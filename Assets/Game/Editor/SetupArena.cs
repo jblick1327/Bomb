@@ -52,6 +52,10 @@ public static class SetupArena
             EditorUtility.SetDirty(asset);
         }
 
+        GameObject rock = GameObject.Find("Rock");
+        if (rock != null && rock.GetComponent<DestructibleRock>() == null)
+            rock.AddComponent<DestructibleRock>();
+
         var player = GameObject.Find("Player").GetComponent<ArenaPlayerController>();
         player.transform.position = layout.PlayerSpawn;
         var bombs = GameObject.Find("Bomb System");
@@ -60,6 +64,7 @@ public static class SetupArena
         SetReference(session, "layout", layout);
         SetReference(session, "player", player);
         SetReference(session, "ground", terrain);
+        SetReference(session, "rock", rock != null ? rock.GetComponent<DestructibleRock>() : null);
         SetReference(session, "bombs", dropper);
         SetReference(dropper, "layout", layout);
         SetReference(dropper, "session", session);

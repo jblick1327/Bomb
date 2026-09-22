@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -95,6 +96,7 @@ public sealed class BombDropper : MonoBehaviour
     {
         if (!CanRun) return;
         if (ground != null) ground.Carve(CreateCraterOutline(center));
+        AffectBlastReceivers(center);
         if (player != null && player.gameObject.activeInHierarchy
             && player.DistanceToBody(center) <= lethalRadius)
         {
@@ -122,6 +124,25 @@ public sealed class BombDropper : MonoBehaviour
         float frontDistance = ((layout != null ? layout.Depth : 0f) * 0.5f + 0.1f) / Mathf.Max(Mathf.Abs(forward.z), 0.1f);
         visual.transform.position = origin - forward * frontDistance;
         visual.AddComponent<BombBlastVisual>().Initialize(lethalRadius, blastDuration);
+    }
+
+    private void AffectBlastReceivers(Vector2 center)
+    {
+        Vector3 queryCenter = new Vector3(center.x, center.y, layout != null ? layout.Origin.z : transform.position.z);
+        float halfDepth = layout != null ? layout.Depth * 0.5f + 0.5f : 10f;
+        Collider[] colliders = Physics.OverlapBox(queryCenter, new Vector3(lethalRadius, lethalRadius, halfDepth));
+        var receivers = new HashSet<IBlastReceiver>();
+        foreach (Collider collider in colliders)
+        {
+            foreach (MonoBehaviour component in collider.GetComponentsInParent<MonoBehaviour>(true))
+            {
+                if (component is IBlastReceiver receiver)
+                    receivers.Add(receiver);
+            }
+        }
+
+        foreach (IBlastReceiver receiver in receivers)
+            receiver.ReceiveBlast(center, lethalRadius);
     }
 
     public void ClearTransientObjects()

@@ -11,6 +11,7 @@ public sealed class ArenaSession : MonoBehaviour
     [SerializeField] private ArenaLayout layout;
     [SerializeField] private ArenaPlayerController player;
     [SerializeField] private DestructibleGround ground;
+    [SerializeField] private DestructibleRock rock;
     [SerializeField, Tooltip("Owns the bombs and effects cleared on death or restart.")]
     private BombDropper bombs;
 
@@ -36,6 +37,7 @@ public sealed class ArenaSession : MonoBehaviour
     {
         bombs.ClearTransientObjects();
         ground.ResetGround();
+        DestructibleRock.ResetAllRocks();
         player.gameObject.SetActive(false);
         CharacterController controller = player.GetComponent<CharacterController>();
         controller.enabled = false;
