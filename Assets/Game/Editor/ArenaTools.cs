@@ -30,12 +30,12 @@ public static class ArenaTools
         try
         {
             foreach (var check in new Func<string>[] { VerifySideArena.Main, VerifyCraterMovement.Main,
-                VerifyArenaLayout.Main, VerifyBombs.Main, VerifyFoundation.Main })
+                VerifyArenaLayout.Main, VerifyBombs.Main, VerifyFoundation.Main, VerifyCanonicalDestruction.Main })
             {
                 session.RestartRound();
                 results.Add(check());
             }
-            return "Arena checks: 5 passed.\n" + string.Join("\n", results);
+            return "Arena checks: 6 passed.\n" + string.Join("\n", results);
         }
         finally { session.RestartRound(); }
     }

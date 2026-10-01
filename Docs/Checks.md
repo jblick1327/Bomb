@@ -12,9 +12,10 @@ round, input routing, or physics; the normal suite finishes with a fresh round.
 | `VerifyArenaLayout` | Resizing ground, boundaries, spawn, bomb range, camera |
 | `VerifyBombs` | Falling collision, crater collision, overlapping shapes, damage |
 | `VerifyFoundation` | Exposed terrain contours, whole-body damage, blast ring, death/HUD/reset |
+| `VerifyCanonicalDestruction` | Real bomb path, canonical split identity, atomic runtime projection, snapshot reload |
 | `StressTerrain` | Deterministic batches of overlapping cuts and rebuild timings |
 
-**Arena → Checks → Run All** runs the five normal checks. A failed check throws an
+**Arena → Checks → Run All** runs the six normal checks. A failed check throws an
 exception identifying the condition. The Console shows the full result.
 
 For individual checks, the optional Unity CLI / Pipeline connection can call the
