@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
+// Draws the Bomb Dropper inspector with grouped settings and contextual help.
 [CustomEditor(typeof(BombDropper))]
 public sealed class BombDropperEditor : Editor
 {
@@ -11,10 +12,16 @@ public sealed class BombDropperEditor : Editor
         var script = new PropertyField(serializedObject.FindProperty("m_Script"));
         script.SetEnabled(false);
         root.Add(script);
-        root.Add(new HelpBox("Crater removes ground. Lethal radius touches the player's body; the visible ring uses that radius.", HelpBoxMessageType.Info));
+        root.Add(new HelpBox("Inner radius removes destructible geometry. Outer radius shatters it. Lethal radius controls player damage.", HelpBoxMessageType.Info));
         Add(root, "craterShape", "Crater shape");
         Add(root, "craterRadius", "Crater radius (units)");
         Add(root, "lethalRadius", "Lethal radius (units)");
+        Add(root, "innerDestructionRadius", "Inner destruction radius (units)");
+        Add(root, "outerShatterRadius", "Outer shatter radius (units)");
+        Add(root, "shatterImpulse", "Shatter impulse");
+        Add(root, "rubblePieces", "Rubble pieces");
+        Add(root, "rubblePieceSize", "Rubble piece size");
+        Add(root, "rubbleImpulse", "Rubble impulse");
 
         var shape = new Foldout { text = "Crater detail", value = false };
         var scale = Add(shape, "craterShapeScale", "Width / height scale");

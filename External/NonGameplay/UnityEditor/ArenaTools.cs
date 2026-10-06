@@ -5,6 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+// Provides Unity menu commands for opening the arena and running its editor checks.
 public static class ArenaTools
 {
     public const string ScenePath = "Assets/Game/Scenes/Arena.unity";

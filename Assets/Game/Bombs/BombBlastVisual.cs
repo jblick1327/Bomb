@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// Animates and removes the expanding ring shown after a bomb explodes.
 [AddComponentMenu("Arena/Blast Visual")]
 public sealed class BombBlastVisual : MonoBehaviour
 {

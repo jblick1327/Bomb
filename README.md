@@ -40,6 +40,8 @@ Inspector foldouts separate detail, drop, visuals, and scene references. Tooltip
 explain less obvious settings. Code defaults apply to new components; the saved
 scene values are the current gameplay tuning.
 
+See [Gameplay reference](Docs/GameplayReference.md) for agreed turf, crater, and debris behavior.
+
 ## Project map
 
 - `Assets/Game/`: our game. Runtime code is grouped by feature; `Editor/` contains

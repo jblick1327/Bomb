@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
+// Checks bomb flight, crater creation, blast effects, and round cleanup.
 public static class VerifyBombs
 {
     public static string Main()

@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+// Stores convex ground polygons and rebuilds an extruded mesh after crater cuts.
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 [AddComponentMenu("Arena/Destructible Ground")]
 public sealed class DestructibleGround : MonoBehaviour
@@ -10,32 +11,98 @@ public sealed class DestructibleGround : MonoBehaviour
     [Header("Scene references")]
     [SerializeField, Tooltip("Ground bounds and extrusion depth come from Arena Layout.")]
     private ArenaLayout layout;
+    [SerializeField, Min(0.01f)] private float extrusionDepth = -1f;
+    [SerializeField, Tooltip("Disable for a destructible visual layer above a separate gameplay collider.")]
+    private bool collisionEnabled = true;
 
     private const float Epsilon = 0.00001f;
+    private const float MinimumGrassPieceArea = 0.015f;
+    private bool useMeshBounds;
+    private float meshBoundsDepth;
+    private Bounds originalMeshBounds;
     private List<List<Vector2>> pieces = new List<List<Vector2>>();
     private Mesh generatedMesh;
     public int SolidPieceCount => pieces.Count;
     public int BoundaryEdgeCount { get; private set; }
     public int VertexCount => generatedMesh != null ? generatedMesh.vertexCount : 0;
+    public bool IsInitialized => generatedMesh != null && pieces.Count > 0;
 
-    private void Awake() => ResetGround();
+    private void Awake()
+    {
+        if (gameObject.name == "Grass_Mesh")
+        {
+            // Turf is a separate extruded destructible layer with its own collider.
+            extrusionDepth = 1.2f;
+            SetCollisionEnabled(true);
+            InitializeFromCurrentMeshBounds();
+            return;
+        }
+        ResolveLayout();
+        if (layout != null && (transform.parent == null || GetComponentInParent<ArenaLayout>() != null)) ResetGround();
+    }
+
+    private void InitializeFromCurrentMeshBounds()
+    {
+        useMeshBounds = true;
+        originalMeshBounds = GetComponent<MeshRenderer>().bounds;
+        ResetGround();
+    }
+
+    public void SetExtrusionDepth(float visualExtrusionDepth)
+    {
+        extrusionDepth = Mathf.Max(0.01f, visualExtrusionDepth);
+        if (IsInitialized && useMeshBounds) ResetGround();
+    }
+
+    public void SetCollisionEnabled(bool enabled)
+    {
+        collisionEnabled = enabled;
+        MeshCollider collision = GetComponent<MeshCollider>();
+        if (collision != null) collision.enabled = enabled;
+    }
 
     public void ResetGround()
     {
-        if (layout == null) layout = GetComponentInParent<ArenaLayout>();
-        if (layout == null) throw new InvalidOperationException("Ground requires an ArenaLayout.");
-        Rect bounds = layout.GroundRect;
+        Vector2 bottomLeft;
+        Vector2 bottomRight;
+        Vector2 topRight;
+        Vector2 topLeft;
+        if (useMeshBounds)
+        {
+            Bounds bounds = originalMeshBounds;
+            bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
+            bottomRight = new Vector2(bounds.max.x, bounds.min.y);
+            topRight = new Vector2(bounds.max.x, bounds.max.y);
+            topLeft = new Vector2(bounds.min.x, bounds.max.y);
+            meshBoundsDepth = layout != null ? layout.Depth : 4.6f;
+        }
+        else
+        {
+            ResolveLayout();
+            if (layout == null) throw new InvalidOperationException("Ground requires an ArenaLayout.");
+            Rect bounds = layout.GroundRect;
+            bottomLeft = new Vector2(bounds.xMin, bounds.yMin);
+            bottomRight = new Vector2(bounds.xMax, bounds.yMin);
+            topRight = new Vector2(bounds.xMax, bounds.yMax);
+            topLeft = new Vector2(bounds.xMin, bounds.yMax);
+        }
         pieces = new List<List<Vector2>>
         {
             new List<Vector2>
             {
-                new Vector2(bounds.xMin, bounds.yMin),
-                new Vector2(bounds.xMax, bounds.yMin),
-                new Vector2(bounds.xMax, bounds.yMax),
-                new Vector2(bounds.xMin, bounds.yMax)
+                bottomLeft,
+                bottomRight,
+                topRight,
+                topLeft
             }
         };
         RebuildMesh();
+    }
+
+    private void ResolveLayout()
+    {
+        if (layout == null) layout = GetComponentInParent<ArenaLayout>();
+        if (layout == null) layout = FindFirstObjectByType<ArenaLayout>(FindObjectsInactive.Include);
     }
 
     // Subtract a counterclockwise convex outline in world XY coordinates.
@@ -45,7 +112,7 @@ public sealed class DestructibleGround : MonoBehaviour
         if (worldOutline == null || worldOutline.Count < 3) return;
         var cutter = new List<Vector2>(worldOutline.Count);
         for (int i = 0; i < worldOutline.Count; i++)
-            cutter.Add((Vector2)transform.InverseTransformPoint(new Vector3(worldOutline[i].x, worldOutline[i].y, transform.position.z)));
+            cutter.Add(worldOutline[i]);
         if (Area(cutter) < 0f) cutter.Reverse();
         if (Mathf.Abs(Area(cutter)) < Epsilon) return;
         Rect cutterBounds = PolygonBounds(cutter);
@@ -75,7 +142,8 @@ public sealed class DestructibleGround : MonoBehaviour
                 Vector2 a = cutter[edge];
                 Vector2 b = cutter[(edge + 1) % cutter.Count];
                 var outside = Clip(remaining, a, b, false);
-                if (outside.Count >= 3 && Mathf.Abs(Area(outside)) > Epsilon) next.Add(outside);
+                float minimumArea = gameObject.name == "Grass_Mesh" ? MinimumGrassPieceArea : Epsilon;
+                if (outside.Count >= 3 && Mathf.Abs(Area(outside)) > minimumArea) next.Add(outside);
                 remaining = Clip(remaining, a, b, true);
             }
         }
@@ -87,7 +155,7 @@ public sealed class DestructibleGround : MonoBehaviour
 
     public bool ContainsSolid(Vector2 worldPoint)
     {
-        Vector2 point = transform.InverseTransformPoint(new Vector3(worldPoint.x, worldPoint.y, transform.position.z));
+        Vector2 point = worldPoint;
         foreach (var piece in pieces)
         {
             bool inside = true;
@@ -166,14 +234,15 @@ public sealed class DestructibleGround : MonoBehaviour
     {
         var vertices = new List<Vector3>();
         var triangles = new List<int>();
-        float front = -layout.Depth * 0.5f;
-        float back = layout.Depth * 0.5f;
+        float depth = extrusionDepth > 0f ? extrusionDepth : (useMeshBounds ? meshBoundsDepth : layout.Depth);
+        float front = transform.position.z - depth * 0.5f;
+        float back = transform.position.z + depth * 0.5f;
         var lines = new Dictionary<(int, int), EdgeLine>();
         foreach (var polygon in pieces)
         {
             int start = vertices.Count;
-            foreach (Vector2 point in polygon) vertices.Add(new Vector3(point.x, point.y, front));
-            foreach (Vector2 point in polygon) vertices.Add(new Vector3(point.x, point.y, back));
+            foreach (Vector2 point in polygon) vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, front)));
+            foreach (Vector2 point in polygon) vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, back)));
             for (int i = 1; i < polygon.Count - 1; i++)
             {
                 triangles.Add(start); triangles.Add(start + i + 1); triangles.Add(start + i);
@@ -213,10 +282,10 @@ public sealed class DestructibleGround : MonoBehaviour
                     Vector2 b = line.Direction * position + line.Normal * line.Offset;
                     if (winding < 0) { Vector2 swap = a; a = b; b = swap; }
                     int edge = vertices.Count;
-                    vertices.Add(new Vector3(a.x, a.y, front));
-                    vertices.Add(new Vector3(b.x, b.y, front));
-                    vertices.Add(new Vector3(b.x, b.y, back));
-                    vertices.Add(new Vector3(a.x, a.y, back));
+                    vertices.Add(transform.InverseTransformPoint(new Vector3(a.x, a.y, front)));
+                    vertices.Add(transform.InverseTransformPoint(new Vector3(b.x, b.y, front)));
+                    vertices.Add(transform.InverseTransformPoint(new Vector3(b.x, b.y, back)));
+                    vertices.Add(transform.InverseTransformPoint(new Vector3(a.x, a.y, back)));
                     triangles.Add(edge); triangles.Add(edge + 1); triangles.Add(edge + 2);
                     triangles.Add(edge); triangles.Add(edge + 2); triangles.Add(edge + 3);
                     BoundaryEdgeCount++;
@@ -236,7 +305,8 @@ public sealed class DestructibleGround : MonoBehaviour
         generatedMesh.RecalculateNormals();
         generatedMesh.RecalculateBounds();
         GetComponent<MeshFilter>().sharedMesh = generatedMesh;
-        collision.sharedMesh = vertices.Count > 0 ? generatedMesh : null;
+        collision.enabled = collisionEnabled;
+        collision.sharedMesh = collisionEnabled && vertices.Count > 0 ? generatedMesh : null;
     }
 
     private void OnDestroy()
@@ -244,6 +314,7 @@ public sealed class DestructibleGround : MonoBehaviour
         if (Application.isPlaying && generatedMesh != null) Destroy(generatedMesh);
     }
 
+    // Groups collinear polygon edges so shared spans can be cancelled.
     private sealed class EdgeLine
     {
         public Vector2 Direction;
@@ -252,6 +323,7 @@ public sealed class DestructibleGround : MonoBehaviour
         public readonly List<EdgeEvent> Events = new List<EdgeEvent>();
     }
 
+    // Marks where a polygon edge starts or stops along an EdgeLine.
     private struct EdgeEvent
     {
         public float Position;

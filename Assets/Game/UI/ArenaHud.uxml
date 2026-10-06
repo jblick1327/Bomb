@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="hud-root" class="hud-root">
+        <ui:Label name="controls" class="controls" text="A/D or arrows: move    Space: jump    B: drop bomb    R: restart" />
+        <ui:VisualElement name="death-panel" class="death-panel">
+            <ui:Label class="death-title" text="YOU DIED" />
+            <ui:Label class="death-subtitle" text="Press R to restart" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

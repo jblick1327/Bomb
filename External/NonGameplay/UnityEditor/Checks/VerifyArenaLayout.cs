@@ -2,6 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
+// Checks arena bounds, camera framing, and bomb placement against the layout.
 public static class VerifyArenaLayout
 {
     public static string Main()

@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
+// Checks terrain subtraction, blast behavior, player death, and restart recovery.
 public static class VerifyFoundation
 {
     public static string Main()

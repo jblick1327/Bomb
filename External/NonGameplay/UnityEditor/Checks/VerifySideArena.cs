@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
+// Checks baseline side-view movement, boundaries, ground, and camera behavior.
 public static class VerifySideArena
 {
     public static string Main()

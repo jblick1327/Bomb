@@ -1,0 +1,39 @@
+.hud-root {
+    position: absolute;
+    left: 50%;
+    top: 18px;
+    width: 420px;
+    min-height: 0;
+    translate: -50% 0;
+    color: rgb(240, 244, 255);
+    -unity-font-style: normal;
+}
+
+.controls {
+    padding: 12px 18px;
+    background-color: rgba(10, 14, 24, 0.9);
+    border-left-width: 3px;
+    border-left-color: rgb(104, 210, 190);
+    font-size: 15px;
+    -unity-text-align: middle-center;
+}
+
+.death-panel {
+    display: none;
+    margin-top: 12px;
+    padding: 18px 24px;
+    background-color: rgba(10, 14, 24, 0.96);
+    border-left-width: 4px;
+    border-left-color: rgb(244, 116, 102);
+    -unity-text-align: middle-center;
+}
+
+.death-title {
+    font-size: 28px;
+    -unity-font-style: bold;
+}
+
+.death-subtitle {
+    margin-top: 4px;
+    font-size: 16px;
+}

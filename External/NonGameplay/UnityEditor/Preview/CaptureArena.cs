@@ -1,6 +1,7 @@
 using System.IO;
 using UnityEngine;
 
+// Captures the current arena camera view to a temporary preview image.
 public static class CaptureArena
 {
     public static string Main()

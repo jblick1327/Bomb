@@ -4,6 +4,7 @@ using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 
+// Runs repeatable terrain carving loads and reports mesh and timing statistics.
 public static class StressTerrain
 {
     // Run consecutive batches: Main(0,25), Main(25,25), ..., Main(175,25).

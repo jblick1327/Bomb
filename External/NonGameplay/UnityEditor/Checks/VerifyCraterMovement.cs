@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
+// Checks player movement, crater edges, and jump assistance around terrain cuts.
 public static class VerifyCraterMovement
 {
     public static string Main()
