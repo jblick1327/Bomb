@@ -1,0 +1,839 @@
+{
+  "version": "1.3.2",
+  "date": "2026-10-07",
+  "title": "BOM Team Handbook",
+  "principles": [
+    {
+      "title": "Unity commits gameplay",
+      "text": "The host's Unity simulation owns physical outcomes and gameplay decisions. Odin carries requests, committed results, and recovery state.",
+      "refs": [
+        "AUTH-003",
+        "NET-001"
+      ]
+    },
+    {
+      "title": "Current state is enough",
+      "text": "A current snapshot and its validated definitions reconstruct the world. Replaying its event history is unnecessary.",
+      "refs": [
+        "STATE-001",
+        "REBUILD-001"
+      ]
+    },
+    {
+      "title": "Each fact has one home",
+      "text": "A hold owns its relationship. The roster owns control assignment. Convenience lookups and engine objects derive from those facts.",
+      "refs": [
+        "STATE-004",
+        "LIMB-002",
+        "PLAYER-002"
+      ]
+    },
+    {
+      "title": "Bodies and relationships differ",
+      "text": "Each connected material piece, living character, and live bomb has a body. Structural connectors and limb holds have identities and constraints, but no bodies of their own.",
+      "refs": [
+        "MAT-002",
+        "CHAR-002",
+        "BOMB-001",
+        "CON-004",
+        "LIMB-003"
+      ]
+    },
+    {
+      "title": "Structural outcomes commit together",
+      "text": "Geometry, identity, behaviour, control, and relationship changes are resolved into a complete outcome with valid references.",
+      "refs": [
+        "COMMIT-001",
+        "COMMIT-002"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "scene",
+      "short": "Bodies and bonds",
+      "title": "A supported platform",
+      "scene": "initial",
+      "intro": "A platform is bonded to a fixed wall.",
+      "notice": "The wall and platform are separate bodies. Their bond is a separate relationship with its own identity and state.",
+      "remember": [
+        "W: wall geometry, fixed behaviour and stable identity from world data.",
+        "P: its current shape, motion, and selected material, response and appearance inputs.",
+        "C: endpoint IDs and local attachment regions that recover its intended rigid fit; authored strength and applicable failure settings."
+      ],
+      "derive": [
+        "Unity bodies, colliders, the connector joint, visuals, and reverse lookups."
+      ],
+      "changes": [
+        [
+          "Bodies",
+          "W and P"
+        ],
+        [
+          "Relationship",
+          "C joins W to P"
+        ]
+      ],
+      "refs": [
+        "ECS-007",
+        "MAT-009",
+        "WORLD-005",
+        "PLAYER-002",
+        "CON-013"
+      ],
+      "speaker": "Introduce the platform and wall before the character, bomb and control assignment. The diagram focuses on this bond; record details use the example IDs.",
+      "facts": [
+        "World data supplies the wall’s fixed behaviour.",
+        "The bond restricts the attached platform’s motion."
+      ],
+      "caveat": "An authored composite expands into pieces and connectors; it does not add a canonical assembly entity. Diagram geometry and origins are illustrative.",
+      "caption": "The purple regions mark where the bond attaches to each body."
+    },
+    {
+      "id": "hold",
+      "short": "Hold",
+      "title": "Holding a platform",
+      "scene": "held",
+      "intro": "A Claymate grabs one point on the platform. Host validation creates a persistent hold.",
+      "notice": "The hold follows that material point while the character can move and rotate within its limb’s permitted reach.",
+      "remember": [
+        "L: character K, selected slot, target P, and the held location in P's local space.",
+        "K's definition: a fixed local root and maximum reach for that slot.",
+        "K and P retain their own current body poses."
+      ],
+      "derive": [
+        "The reach constraint and visible limb pose.",
+        "The lookup from K's slot to L. K stores no second authoritative attachment reference."
+      ],
+      "changes": [
+        [
+          "Create",
+          "L"
+        ],
+        [
+          "Target",
+          "P"
+        ],
+        [
+          "Constraint",
+          "The body may move and rotate within permitted reach"
+        ],
+        [
+          "Ownership",
+          "L alone owns the relationship"
+        ]
+      ],
+      "refs": [
+        "INTERACT-002",
+        "LIMB-002",
+        "LIMB-010",
+        "LIMB-011",
+        "LIMB-012",
+        "WORLD-006"
+      ],
+      "speaker": "Use this case to explain the difference between a canonical relationship and the joint that realizes it. A limb hold is not the rigid fit used by structural connectors. Active pulling/climbing controls and the engine constraint remain open.",
+      "facts": [
+        "The character definition supplies the fixed limb root and maximum reach.",
+        "The hold, both body poses and that definition determine the constraint and visible limb pose."
+      ],
+      "caveat": "A limb hold does not encode the rigid fit of structural connectors. Active pulling/climbing controls and the engine constraint remain open.",
+      "caption": "The purple dot marks the held material location."
+    },
+    {
+      "id": "countdown",
+      "short": "Countdown",
+      "title": "Landing and countdown",
+      "scene": "countdown",
+      "intro": "Landing starts the bomb’s countdown. The host advances its remaining duration.",
+      "notice": "The bomb stores an inactive countdown, or an active countdown with its remaining duration.",
+      "remember": [
+        "B: its selected configuration and current active remaining duration.",
+        "The platform, wall, character, connector, hold, and roster remain present in this case."
+      ],
+      "derive": [
+        "Engine contacts and presentation of the countdown. The landing observation is not a second authoritative timer."
+      ],
+      "changes": [
+        [
+          "B's countdown",
+          "Inactive becomes active with remaining duration"
+        ],
+        [
+          "Initialization",
+          "Selected bomb/fuse configuration"
+        ],
+        [
+          "Advancement",
+          "Host simulation"
+        ],
+        [
+          "Still open",
+          "Landing classification, values, units, later contacts, and detailed order"
+        ]
+      ],
+      "refs": [
+        "BOMB-003",
+        "BOMB-004",
+        "STATE-001"
+      ],
+      "speaker": "No numerical fuse duration is selected here. The diagram marks the timer active without implying particular units or a deadline representation.",
+      "facts": [
+        "The selected bomb configuration supplies the starting duration.",
+        "Reconstruction restores the current countdown without replaying the landing."
+      ],
+      "caveat": "No numeric fuse duration is selected here. Landing classification, later contacts and detailed update order remain open.",
+      "caption": "The bomb has landed on the platform and its countdown is active."
+    },
+    {
+      "id": "split",
+      "short": "Split",
+      "title": "Splitting a piece",
+      "scene": "split",
+      "intro": "An explosion leaves two disconnected platform pieces. The wall bond survives on the left piece; the held point survives on the right.",
+      "notice": "The original platform retires. Both resulting pieces receive new IDs.",
+      "remember": [
+        "P1 and P2: their own shapes, motion, and recoverable material/response/appearance selections.",
+        "C: endpoint P1, its intended fit, and its continuing lifetime reference if percentage loss is used.",
+        "L: target P2 and transformed coordinates identifying the same surviving material location."
+      ],
+      "derive": [
+        "Each material child's mass from density and its current area.",
+        "New colliders, visuals, constraints, and indexes from the complete committed outcome."
+      ],
+      "changes": [
+        [
+          "Retire",
+          "P and detonated B"
+        ],
+        [
+          "Create",
+          "P1 and P2, both with new IDs"
+        ],
+        [
+          "Continue C",
+          "Same ID; endpoint becomes P1"
+        ],
+        [
+          "Continue L",
+          "Same ID; target becomes P2"
+        ],
+        [
+          "Commit",
+          "Apply geometry, identities, and relationships together"
+        ]
+      ],
+      "refs": [
+        "IDENTITY-001",
+        "CON-011",
+        "CON-014",
+        "LIMB-008",
+        "MAT-008",
+        "WORLD-006",
+        "COMMIT-002",
+        "BOMB-002"
+      ],
+      "speaker": "This is one split outcome, not a chosen fragmentation algorithm or child-motion formula. Test the old connector before creating replacements. If its bond fails, it produces no child connectors. If the held location is destroyed, L retires. A changed local frame must preserve the same surviving material.",
+      "facts": [
+        "The bond and hold keep their IDs and remap to the surviving material. A destroyed held point ends the hold.",
+        "Geometry, identity and relationship changes commit together."
+      ],
+      "caveat": "Test any old attachment-loss policy before creating connector replacements. A failed bond produces no replacements. Child-motion derivation and geometry algorithms remain open.",
+      "caption": "The hold follows the same surviving material point on the right piece."
+    },
+    {
+      "id": "death",
+      "short": "Death",
+      "title": "Character death",
+      "scene": "death",
+      "intro": "In a separate case, a qualifying blast kills the Claymate immediately. Character damage does not accumulate.",
+      "notice": "The surviving body keeps its ID and begins behaving as environment.",
+      "remember": [
+        "K: ordinary environment records with installed material, destruction-response, interaction, and reusable appearance selections.",
+        "R: its controlled-body reference is now empty.",
+        "Outgoing hold L retires. Any incoming holds on surviving locations continue under the existing rules."
+      ],
+      "derive": [
+        "The corpse's body and presentation through ordinary environment reconstruction. The former living state and death-event history are unnecessary."
+      ],
+      "changes": [
+        [
+          "Keep",
+          "Body ID K"
+        ],
+        [
+          "Install",
+          "Character-definition-supplied environment configuration"
+        ],
+        [
+          "Clear",
+          "R's control reference"
+        ],
+        [
+          "Retire",
+          "Outgoing L and detonated B"
+        ],
+        [
+          "Preserve",
+          "Incoming holds on surviving material locations"
+        ]
+      ],
+      "refs": [
+        "CHAR-003",
+        "CHAR-004",
+        "CHAR-005",
+        "PLAYER-002",
+        "LIMB-009",
+        "COMMIT-002"
+      ],
+      "speaker": "The source is settled; actual corpse values are not. No health counter is required. Concurrent geometry changes still use the ordinary identity rules. The split and death pages are explanatory cases; all applicable consequences of one explosion commit consistently together.",
+      "facts": [
+        "The character definition supplies the environment settings installed on death.",
+        "Control and outgoing holds end. Other characters’ incoming holds continue on surviving material locations."
+      ],
+      "caveat": "Concurrent geometry changes use the ordinary identity rules. These split and death examples do not establish tick order; applicable consequences of one explosion commit together.",
+      "caption": "The body remains; its character behaviour and outgoing hold have ended."
+    },
+    {
+      "id": "recovery",
+      "short": "Recovery",
+      "title": "Reconstruction",
+      "scene": "split",
+      "intro": "Rebuild the split result using its current records and the definitions they select.",
+      "notice": "Current state supplies the lasting inputs needed to reconstruct the scene.",
+      "remember": [
+        "Current entity and relationship identities, shape, motion, configuration selections, and roster state.",
+        "Fixed wall inputs, character definition roots/reach if living, connector fit/reference where applicable, and any current countdown state.",
+        "Validated definitions needed to resolve the same effective inputs."
+      ],
+      "derive": [
+        "Bodies, colliders, joints, visible limbs, changed-shape visuals, and lookup indexes."
+      ],
+      "changes": [
+        [
+          "Recover",
+          "Current records plus validated dependencies"
+        ],
+        [
+          "No retired-parent dependency",
+          "Each resulting piece has its own reconstructable inputs"
+        ],
+        [
+          "No event replay",
+          "The current snapshot is sufficient"
+        ],
+        [
+          "Open implementation work",
+          "Exact units, formats, references, physical derivations, and tolerances"
+        ]
+      ],
+      "refs": [
+        "STATE-001",
+        "STATE-003",
+        "STATE-004",
+        "REBUILD-001",
+        "MAT-008",
+        "CON-013",
+        "CON-014"
+      ],
+      "speaker": "Make this the team's shared completion question. Test both the split and death results. The diagram shows semantic coverage; it is not an executable snapshot schema or physics simulation.",
+      "facts": [
+        "Resulting pieces recover their own shape, motion and selected properties. The bond and hold recover their surviving attachments.",
+        "Unity bodies, colliders, constraints, visuals and lookups derive from those records."
+      ],
+      "caveat": "Exact shape/reference formats, definition validation and additional physical inputs remain implementation work.",
+      "caption": "The split result reconstructed without the original platform or explosion history."
+    }
+  ],
+  "choices": [
+    {
+      "id": "units",
+      "title": "Units and scale",
+      "prompt": "Length, rotation and duration units; the fixture's scale.",
+      "roles": "Simulation + assets"
+    },
+    {
+      "id": "origins",
+      "title": "Body-local origins",
+      "prompt": "How an asset's origin/pivot is declared and how gameplay shape aligns with visuals.",
+      "roles": "Simulation + assets"
+    },
+    {
+      "id": "geometry",
+      "title": "Geometry exchange",
+      "prompt": "The initial prototype shape format, validation, and handoff example.",
+      "roles": "Simulation + assets"
+    },
+    {
+      "id": "definitions",
+      "title": "Definition lookup",
+      "prompt": "How selected material, response, character, bomb and world inputs resolve consistently.",
+      "roles": "Simulation + assets + level"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "SHARED-01",
+      "role": "shared",
+      "title": "Agree the fixture handoff",
+      "stage": "Start now",
+      "purpose": "Give the first asset and scene a common interpretation so authoring and integration can exchange usable inputs.",
+      "start": "Simulation integration records a prototype import contract with asset authoring. Use one platform to settle the four exchange conventions, then load that same example through both paths.",
+      "inputs": [
+        "Accepted world/body-local convention and declared shape/visual contract.",
+        "One platform shape and an example material/response selection."
+      ],
+      "deliverable": "A short prototype import contract and one example accepted by both the authoring and simulation paths.",
+      "steps": [
+        "Asset authoring supplies one simple platform shape with a declared local origin and aligned visuals.",
+        "Simulation integration records units, origin handling, initial shape exchange and definition lookup; authoring checks those choices against the example.",
+        "Round-trip the example and keep the import contract beside it, recording any required defaults or assumptions."
+      ],
+      "checks": [
+        "Both paths interpret the same shape, origin, scale, and visual alignment.",
+        "Selected definitions resolve to the same effective inputs.",
+        "No required input is silently supplied by an undocumented engine default."
+      ],
+      "dependencies": [],
+      "refs": [
+        "WORLD-006",
+        "MAT-007",
+        "MAT-005",
+        "STATE-001",
+        "STATE-004"
+      ],
+      "open": "These are working implementation conventions. Framework, final geometry format, and other physical derivations remain open. The team's chosen conventions must be recorded before exchanging integrated assets."
+    },
+    {
+      "id": "ASSET-01",
+      "role": "assets",
+      "title": "Author the platform example",
+      "stage": "Start now",
+      "purpose": "Give level composition and simulation integration one asset that satisfies the accepted authoring contract.",
+      "start": "Produce a simple section with a declared 2D gameplay shape and visuals aligned in its local frame.",
+      "inputs": [
+        "SHARED-01's exchange conventions.",
+        "Explicit material density and independently selected destruction response."
+      ],
+      "deliverable": "One reusable platform section with shape, aligned appearance, material selection and response selection. Use simple visuals before polishing art.",
+      "steps": [
+        "Declare the section's shape and alignment; include a variable colour input where the chosen authoring format places it.",
+        "Supply a material definition with explicit density, and a separate effective response selection.",
+        "Hand the example to integration and level composition, then check it against the loaded result."
+      ],
+      "checks": [
+        "The declared silhouette is used for physics, destruction, mass calculation, and attachments.",
+        "Material and response can be selected independently.",
+        "Reusable appearance inputs can be carried by changed pieces without needing the retired parent."
+      ],
+      "dependencies": [
+        "SHARED-01"
+      ],
+      "refs": [
+        "MAT-005",
+        "MAT-006",
+        "MAT-007",
+        "MAT-008",
+        "ECS-007"
+      ],
+      "open": "Appearance ownership/encoding and a separate VisualBinding remain open. Fixture values and temporary authoring records are working choices; supporting independent responses does not require shattering."
+    },
+    {
+      "id": "CHARACTER-01",
+      "role": "assets",
+      "title": "Supply character definition inputs",
+      "stage": "Begin alongside platform authoring",
+      "purpose": "Give the hold and death systems their accepted inputs without adding independent limb bodies or changing root poses.",
+      "start": "Declare one body's local limb roots and maximum reach for each hand/foot slot.",
+      "inputs": [
+        "Shared coordinate conventions.",
+        "The one-body character and same-ID death model."
+      ],
+      "deliverable": "A character definition supplying roots/reach and the environment configuration to install on death, with the fixture's selected values documented.",
+      "steps": [
+        "Declare fixed body-local roots and authored maximum reach per slot.",
+        "Select corpse material, destruction response, interaction eligibility, and reusable appearance.",
+        "Review definition lookup and visual alignment with simulation integration."
+      ],
+      "checks": [
+        "A minimum hold can resolve its character-side root/reach without copying them onto L.",
+        "Death can install complete environment selections on the same body ID.",
+        "The resulting corpse can reconstruct without the former CharacterState."
+      ],
+      "dependencies": [
+        "SHARED-01"
+      ],
+      "refs": [
+        "CHAR-002",
+        "LIMB-011",
+        "LIMB-012",
+        "CHAR-004",
+        "CHAR-005",
+        "MAT-009"
+      ],
+      "open": "Actual values, additional movement inputs, visual limb construction and exact definition encoding are implementation/authoring work. No corpse inheritance/override default or extra profile record is mandated. Coordinate with integration on remaining character physical derivations."
+    },
+    {
+      "id": "LEVEL-01",
+      "role": "level",
+      "title": "Compose the shared scene",
+      "stage": "Start now",
+      "purpose": "Exercise pieces, fixed supports, and connectors using the same fixture the other roles consume.",
+      "start": "Lay out fixed W, platform P and connector C; mark the intended attachment regions on both endpoints.",
+      "inputs": [
+        "Platform section and agreed exchange conventions.",
+        "Recoverable world inputs for wall geometry, fixed behaviour, and endpoint identity."
+      ],
+      "deliverable": "One reproducible level fixture with W, P, C, a Claymate spawn, and a bomb spawn/configuration for the integration checks.",
+      "steps": [
+        "Supply wall geometry and fixed behaviour through world data; bind attachable endpoints consistently.",
+        "Select platform material and destruction response independently.",
+        "Author endpoint-local connector regions and one strength-per-length value. Explicitly select whether the fixture uses a minimum surviving percentage and its value."
+      ],
+      "checks": [
+        "Every material section instantiates with its own body.",
+        "C resolves valid endpoint identities and an unambiguous intended fit.",
+        "The fixture's wall reconstructs as fixed and its settings are reproducible."
+      ],
+      "dependencies": [
+        "SHARED-01",
+        "ASSET-01"
+      ],
+      "refs": [
+        "MAT-001",
+        "MAT-002",
+        "WORLD-005",
+        "WORLD-006",
+        "CON-002",
+        "CON-008",
+        "CON-013",
+        "CON-009",
+        "CON-010",
+        "CON-014"
+      ],
+      "open": "ID allocation, attachment encoding, length measurement, force/torque conversion, numeric tuning and exact spawn records remain implementation choices. Length-based strength and optional authored percentage failure are accepted policies."
+    },
+    {
+      "id": "UNITY-01",
+      "role": "simulation",
+      "title": "Reconstruct the scene from current state",
+      "stage": "Start now",
+      "purpose": "Establish the canonical-to-runtime path that asset, level, gameplay and networking work will use.",
+      "start": "Build a local fixture loader and reconstruction path using the agreed meanings of body and relationship state. It can begin with hand-authored inputs while assets arrive.",
+      "inputs": [
+        "Accepted body/relationship records and the roster’s sole controlled-body reference.",
+        "Shared exchange conventions and fixture definitions."
+      ],
+      "deliverable": "A scene that derives separate Unity bodies, colliders, a structural constraint and visuals from current records and validated definitions, plus a recoverable current-state capture.",
+      "steps": [
+        "Instantiate W, P, K and B; resolve their selected material and role inputs.",
+        "Include a fixture participant whose sole controlled-body reference points to the Claymate. Capture the roster alongside the body and relationship records.",
+        "Derive C's joint from its endpoints and intended fit. Keep engine handles outside canonical state.",
+        "Capture current motion/shape/configuration/relationships and rebuild from that capture."
+      ],
+      "checks": [
+        "Rebuilding preserves active identities, arrangement, shape, fixed behaviour, and selected inputs.",
+        "The bond retains its intended relative position and angle rather than adopting temporary displacement as a new rest fit.",
+        "No event replay or solver history is needed, and the roster remains the sole control assignment."
+      ],
+      "dependencies": [
+        "SHARED-01"
+      ],
+      "refs": [
+        "AUTH-003",
+        "STATE-001",
+        "STATE-003",
+        "STATE-004",
+        "ECS-005",
+        "ECS-007",
+        "MAT-009",
+        "CON-013",
+        "PLAYER-002"
+      ],
+      "open": "Framework, exact fields/types and references remain implementation choices. Resolve and document additional body inputs/derivations, especially for characters and bombs; shared MaterialProperties does not automatically settle every engine input. Integrate ASSET-01, CHARACTER-01 and LEVEL-01 for the shared completion check."
+    },
+    {
+      "id": "HOLD-01",
+      "role": "simulation",
+      "title": "Implement a validated hold",
+      "stage": "Next",
+      "purpose": "Prove the minimum hold record, sole ownership, and reach behaviour on the shared platform.",
+      "start": "Create one host-validated hold from K to P using a participant control assignment and a selected limb slot.",
+      "inputs": [
+        "Current bodies and shapes, character roots/reach, target eligibility, and roster control.",
+        "Minimum L contents: character, slot, target, target-local location."
+      ],
+      "deliverable": "Create/release of one persistent hold with a derived constraint and visible held-limb pose.",
+      "steps": [
+        "Validate endpoint existence, geometry, reach, obstruction, slot occupancy and the shared authored hand/foot eligibility setting; live bombs use ordinary eligibility.",
+        "Create L through the structural path and derive the slot lookup and runtime constraint.",
+        "Move/rotate the endpoints within the allowed reach and recover the held scene from current state."
+      ],
+      "checks": [
+        "Each slot has at most one live hold.",
+        "L alone owns the relationship; roots/reach and body poses are not copied onto it.",
+        "The held location follows the target while the body can move/rotate within reach, and release leaves no dangling state.",
+        "An ineligible target rejects new hand and deliberate foot holds; eligibility does not bypass reach or obstruction checks.",
+        "Applied force alone does not release a hold. Ordinary foot contact creates no persistent attachment.",
+        "An eligible live bomb can be held without altering its countdown lifecycle; retiring it ends targeting holds."
+      ],
+      "dependencies": [
+        "UNITY-01",
+        "CHARACTER-01"
+      ],
+      "refs": [
+        "INTERACT-002",
+        "LIMB-001",
+        "LIMB-002",
+        "LIMB-010",
+        "LIMB-011",
+        "LIMB-012",
+        "LIMB-005",
+        "LIMB-006",
+        "LIMB-007",
+        "BOMB-002"
+      ],
+      "open": "Engine constraint, active controls, tuning, numeric encoding, authoring defaults and eligibility record placement remain implementation work. Hands and deliberate feet share one eligibility policy. Automatic force breakage is outside the current build."
+    },
+    {
+      "id": "SPLIT-01",
+      "role": "simulation",
+      "title": "Commit the worked split and remapping",
+      "stage": "Next",
+      "purpose": "Prove that the canonical identities and relationships remain complete when geometry changes.",
+      "start": "Use the P-to-P1/P2 example. A controlled geometry result may be supplied first to isolate the identity/remapping path, followed by the chosen geometry evaluator.",
+      "inputs": [
+        "The held, supported fixture.",
+        "Result geometry, surviving attachment locations, and selected connector policies."
+      ],
+      "deliverable": "One atomic split outcome and current-state captures proving both the surviving-location and lost-location cases.",
+      "steps": [
+        "Retire P and create new IDs for all disconnected children; establish each child's recoverable inputs.",
+        "Test any old attachment-loss policy before creating replacements. Resolve C according to surviving relationships and reference lifetime.",
+        "Keep/remap L if its material location survives, otherwise retire it. Transform coordinates into the result's local frame.",
+        "Commit the complete outcome, reconstruct it, and check for invalid references."
+      ],
+      "checks": [
+        "P1 and P2 both have new IDs and reconstruct without P.",
+        "C and L retain their IDs only in their accepted one-survivor cases.",
+        "A failed old bond produces no replacements, and a destroyed held point is not relocated to preserve the hold.",
+        "The recovered result preserves connector fit, material locations, and one-source relationship ownership."
+      ],
+      "dependencies": [
+        "HOLD-01",
+        "LEVEL-01"
+      ],
+      "refs": [
+        "IDENTITY-001",
+        "MAT-008",
+        "CON-011",
+        "CON-013",
+        "CON-014",
+        "LIMB-008",
+        "WORLD-006",
+        "COMMIT-002"
+      ],
+      "open": "Geometry algorithms, child-motion derivation, length measurement, tolerances and exact scheduling remain open. Canned results are a proposed testing aid, not a selected destruction algorithm. No 40% cutoff is adopted."
+    },
+    {
+      "id": "BOMB-01",
+      "role": "simulation",
+      "title": "Advance and recover the bomb lifecycle",
+      "stage": "Next",
+      "purpose": "Make landing activation and current countdown progress recoverable before integrating complete blast consequences.",
+      "start": "Represent inactive and active-with-remaining-duration state on one live bomb.",
+      "inputs": [
+        "Selected bomb/fuse configuration and the host's landing observation.",
+        "The one-body bomb and no-persistent-bomb-fragments lifecycle."
+      ],
+      "deliverable": "Landing activation, host countdown advancement, mid-countdown reconstruction and detonation retirement.",
+      "steps": [
+        "Initialize the timer from the selected configuration on a valid landing.",
+        "Advance active remaining duration on the host and capture/rebuild during countdown.",
+        "Trigger detonation and retire B, handing lasting consequences to structural resolution."
+      ],
+      "checks": [
+        "Recovery preserves activation and remaining progress without landing replay or a required shared deadline clock.",
+        "Detonation retires B and creates no persistent bomb fragments.",
+        "Committed world consequences remain separate from transient explosion presentation."
+      ],
+      "dependencies": [
+        "UNITY-01"
+      ],
+      "refs": [
+        "BOMB-001",
+        "BOMB-002",
+        "BOMB-003",
+        "BOMB-004",
+        "EVENT-001",
+        "ECS-006"
+      ],
+      "open": "Choose and document the fixture's landing classification and duration values/units. Later contacts/support loss, detailed update order, blast values and occlusion remain open policies."
+    },
+    {
+      "id": "DEATH-01",
+      "role": "simulation",
+      "title": "Apply immediate death and environment transition",
+      "stage": "Next",
+      "purpose": "Prove the accepted no-damage-accumulation model and complete same-body death outcome.",
+      "start": "Exercise a qualifying and a nonqualifying blast case using documented fixture settings.",
+      "inputs": [
+        "The blast's power/radius lethality condition, current character state, roster and holds.",
+        "Character-definition-supplied environment configuration."
+      ],
+      "deliverable": "A death outcome that installs environment records on the surviving body, clears control/outgoing holds, and preserves valid incoming holds.",
+      "steps": [
+        "Evaluate lethality on the host; use no accumulated health/damage value.",
+        "Install the selected environment configuration while keeping K's ID when its body remains one surviving piece.",
+        "Clear the roster's control reference and retire outgoing holds in the same complete outcome.",
+        "Check an incoming-hold example and concurrent lost-location geometry, then reconstruct the corpse from current environment state."
+      ],
+      "checks": [
+        "A qualifying blast causes immediate death; nonqualifying hits do not leave accumulated damage.",
+        "Death alone preserves K's body ID and ends its control and outgoing holds.",
+        "Incoming holds continue on surviving locations; destroyed locations release.",
+        "The corpse reconstructs without old CharacterState or death-event replay."
+      ],
+      "dependencies": [
+        "HOLD-01",
+        "CHARACTER-01",
+        "BOMB-01"
+      ],
+      "refs": [
+        "CHAR-003",
+        "CHAR-004",
+        "CHAR-005",
+        "PLAYER-002",
+        "LIMB-008",
+        "LIMB-009",
+        "COMMIT-002"
+      ],
+      "open": "Exact power/radius values/mapping, distance-versus-overlap test and occlusion remain open. Document temporary fixture choices without treating them as global gameplay decisions. Actual corpse values and transition encoding remain configurable/unselected."
+    },
+    {
+      "id": "NET-01",
+      "role": "networking",
+      "title": "Connect requests, committed results and recovery",
+      "stage": "When networking resumes",
+      "purpose": "Build against the shared semantic boundary while keeping serialization and delivery choices replaceable.",
+      "start": "Agree request, committed-result and current-state recovery interfaces with Unity integration; mock those interfaces while the fixture is being built.",
+      "inputs": [
+        "Host-owned control/interaction validation and canonical state capture.",
+        "Accepted body/relationship semantics and validated definition dependencies."
+      ],
+      "deliverable": "An Odin-to-Unity boundary and a second-instance recovery exercise using the same fixture and its current outcomes.",
+      "steps": [
+        "Carry participant intent to the host, which validates and decides the result.",
+        "Expose complete committed results and current recovery state from Unity.",
+        "Resolve the same definition inputs and rebuild initial, held, split and death results on another instance.",
+        "Keep transport, serializer and compatibility choices documented as networking implementation work."
+      ],
+      "checks": [
+        "Odin owns networking, while Unity remains the sole authoritative gameplay simulation.",
+        "Recovery uses current records/dependencies without event replay or engine-object serialization.",
+        "Observers receive complete structural outcomes with valid references."
+      ],
+      "dependencies": [
+        "UNITY-01"
+      ],
+      "refs": [
+        "AUTH-003",
+        "NET-001",
+        "NET-002",
+        "STATE-001",
+        "COMMIT-001"
+      ],
+      "open": "Networking remains deprioritized for the immediate handoff. Final message fields, serializer, transport/channels, rates, compatibility and correction strategy are not selected. Mocking can begin before the full fixture is complete."
+    }
+  ],
+  "topics": [
+    [
+      "bodies",
+      "Body components"
+    ],
+    [
+      "relationships",
+      "Relationships"
+    ],
+    [
+      "control",
+      "Control assignment"
+    ],
+    [
+      "definitions",
+      "Definitions and compositions"
+    ],
+    [
+      "coordinates",
+      "Coordinates"
+    ],
+    [
+      "systems",
+      "Systems"
+    ],
+    [
+      "lifecycles",
+      "Lifecycles"
+    ],
+    [
+      "unresolved",
+      "Unresolved details"
+    ],
+    [
+      "rules",
+      "Rules"
+    ],
+    [
+      "sources",
+      "Source documents"
+    ]
+  ],
+  "roleOrder": [
+    "simulation",
+    "assets",
+    "level",
+    "networking",
+    "shared"
+  ],
+  "implementation": {
+    "title": "Build and reconstruct one scene",
+    "goal": "Use one platform bonded to a fixed wall, one player-controlled Claymate and one bomb. Capture the scene’s current records, remove its derived Unity objects, then reconstruct it from that capture and its selected definitions.",
+    "begin": "Simulation integration and asset authoring begin with one simple platform. Record the fixture’s units, local origin, shape exchange and definition lookup, then verify that both paths interpret the same example.",
+    "contributions": [
+      {
+        "role": "simulation",
+        "deliverable": "A loader, a current-state capture and a reconstruction path. Start with hand-authored data while the asset and level inputs are prepared."
+      },
+      {
+        "role": "assets",
+        "deliverable": "A reusable platform section: gameplay shape, aligned appearance, explicit-density material and independently selected destruction response. Also begin the character-definition inputs."
+      },
+      {
+        "role": "level",
+        "deliverable": "The scene composition: wall, platform, bond, Claymate spawn and bomb configuration. Lay it out now; integrate the shared asset when it is ready."
+      }
+    ],
+    "checks": [
+      "The asset and level inputs load as separate bodies and an identifiable bond, with the wall reconstructed as fixed.",
+      "A capture plus its validated definitions rebuilds the scene after the derived Unity objects are removed.",
+      "Rebuilding preserves current IDs, geometry, poses and velocities, selected properties, the bond’s intended fit and the roster’s control assignment."
+    ],
+    "followups": [
+      [
+        "HOLD-01",
+        "Create, move, release and reconstruct a valid hold."
+      ],
+      [
+        "SPLIT-01",
+        "Split the supported, held platform; check surviving and destroyed attachment locations."
+      ],
+      [
+        "BOMB-01",
+        "Reconstruct an active countdown and retire the bomb on detonation."
+      ],
+      [
+        "DEATH-01",
+        "Install environment behaviour, clear control/outgoing holds and preserve valid incoming holds."
+      ]
+    ]
+  }
+}
