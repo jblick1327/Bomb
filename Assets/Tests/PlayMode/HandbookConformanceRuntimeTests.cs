@@ -116,6 +116,32 @@ namespace Bomb.Tests.PlayMode
             yield return null;
         }
         [UnityTest]
+        public IEnumerator SpinningSingleSurvivor_PreservesEnginePointVelocity_AcrossCommitAndRecovery()
+        {
+            var world = HandbookConformanceFixture.Create(out var ids); var runtime = new CanonicalWorldRuntime2D();
+            try
+            {
+                var source = world.View.Body(ids.Platform).WithMotion(new Vector2(4,7),Mathf.PI * 0.5f,new Vector2(1,-2),2);
+                Assert.That(world.TryUpdateBodyBatch(new[] { source },out var error),Is.True,error);
+                Commit(world,new CanonicalWorldView(new[] { source })); Rebuild(runtime,world);
+                var point = source.ToWorld(new Vector2(1,0));
+                var beforeVelocity = Body(runtime,ids.Platform).GetPointVelocity(point);
+                Assert.That(Vector2.Distance(beforeVelocity,new Vector2(-1,-2)),Is.LessThan(0.0001f));
+                var cutter = new CanonicalPolygon2D(HandbookConformanceFixture.Rectangle(2.5f,-0.6f,4,0.6f).Vertices.Select(source.ToWorld));
+                Assert.That(new CanonicalDestructionService(world).TryExecute(new DestructionRequest(ids.Platform,cutter,Vector2.zero,0),out var outcome,out error),Is.True,error);
+                Assert.That(outcome.Commit.NotificationErrors,Is.Empty); Assert.That(outcome.Commit.ResultIds.Single(),Is.EqualTo(ids.Platform));
+                Assert.That(Vector2.Distance(Body(runtime,ids.Platform).GetPointVelocity(point),beforeVelocity),Is.LessThan(0.0001f));
+                var host = new CanonicalSimulationHost(world,runtime);
+                Assert.That(host.TryCapture(out var snapshot,out error),Is.True,error);
+                var previousBody = Body(runtime,ids.Platform); runtime.Clear(); yield return null;
+                Assert.That(previousBody == null,Is.True); Assert.That(host.TryRecover(snapshot,out error),Is.True,error);
+                Assert.That(Vector2.Distance(Body(runtime,ids.Platform).position,source.Position),Is.LessThan(0.0001f));
+                Assert.That(Vector2.Distance(Body(runtime,ids.Platform).GetPointVelocity(point),beforeVelocity),Is.LessThan(0.0001f));
+            }
+            finally { runtime.Dispose(); }
+            yield return null;
+        }
+        [UnityTest]
         public IEnumerator PerturbedReconstruction_RestoresAuthoredRigidFit_InsteadOfAdoptingDisplacement()
         {
             var world = HandbookConformanceFixture.Create(out var ids); var runtime = new CanonicalWorldRuntime2D();
@@ -289,7 +315,7 @@ namespace Bomb.Tests.PlayMode
             {
                 Rebuild(runtime,world); var host = new CanonicalSimulationHost(world,runtime); Land(host,ids);
                 Assert.That(host.TryRelease(ids.Participant,LimbSlot.RightHand,out var error),Is.True,error);
-                var bomb = world.View.Body(ids.Bomb); float timer = bomb.Countdown.RemainingSeconds;
+                var bomb = world.View.Body(ids.Bomb); double timer = bomb.Countdown.RemainingSeconds;
                 Body(runtime,ids.Character).position = bomb.Position + new Vector2(0,1.25f); Body(runtime,ids.Character).linearVelocity = Vector2.zero;
                 Assert.That(runtime.TryCaptureMotion(world,out error),Is.True,error);
                 Assert.That(host.TryHold(new HoldRequest(ids.Participant,ids.Character,LimbSlot.LeftHand,ids.Bomb,new Vector2(0,0.25f),1),out var hold,out error),Is.True,error);
@@ -298,6 +324,7 @@ namespace Bomb.Tests.PlayMode
                 world.Committed += commit => { observed = world.View; projectedBombRetired = !runtime.TryGetBody(ids.Bomb,out _); };
                 int steps = 0;
                 while (world.Contains(ids.Bomb) && steps++ < 450) { platformBeforeBlast = world.View.Body(ids.Platform); Tick(host,1); }
+                Assert.That(steps,Is.EqualTo(400),"The landed eight-second timer must detonate on its 400th active step.");
                 Assert.That(world.Contains(ids.Bomb),Is.False); Assert.That(host.LastExplosionCenter.HasValue,Is.True); Vector2 origin = host.LastExplosionCenter.Value;
                 Assert.That(CanonicalGeometry.Contains(platformBeforeBlast.Shape,platformBeforeBlast.ToLocal(origin)),Is.False);
                 Assert.That(origin.y,Is.GreaterThan(3.6f)); Assert.That(world.View.Body(ids.Platform).Shape.Area,Is.LessThan(6));
@@ -316,7 +343,8 @@ namespace Bomb.Tests.PlayMode
             public bool frameAdvanced, bodyIdPreserved, bombRetired;
             public int steps;
             public Vector2 support, force, position, velocity;
-            public float initialFit, connectorFit, holdDistance, peakHoldDistance, authoredReach, remainingSeconds, torque, forceCapacity, torqueCapacity, rotation, mass, depth, platformArea;
+            public double remainingSeconds;
+            public float initialFit, connectorFit, holdDistance, peakHoldDistance, authoredReach, torque, forceCapacity, torqueCapacity, rotation, mass, depth, platformArea;
         }
     }
 }

@@ -22,17 +22,19 @@ namespace Bomb.CanonicalDestruction
             Vector2 worldCentroid = Rotate(resultShape.Centroid, source.RotationRadians) + source.Position;
             Vector2 direction = worldCentroid - request.ImpulseOrigin;
             if (direction.sqrMagnitude <= 0.00001f) direction = Vector2.up;
-            Vector2 velocity = source.LinearVelocity + direction.normalized * request.ImpulseSpeed;
+            // LinearVelocity describes COM motion, including when a sole survivor keeps its local frame.
+            Vector2 comOffset = Rotate(resultShape.Centroid - source.Shape.Centroid, source.RotationRadians);
+            Vector2 velocity = source.LinearVelocity + CanonicalGeometry.AngularVelocityAt(source.AngularVelocityRadians, comOffset)
+                + direction.normalized * request.ImpulseSpeed;
             var result = source.WithGeometry(resultId, resultShape, revision, velocity,
                 source.AngularVelocityRadians, source.BodyMode);
             if (resultId != source.Id && source.Selection != null)
             {
                 Vector2 center = resultShape.Centroid;
-                Vector2 comOffset = Rotate(center - source.Shape.Centroid, source.RotationRadians);
                 result = result.WithGeometry(resultId, CanonicalGeometry.Translate(resultShape, -center), revision,
-                    velocity + CanonicalGeometry.AngularVelocityAt(source.AngularVelocityRadians, comOffset),
+                    velocity,
                     source.AngularVelocityRadians, source.BodyMode).WithMotion(source.ToWorld(center), source.RotationRadians,
-                        velocity + CanonicalGeometry.AngularVelocityAt(source.AngularVelocityRadians, comOffset), source.AngularVelocityRadians);
+                        velocity, source.AngularVelocityRadians);
             }
             return result;
         }

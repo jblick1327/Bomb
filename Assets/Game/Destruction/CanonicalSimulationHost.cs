@@ -8,7 +8,7 @@ namespace Bomb.CanonicalDestruction
     public static class CanonicalBombLifecycle
     {
         public static BombCountdown AfterStep(BombCountdown current, bool landed, float authoredDuration)
-            => current.Active ? new BombCountdown(true, Mathf.Max(0, current.RemainingSeconds - CanonicalWorldRuntime2D.StepSeconds))
+            => current.Active ? current.AdvanceMilliseconds(CanonicalWorldRuntime2D.StepMilliseconds)
                 : landed ? new BombCountdown(true, authoredDuration) : current;
     }
     public sealed class HoldRequest

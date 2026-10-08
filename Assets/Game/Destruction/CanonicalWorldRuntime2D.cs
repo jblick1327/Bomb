@@ -23,7 +23,8 @@ namespace Bomb.CanonicalDestruction
         private CanonicalWorldView view;
         private bool disposed;
         private readonly HashSet<MaterialEntityId> landed = new HashSet<MaterialEntityId>();
-        public const float StepSeconds = 0.02f;
+        public const int StepMilliseconds = 20;
+        public const float StepSeconds = StepMilliseconds / 1000f;
         public static readonly Vector2 Gravity = new Vector2(0, -9.81f);
         public Scene Scene => scene;
         public int ProjectionCount => bodies.Count;

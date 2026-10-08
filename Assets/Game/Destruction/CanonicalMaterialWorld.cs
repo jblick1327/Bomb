@@ -309,7 +309,10 @@ namespace Bomb.CanonicalDestruction
         {
             if (view.AllIds.Any()) { error = "Recovery requires an empty unpublished world."; return false; }
             if (!restored.TryValidate(Definitions, out error)) return false;
-            if (restored.Bodies.Any(b => b.Selection != null))
+            // A match still owns its allocator namespace when only roster/relationship records remain.
+            // Body-only legacy snapshots retain their original non-allocated IDs.
+            if (restored.Bodies.Any(b => b.Selection != null) || restored.Participants.Count != 0
+                || restored.Connectors.Count != 0 || restored.Holds.Count != 0)
                 foreach (var id in restored.AllIds)
                 {
                     if (!id.Value.StartsWith(IdAllocator.Prefix, StringComparison.Ordinal)

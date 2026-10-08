@@ -58,6 +58,37 @@ namespace Bomb.Tests.EditMode
             Assert.That(world.View.Connectors.Single().Id,Is.EqualTo(ids.Connector));
             Assert.That(world.View.Holds.Single().Id,Is.EqualTo(ids.Hold)); Assert.That(world.IdAllocator.NextSequence,Is.EqualTo(8));
         }
+        [TestCase(false)]
+        [TestCase(true)]
+        public void ConsecutiveAsymmetricSingleSurvivors_PreserveSpinningMaterialVelocity_AndTheOriginalFrame(bool rotated)
+        {
+            var world = HandbookConformanceFixture.Create(out var ids);
+            var source = world.View.Body(ids.Platform).WithMotion(new Vector2(4,7),rotated ? Mathf.PI * 0.5f : 0,new Vector2(1,-2),2);
+            Motion(world,source);
+            var heldWorld = source.ToWorld(world.View.Holds.Single().HeldLocal);
+            var materialPoint = source.ToWorld(new Vector2(1,0));
+            var expectedPointVelocity = rotated ? new Vector2(-1,-2) : new Vector2(1,0);
+            for (int cut = 1; cut <= 2; cut++)
+            {
+                var cutter = new CanonicalPolygon2D(Rect(3 - 0.5f * cut,-0.6f,4,0.6f).Vertices.Select(source.ToWorld));
+                Cut(world,ids.Platform,cutter);
+                var survivor = world.View.Body(ids.Platform);
+                Assert.That(survivor.Position,Is.EqualTo(source.Position));
+                Assert.That(survivor.RotationRadians,Is.EqualTo(source.RotationRadians));
+                Assert.That(survivor.GeometryRevision,Is.EqualTo(1 + cut));
+                Assert.That(Vector2.Distance(survivor.Shape.Centroid,new Vector2(-0.25f * cut,0)),Is.LessThan(0.0001f));
+                var expectedVelocity = rotated ? new Vector2(1 + 0.5f * cut,-2) : new Vector2(1,-2 - 0.5f * cut);
+                Assert.That(Vector2.Distance(survivor.LinearVelocity,expectedVelocity),Is.LessThan(0.0001f));
+                var radius = materialPoint - survivor.ToWorld(survivor.Shape.Centroid);
+                var pointVelocity = survivor.LinearVelocity + CanonicalGeometry.AngularVelocityAt(survivor.AngularVelocityRadians,radius);
+                Assert.That(Vector2.Distance(pointVelocity,expectedPointVelocity),Is.LessThan(0.0001f));
+                Assert.That(survivor.AngularVelocityRadians,Is.EqualTo(2));
+                Assert.That(world.View.Connectors.Single().Id,Is.EqualTo(ids.Connector));
+                Assert.That(world.View.Holds.Single().Id,Is.EqualTo(ids.Hold));
+                Assert.That(Vector2.Distance(survivor.ToWorld(world.View.Holds.Single().HeldLocal),heldWorld),Is.LessThan(0.0001f));
+                Assert.That(world.IdAllocator.NextSequence,Is.EqualTo(8));
+            }
+        }
         [Test]
         public void RealFullRemoval_RetiresTargetingRelationships_WithoutChangingControl()
         {
@@ -235,6 +266,39 @@ namespace Bomb.Tests.EditMode
             timer = CanonicalBombLifecycle.AfterStep(timer,false,8); Assert.That(timer.RemainingSeconds,Is.EqualTo(7.98f).Within(0.00001f));
             timer = CanonicalBombLifecycle.AfterStep(timer,true,8); Assert.That(timer.RemainingSeconds,Is.EqualTo(7.96f).Within(0.00001f));
         }
+        [TestCase(0)]
+        [TestCase(93)]
+        [TestCase(1)]
+        public void EightSecondCountdown_ExpiresOnStep400_IncludingCurrentStateRecovery(int recoveryInterval)
+        {
+            var world = HandbookConformanceFixture.Create(out var ids);
+            var timer = CanonicalBombLifecycle.AfterStep(new BombCountdown(false,0),true,8);
+            for (int step = 1; step <= 400; step++)
+            {
+                timer = CanonicalBombLifecycle.AfterStep(timer,false,8);
+                if (recoveryInterval > 0 && step % recoveryInterval == 0)
+                {
+                    Motion(world,world.View.Body(ids.Bomb).WithCountdown(timer));
+                    Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(Bytes(world),out world,out var error),Is.True,error);
+                    timer = world.View.Body(ids.Bomb).Countdown;
+                }
+                Assert.That(timer.Active,Is.True);
+                if (step < 400) Assert.That(timer.RemainingSeconds,Is.GreaterThan(0),"Expired early at step " + step);
+            }
+            Assert.That(timer.RemainingSeconds,Is.EqualTo(0),"An eight-second timer must expire after 400 nominal 0.02-second steps.");
+        }
+        [TestCase(0.020000001f,2)]
+        [TestCase(8.005f,401)]
+        public void Countdown_DoesNotDiscardAPositiveFractionalStep(float duration,int expiryStep)
+        {
+            var timer = new BombCountdown(true,duration);
+            for (int step = 1; step < expiryStep; step++)
+            {
+                timer = CanonicalBombLifecycle.AfterStep(timer,false,duration);
+                Assert.That(timer.RemainingSeconds,Is.GreaterThan(0),"Fractional remainder was lost at step " + step);
+            }
+            Assert.That(CanonicalBombLifecycle.AfterStep(timer,false,duration).RemainingSeconds,Is.EqualTo(0));
+        }
         [Test]
         public void DirectDetonationTransition_RetiresBombAndTargetingHoldInOneOutcome()
         {
@@ -319,6 +383,34 @@ namespace Bomb.Tests.EditMode
             Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json,out rejected,out _,missing),Is.False); Assert.That(rejected,Is.Null);
             Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json.Replace("\"schemaVersion\":2","\"schemaVersion\":1"),out _,out _),Is.False);
             Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json.Replace("\"nextEntitySequence\":\"8\"","\"nextEntitySequence\":\"1\""),out _,out _),Is.False);
+        }
+        [TestCase("1","match-")]
+        [TestCase("7","match-")]
+        [TestCase("8","other-")]
+        public void RosterOnlyRecovery_RejectsCounterReuseAndMismatchedAllocatorNamespace(string nextSequence,string prefix)
+        {
+            var world = HandbookConformanceFixture.Create(out var ids);
+            Commit(world,new CanonicalWorldView(null,null,null,new[] { new CanonicalParticipant(ids.Participant,default) }));
+            string json = Bytes(world).Replace("\"nextEntitySequence\":\"8\"","\"nextEntitySequence\":\"" + nextSequence + "\"")
+                .Replace("\"allocatorPrefix\":\"match-\"","\"allocatorPrefix\":\"" + prefix + "\"");
+            Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json,out var rejected,out var error),Is.False);
+            Assert.That(rejected,Is.Null); Assert.That(error,Does.Contain("allocator"));
+        }
+        [Test]
+        public void RosterOnlyRecovery_PreservesHighWaterAndAllocatesANoncollidingPersistentId()
+        {
+            var world = HandbookConformanceFixture.Create(out var ids);
+            Commit(world,new CanonicalWorldView(null,null,null,new[] { new CanonicalParticipant(ids.Participant,default) }));
+            Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(Bytes(world),out var recovered,out var error),Is.True,error);
+            Assert.That(recovered.View.Bodies,Is.Empty); Assert.That(recovered.View.Connectors,Is.Empty); Assert.That(recovered.View.Holds,Is.Empty);
+            Assert.That(recovered.View.Participants.Single().Id,Is.EqualTo(ids.Participant));
+            Assert.That(recovered.TryReserveEntityIds(1,out var reservation,out error),Is.True,error);
+            var nextId = reservation.Ids.Single(); Assert.That(nextId.Value,Is.EqualTo("match-0000000000000008"));
+            Assert.That(nextId,Is.Not.EqualTo(ids.Participant));
+            Commit(recovered,new CanonicalWorldView(null,null,null,recovered.View.Participants.Concat(new[] { new CanonicalParticipant(nextId,default) })),reservation);
+            Assert.That(recovered.IdAllocator.NextSequence,Is.EqualTo(9));
+            Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(Bytes(recovered),out var roundTrip,out error),Is.True,error);
+            Assert.That(roundTrip.View.Participants,Has.Count.EqualTo(2));
         }
         [Test]
         public void InvalidOverlappingOrDisconnectedShapes_AreRejected()

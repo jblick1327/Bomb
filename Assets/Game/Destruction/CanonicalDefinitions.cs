@@ -153,9 +153,21 @@ namespace Bomb.CanonicalDestruction
 
     public sealed class BombCountdown
     {
-        public BombCountdown(bool active, float remainingSeconds) { Active = active; RemainingSeconds = remainingSeconds; }
+        // One duration value in milliseconds; fractional milliseconds remain representable.
+        // Subtracting the integral fixed step avoids repeated inexact 0.02-second subtraction.
+        private readonly double remainingMilliseconds;
+        public BombCountdown(bool active, double remainingSeconds)
+        { Active = active; remainingMilliseconds = remainingSeconds * 1000d; }
+        private BombCountdown(BombCountdown current, int elapsedMilliseconds)
+        {
+            if (elapsedMilliseconds < 0) throw new ArgumentOutOfRangeException(nameof(elapsedMilliseconds));
+            Active = current.Active;
+            remainingMilliseconds = Math.Max(0d, current.remainingMilliseconds - elapsedMilliseconds);
+        }
         public bool Active { get; }
-        public float RemainingSeconds { get; }
-        public bool IsValid => DefinitionSpec.Nonnegative(RemainingSeconds) && (Active || RemainingSeconds == 0);
+        public double RemainingSeconds => remainingMilliseconds / 1000d;
+        internal BombCountdown AdvanceMilliseconds(int elapsedMilliseconds) => new BombCountdown(this, elapsedMilliseconds);
+        public bool IsValid => !double.IsNaN(remainingMilliseconds) && !double.IsInfinity(remainingMilliseconds)
+            && remainingMilliseconds >= 0 && (Active || remainingMilliseconds == 0);
     }
 }

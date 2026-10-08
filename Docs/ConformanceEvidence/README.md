@@ -7,7 +7,14 @@ Source baseline `5960ed4e16efc5e3bf21489fb38b6ce429229c04`; normative handbook
 [implementation and coverage report](../HandbookConformance.md) for conventions,
 ownership, rule IDs and limitations.
 
-## Current results
+## Latest correction results
+
+The [correction pass after review of 35b4693](Correction-2026-10-08/README.md)
+reproduces the single-survivor COM motion, roster-only allocator and countdown
+failures, then records **50/50 EditMode and 12/12 PlayMode passes**. Its evidence and
+checksums live in a separate subdirectory; the original artifacts here are unchanged.
+
+## Original 35b4693 results
 
 - [EditMode result 4](editmode-result-4.json): 39 passed, zero failures/skips/inconclusive; [start and selection](editmode-start-4.json).
 - [PlayMode result 5](playmode-result-5.json): 11 passed, zero failures/skips/inconclusive; [start and selection](playmode-start-5.json).

@@ -85,7 +85,8 @@ These are fixture choices, not universal gameplay rules or ratified decisions.
   on one unchanged child pair. No fallback relocates a lost held point.
 * One survivor keeps its frame. Several children recenter at their own centroids.
   Coordinates preserve the same material points; child COM velocity includes
-  `ω × rotated(childCentroid − sourceCentroid)`. Material/response/appearance and
+  `ω × rotated(resultCentroid − sourceCentroid)` for every outcome, including a
+  single same-ID survivor whose local centroid changes. Material/response/appearance and
   independently selected motion configuration survive by default.
 * Material density × current area supplies engine mass with no floor. The same
   derivation is an approved fixture extension for K/B, beyond MAT-005's material
@@ -121,7 +122,11 @@ These are fixture choices, not universal gameplay rules or ratified decisions.
 * Bomb landing is an environment support contact with upward normal ≥ 0.5 and
   approaching relative motion. Activation installs 8 seconds. Active countdowns
   continue on support loss, later contacts and holding. Bomb retirement cleans up
-  targeting holds atomically. No bomb fragments.
+  targeting holds atomically. One canonical double duration is held internally in
+  milliseconds and advanced by the integral 20 ms step; fractional milliseconds are
+  preserved. Schema 2 still encodes `countdown.remaining` as numeric seconds, now
+  read/written at double precision. No expiry epsilon or history-based clock reset.
+  No bomb fragments.
 * Blast power 1, radius 0.75 m, 24-gon subtraction. Lethal when power ≥ 1 and distance
   to current character shape ≤ radius; no damage accumulator, occlusion/shielding,
   attenuation or blast impulse. Bodies that become corpses in this blast are not
@@ -137,8 +142,12 @@ These are fixture choices, not universal gameplay rules or ratified decisions.
 
 ## Executed verification
 
-On 2026-10-08, Unity 6000.2.14f1 executed **39/39 EditMode and 11/11 PlayMode
-tests successfully**, with no skipped or inconclusive tests. These include all
+The correction pass on 2026-10-08 executed **50/50 EditMode and 12/12 PlayMode
+tests successfully** in Unity 6000.2.14f1, with no skipped or inconclusive tests.
+The [correction evidence](ConformanceEvidence/Correction-2026-10-08/README.md)
+records eight reproduced failures before the fixes and all subsequent passes.
+The earlier `35b4693` implementation executed 39/39 EditMode and 11/11 PlayMode
+tests successfully; its preserved reports below remain unchanged. Both runs include all
 eight original EditMode tests and the original PlayMode test. Unity reported
 `compilationFailed: false`, `compiling: false` and zero current console errors.
 Historical failed runs are retained, rather than counted as current failures or
@@ -269,14 +278,29 @@ distance returned to approximately 1.5 m after about 0.6 s. Increasing solver wo
 substepping or restricting controls would need a separate decision. No force cap,
 extra substeps, relocation or hold-break threshold was introduced to hide this.
 
-Clock limit: repeated float subtraction of 0.02 s left a small positive remainder
-after 400 active steps; the reachable-bomb test expired on step 401 (8.02 s).
-Current remaining-duration state still recovers directly. Exact deadline precision
-and tick-boundary expiry tolerance are not settled by this probe.
+Resolved clock defect: `35b4693` repeatedly subtracted float 0.02 s, leaving about
+0.000007063 s after 400 steps and expiring on step 401. The correction uses one
+double duration in milliseconds and subtracts an exact integral 20 ms. Eight seconds
+now expires at step 400, including recovery every step and periodic recovery.
+Positive fractional steps are retained and expire on the next step; the physically
+reachable bomb case also asserts exactly 400 active steps. This is an implementation
+precision correction, not a new gameplay duration or handbook rule.
+
+Reach assessment: K has mass 0.48 kg, so gravity supplies about 4.709 N. The two
+diagnostic force vectors have magnitudes about 1118 N and 11180 N, approximately
+237 and 2374 times its weight. Their unconstrained one-step velocity changes would
+be about 46.6 and 466 m/s. These are deliberate load probes, not established movement
+control settings. The scene has gravity/collisions/holds and no authored locomotion
+controls or blast impulse; its primary and reachable-bomb checks did not reproduce
+the extreme stretch. That does not establish a bound for future controls or contact
+loads. Gameplay relevance remains conditional on intended acceleration, jump/pull
+impulses, falls and moving supports, plus an accepted reach-error/settling criterion.
+No force cap, movement redesign, solver setting change or extra physics step was added.
 
 Proposed handbook clarifications for James's review (not edits): distinguish
 definition dependency integrity from engine object identity; make explicit that
-canonical velocities describe COM motion when frames recenter; require recovery
+canonical velocities describe COM motion when any shape change moves its centroid,
+including a same-ID survivor whose frame is retained; require recovery
 evidence with temporary body displacement when testing connector rest fit; specify
 whether disconnected attachment remnants on one child pair need a later geometry
 contract; consider documenting publication's no-fail projection-switch contract and
@@ -290,10 +314,48 @@ and define countdown precision/expiry at fixed-step boundaries. No existing rule
 was edited to adopt either limitation.
 
 Remaining implementation work outside the approved slice: choose a solver strategy
-if hard instantaneous reach is required; decide clock precision; extend the geometry
+if hard instantaneous reach is required; establish gameplay load/error bounds;
+extend the geometry
 contract when a real reachable unsupported case exists; then implement production
 controls/matches/networking or schema migration as separately scoped work. The
 prototype adapters still require their own migration if the team adopts this model.
+
+## Correction pass after review of 35b4693
+
+The real subtraction policy applies `omega cross COM-offset` before its identity/
+frame choice. One survivor retains pose/local coordinates/ID and gets the corrected
+COM velocity; several children still recenter and receive the correction once.
+Two consecutive asymmetric cuts test both unrotated and rotated spinning sources,
+including the second cut's nonzero original centroid, analytic surviving-point
+velocities, relationship continuity and unchanged allocator sequence. A PlayMode
+test verifies native `Rigidbody2D.GetPointVelocity` before/after the same-ID commit
+and after old objects are destroyed and recovered.
+
+Recovery high-water validation now runs for defined matches with any participant,
+connector or hold, independent of whether bodies remain. Body-only legacy snapshots
+keep their previous non-allocated-ID compatibility. Roster-only regressions reject
+counters below/equal to the participant ID and a mismatched namespace, then prove
+valid round-trip recovery and allocation of the next noncolliding participant ID.
+
+The timer implementation changes `BombCountdown`, the lifecycle step and the codec's
+numeric duration precision. Snapshot schema and field names are unchanged; prior
+numeric remaining durations are read as given, without changing an already saved
+duration. The native simulation step remains 0.02 s. Double milliseconds permit
+fractional durations while removing the repeated subtraction error in this fixture.
+
+The full EditMode assembly ran before the fixes: 42/50 passed, eight failed. Those
+failures exactly reproduce two single-survivor velocity cases, three roster-only
+validation cases and three eight-second expiry/recovery cases. Afterward, 50/50
+passed in 2.40 s; the full PlayMode assembly passed 12/12 in 1.80 s. Compiler and
+final console checks reported no failure and zero errors/warnings. The original
+eight EditMode and one PlayMode tests remain included. The original checkout, scene,
+packages/settings and handbook revisions remain separate and unchanged.
+
+Current reports, commands and measurement bundles are preserved in the correction
+evidence subdirectory with separate checksums. The original evidence stays intact.
+The background setting is restored and Play mode stopped. The correction work stays
+on `feature/handbook-conformance-probe`; the original experiment branch and handbook
+remain untouched.
 
 ## Verification checkpoint before commit and push
 

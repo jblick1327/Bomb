@@ -181,7 +181,7 @@ namespace Bomb.CanonicalDestruction
         }
 
         [Serializable] private sealed class SelectionData { public DefinitionReference material, response, appearance, role; }
-        [Serializable] private sealed class CountdownData { public bool active; public float remaining; }
+        [Serializable] private sealed class CountdownData { public bool active; public double remaining; }
         [Serializable] private sealed class ConnectorData
         { public string id, a, b; public PointData a0, a1, b0, b1; public float strength, fraction, referenceLength; public bool hasPercentage; }
         [Serializable] private sealed class HoldData { public string id, character, target; public LimbSlot slot; public PointData point; }
