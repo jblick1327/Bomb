@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 
+// Updates the legacy text HUD to reflect the current round state.
 [AddComponentMenu("Arena/Arena HUD")]
 public sealed class ArenaHud : MonoBehaviour
 {

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Handles side-view player movement, jumping, grounding, and blast-distance queries.
 [RequireComponent(typeof(CharacterController))]
 [AddComponentMenu("Arena/Player Controller")]
 public sealed class ArenaPlayerController : MonoBehaviour
@@ -174,11 +175,20 @@ public sealed class ArenaPlayerController : MonoBehaviour
         wasGrounded = false;
     }
 
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Rigidbody body = hit.collider.attachedRigidbody;
+        if (body == null || hit.collider.GetComponentInParent<GroundRubble>() == null || body.isKinematic) return;
+        Vector3 push = new Vector3(hit.moveDirection.x, 0.15f, 0f);
+        body.AddForce(push * Mathf.Max(1f, moveSpeed), ForceMode.VelocityChange);
+    }
+
     private void OnValidate()
     {
         gravity = Mathf.Min(gravity, -0.1f);
     }
 
+    // Measure distance to the capsule side in XY, accounting for the capsule end caps.
     public float DistanceToBody(Vector2 point)
     {
         CharacterController body =
