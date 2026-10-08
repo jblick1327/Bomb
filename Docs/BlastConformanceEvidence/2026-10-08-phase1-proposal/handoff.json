@@ -1,0 +1,204 @@
+{
+  "phase": "Phase 1 proposal only; Phase 2 unapproved",
+  "capturedUtc": "2026-10-08 22:48:31 UTC",
+  "authorization": {
+    "reportCommitAndPush": "Explicitly authorized by James's opening instruction",
+    "unityImplementationApproved": false,
+    "handbookChangesAuthorized": false
+  },
+  "handbook": {
+    "suppliedArchive": {
+      "path": "C:\\Users\\jblic\\Downloads\\BOM-Handbook-1.5.0-Source.zip",
+      "bytes": 415916,
+      "sha256": "49deb9ece85b84086ed4b3dcccd76bcc32e518f1c9d91210d5bc3343098491f8"
+    },
+    "embeddedIdentity": {
+      "version": "1.5.0",
+      "baseline": "Architecture v0.13 · DEC-066",
+      "sourceHash": "ef1d9430e490e7b4757e38f57daf12b1dfe19ff3cd2272610aea3147f9e93a0c"
+    },
+    "independentlyRecomputedSourceHash": "ef1d9430e490e7b4757e38f57daf12b1dfe19ff3cd2272610aea3147f9e93a0c",
+    "manifestFilesVerified": 15,
+    "sourceFilesVerified": 6,
+    "publication": "Prepared local checkpoint; uncommitted and not pushed.",
+    "gitRevisionForSuppliedCheckpoint": null,
+    "publishedGhPagesRevision": "65cd6086626d916f99b9389c589fecf9356bf67d",
+    "publishedVersion": "1.4.0",
+    "publishedBaseline": "Architecture v0.12 / DEC-061",
+    "completeReadingOrder": [
+      "README.md",
+      "handbook/sources/BOM Architecture.md",
+      "handbook/sources/BOM Decision Log.md",
+      "handbook/sources/BOM Open Questions.md",
+      "handbook/sources/BOM-Candidate-Component-Map.md",
+      "handbook/sources/BOM-Team-Model-Handoff.md",
+      "handbook/sources/BOM Model Interview Handoff.md"
+    ],
+    "inspectionCopies": "Select reading copies under the report checkout's ignored Temp/BlastConformancePhase1 directory; original archive and handbook unchanged"
+  },
+  "experimentBase": "3f652e9178a78777bd41514441229827f7e611ad",
+  "checkoutsAtCapture": [
+    {
+      "path": "C:\\Users\\jblic\\Desktop\\Bomb",
+      "branch": "feature/canonical-destruction-commit",
+      "head": "5960ed4e16efc5e3bf21489fb38b6ce429229c04",
+      "changes": []
+    },
+    {
+      "path": "C:\\Users\\jblic\\Desktop\\Bomb\\.worktrees\\handbook-conformance",
+      "branch": "feature/handbook-conformance-probe",
+      "head": "3f652e9178a78777bd41514441229827f7e611ad",
+      "changes": []
+    },
+    {
+      "path": "C:\\Users\\jblic\\Desktop\\Bomb\\.worktrees\\blast-conformance-plan",
+      "branch": "feature/blast-conformance-plan",
+      "head": "61c70c0c94cdf73dd94fd3d448129bfeae2a0845",
+      "changes": [
+        " M Docs/BlastConformance.md",
+        "?? Docs/BlastConformanceEvidence/2026-10-08-phase1-proposal/"
+      ]
+    }
+  ],
+  "reportChangesAtCapture": "Uncommitted documentation and dated inspection evidence only; commit/push follows validation. Final revision is recorded by Git history and final handoff.",
+  "originalAndProbeCheckoutsClean": true,
+  "unitySourceTestsPackagesAndSettingsIdenticalToExperimentBase": true,
+  "assetsPackagesProjectSettingsDiff": "",
+  "unity": {
+    "editor": {
+      "status": "ready",
+      "compiling": false,
+      "domainReloadInProgress": false,
+      "playMode": "stopped",
+      "lastHeartbeat": "2026-10-08T22:41:48.3880682Z",
+      "projectPath": "C:\\Users\\jblic\\Desktop\\Bomb\\.worktrees\\handbook-conformance",
+      "unityVersion": "6000.2.14f1"
+    },
+    "scene": "Assets/Game/Scenes/HandbookConformance.unity",
+    "groundTruth": {
+      "sampledUtc": "2026-10-08T22:41:50.6910351Z",
+      "ageMs": 326,
+      "compilationFailed": false,
+      "compiling": false,
+      "consoleErrors": 0,
+      "consoleWarnings": 1,
+      "consoleLogs": 10,
+      "seeded": true
+    },
+    "historicalBufferCounts": {
+      "error": 8,
+      "warn": 18,
+      "log": 182
+    },
+    "windowFocusRequiredForPhase1": false,
+    "reportCheckoutOpenedInUnity": false,
+    "projectOrSceneSwitched": false,
+    "playModeChanged": false,
+    "testsRunInPhase1": false,
+    "explicitCompilationInvoked": false,
+    "versions": {
+      "editor": "6000.2.14f1",
+      "cli": "1.0.0-beta.10",
+      "pipeline": "0.7.0-exp.1",
+      "testFramework": "1.6.0",
+      "urp": "17.2.0"
+    }
+  },
+  "historicalTests": [
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/editmode-after-result.json",
+      "status": "completed",
+      "duration": 2.4,
+      "summary": {
+        "total": 50,
+        "passed": 50,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "actualPassedResults": 50,
+      "rerunInPhase1": false
+    },
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/playmode-after-result.json",
+      "status": "completed",
+      "duration": 1.8,
+      "summary": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "actualPassedResults": 12,
+      "rerunInPhase1": false
+    }
+  ],
+  "preservedChecksums": [
+    {
+      "path": "Docs/ConformanceEvidence/SHA256SUMS.txt",
+      "entries": 55,
+      "mismatches": []
+    },
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/SHA256SUMS.txt",
+      "entries": 15,
+      "mismatches": []
+    },
+    {
+      "path": "Docs/BlastConformanceEvidence/2026-10-08-phase1-baseline/SHA256SUMS.txt",
+      "entries": 5,
+      "mismatches": []
+    }
+  ],
+  "oldExtremeForceLimit": {
+    "authoredReach": 1.5,
+    "peakReach": 6.15577,
+    "settledReachApproximately": 1.5,
+    "steps": 40,
+    "status": "Separate prior solver limitation; unchanged and not instant hard-reach conformance"
+  },
+  "completeSourceReview": [
+    "Docs/HandbookConformance.md",
+    "Docs/ConformanceEvidence/Correction-2026-10-08/README.md",
+    "Assets/Game/Destruction/CanonicalDefinitions.cs",
+    "Assets/Game/Destruction/CanonicalMaterialState.cs",
+    "Assets/Game/Destruction/CanonicalRelationships.cs",
+    "Assets/Game/Destruction/CanonicalSimulationHost.cs",
+    "Assets/Game/Destruction/CanonicalBombContactSensor.cs",
+    "Assets/Game/Destruction/CanonicalGeometry.cs",
+    "Assets/Game/Destruction/DestructionGeometry.cs",
+    "Assets/Game/Destruction/CanonicalDestructionService.cs",
+    "Assets/Game/Destruction/CanonicalOutcomePlanner.cs",
+    "Assets/Game/Destruction/CanonicalMaterialWorld.cs",
+    "Assets/Game/Destruction/CanonicalMaterialSnapshot.cs",
+    "Assets/Game/Destruction/CanonicalWorldRuntime2D.cs",
+    "Assets/Game/Destruction/CanonicalMaterialRuntimeProjector.cs",
+    "Assets/Game/Destruction/CanonicalShapeMesh.cs",
+    "Assets/Game/Destruction/MaterialEntityId.cs",
+    "Assets/Game/Destruction/HandbookConformanceFixture.cs",
+    "Assets/Game/Destruction/HandbookConformanceScene.cs",
+    "Assets/Tests/EditMode/CanonicalDestructionTests.cs",
+    "Assets/Tests/EditMode/HandbookConformanceTests.cs",
+    "Assets/Tests/PlayMode/CanonicalRuntimeReconstructionTests.cs",
+    "Assets/Tests/PlayMode/HandbookConformanceRuntimeTests.cs"
+  ],
+  "instructions": {
+    "applicableAgentsFound": [],
+    "skillsRead": [
+      "C:/Users/jblic/.codex/plugins/cache/unity-agent-plugin/unity/0.1.8-beta/skills/unity-cli/SKILL.md",
+      "C:/Users/jblic/.codex/plugins/cache/unity-agent-plugin/unity/0.1.8-beta/skills/create-2d-physics/SKILL.md",
+      "C:/Users/jblic/.codex/plugins/cache/unity-agent-plugin/unity/0.1.8-beta/skills/create-2d-physics/references/legacy-2d-physics.md"
+    ],
+    "agentsSearchScope": "Repository ancestors, original checkout and inspected conformance/report trees, excluding generated state"
+  },
+  "review": {
+    "indestructibleBarrierDecision": "Question sent; no answer received. Unsupported/rejection versus opaque for both carving and exposure remains pending.",
+    "ordering": "Proposed existing stable body-ID order for simultaneous independent blasts, caller order for explicit consecutive calls; no physics/fuse step between them.",
+    "methodsAndBoundsMeasured": false,
+    "feasibilityGate": "Lossless strict batch subtraction and final float-converted breach continuity within the existing canonical representation; report rejection rather than cleanup or tolerance increases.",
+    "futureImplementationCheckout": "C:/Users/jblic/Desktop/Bomb/.worktrees/blast-conformance-probe",
+    "futureImplementationBranch": "feature/blast-conformance-probe",
+    "separateApprovalRequiredBeforeUnityChanges": true
+  }
+}
