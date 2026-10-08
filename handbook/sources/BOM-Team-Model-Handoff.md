@@ -1,9 +1,9 @@
 # BOM — Team Model Handoff
 
-**Version:** 0.7  
-**Date:** 2026-10-07  
+**Version:** 0.8  
+**Date:** 2026-10-08  
 **Purpose:** Shared conceptual ECS baseline for Unity, art/assets, and level design  
-**Source:** `BOM Architecture.md` v0.11; decisions through `DEC-056`
+**Source:** `BOM Architecture.md` v0.12; decisions through `DEC-061`
 
 This summary gives the team a common model to review. The entity, identity, lifecycle, component/system responsibilities, and contracts below are agreed. These include material density/mass derivation, independent destruction response, declared shape/visual alignment, default fragment-property inheritance, reach-constrained holds, course anchoring, and connector reconstruction. Seven conceptual component groupings, fixed limb roots/reach, minimum hold contents, remaining-duration countdowns, and connector reference lifetimes are now accepted. The death-configuration source, shared material applicability, fixed-wall source, and semantic coordinate convention are also accepted. Remaining values, fields/encodings, storage, authoring formats, and system ordering remain open. The Architecture controls if this summary conflicts with it; examples and review suggestions are non-normative. Collaboration is described through roles/responsibilities that may overlap or be shared.
 
@@ -15,7 +15,7 @@ BOM has authoritative 2D gameplay physics and geometry, with 3D presentation der
 
 ## Entity and state map
 
-Every physical body shares three state responsibilities: **motion** (position, rotation, linear/angular velocity), **reconstructable gameplay shape**, and **physical configuration** sufficient to derive its engine behaviour. Environment pieces, living characters, and live bombs also share `MaterialProperties`; `CharacterState` and `BombState` supply their particular behaviour. Material-piece mass follows the density/area rule below; further physical inputs and derivations remain open.
+Every physical body shares three state responsibilities: **motion** (position, rotation, linear/angular velocity), **reconstructable gameplay shape**, and **physical configuration** sufficient to derive its engine behaviour. Environment pieces, living characters, and live bombs also share `MaterialProperties`; `CharacterState` and `BombState` supply their particular behaviour. Mass for all three physical roles follows the density/area rule below; further physical inputs and derivations remain open.
 
 | Role | Own physics body? | Additional canonical responsibilities |
 |---|---|---|
@@ -29,7 +29,7 @@ Every physical body shares three state responsibilities: **motion** (position, r
 
 These are semantic responsibilities, not a mandatory one-component-per-row layout. Destruction, motion, and interaction eligibility remain independently composable.
 
-Accepted conceptual groupings are `BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState`. `BOM-Candidate-Component-Map.md` v0.4 distinguishes these from proposals and remaining fields. A separate `BodyPhysics` is unaccepted: relationship-imposed restrictions derive from attachments, while level/world data supplies fixed wall geometry, fixed behaviour, and stable endpoint identities. Colour is a variable appearance input; a separate `VisualBinding` and its placement remain open. The map shows roster/match data as canonical dependencies for review; that presentation is not an accepted storage partition or a transfer of authority to networking.
+Accepted conceptual groupings are `BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState`. `BOM-Candidate-Component-Map.md` v0.6 distinguishes these from proposals and remaining fields. A separate `BodyPhysics` is unaccepted: relationship-imposed restrictions derive from attachments, while level/world data supplies fixed wall geometry, fixed behaviour, and stable endpoint identities. Colour is a variable appearance input; a separate `VisualBinding` and its placement remain open. The map shows roster/match data as canonical dependencies for review; that presentation is not an accepted storage partition or a transfer of authority to networking.
 
 An authored composite object expands into separate material pieces plus connectors. Its authoring container does not automatically become another canonical entity. Persistent physical entities and relationships receive match-scoped IDs; requests and transient events do not automatically enter that namespace.
 
@@ -41,19 +41,21 @@ The shared coordinate contract (`WORLD-006`) is:
 
 | Data | Frame |
 |---|---|
-| Body position and rotation | World space |
+| Body position and rotation | World-space pose of the local frame |
+| Body linear velocity | World-space velocity of the current centre of mass |
+| Body angular velocity | Rate of change of body angle |
 | Body gameplay shape and limb roots | That body's local space |
 | Held location | Target body's local space |
 | Connector attachment regions | Each endpoint body's local space |
 | Visual geometry | Aligned with the body's local gameplay shape |
 
-If splitting changes local frames, structural resolution transforms attachment coordinates to preserve the same surviving material locations. Exact units, origins/pivots, numeric encoding, scaling/alignment data, and tolerances remain open.
+The local-frame origin may differ from the current centre of mass. Geometry/frame changes intended to preserve motion preserve surviving material movement, including a same-ID result; this does not select universal motion inheritance or blast impulses. If splitting changes local frames, structural resolution transforms attachment coordinates to preserve the same surviving material locations. Exact units, origins/pivots, numeric encoding, scaling/alignment data, and tolerances remain open.
 
 For example, a glass platform attached to a wooden support attached to a fixed foundation instantiates as three material entities and two rigid connectors. The authored assembly adds no entity. Asset authoring supplies section data; level composition assembles and places sections and relationships; simulation integration resolves those inputs into canonical state and derived runtime objects. This describes work responsibilities, not a required personnel allocation.
 
 ## Material, destruction, and anchoring
 
-Material definitions contain **explicit authored density**. A piece references its definition, so choosing glass resolves a density value. Material-piece mass derives from density multiplied by current gameplay 2D area; geometry loss therefore changes mass. Definition values must resolve consistently when reconstructing the world. Units, exact records, and other physical-property derivations remain open.
+Material definitions contain **explicit authored density**. A piece references its definition, so choosing glass resolves a density value. Mass for environment pieces, living characters, and live bombs derives from density multiplied by current gameplay 2D area; geometry loss therefore changes mass. Definition values must resolve consistently when reconstructing the world. Units, exact records, and other physical-property derivations remain open.
 
 **Destruction response is independently selectable from material properties.** Material presets can offer defaults. Shattering is a process; splitting is a possible outcome. Persistent physical material fragments use ordinary material entities and the lifecycle rules below. Decorative particles may be transient. Supporting response selection does not require implementing shattering for the course.
 
@@ -71,8 +73,8 @@ A surviving connector retains its **intended relative position and angle** throu
 | Connector endpoints change | Zero surviving relationships: retire it. One: keep its ID and remap endpoint/attachment data. Several: retire it and create a new connector per valid surviving relationship. |
 | A held material piece changes or splits | If the held location survives on a valid result, keep the attachment ID and remap target/coordinates. If the location is lost, retire the attachment. A hold never branches across children. |
 | Claymate dies | Keep the body's ID; install environment configuration supplied by the character definition. The corpse reconstructs through ordinary environment records. Clear the participant's controlled-body reference. Release the dead character's own holds; preserve others' holds on surviving locations. |
-| Bomb lands | Activate remaining-duration countdown state from selected bomb/fuse configuration. Landing classification, values, units/types, and later-contact policies remain open. |
-| Bomb explodes | Retire the bomb; create no persistent bomb fragments. The explosion notification may be transient, while its lasting consequences belong in canonical state. |
+| Bomb first lands validly | Activate remaining-duration countdown state from selected bomb/fuse configuration. Holding, throwing, support loss and further landings leave it running without reset or extension. Landing classification, values, units/types/precision and detailed order remain open. |
+| Bomb explodes | Detonate at its current position on countdown expiry; retire the bomb; create no persistent bomb fragments. The explosion notification may be transient, while its lasting consequences belong in canonical state. |
 
 Topology and relationship outcomes commit **atomically**. A published state must contain complete splits and valid references. Concurrent destruction of a corpse's held location uses the same hold-loss rule. The character definition supplies corpse material, destruction response, interaction eligibility, and reusable appearance selections (`CHAR-004`). Actual values and transition/reference encoding remain open; no inheritance/override default is selected. Starting new holds uses the installed eligibility policy, while accepted incoming holds continue on surviving locations.
 
@@ -80,11 +82,11 @@ Hands and deliberate foot holds share the limb-attachment entity kind. Each slot
 
 A hold maintains the limb's **held location while the character body can move and rotate within permitted reach**. The attachment constrains motion beyond reach; visible limbs follow the body/attachment relationship without separate physics bodies. The held point follows a moving target. Fixed body-local limb roots and authored maximum reach come from the character definition. Body poses plus the target-local held location derive the constraint and visible held-limb pose. No independently changing authoritative root pose is required. Exact coordinate/numeric encoding, Unity constraint, tuning, and active controls remain open; applied force alone does not release holds in the current build. Deliberate release and applicable destruction, retirement, and death outcomes still apply.
 
-Rigid environmental connectors can fail from excessive load or attachment loss. Load evaluation includes force and in-plane torque; engine limits derive from the authored strength and attachment geometry. Immediate load failure is required, while accumulated fatigue and non-rigid environmental connectors are outside current course requirements.
+Rigid environmental connectors can fail from excessive load or attachment loss. Load evaluation includes force and in-plane torque. For authored strength per unit length `S` and surviving attachment length `L`, limits are `Fmax = S × L` and `Tmax = ½ × S × L²` (`CON-009`). Halving `L` halves force capacity and quarters torque capacity. Length measurement, load conversion, units and strength values remain open. Immediate load failure is required, while accumulated fatigue and non-rigid environmental connectors are outside current course requirements.
 
 If attachment-loss percentage is used, the reference follows connector identity: an ongoing ID keeps its reference; each new ID starts with its own initial attached length as 100%, fixed for its lifetime. Check the old connector against its existing reference before creating replacements. A failed old bond produces no child connectors. Connector strength scales with actual surviving attachment length, so 100% of a smaller reference still means a smaller bond. Optional authored percentage failure is accepted; without the setting, that condition does not apply. No universal numerical cutoff is selected. A bomb countdown uses current remaining duration and needs no shared deadline clock solely for reconstruction.
 
-Character damage **does not accumulate**. Gameplay evaluation kills a character when a blast meets its power/radius lethality condition, then applies the transition above (`CHAR-005`). `CharacterState` needs no health or accumulated-damage value. Exact power/radius values, distance/overlap evaluation, and occlusion remain open.
+Character damage **does not accumulate**. Gameplay evaluation kills a character when a blast meets its power/radius lethality condition, then applies the transition above (`CHAR-005`). `CharacterState` needs no health or accumulated-damage value. Nominal radius is maximum reach through empty space. Intervening material and thickness consume reach; penetration may continue while reach remains. Cover destroyed by that same blast still contributes to its reach cost (`WORLD-007`). Exact power/radius values, distance/overlap evaluation, material-resistance inputs/source and propagation calculation remain open.
 
 ## Agreed system responsibilities
 
@@ -110,6 +112,7 @@ Suppose piece P is joined to fixed foundation F by connector C, and a character 
 |---|---|
 | Material identity and mass | Retire P; assign new IDs to P1 and P2. Derive each result's mass from its resolved density and resulting area. |
 | Material/response/appearance settings | P1 and P2 inherit P's definitions/settings by default, with changes only where the response explicitly specifies them. Each result reconstructs without consulting retired P. |
+| Motion | Local-frame pose and COM velocity follow `WORLD-006`; changes intended to preserve motion preserve surviving material movement. Other impulse/inheritance policies remain open. |
 | Structural connection | First evaluate any attachment-loss test against C's existing reference. If it passes and one relationship survives, keep C's ID/reference; remap its endpoint to P1 while preserving the intended fit. Otherwise retire it. |
 | Character's hold | Keep L's ID; remap its target and held-location coordinates to P2. The held point follows P2; the character body may move/rotate within reach. The hold does not branch. |
 | Publication and runtime objects | Commit these outcomes together. Affected bodies/joints/visuals and replicated state reflect that complete outcome. Exact scheduling remains open. |
@@ -120,7 +123,7 @@ If a held location is lost, retire that hold instead. If no valid structural att
 
 | Work role | Agreed design boundary | Useful next review |
 |---|---|---|
-| Simulation integration | Body/relationship state is reconstructable. Material-piece mass follows current shape and density. Structural resolution owns complete topology outcomes; limb holds constrain reach. | Trace reconstruction, the worked split, held-body motion, and death using the accepted sources and coordinate convention; identify remaining physical derivations and scheduling needs. |
+| Simulation integration | Body/relationship state is reconstructable. All physical roles derive mass from current shape and density; blast reach accounts for intervening material. Structural resolution owns complete topology outcomes; limb holds constrain reach. | Trace reconstruction, the worked split, held-body motion, and death using the accepted sources and coordinate convention; identify remaining physical derivations and scheduling needs. |
 | Asset authoring | Material sections declare gameplay shape and visual alignment. Reusable appearance data supports resulting shapes; visible limbs follow one body's hold relationships. | Check shape/visual alignment in the accepted body-local frame, shared material inputs, death settings, visual regeneration, and limb pose inputs with integration. |
 | Level composition | Compose pieces, fixed foundations, and rigid connectors. Select material and response independently. Authors provide one connector-strength value. | Check fixed-wall inputs/endpoint identities and the representative composite's local attachment regions, resolved definitions, and effective eligibility settings. |
 
@@ -128,10 +131,12 @@ These review suggestions do not prescribe an implementation slice or make tempor
 
 ## Implementation and authoring boundaries
 
-**Current build policies:** connector strength scales with surviving attachment length; authors may configure independent percentage-loss failure; one Boolean eligibility policy governs hand and deliberate foot holds, including live bombs; applied force alone does not release holds. These are accepted requirements under `CON-009`, `CON-010`, and `LIMB-005` through `LIMB-007`. Actual authoring values, formulas, and encoding still need implementation contracts.
+**Current build policies:** all physical roles use density-times-area mass; body motion uses local-frame poses and COM linear velocity, with conditional preservation of surviving material movement; connector capacities are `Fmax = S × L` and `Tmax = ½ × S × L²`; authors may configure independent percentage-loss failure; one Boolean eligibility policy governs hand and deliberate foot holds, including live bombs; applied force alone does not release holds. Activated bomb countdowns run through handling/support loss/later landings. Material and thickness consume blast reach, including cover destroyed by that blast. Actual authoring values, remaining measurements and encoding still need implementation contracts.
 
-**Important integration/authoring seams:** geometry format and local-coordinate/alignment encoding; definition/reference encoding and units; remaining physical-property derivations; response algorithms and explicit result-property changes; visual regeneration; connector attachment/intended-relationship encoding; limb coordinate encoding, further movement inputs and engine constraint implementation; fixed-support reference/configuration encoding; actual corpse settings and transition encoding; detailed execution and commit scheduling. The ownership and semantic behaviour above are settled; implementation contracts remain explicit review items.
+**Important integration/authoring seams:** geometry format and local-coordinate/alignment encoding; definition/reference encoding and units; remaining physical-property derivations; blast-resistance inputs/source and propagation calculation; response algorithms and explicit result-property changes; visual regeneration; connector attachment/intended-relationship encoding; limb coordinate encoding, further movement inputs and engine constraint implementation; fixed-support reference/configuration encoding; actual corpse settings and transition encoding; detailed execution and commit scheduling. The ownership and semantic behaviour above are settled; implementation contracts remain explicit review items.
 
-**Next activity:** use `BOM-Team-Handbook.html` for a guided walkthrough, source-linked reference, and proposed starting work by role. Its work cards give deliverables, dependencies, and completion checks; the team chooses assignees and the minimal implementation conventions. The work plan is recommended, not additional architecture. Take candidate map v0.4 and this summary into team review: can a snapshot plus validated definitions reconstruct a running scene with all relationships and behaviour accounted for? Trace the supported/held scene, split, death, and countdown across the work roles. No further semantic decision needs forcing before review; raise one focused question only when a concrete case exposes a material gap. Exact records/ECS framework, geometry tooling, and networking schema, transport, rates, compatibility, and correction strategy remain open. Refine contracts as their roles need them; this handoff does not require resolving every implementation question before review.
+**Experiment boundary:** the reviewed `feature/handbook-conformance-probe` report at `3f652e9178a78777bd41514441229827f7e611ad` records 50 EditMode and 12 PlayMode tests passing against Architecture v0.11 / `DEC-056`. Its corrected COM motion, shared mass, connector formulas and continuous fuse cases inform this checkpoint. Its radius-only explosions do not demonstrate `WORLD-007`; extreme-load hold reach also remains a documented solver limitation. This handbook update changes no Unity code and does not approve every fixture convention.
+
+**Next activity:** use `BOM-Team-Handbook.html` for a guided walkthrough, source-linked reference, and proposed starting work by role. Its work cards give deliverables, dependencies, and completion checks; the team chooses assignees and the minimal implementation conventions. The work plan is recommended, not additional architecture. Take candidate map v0.6 and this summary into team review: can a snapshot plus validated definitions reconstruct a running scene with all relationships and behaviour accounted for? Trace the supported/held scene, split, death, and countdown across the work roles. No further semantic decision needs forcing before review; raise one focused question only when a concrete case exposes a material gap. Exact records/ECS framework, geometry tooling, and networking schema, transport, rates, compatibility, and correction strategy remain open. Refine contracts as their roles need them; this handoff does not require resolving every implementation question before review.
 
 For the full rules and rationale, use `BOM Architecture.md`, `BOM Decision Log.md`, and `BOM Open Questions.md`. `BOM Model Interview Handoff.md` carries the ongoing design and checkpoint procedure.

@@ -1,6 +1,6 @@
 {
-  "version": "1.3.2",
-  "date": "2026-10-07",
+  "version": "1.4.0",
+  "date": "2026-10-08",
   "title": "BOM Team Handbook",
   "principles": [
     {
@@ -144,7 +144,7 @@
       "short": "Countdown",
       "title": "Landing and countdown",
       "scene": "countdown",
-      "intro": "Landing starts the bomb’s countdown. The host advances its remaining duration.",
+      "intro": "The first valid landing starts the bomb’s countdown. The host advances its remaining duration through holding, throwing, support loss and later landings.",
       "notice": "The bomb stores an inactive countdown, or an active countdown with its remaining duration.",
       "remember": [
         "B: its selected configuration and current active remaining duration.",
@@ -168,7 +168,7 @@
         ],
         [
           "Still open",
-          "Landing classification, values, units, later contacts, and detailed order"
+          "Landing classification, duration values/units/precision and detailed order"
         ]
       ],
       "refs": [
@@ -176,12 +176,13 @@
         "BOMB-004",
         "STATE-001"
       ],
-      "speaker": "No numerical fuse duration is selected here. The diagram marks the timer active without implying particular units or a deadline representation.",
+      "speaker": "Once activated, the fuse continues through holding, throwing, support loss and later landings. Expiry detonates at the current position. No numerical duration, timestep or timer encoding is selected here.",
       "facts": [
         "The selected bomb configuration supplies the starting duration.",
-        "Reconstruction restores the current countdown without replaying the landing."
+        "Reconstruction restores the current countdown without replaying the landing.",
+        "Handling and later landings do not pause, restart or extend the fuse. Expiry detonates at the current position."
       ],
-      "caveat": "No numeric fuse duration is selected here. Landing classification, later contacts and detailed update order remain open.",
+      "caveat": "No numeric fuse duration or timestep is selected here. Landing classification, duration precision and detailed update order remain open.",
       "caption": "The bomb has landed on the platform and its countdown is active."
     },
     {
@@ -232,12 +233,12 @@
         "COMMIT-002",
         "BOMB-002"
       ],
-      "speaker": "This is one split outcome, not a chosen fragmentation algorithm or child-motion formula. Test the old connector before creating replacements. If its bond fails, it produces no child connectors. If the held location is destroyed, L retires. A changed local frame must preserve the same surviving material.",
+      "speaker": "This is one split outcome. Changes intended to preserve motion preserve surviving material movement under WORLD-006; no universal motion-inheritance or impulse policy is selected. Test the old connector before creating replacements. If its bond fails, it produces no child connectors. If the held location is destroyed, L retires. A changed local frame must preserve the same surviving material.",
       "facts": [
         "The bond and hold keep their IDs and remap to the surviving material. A destroyed held point ends the hold.",
         "Geometry, identity and relationship changes commit together."
       ],
-      "caveat": "Test any old attachment-loss policy before creating connector replacements. A failed bond produces no replacements. Child-motion derivation and geometry algorithms remain open.",
+      "caveat": "Test any old attachment-loss policy before creating connector replacements. A failed bond produces no replacements. Motion-preserving changes follow WORLD-006; other motion policies and geometry algorithms remain open.",
       "caption": "The hold follows the same surviving material point on the right piece."
     },
     {
@@ -283,12 +284,14 @@
         "CHAR-005",
         "PLAYER-002",
         "LIMB-009",
-        "COMMIT-002"
+        "COMMIT-002",
+        "WORLD-007"
       ],
-      "speaker": "The source is settled; actual corpse values are not. No health counter is required. Concurrent geometry changes still use the ordinary identity rules. The split and death pages are explanatory cases; all applicable consequences of one explosion commit consistently together.",
+      "speaker": "The source is settled; actual corpse values are not. No health counter is required. Effective blast reach accounts for material and thickness even when that blast destroys the cover; its resistance inputs and calculation remain open. Concurrent geometry changes still use ordinary identity rules. Applicable consequences of one explosion commit consistently together.",
       "facts": [
         "The character definition supplies the environment settings installed on death.",
-        "Control and outgoing holds end. Other characters’ incoming holds continue on surviving material locations."
+        "Control and outgoing holds end. Other characters’ incoming holds continue on surviving material locations.",
+        "Intervening material and thickness consume blast reach, including cover destroyed by that same blast."
       ],
       "caveat": "Concurrent geometry changes use the ordinary identity rules. These split and death examples do not establish tick order; applicable consequences of one explosion commit together.",
       "caption": "The body remains; its character behaviour and outgoing hold have ended."
@@ -510,7 +513,7 @@
         "CON-010",
         "CON-014"
       ],
-      "open": "ID allocation, attachment encoding, length measurement, force/torque conversion, numeric tuning and exact spawn records remain implementation choices. Length-based strength and optional authored percentage failure are accepted policies."
+      "open": "The capacity formulas Fmax = S × L and Tmax = ½ × S × L² are settled. ID allocation, attachment encoding, paired length measurement, load conversion, numeric tuning and exact spawn records remain implementation choices. Optional authored percentage failure is accepted; no universal cutoff is selected."
     },
     {
       "id": "UNITY-01",
@@ -525,7 +528,7 @@
       ],
       "deliverable": "A scene that derives separate Unity bodies, colliders, a structural constraint and visuals from current records and validated definitions, plus a recoverable current-state capture.",
       "steps": [
-        "Instantiate W, P, K and B; resolve their selected material and role inputs.",
+        "Instantiate W, P, K and B; resolve their selected material and role inputs. Derive mass for every physical role from density × current gameplay area and use local-frame pose/current COM velocity semantics.",
         "Include a fixture participant whose sole controlled-body reference points to the Claymate. Capture the roster alongside the body and relationship records.",
         "Derive C's joint from its endpoints and intended fit. Keep engine handles outside canonical state.",
         "Capture current motion/shape/configuration/relationships and rebuild from that capture."
@@ -547,9 +550,11 @@
         "ECS-007",
         "MAT-009",
         "CON-013",
-        "PLAYER-002"
+        "PLAYER-002",
+        "MAT-005",
+        "WORLD-006"
       ],
-      "open": "Framework, exact fields/types and references remain implementation choices. Resolve and document additional body inputs/derivations, especially for characters and bombs; shared MaterialProperties does not automatically settle every engine input. Integrate ASSET-01, CHARACTER-01 and LEVEL-01 for the shared completion check."
+      "open": "Framework, exact fields/types and references remain implementation choices. Density-times-area mass is settled for all physical roles; COM/inertia and other body inputs/derivations remain open. Shared MaterialProperties does not automatically settle every engine input. Integrate ASSET-01, CHARACTER-01 and LEVEL-01 for the shared completion check."
     },
     {
       "id": "HOLD-01",
@@ -632,7 +637,7 @@
         "WORLD-006",
         "COMMIT-002"
       ],
-      "open": "Geometry algorithms, child-motion derivation, length measurement, tolerances and exact scheduling remain open. Canned results are a proposed testing aid, not a selected destruction algorithm. No 40% cutoff is adopted."
+      "open": "Geometry algorithms, other child-motion/impulse policies, length measurement, tolerances and exact scheduling remain open. Changes intended to preserve motion preserve surviving material movement under WORLD-006, including same-ID geometry updates. Canned results are a proposed testing aid, not a selected destruction algorithm. No 40% cutoff is adopted."
     },
     {
       "id": "BOMB-01",
@@ -647,14 +652,15 @@
       ],
       "deliverable": "Landing activation, host countdown advancement, mid-countdown reconstruction and detonation retirement.",
       "steps": [
-        "Initialize the timer from the selected configuration on a valid landing.",
-        "Advance active remaining duration on the host and capture/rebuild during countdown.",
-        "Trigger detonation and retire B, handing lasting consequences to structural resolution."
+        "Initialize the timer from the selected configuration on the first valid landing.",
+        "Advance active remaining duration on the host through holding, throwing, support loss and later landings; capture/rebuild during countdown.",
+        "On expiry, detonate at the current position and retire B, handing lasting consequences to structural resolution."
       ],
       "checks": [
         "Recovery preserves activation and remaining progress without landing replay or a required shared deadline clock.",
         "Detonation retires B and creates no persistent bomb fragments.",
-        "Committed world consequences remain separate from transient explosion presentation."
+        "Committed world consequences remain separate from transient explosion presentation.",
+        "Holding, throwing, support loss and further landings do not pause, restart or extend the active fuse."
       ],
       "dependencies": [
         "UNITY-01"
@@ -665,9 +671,10 @@
         "BOMB-003",
         "BOMB-004",
         "EVENT-001",
-        "ECS-006"
+        "ECS-006",
+        "WORLD-007"
       ],
-      "open": "Choose and document the fixture's landing classification and duration values/units. Later contacts/support loss, detailed update order, blast values and occlusion remain open policies."
+      "open": "Choose and document landing classification, duration values/units/precision and detailed update order. Continuous active progress is settled. Blast-resistance inputs/calculation and exact power/radius values remain open; material-dependent reach is required by WORLD-007."
     },
     {
       "id": "DEATH-01",
@@ -677,12 +684,12 @@
       "purpose": "Prove the accepted no-damage-accumulation model and complete same-body death outcome.",
       "start": "Exercise a qualifying and a nonqualifying blast case using documented fixture settings.",
       "inputs": [
-        "The blast's power/radius lethality condition, current character state, roster and holds.",
+        "The blast’s power/radius lethality condition with effective reach accounting for intervening material/thickness; current character state, roster and holds.",
         "Character-definition-supplied environment configuration."
       ],
       "deliverable": "A death outcome that installs environment records on the surviving body, clears control/outgoing holds, and preserves valid incoming holds.",
       "steps": [
-        "Evaluate lethality on the host; use no accumulated health/damage value.",
+        "Evaluate lethality on the host using effective blast reach under WORLD-007; use no accumulated health/damage value.",
         "Install the selected environment configuration while keeping K's ID when its body remains one surviving piece.",
         "Clear the roster's control reference and retire outgoing holds in the same complete outcome.",
         "Check an incoming-hold example and concurrent lost-location geometry, then reconstruct the corpse from current environment state."
@@ -691,7 +698,8 @@
         "A qualifying blast causes immediate death; nonqualifying hits do not leave accumulated damage.",
         "Death alone preserves K's body ID and ends its control and outgoing holds.",
         "Incoming holds continue on surviving locations; destroyed locations release.",
-        "The corpse reconstructs without old CharacterState or death-event replay."
+        "The corpse reconstructs without old CharacterState or death-event replay.",
+        "Cover contributes to this blast’s reach cost even when the blast destroys it; penetration can continue if reach remains."
       ],
       "dependencies": [
         "HOLD-01",
@@ -705,9 +713,10 @@
         "PLAYER-002",
         "LIMB-008",
         "LIMB-009",
-        "COMMIT-002"
+        "COMMIT-002",
+        "WORLD-007"
       ],
-      "open": "Exact power/radius values/mapping, distance-versus-overlap test and occlusion remain open. Document temporary fixture choices without treating them as global gameplay decisions. Actual corpse values and transition encoding remain configurable/unselected."
+      "open": "Exact power/radius mapping, distance-versus-overlap test, material-resistance inputs/source and propagation calculation remain open. Material-dependent reach, including the cost of cover destroyed by that blast, is accepted under WORLD-007. Actual corpse values and transition encoding remain configurable/unselected."
     },
     {
       "id": "NET-01",

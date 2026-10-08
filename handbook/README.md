@@ -1,6 +1,6 @@
 # BOM — Simulation model source
 
-Handbook 1.3.2, dated 7 October 2026. Model baseline: Architecture v0.11 through DEC-056.
+Handbook 1.4.0, dated 8 October 2026. Model baseline: Architecture v0.12 through DEC-061.
 
 The published page is the repository's root `index.html`. It contains all styles, diagrams, navigation, search, and six complete source documents. It can also be opened locally without a server or internet connection.
 
@@ -17,15 +17,17 @@ cp handbook/dist/index.html index.html
 
 The build also writes an identical standalone HTML copy, readable Markdown, and extracted JSON under `handbook/dist/`. Only root `index.html` is the published output. Build artifacts in `dist/` are ignored.
 
-## Current policy review
+## Current checkpoint
 
-- Connector strength is authored per surviving attachment length.
-- Authors may configure independent minimum-surviving-percentage failure; no universal cutoff is selected.
-- Live bombs use ordinary authored hold eligibility and host validation.
-- Applied force alone does not release limb holds in the current build.
-- One authored Boolean governs hand and deliberate foot holds. Ordinary foot contact is unaffected.
+- Local-frame poses and current centre-of-mass velocity have explicit meanings. Motion-preserving geometry/frame changes preserve surviving material movement, including same-ID results.
+- Density × current gameplay area supplies mass for environment pieces, living characters and live bombs.
+- Connector capacities are `Fmax = S × L` and `Tmax = ½ × S × L²`, from one authored strength per length and current surviving attachment length.
+- The first valid landing starts a continuous fuse. Handling, support loss and later landings preserve progress; expiry detonates at the current position.
+- Material and thickness consume effective blast reach, including cover destroyed by that same blast.
 
-DEC-052 through DEC-056 record these choices. Historical tentative decisions retain their supersession trail; the current architecture contains no provisional rules. Remaining numerical values, geometry contracts, encoding, controls, and tuning retain their actual scope.
+DEC-057 through DEC-061 record these choices. Historical decisions and their supersession trail remain intact; the current architecture contains no provisional rules. Remaining numerical values, geometry contracts, COM/inertia derivation, attachment-length/load measurement, landing detection, blast-resistance inputs/calculation, encoding, controls and tuning retain their actual scope.
+
+The reviewed conformance probe at `3f652e9` records 50 EditMode and 12 PlayMode tests passing against the earlier Architecture v0.11 / DEC-056 baseline. It informed the first four decisions. Its radius-only blast model does not exercise the new shielding rule; extreme-load hold reach remains a documented limit. The Unity code and evidence are unchanged by this handbook checkpoint.
 
 The approved layout, walkthrough navigation, stable reference routes, and ten work deliveries are preserved. Earlier recommendations about the first shared milestone, candidate authoring organization, networking-start wording, and destruction expansion were not accepted by this policy review.
 

@@ -1,7 +1,7 @@
 # BOM Architecture Open Questions
 
-**Version:** 0.10  
-**Last updated:** 2026-10-07  
+**Version:** 0.11  
+**Last updated:** 2026-10-08  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Interpretation
@@ -16,7 +16,7 @@ Priority meanings:
 
 These priorities describe implementation needs, not the order of the conceptual design interview. Component responsibilities, coarse system ownership, and seven conceptual groupings are accepted under `ECS-005` to `ECS-007`. Fixed limb roots/reach, minimum hold contents, remaining-duration bomb countdowns, and connector reference lifetimes are also settled. Character definitions now supply death-to-environment configuration; `MaterialProperties` applies to living characters and bombs; level/world data supplies fixed walls; world/body-local frame roles are settled. Remaining values, fields/encodings, execution order, and detailed coordination stay open. The immediate goal is a team-facing conceptual handoff for Unity, art, and level design. Networking refinement can wait for its owner. A useful model can retain explicit unresolved policies; the questions below are not an exhaustive serial interview.
 
-**Resolution status:** `OQ-CON-004` remains resolved by `CON-014` / `DEC-046`. This checkpoint settles the death-configuration source (`CHAR-004` / `DEC-047`), shared material-record applicability (`MAT-009` / `DEC-048`), fixed-wall input source (`WORLD-005` / `DEC-049`), and semantic coordinate frames (`WORLD-006` / `DEC-050`). Character damage does not accumulate, and blast power/radius lethality is settled at the semantic level (`CHAR-005` / `DEC-051`). The related questions below are narrowed: actual settings, remaining derivations, units, references, and implementation are still open. Earlier limb inputs and countdown representation remain settled. The 7 October review accepts length-based connector strength and optional percentage failure, makes live bombs ordinary eligible hold targets, excludes automatic limb force breakage from the current build, and accepts shared Boolean hand/foot eligibility (`DEC-052` through `DEC-056`). Numerical settings and implementation contracts remain open as stated below.
+**Resolution status:** Earlier accepted policies remain in force through `DEC-056`, including connector percentage-reference lifetimes, ordinary live-bomb eligibility, shared hand/foot eligibility, and no automatic limb force breakage. The 8 October checkpoint adds COM velocity and conditional motion preservation (`WORLD-006` / `DEC-057`), density-times-area mass for all physical roles (`MAT-005`, `MAT-009` / `DEC-058`), connector capacity formulas (`CON-009` / `DEC-059`), continuous activated fuses (`BOMB-003`, `BOMB-004` / `DEC-060`), and material-dependent blast reach (`WORLD-007` / `DEC-061`). The related questions below are narrowed; measurements, additional derivations, numeric settings, encoding, blast-resistance inputs/calculation, and detailed execution order remain open. `OQ-CON-004` remains resolved by `CON-014` / `DEC-046`.
 
 ## 2. Geometry and destruction
 
@@ -41,19 +41,23 @@ After subtraction, does the host primarily replicate the destruction operation, 
 
 What happens to tiny, degenerate, or numerically invalid geometry results? Define minimum area, edge length, vertex count, and cleanup behavior without allowing implementation artifacts to create unstable entities.
 
-### OQ-GEO-004 — Damage reach and occlusion
+### OQ-GEO-004 — Material-dependent blast reach calculation
 
-**Priority:** P1  
-**Related rules:** `WORLD-003`, `CHAR-005`
+**Priority:** P0  
+**Related rules:** `WORLD-003`, `WORLD-007`, `CHAR-005`
 
-Precisely how does a surface-originating explosion affect overlapping material entities? Define whether material shields other material, whether subtraction applies to every polygon in the blast volume, and how exposed cavities behave. Character lethality uses a blast power/radius condition with no accumulated damage under `CHAR-005`; its exact geometric test and shielding/occlusion remain open.
+Material-dependent reach is accepted under `WORLD-007`: nominal radius is maximum reach through empty space; intervening material and thickness consume reach; penetration can continue while reach remains. Material destroyed by that blast still contributes to its reach cost. Character lethality must account for effective reach and still has no accumulated damage under `CHAR-005`.
+
+What material-resistance inputs and numerical calculation implement that rule? Define their recoverable source, values/units and relation to density or destruction response without silently inferring resistance from an existing property. Specify propagation, thickness measurement, the geometric distance/overlap test, and consistent destruction/lethality evaluation, including overlapping material, cavities, and indestructible barriers. Detailed ordering of multiple explosions remains open. The experiment's radius-only blast model is not evidence for this new requirement.
 
 ### OQ-MAT-001 — Canonical material and body properties
 
 **Priority:** P0  
-**Related rules:** `MAT-002`, `MAT-005`, `MAT-009`, `STATE-002`, `REBUILD-001`
+**Related rules:** `MAT-002`, `MAT-005`, `MAT-009`, `WORLD-006`, `STATE-002`, `REBUILD-001`
 
-Density placement and material-piece mass derivation are settled under `MAT-005`: material definitions explicitly author density, pieces reference the definition, and mass derives from density multiplied by current gameplay 2D area. `MaterialProperties` also applies to living characters and live bombs under `MAT-009`; their material input source is settled. Which additional material/body properties are canonical, and how are mass for those roles, center of mass, inertia, collision category, friction, damping, and other engine inputs derived? Define units, definition/reference validation, and any per-instance override policy without duplicating canonical facts.
+Density placement and mass derivation for environment pieces, living characters, and live bombs are settled under `MAT-005` and `MAT-009`: material definitions explicitly author density, and all three roles derive mass from resolved density multiplied by current gameplay 2D area. `WORLD-006` defines linear velocity at the current centre of mass and angular velocity as the rate of change of body angle.
+
+Which additional material/body properties are canonical, and how are centre of mass, inertia, collision category, friction, damping, and other engine inputs derived? Define units, definition/reference validation, and any per-instance override policy without duplicating canonical facts. Blast-resistance inputs and their source remain open under `OQ-GEO-004`; mass derivation does not settle them.
 
 ### OQ-MAT-002 — Destruction-response authoring and implementation
 
@@ -90,7 +94,7 @@ Will BOM use Unity Entities, a custom ECS, or another data-oriented implementati
 **Priority:** P0  
 **Related rules:** `ECS-005`, `ECS-006`, `ECS-007`, all entity sections
 
-`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The current map is `BOM-Candidate-Component-Map.md` v0.4; source rules control its status labels.
+`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The current map is `BOM-Candidate-Component-Map.md` v0.6; source rules control its status labels.
 
 Review the assembled map and its reconstruction/transition checks before opening another detailed question. Avoid repeatedly debating names or tuning values when the underlying fact is already represented. Framework, memory/wire layout, and scheduling remain distinct decisions.
 
@@ -126,12 +130,14 @@ Each attachment region uses its endpoint body's local space under `WORLD-006`. H
 
 Preserving the intended relative position and angle is settled under `CON-013`. How do canonical attachment frames, a rest transform, or other unambiguous data encode that relationship, and how does Unity reconstruction retain it after endpoint remapping? Derive it from existing canonical data where possible rather than requiring duplicate fields. Current poses alone must not silently redefine a surviving bond.
 
-### OQ-CON-003 — Strength derivation formula
+### OQ-CON-003 — Attachment-length measurement and load conversion
 
 **Priority:** P0  
 **Related rules:** `CON-007`, `CON-008`, `CON-009`, `CON-010`, `CON-014`
 
-How does authored bond strength and current attachment geometry produce force and torque limits? The rule should be intuitive for designers without pretending to provide unnecessary physical fidelity. Define the surviving attachment-length measure and how paired endpoint regions contribute to that measure, including the old-connector failure test under `CON-014`; the reference-lifetime rule is already settled.
+The capacity formulas are accepted under `CON-009`: `Fmax = S × L` and `Tmax = ½ × S × L²`, where `S` is authored strength per unit length and `L` is surviving attachment length. One authored strength value and the `½` factor are settled.
+
+How is `L` measured from paired surviving endpoint regions, including the old-connector failure test under `CON-014`? Define region correspondence, units/numeric encoding, and authoritative load measurement/conversion, including the moment reference used for torque. Actual strength values remain tuning. The identity-based reference lifetime is already settled; the experiment's minimum-endpoint-length encoding and paired-pin implementation are not mandatory.
 
 
 
@@ -207,7 +213,9 @@ The accepted semantic transition ends character behaviour, establishes environme
 **Priority:** P0  
 **Related rules:** `BOMB-001`, `BOMB-002`, `BOMB-003`, `BOMB-004`, `ECS-007`, `EVENT-001`, `STATE-001`
 
-Landing starts the countdown; canonical timer state is inactive or active with remaining duration, initialized from selected bomb/fuse configuration and advanced by the host. That representation is settled and does not require a shared deadline clock. How is a valid landing identified, what fuse/explosion settings are selected, and how are their values/references and duration units encoded? If needed, define responses to later support loss or further landings and detailed update/detonation ordering. Character blast lethality does not accumulate damage (`CHAR-005`); exact power/radius values and mapping remain open. These values and policies need not all be resolved for the conceptual map.
+The first valid landing starts a countdown represented as inactive or active with remaining duration, initialized from selected bomb/fuse configuration and advanced by the host. Holding, throwing, support loss, and later landings do not pause, restart, or extend it; expiry detonates at the current position (`BOMB-003`, `BOMB-004`). Recovery does not require a shared deadline clock.
+
+How is a valid landing identified, what fuse/explosion settings are selected, and how are their values/references, duration units, precision and expiry boundaries encoded? Detailed update/detonation ordering remains open. Character blast lethality does not accumulate damage (`CHAR-005`); material-dependent reach is accepted (`WORLD-007`), with its calculation and exact power/radius mapping open under `OQ-GEO-004`. The experiment's timestep and timer arithmetic are not required implementations. These remaining choices need not all be resolved for the conceptual map.
 
 ### OQ-MATCH-001 — Match-level canonical state
 

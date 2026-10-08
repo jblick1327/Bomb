@@ -1,8 +1,8 @@
 # BOM Simulation Architecture
 
-**Version:** 0.11  
+**Version:** 0.12  
 **Review state:** Current source of truth; accepted rules govern the current build  
-**Last updated:** 2026-10-07  
+**Last updated:** 2026-10-08  
 **Companion files:** `BOM Decision Log.md`, `BOM Open Questions.md`
 
 ## 1. Purpose
@@ -172,7 +172,7 @@ The first-pass catalogue assigns the following state responsibilities. The conce
 | Participant record | Participant identity and optional controlled-body reference | Canonical match roster |
 | Match progression | Lasting spawning and round facts required by the chosen mechanics | Match-level canonical state |
 
-Each fact still has one canonical source under `STATE-004`. Destructibility, motion, and interaction eligibility remain independent concerns. Material density and material-piece mass derivation follow `MAT-005`; `MaterialProperties` also applies to living characters and live bombs under `MAT-009`. Other physical-property inputs and derivations remain open under `OQ-MAT-001`. Destruction response is independently selectable under `MAT-006`. Authored section shape/visual alignment and resulting-piece property inheritance follow `MAT-007` and `MAT-008`. Rigid-connector reconstruction preserves the intended relationship under `CON-013`. Limb holds constrain reach while permitting body movement and rotation under `LIMB-010`; fixed character-local roots and maximum reach resolve from the character definition under `LIMB-011`, and minimum hold state follows `LIMB-012`. Exact coordinate encoding, further movement inputs, and match mechanics remain open. `ECS-006` assigns coarse system responsibilities; exact implementation partitioning and execution order remain open.
+Each fact still has one canonical source under `STATE-004`. Destructibility, motion, and interaction eligibility remain independent concerns. Material density and density-times-area mass derivation apply to environment pieces, living characters, and live bombs under `MAT-005` and `MAT-009`. Other physical-property inputs and derivations remain open under `OQ-MAT-001`. Destruction response is independently selectable under `MAT-006`. Authored section shape/visual alignment and resulting-piece property inheritance follow `MAT-007` and `MAT-008`. Rigid-connector reconstruction preserves the intended relationship under `CON-013`. Limb holds constrain reach while permitting body movement and rotation under `LIMB-010`; fixed character-local roots and maximum reach resolve from the character definition under `LIMB-011`, and minimum hold state follows `LIMB-012`. Exact coordinate encoding, further movement inputs, and match mechanics remain open. `ECS-006` assigns coarse system responsibilities; exact implementation partitioning and execution order remain open.
 
 ### ECS-006 — Coarse system responsibilities
 
@@ -202,7 +202,7 @@ The following names and groupings are accepted for the conceptual component map:
 
 | Grouping | Responsibility |
 |---|---|
-| `BodyMotion2D` | Position, rotation, linear velocity, angular velocity |
+| `BodyMotion2D` | World-space local-frame pose, current centre-of-mass linear velocity, and angular velocity under `WORLD-006` |
 | `BodyShape2D` | Recoverable current 2D gameplay shape |
 | `MaterialProperties` | Shared material properties/definition inputs for environment pieces, living characters, and live bombs under `MAT-009`, including explicit density under `MAT-005` |
 | `DestructionBehaviour` | Destructibility and independently selected destruction response |
@@ -241,7 +241,7 @@ The exact polygon representation, quantization rules, and geometry library are n
 
 Bombs enter the world from above and cannot originate inside solid material. Bomb-driven subtraction begins from a physically reachable bomb position; the course architecture does not require spontaneous enclosed subtraction that starts inside intact solid material.
 
-This rule does not determine whether intervening material occludes or attenuates an otherwise reachable explosion.
+Intervening material reduces blast reach under `WORLD-007`; a physically reachable origin does not make every target inside the nominal radius exposed.
 
 ### WORLD-004 — Course anchoring baseline
 
@@ -272,15 +272,30 @@ The model uses the following coordinate convention:
 
 | Information | Coordinate meaning |
 |---|---|
-| Body position and rotation | World space |
+| Body position and rotation | World-space pose of the body's local coordinate frame |
+| Body linear velocity | World-space velocity of its current centre of mass |
+| Body angular velocity | Rate of change of the body's angle |
 | Body gameplay shape and character limb roots | That body's local space |
 | Limb attachment's held location | Target body's local space |
 | Structural connector attachment regions | Each endpoint body's local space |
 | Visual geometry | Aligned with the body's local gameplay shape |
 
+The local-frame origin may differ from the body's current centre of mass. When a geometry or local-frame change is intended to preserve motion, the resulting motion state must preserve the instantaneous movement of surviving material, including when the body retains its ID. A centre-of-mass change must therefore be reflected in the velocity representation even when the frame is unchanged.
+
 When a split changes a resulting body's local frame, structural resolution transforms attachment coordinates to identify the same surviving material locations. Connector fit and hold continuity still follow `CON-011`, `CON-013`, `LIMB-008`, and `COMMIT-002`; changing a frame does not relocate a hold to different material.
 
-This settles the semantic frames shared by simulation, authoring, relationships, and presentation. Precise units, numeric encoding, local origin/pivot choices, scaling/alignment encoding, and numerical tolerances remain open.
+This settles the semantic frames and velocity meanings shared by simulation, authoring, relationships, and presentation. It does not choose a universal motion-inheritance or blast-impulse policy. Precise units, numeric encoding, local origin/pivot choices, centre-of-mass and inertia derivation, scaling/alignment encoding, and numerical tolerances remain open.
+
+### WORLD-007 — Material reduces blast reach
+
+**Status:** Accepted  
+**Kind:** Gameplay rule
+
+A bomb's nominal blast radius is its maximum reach through empty space. Intervening material consumes some of that reach according to the material and its thickness. A blast can penetrate a barrier and affect a target beyond it if sufficient reach remains. Character lethality must account for this effective reach under `CHAR-005`.
+
+Material destroyed by a blast still contributes to what that same blast had to overcome. Removing a barrier during structural resolution does not restore the reach spent passing through it.
+
+The material-resistance inputs and their source, numerical values, propagation and thickness calculation, and exact power/radius mapping remain open. This rule does not select a raycasting algorithm, a resistance formula, or a new persistent blast entity.
 
 ## 7. Environment/material entities and destruction identity
 
@@ -319,9 +334,9 @@ This rule establishes the shared identity model, not automatic permission for ev
 **Status:** Accepted  
 **Kind:** Authoring and physical-configuration rule
 
-Material definitions contain explicit authored density. A material piece references its material definition; choosing a material such as glass resolves that density rather than inferring it from a name. Reconstruction must resolve the same effective definition values.
+Material definitions contain explicit authored density. Environment pieces, living characters, and live bombs resolve density through their selected material inputs under `MAT-009`; choosing a material such as glass resolves that density rather than inferring it from a name. Reconstruction must resolve the same effective definition values.
 
-A material piece's mass is derived from its resolved density multiplied by its current gameplay two-dimensional area. Geometry changes therefore update derived mass. This rule does not choose density values, units, definition encoding, or the derivation of other physical properties.
+A body's mass is derived from its resolved density multiplied by its current gameplay two-dimensional area. This applies to environment/material pieces, living characters, and live bombs. Geometry changes therefore update derived mass. At the same density, twice the gameplay area gives twice the mass. This rule does not choose density values, units, definition encoding, or the derivation of other physical properties.
 
 ### MAT-006 — Independently selectable destruction response
 
@@ -361,7 +376,7 @@ This rule settles inheritance for the named properties, not an automatic copy of
 
 Living characters and live bombs use `MaterialProperties` as well as environment/material pieces. Their material inputs resolve through the shared material-property source; `CharacterState` and `BombState` retain their role-specific behaviour. Effective material selections must remain recoverable under `STATE-001` and have one canonical source under `STATE-004`.
 
-Material definitions supply explicit density under `MAT-005`. This accepts shared record applicability, not every additional body property or derivation. The material-piece mass rule in `MAT-005` retains its stated scope; remaining physical inputs, derivations, values, units, and overrides remain open under `OQ-MAT-001`.
+Material definitions supply explicit density and all three physical roles use density-times-area mass derivation under `MAT-005`. Remaining physical inputs, centre-of-mass and inertia derivation, values, units, and overrides remain open under `OQ-MAT-001`; shared record applicability does not settle every additional body property.
 
 ### IDENTITY-001 — Material outcome identity
 
@@ -448,7 +463,16 @@ Level authors set one connector strength value. Runtime force and torque limits 
 
 Connector strength is authored per unit of surviving attachment length. Destruction that shortens the attachment reduces its effective load capacity.
 
-Force and torque limits derive from the authored value and attachment geometry under `CON-008`. The precise attachment-length measure, conversion formula, units, and tuning remain implementation work.
+For authored strength per unit length `S` and current surviving attachment length `L`, the capacity formulas are:
+
+| Capacity | Formula |
+|---|---|
+| Maximum translational force | `Fmax = S × L` |
+| Maximum in-plane torque | `Tmax = ½ × S × L²` |
+
+Halving the surviving attachment length halves its force capacity and quarters its torque capacity. Both limits derive from the single authored strength under `CON-008`; the `½` factor is part of this gameplay model.
+
+The precise surviving attachment-length measure and paired-endpoint representation, load measurement, units, numeric encoding, and authored strength values remain implementation and tuning work. These formulas do not assert physical fidelity or establish balanced gameplay values.
 
 ### CON-010 — Minimum surviving percentage
 
@@ -574,7 +598,9 @@ Character damage does not accumulate. A character dies immediately when a blast 
 
 The host's gameplay evaluation applies the lethality test and triggers the existing death transition under `CHAR-003` and `CHAR-004`. Lasting body, control, and relationship consequences commit under the existing structural rules.
 
-Exact power/radius values and their relationship, the geometric distance/overlap test, and shielding or occlusion remain open. This rule does not select those details or add other death causes.
+The lethality test uses effective blast reach after accounting for intervening material and thickness under `WORLD-007`. Being inside the nominal radius alone does not establish exposure. A barrier destroyed by this blast still contributes to its reach cost.
+
+Exact power/radius values and their relationship, the geometric distance/overlap test, material-resistance inputs, and the blast propagation calculation remain open. This rule does not select those details or add other death causes.
 
 ### HAND-001 — Hands as slots
 
@@ -717,18 +743,20 @@ A live bomb has an authoritative two-dimensional physics body. Its movement resp
 **Status:** Accepted  
 **Kind:** Gameplay lifecycle and recoverability rule
 
-A live bomb begins its detonation countdown when it lands. Its canonical bomb-lifecycle state records countdown activation and enough timing information to reconstruct its remaining path to detonation without replaying the original landing event.
+A live bomb begins its detonation countdown on its first valid landing. Its canonical bomb-lifecycle state records countdown activation and enough timing information to reconstruct its remaining path to detonation without replaying the original landing event.
 
-The remaining-duration representation is accepted under `BOMB-004`. The landing condition, countdown value, and any policy for subsequent support loss or further landings remain open.
+Once activated, the countdown continues while the bomb is held, thrown, moving, or unsupported. Losing support or landing again does not pause, restart, or extend it. When the countdown expires, the bomb detonates at its current position and retires under `BOMB-001`.
+
+The remaining-duration representation is accepted under `BOMB-004`. The landing classification, authored countdown value, and detailed update/detonation ordering remain open.
 
 ### BOMB-004 — Countdown stores remaining duration
 
 **Status:** Accepted  
 **Kind:** Canonical lifecycle-state baseline
 
-`BombState` represents a countdown as inactive, or active with a remaining duration. On countdown activation by landing, the host initializes that duration from the selected bomb/fuse configuration and advances the active countdown through the authoritative simulation. Reconstruction reads the current activation state and remaining duration without replaying the landing event.
+`BombState` represents a countdown as inactive, or active with a remaining duration. On the first valid landing, the host initializes that duration from the selected bomb/fuse configuration and advances the active countdown through the authoritative simulation. Holding, throwing, support loss, and later landings preserve its progress under `BOMB-003`. Reconstruction reads the current activation state and remaining duration without replaying the landing event.
 
-A deadline against a shared match clock is not required for this countdown representation. Duration values, units/numeric encoding, landing classification, later-contact policy, and detailed update/detonation ordering remain open. This does not decide whether an already active countdown can be restarted, paused, or otherwise changed by a later contact.
+A deadline against a shared match clock is not required for this countdown representation. Duration values, units/numeric encoding and precision, landing classification, and detailed update/detonation ordering remain open. No fixture timestep or numeric timer implementation is selected by this rule.
 
 ### EVENT-001 — Explosion event
 
@@ -816,12 +844,12 @@ The course implementation currently requires:
 - Persistent player match identity separate from the current Claymate body's entity ID.
 - Canonical participant-roster records owning optional controlled-body references.
 - Character death switches the surviving body to environment behaviour while preserving its ID, installing environment selections supplied by the character definition; the corpse then reconstructs from ordinary environment records.
-- Character damage does not accumulate; a qualifying blast causes immediate death under its power/radius lethality condition.
+- Character damage does not accumulate; a qualifying blast causes immediate death under its power/radius lethality condition, with intervening material reducing effective reach under `WORLD-007`.
 - Death clears player control and the dying character's own holds while preserving other characters' holds on surviving locations.
 - One authoritative physics body per character and live bomb, with hands and feet as character-local interaction slots.
 - Destructible material geometry with the accepted identity rules.
 - Separate physics bodies for material entities.
-- Shared `MaterialProperties` for environment pieces, living characters, and live bombs; explicit density in material definitions, with material-piece mass derived from density and current 2D gameplay area.
+- Shared `MaterialProperties` for environment pieces, living characters, and live bombs; explicit density in material definitions, with mass for all three roles derived from density and current 2D gameplay area.
 - Independently selectable material destruction response, with physical results using ordinary material entities.
 - A declared 2D gameplay shape and aligned visual data for each authored material section.
 - Default inheritance of material, response, and reusable visual settings by resulting pieces, with explicit response-specified changes permitted.
@@ -829,12 +857,13 @@ The course implementation currently requires:
 - Rigid environmental connectors with derived Unity joints.
 - Recoverable intended connector relationships preserved through reconstruction and remapping.
 - Force, torque, and attachment-loss failure paths for rigid connectors.
-- Atomic structural commits and relationship remapping, using world-space body poses and body-local shapes, limb roots, held locations, and endpoint attachment regions under `WORLD-006`. Visual geometry aligns with the local gameplay shape; remapping preserves surviving material locations.
+- Atomic structural commits and relationship remapping, using world-space local-frame poses, centre-of-mass linear velocity, and body-local shapes, limb roots, held locations, and endpoint attachment regions under `WORLD-006`. Visual geometry aligns with the local gameplay shape; remapping preserves surviving material locations. Changes intended to preserve motion preserve surviving material's instantaneous movement, including same-ID results.
 - Limb holds retain their IDs and follow surviving held locations through destruction; destroyed locations release their holds.
 - Limb holds maintain their held locations and constrain reach while permitting character-body movement and rotation; fixed local roots and authored maximum reach resolve from the character definition, with minimum hold state under `LIMB-012`.
-- Landing starts a bomb countdown represented canonically as inactive or active with remaining duration.
+- The first valid landing starts a bomb countdown represented canonically as inactive or active with remaining duration. It continues through holding, throwing, support loss, and later landings, then detonates at the current position.
 - The first-pass component responsibilities under `ECS-005` and the accepted conceptual groupings under `ECS-007`, with remaining fields/encodings open.
-- Connector strength scales with surviving attachment length under `CON-009`; optional authored percentage failure uses identity-based references under `CON-010` and `CON-014`.
+- Connector capacity is `Fmax = S × L` and `Tmax = ½ × S × L²` under `CON-009`; optional authored percentage failure uses identity-based references under `CON-010` and `CON-014`.
+- Nominal blast radius gives maximum reach through empty space. Material and thickness consume reach, including material destroyed by that same blast (`WORLD-007`).
 - One authored Boolean eligibility policy governs deliberate hand and foot holds, including live-bomb targets, under `LIMB-005` and `LIMB-007`.
 - Applied force alone does not release limb holds in the current build under `LIMB-006`.
 - The coarse system responsibilities under `ECS-006`, with execution order still open.
@@ -845,6 +874,7 @@ The following are not implied by this document and remain open or deferred:
 - Exact ECS framework, unaccepted record boundaries and remaining fields/encodings, and system/commit ordering.
 - Exact geometry representation, units, numeric encoding, local origins/pivots, quantization, and polygon library.
 - Additional physical-property inputs/derivations, actual corpse settings, and fixed-wall/definition reference encoding.
+- Blast-resistance inputs and their source, propagation and thickness calculation, and exact power/radius mapping.
 - Exact fixed-timestep rate, snapshot rate, transport, rollback, or correction strategy.
 - Geometry-operation versus result-contour replication.
 - Non-rigid environmental connector implementations.

@@ -1,7 +1,7 @@
 # BOM Architecture Decision Log
 
-**Version:** 0.11  
-**Last updated:** 2026-10-07  
+**Version:** 0.12  
+**Last updated:** 2026-10-08  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Purpose
@@ -742,3 +742,69 @@ The discussed geometry assumed a blast could originate inside intact material. T
 **Rationale:** James supported the existing grabbable trait and clarified that hands and feet are architecturally the same.
 
 **Scope:** Eligibility permits an attempt and never bypasses host validation. Ordinary foot contact is unaffected. Existing hold continuity retains its accepted rules. The example field name, authoring default, exact record placement, and reference encoding are not prescribed.
+
+### DEC-057 — Define centre-of-mass velocity and motion-preserving geometry changes
+
+**Date:** 2026-10-08  
+**Status:** Accepted  
+**Affects:** `WORLD-006`, `STATE-002`, `ECS-007`  
+**Refines:** `DEC-050`
+
+**Decision:** Body position/rotation describe the world-space pose of its local frame. Linear velocity is the world-space velocity of its current centre of mass; angular velocity is the rate of change of body angle. The local-frame origin may differ from the centre of mass. When a geometry or frame change is intended to preserve motion, it preserves the instantaneous movement of surviving material, including a same-ID result.
+
+**Rationale:** The conformance review exposed an asymmetric one-survivor cut that moved the centre of mass without changing the body ID or frame. Retaining the old COM velocity changed surviving material's motion. James accepted the clarified meaning and conditional preservation requirement.
+
+**Scope:** This does not impose universal motion inheritance, prohibit blast impulses, or select a frame-recentring policy. COM/inertia derivation, units, numeric encoding, and other motion policies remain open. The experiment's corrected motion-preservation implementation is evidence for that policy's cases, not a universal gameplay choice.
+
+### DEC-058 — Apply density-times-area mass to all physical roles
+
+**Date:** 2026-10-08  
+**Status:** Accepted  
+**Affects:** `MAT-005`, `MAT-009`, `ECS-005`, `ECS-007`  
+**Extends:** `DEC-035`, `DEC-048`
+
+**Decision:** Environment/material pieces, living characters, and live bombs all derive mass as resolved material density multiplied by current two-dimensional gameplay area. At equal density, twice the area gives twice the mass.
+
+**Rationale:** James accepted the same mass derivation for roles already sharing material inputs. Geometry and selected material consistently determine body mass across the physical world.
+
+**Unresolved:** Actual density values, units, definition/reference encoding, COM/inertia and other physical-property derivation, collision settings, and override policy. This does not adopt the experiment's fixture values or other engine defaults.
+
+### DEC-059 — Adopt connector force and torque capacity formulas
+
+**Date:** 2026-10-08  
+**Status:** Accepted  
+**Affects:** `CON-008`, `CON-009`, `CON-014`  
+**Refines:** `DEC-014`, `DEC-052`
+
+**Decision:** For authored strength per unit length `S` and surviving attachment length `L`, connector capacities are `Fmax = S × L` and `Tmax = ½ × S × L²`. The `½` factor is accepted as part of the gameplay model; authors still provide one strength value.
+
+**Rationale:** James accepted the experiment's simple geometric capacity model. Halving the attachment halves direct-force capacity and quarters bending capacity, making partial destruction meaningful before a bond disappears.
+
+**Scope:** This is a chosen gameplay model, not a claim of physical fidelity or established balance. The attachment-length measure, paired-endpoint representation, load measurement, units, numerical encoding, and strength values remain open. Optional percentage failure and its identity-based references are unchanged.
+
+### DEC-060 — Keep an activated bomb fuse running through handling and later contacts
+
+**Date:** 2026-10-08  
+**Status:** Accepted  
+**Affects:** `BOMB-001`, `BOMB-003`, `BOMB-004`, `LIMB-005`  
+**Refines:** `DEC-033`, `DEC-045`, `DEC-054`
+
+**Decision:** The first valid landing activates the configured remaining-duration countdown. Holding, throwing, movement, support loss, and further landings do not pause, restart, or extend it. Expiry detonates the bomb at its current position.
+
+**Rationale:** James explicitly agreed with the experiment's continuous-fuse behavior. Handling an active bomb changes the danger's position while retaining predictable progress to detonation; destruction beneath it does not reset that progress.
+
+**Unresolved:** Landing classification, authored fuse values, duration units/precision and numeric encoding, and detailed update/detonation order. The corrected experiment's 20 ms step and double-millisecond timer remain implementation conventions.
+
+### DEC-061 — Reduce blast reach through material, including cover destroyed by that blast
+
+**Date:** 2026-10-08  
+**Status:** Accepted  
+**Affects:** `WORLD-003`, `WORLD-007`, `CHAR-005`
+
+**Decision:** Nominal blast radius sets maximum reach through empty space. Intervening material consumes reach according to the material and its thickness. A blast may penetrate a barrier and reach targets beyond it if sufficient reach remains. Material destroyed by that same blast still contributes to what it had to overcome; deletion does not remove its reach cost. Character lethality accounts for effective reach.
+
+**Rationale:** James required blast radius to account for material in between and explicitly accepted this penetration behavior. Terrain provides protection without every thin barrier becoming an unconditional shield.
+
+**Unresolved:** Material-resistance inputs, their definition/instance source and relation to other properties, values and units, propagation/thickness calculation, and exact power/radius mapping. No formula, raycasting algorithm, new ECS record, or persistent blast entity was selected.
+
+**Experiment boundary:** The reviewed conformance branch tested radius-only explosions against Architecture v0.11 / `DEC-056`. Its reported successes do not demonstrate this newly accepted shielding rule. Updating the probe's blast model and evidence is later implementation work, not part of this handbook checkpoint.
