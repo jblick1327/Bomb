@@ -102,7 +102,8 @@ namespace Bomb.CanonicalDestruction.Tests
                 Assert.That(commit.ResultIds.All(fixture.World.Contains), Is.True);
             };
 
-            Assert.That(fixture.Execute(Rectangle(-0.25f, -2f, 0.25f, 2f), out _), Is.True);
+            Assert.That(fixture.Execute(Rectangle(-0.25f, -2f, 0.25f, 2f), out var observedOutcome), Is.True);
+            Assert.That(observedOutcome.Commit.NotificationErrors, Is.Empty, "Observer assertions must not be swallowed.");
             Assert.That(notifications, Is.EqualTo(1));
         }
 

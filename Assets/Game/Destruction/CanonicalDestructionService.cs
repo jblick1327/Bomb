@@ -23,8 +23,18 @@ namespace Bomb.CanonicalDestruction
             Vector2 direction = worldCentroid - request.ImpulseOrigin;
             if (direction.sqrMagnitude <= 0.00001f) direction = Vector2.up;
             Vector2 velocity = source.LinearVelocity + direction.normalized * request.ImpulseSpeed;
-            return source.WithGeometry(resultId, resultShape, revision, velocity,
-                source.AngularVelocityRadians, CanonicalBodyMode.Dynamic);
+            var result = source.WithGeometry(resultId, resultShape, revision, velocity,
+                source.AngularVelocityRadians, source.BodyMode);
+            if (resultId != source.Id && source.Selection != null)
+            {
+                Vector2 center = resultShape.Centroid;
+                Vector2 comOffset = Rotate(center - source.Shape.Centroid, source.RotationRadians);
+                result = result.WithGeometry(resultId, CanonicalGeometry.Translate(resultShape, -center), revision,
+                    velocity + CanonicalGeometry.AngularVelocityAt(source.AngularVelocityRadians, comOffset),
+                    source.AngularVelocityRadians, source.BodyMode).WithMotion(source.ToWorld(center), source.RotationRadians,
+                        velocity + CanonicalGeometry.AngularVelocityAt(source.AngularVelocityRadians, comOffset), source.AngularVelocityRadians);
+            }
+            return result;
         }
 
         private static Vector2 Rotate(Vector2 value, float radians)
@@ -60,7 +70,7 @@ namespace Bomb.CanonicalDestruction
             IDestructionResultStatePolicy resultStatePolicy = null)
         {
             this.world = world ?? throw new ArgumentNullException(nameof(world));
-            this.evaluator = evaluator ?? new ConvexSubtractionGeometryEvaluator();
+            this.evaluator = evaluator;
             this.revisionPolicy = revisionPolicy ?? new DefaultGeometryRevisionPolicy();
             this.resultStatePolicy = resultStatePolicy ?? new PreserveMotionAndApplyBlastPolicy();
         }
@@ -76,7 +86,7 @@ namespace Bomb.CanonicalDestruction
                 return false;
             }
 
-            GeometryEvaluationResult evaluation = evaluator.Evaluate(source, request);
+            if (!TryEvaluate(source, request, out GeometryEvaluationResult evaluation, out error)) return false;
             if (evaluation == null || !evaluation.Succeeded)
             {
                 error = evaluation == null ? "The geometry evaluator returned no result." : evaluation.Error;
@@ -89,53 +99,41 @@ namespace Bomb.CanonicalDestruction
                 return true;
             }
 
-            StructuralMutationPlan plan;
+            var derived = new List<CanonicalMaterialState>();
             int count = evaluation.ConnectedResults.Count;
-            if (count == 0)
+            try
             {
-                plan = new StructuralMutationPlan(source.Id, source.GeometryRevision, true, null,
-                    Array.Empty<CanonicalMaterialState>(), Array.Empty<MaterialEntityId>());
-            }
-            else if (count == 1)
-            {
-                uint revision;
-                try { revision = revisionPolicy.NextRevision(source.GeometryRevision); }
-                catch (Exception exception)
+                for (int i = 0; i < count; i++)
                 {
-                    error = "Could not advance the geometry revision: " + exception.Message;
-                    return false;
+                    var id = count == 1 ? source.Id : new MaterialEntityId("__geometry-result-" + i);
+                    derived.Add(resultStatePolicy.BuildResult(source, id, evaluation.ConnectedResults[i],
+                        count == 1 ? revisionPolicy.NextRevision(source.GeometryRevision) : revisionPolicy.InitialRevision, request));
                 }
-                CanonicalMaterialState updated = resultStatePolicy.BuildResult(source, source.Id,
-                    evaluation.ConnectedResults[0], revision, request);
-                plan = new StructuralMutationPlan(source.Id, source.GeometryRevision, false, updated,
-                    Array.Empty<CanonicalMaterialState>(), new[] { source.Id });
             }
-            else
-            {
-                if (!world.TryReserveEntityIds(count, out MaterialEntityIdReservation reservation, out error))
-                    return false;
-                var created = new List<CanonicalMaterialState>(count);
-                try
-                {
-                    for (int i = 0; i < count; i++)
-                    {
-                        created.Add(resultStatePolicy.BuildResult(source, reservation.Ids[i],
-                            evaluation.ConnectedResults[i], revisionPolicy.InitialRevision, request));
-                    }
-                }
-                catch (Exception exception)
-                {
-                    world.IdAllocator.Cancel(reservation);
-                    error = "Could not derive result material state: " + exception.Message;
-                    return false;
-                }
-                plan = new StructuralMutationPlan(source.Id, source.GeometryRevision, true, null,
-                    created, reservation.Ids, reservation);
-            }
-
+            catch (Exception exception) { error = "Could not derive result material state: " + exception.Message; return false; }
+            var replacements = new Dictionary<MaterialEntityId, IReadOnlyList<CanonicalMaterialState>> { [source.Id] = derived };
+            if (!CanonicalOutcomePlanner.TryPlan(world, replacements, null, out var plan, out error, source.Id)) return false;
             if (!world.TryCommit(plan, out StructuralCommitResult commit, out error)) return false;
             outcome = new DestructionCommitOutcome(true, commit);
             return true;
+        }
+
+        public bool TryEvaluate(CanonicalMaterialState source, DestructionRequest request, out GeometryEvaluationResult evaluation, out string error)
+        {
+            evaluation = null; error = null;
+            try
+            {
+                if (source.Selection != null)
+                {
+                    var response = world.Definitions.Resolve(source.Selection.Response);
+                    if (!response.destructible) { evaluation = GeometryEvaluationResult.Success(false, new[] { source.Shape }); return true; }
+                    evaluation = (evaluator ?? new ConvexSubtractionGeometryEvaluator(response.minimumRetainedCellArea)).Evaluate(source, request);
+                }
+                else evaluation = (evaluator ?? new ConvexSubtractionGeometryEvaluator()).Evaluate(source, request);
+                if (evaluation == null || !evaluation.Succeeded) { error = evaluation?.Error ?? "Missing geometry result."; return false; }
+                return true;
+            }
+            catch (Exception exception) { error = "Geometry evaluation failed: " + exception.Message; return false; }
         }
     }
 }

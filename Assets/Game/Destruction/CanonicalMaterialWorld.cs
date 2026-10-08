@@ -72,7 +72,7 @@ namespace Bomb.CanonicalDestruction
 
         public bool TryCommit(MaterialEntityIdReservation reservation, out string error)
         {
-            if (reservation == null || activeReservation == null || reservation.Token != activeReservation.Token)
+            if (reservation == null || !ReferenceEquals(reservation, activeReservation))
             {
                 error = "The mutation plan does not own the active ID reservation.";
                 return false;
@@ -86,7 +86,7 @@ namespace Bomb.CanonicalDestruction
 
         public void Cancel(MaterialEntityIdReservation reservation)
         {
-            if (reservation != null && activeReservation != null && reservation.Token == activeReservation.Token)
+            if (reservation != null && ReferenceEquals(reservation, activeReservation))
                 activeReservation = null;
         }
     }
@@ -111,12 +111,30 @@ namespace Bomb.CanonicalDestruction
             IdReservation = idReservation;
         }
 
+        public StructuralMutationPlan(long expectedGeneration, CanonicalWorldView completeView,
+            MaterialEntityIdReservation reservation = null, MaterialEntityId sourceId = default,
+            uint expectedSourceRevision = 0, IEnumerable<MaterialEntityId> resultIds = null)
+        {
+            ExpectedGeneration = expectedGeneration;
+            CompleteView = completeView;
+            IdReservation = reservation;
+            SourceId = sourceId;
+            ExpectedSourceRevision = expectedSourceRevision;
+            ResultIds = Array.AsReadOnly((resultIds ?? Array.Empty<MaterialEntityId>()).ToArray());
+            RetireSource = sourceId.IsValid && completeView?.Body(sourceId) == null;
+            UpdatedSource = sourceId.IsValid && !RetireSource ? completeView?.Body(sourceId) : null;
+            CreatedEntities = Array.AsReadOnly((completeView?.Bodies.Where(b => ResultIds.Contains(b.Id) && b.Id != sourceId)
+                ?? Array.Empty<CanonicalMaterialState>()).ToArray());
+        }
+
         public MaterialEntityId SourceId { get; }
         public uint ExpectedSourceRevision { get; }
         public bool RetireSource { get; }
         public CanonicalMaterialState UpdatedSource { get; }
         public IReadOnlyList<CanonicalMaterialState> CreatedEntities { get; }
         public IReadOnlyList<MaterialEntityId> ResultIds { get; }
+        public long? ExpectedGeneration { get; }
+        public CanonicalWorldView CompleteView { get; }
         internal MaterialEntityIdReservation IdReservation { get; }
     }
 
@@ -139,14 +157,22 @@ namespace Bomb.CanonicalDestruction
     {
         private Dictionary<MaterialEntityId, CanonicalMaterialState> entities =
             new Dictionary<MaterialEntityId, CanonicalMaterialState>();
+        private CanonicalWorldView view = new CanonicalWorldView(null);
+        private readonly HashSet<MaterialEntityId> legacyIssued = new HashSet<MaterialEntityId>();
+        private bool committing;
 
-        public CanonicalMaterialWorld(IMaterialEntityIdAllocator idAllocator)
+        public CanonicalMaterialWorld(IMaterialEntityIdAllocator idAllocator, DefinitionSet definitions = null)
         {
             IdAllocator = idAllocator ?? throw new ArgumentNullException(nameof(idAllocator));
+            Definitions = definitions ?? new DefinitionSet();
         }
 
         public IMaterialEntityIdAllocator IdAllocator { get; }
-        public IReadOnlyCollection<CanonicalMaterialState> Entities => entities.Values;
+        public IReadOnlyCollection<CanonicalMaterialState> Entities => view.Bodies;
+        public CanonicalWorldView View => view;
+        public DefinitionSet Definitions { get; }
+        public long Generation { get; private set; }
+        public ICanonicalWorldProjection Projection { get; set; }
         public int Count => entities.Count;
         public event Action<StructuralCommitResult> Committed;
 
@@ -158,7 +184,8 @@ namespace Bomb.CanonicalDestruction
                 return false;
             }
             if (!state.TryValidate(out error)) return false;
-            if (entities.ContainsKey(state.Id))
+            if (state.Selection != null) { error = "Defined match bodies must enter through an allocated complete plan."; return false; }
+            if (view.AllIds.Contains(state.Id) || legacyIssued.Contains(state.Id))
             {
                 error = "Duplicate canonical material entity ID: " + state.Id;
                 return false;
@@ -168,6 +195,9 @@ namespace Bomb.CanonicalDestruction
                 [state.Id] = state
             };
             entities = staged;
+            view = new CanonicalWorldView(staged.Values, view.Connectors, view.Holds, view.Participants);
+            legacyIssued.Add(state.Id);
+            Generation++;
             error = null;
             return true;
         }
@@ -181,25 +211,55 @@ namespace Bomb.CanonicalDestruction
         public bool TryCommit(StructuralMutationPlan plan, out StructuralCommitResult result, out string error)
         {
             result = null;
-            if (!TryValidatePlan(plan, out CanonicalMaterialState source, out error))
+            error = null;
+            if (committing || plan == null || (plan.ExpectedGeneration.HasValue && plan.ExpectedGeneration != Generation))
+            { error = "Missing, reentrant, or stale complete mutation plan."; if (plan != null) IdAllocator.Cancel(plan.IdReservation); return false; }
+            CanonicalMaterialState source = null;
+            if ((plan.CompleteView == null || plan.SourceId.IsValid) && !TryValidatePlan(plan, out source, out error))
             {
                 if (plan != null) IdAllocator.Cancel(plan.IdReservation);
                 return false;
             }
 
-            var staged = new Dictionary<MaterialEntityId, CanonicalMaterialState>(entities);
-            if (plan.RetireSource) staged.Remove(plan.SourceId);
-            if (plan.UpdatedSource != null) staged[plan.SourceId] = plan.UpdatedSource;
-            foreach (CanonicalMaterialState created in plan.CreatedEntities) staged.Add(created.Id, created);
-
-            if (plan.IdReservation != null && !IdAllocator.TryCommit(plan.IdReservation, out error))
+            CanonicalWorldView stagedView = plan.CompleteView;
+            if (stagedView == null)
             {
-                IdAllocator.Cancel(plan.IdReservation);
+                var staged = new Dictionary<MaterialEntityId, CanonicalMaterialState>(entities);
+                if (plan.RetireSource) staged.Remove(plan.SourceId);
+                if (plan.UpdatedSource != null) staged[plan.SourceId] = plan.UpdatedSource;
+                foreach (var created in plan.CreatedEntities) staged.Add(created.Id, created);
+                stagedView = new CanonicalWorldView(staged.Values, view.Connectors, view.Holds, view.Participants);
+            }
+            if (!stagedView.TryValidate(Definitions, out error)) { IdAllocator.Cancel(plan.IdReservation); return false; }
+            foreach (var body in stagedView.Bodies)
+                if (entities.TryGetValue(body.Id, out var previous) && body.Shape != previous.Shape && body.GeometryRevision <= previous.GeometryRevision)
+                { error = "Changed geometry must advance its surviving body's revision."; IdAllocator.Cancel(plan.IdReservation); return false; }
+            var added = stagedView.AllIds.Except(view.AllIds).ToArray();
+            if ((plan.IdReservation == null ? added.Length != 0 : !added.OrderBy(id => id).SequenceEqual(plan.IdReservation.Ids.OrderBy(id => id)))
+                )
+            { error = error ?? "New body and relationship IDs must exactly match the active match reservation."; IdAllocator.Cancel(plan.IdReservation); return false; }
+            var stagedIndex = stagedView.Bodies.ToDictionary(b => b.Id);
+            IPreparedCanonicalProjection prepared = null;
+            committing = true;
+            try
+            {
+                if (Projection != null && !Projection.TryPrepare(stagedView, Definitions, out prepared, out error))
+                { IdAllocator.Cancel(plan.IdReservation); prepared?.Dispose(); return false; }
+                if (plan.IdReservation != null && !IdAllocator.TryCommit(plan.IdReservation, out error))
+                { IdAllocator.Cancel(plan.IdReservation); prepared?.Dispose(); return false; }
+            }
+            catch (Exception exception)
+            {
+                prepared?.Dispose(); IdAllocator.Cancel(plan.IdReservation);
+                error = "Projection preparation failed: " + exception.Message;
                 return false;
             }
-
-            entities = staged;
-            result = new StructuralCommitResult(source.Id, plan.RetireSource, plan.ResultIds.ToArray());
+            finally { committing = false; }
+            // Prepared.Publish is a no-fail main-thread switch. Preparation and all validation occur above;
+            // an implementation violating that contract is an internal error, never a rejected mutation.
+            view = stagedView; entities = stagedIndex; Generation++;
+            prepared?.Publish();
+            result = new StructuralCommitResult(plan.SourceId, plan.RetireSource, plan.ResultIds.ToArray());
             Action<StructuralCommitResult> callbacks = Committed;
             if (callbacks != null)
             {
@@ -224,14 +284,41 @@ namespace Bomb.CanonicalDestruction
             }
 
             CanonicalMaterialState updated = current.WithMotion(position, rotationRadians, velocity, angularVelocityRadians);
-            if (!updated.TryValidate(out error)) return false;
-            var staged = new Dictionary<MaterialEntityId, CanonicalMaterialState>(entities)
+            return TryUpdateBodyBatch(new[] { updated }, out error);
+        }
+
+        public bool TryUpdateBodyBatch(IEnumerable<CanonicalMaterialState> updates, out string error)
+        {
+            error = "Invalid motion/lifecycle capture batch.";
+            if (committing || updates == null) return false;
+            var staged = new Dictionary<MaterialEntityId, CanonicalMaterialState>(entities);
+            var unique = new HashSet<MaterialEntityId>();
+            foreach (var updated in updates)
             {
-                [id] = updated
-            };
-            entities = staged;
-            error = null;
-            return true;
+                if (updated == null || !unique.Add(updated.Id) || !entities.TryGetValue(updated.Id, out var old)
+                    || old.Shape != updated.Shape || old.GeometryRevision != updated.GeometryRevision || old.BodyMode != updated.BodyMode
+                    || !Equals(old.Selection, updated.Selection) || old.Depth != updated.Depth || old.MassPerArea != updated.MassPerArea) return false;
+                staged[updated.Id] = updated;
+            }
+            var captured = new CanonicalWorldView(staged.Values, view.Connectors, view.Holds, view.Participants);
+            if (!captured.TryValidate(Definitions, out error)) return false;
+            entities = staged; view = captured; Generation++; error = null; return true;
+        }
+
+        internal bool TryLoadInitial(CanonicalWorldView restored, out string error)
+        {
+            if (view.AllIds.Any()) { error = "Recovery requires an empty unpublished world."; return false; }
+            if (!restored.TryValidate(Definitions, out error)) return false;
+            if (restored.Bodies.Any(b => b.Selection != null))
+                foreach (var id in restored.AllIds)
+                {
+                    if (!id.Value.StartsWith(IdAllocator.Prefix, StringComparison.Ordinal)
+                        || !ulong.TryParse(id.Value.Substring(IdAllocator.Prefix.Length), System.Globalization.NumberStyles.HexNumber,
+                            System.Globalization.CultureInfo.InvariantCulture, out var sequence)
+                        || sequence == 0 || sequence >= IdAllocator.NextSequence)
+                    { error = "Recovery IDs conflict with the match allocator high-water mark."; return false; }
+                }
+            view = restored; entities = restored.Bodies.ToDictionary(b => b.Id); Generation++; error = null; return true;
         }
 
         private bool TryValidatePlan(StructuralMutationPlan plan, out CanonicalMaterialState source, out string error)
@@ -284,7 +371,7 @@ namespace Bomb.CanonicalDestruction
                     error = "A multi-result mutation must retire its source and create every result.";
                     return false;
                 }
-                if (plan.IdReservation == null || plan.IdReservation.Ids.Count != resultCount)
+                if (plan.IdReservation == null || plan.IdReservation.Ids.Count < resultCount)
                 {
                     error = "Every created material ID must come from the world's active allocator reservation.";
                     return false;

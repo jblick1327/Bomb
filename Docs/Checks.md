@@ -12,7 +12,7 @@ round, input routing, or physics; the normal suite finishes with a fresh round.
 | `VerifyArenaLayout` | Resizing ground, boundaries, spawn, bomb range, camera |
 | `VerifyBombs` | Falling collision, crater collision, overlapping shapes, damage |
 | `VerifyFoundation` | Exposed terrain contours, whole-body damage, blast ring, death/HUD/reset |
-| `VerifyCanonicalDestruction` | Real bomb path, canonical split identity, atomic runtime projection, snapshot reload |
+| `VerifyCanonicalDestruction` | Synthetic interior-origin cut through BombDropper, canonical split identity, 3D projection and snapshot reload; does not verify WORLD-003 or authoritative 2D physics |
 | `StressTerrain` | Deterministic batches of overlapping cuts and rebuild timings |
 
 **Arena → Checks → Run All** runs the six normal checks. A failed check throws an
@@ -34,3 +34,9 @@ or frequent explosions may require terrain chunking.
 **Arena → Preview → Craters** creates sample overlapping cuts. **Capture** writes
 a 1280×720 image to `Temp/Arena-preview.png`. Previews are temporary; R restores
 the round. No CLI is needed for the menu tools.
+
+The isolated handbook fixture and its Unity Test Framework checks are documented in
+`Docs/HandbookConformance.md`. They use the same canonical evaluator/world/codec,
+with an authoritative local PhysicsScene2D adapter. The fixture's primary strip is
+a direct geometry test; its separate falling-bomb test establishes a reachable
+gameplay explosion origin. The legacy Arena checks above exercise prototype behavior.

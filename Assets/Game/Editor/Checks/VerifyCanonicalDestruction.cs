@@ -24,8 +24,8 @@ public static class VerifyCanonicalDestruction
             dropper.Explode(fixture.transform.position);
 
             Require(rock.CanonicalWorld != null, "The gameplay blast did not initialize a canonical material world.");
-            Require(!rock.CanonicalWorld.Contains(sourceId), "A split gameplay blast left the parent material ID alive.");
-            Require(rock.CanonicalWorld.Count == 2, "The reachable gameplay cut must produce two canonical connected results.");
+            Require(!rock.CanonicalWorld.Contains(sourceId), "A synthetic interior-origin blast left the parent material ID alive.");
+            Require(rock.CanonicalWorld.Count == 2, "The direct interior-origin cut must produce two canonical connected results.");
             Require(rock.CanonicalWorld.Entities.Select(entity => entity.Id).Distinct().Count() == 2,
                 "Every gameplay split result must have a distinct canonical ID.");
 
@@ -49,7 +49,7 @@ public static class VerifyCanonicalDestruction
             Require(rock.CanonicalWorld.Count == 2 && !rock.CanonicalWorld.Contains(sourceId),
                 "Loading the committed snapshot changed material identity or topology.");
 
-            return "PASS: BombDropper -> canonical polygon evaluation -> atomic split commit -> runtime rebuild -> snapshot reload.";
+            return "PASS: synthetic interior-origin BombDropper call -> canonical evaluation -> split commit -> legacy 3D rebuild -> snapshot reload (not WORLD-003 / 2D physics evidence).";
         }
         finally
         {

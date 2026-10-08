@@ -23,7 +23,7 @@ namespace Bomb.CanonicalDestruction
             if (SignedArea(this.vertices) < 0f) Array.Reverse(this.vertices);
         }
 
-        public IReadOnlyList<Vector2> Vertices => vertices;
+        public IReadOnlyList<Vector2> Vertices => Array.AsReadOnly(vertices);
         public float Area => Mathf.Abs(SignedArea(vertices));
 
         public Vector2 Centroid
@@ -76,6 +76,10 @@ namespace Bomb.CanonicalDestruction
                 error = "Canonical polygons must have non-zero area.";
                 return false;
             }
+            for (int i = 0; i < vertices.Length; i++)
+                foreach (var point in vertices)
+                    if (Cross(vertices[(i + 1) % vertices.Length] - vertices[i], point - vertices[i]) < -Epsilon)
+                    { error = "Canonical cells must be simple convex CCW polygons."; return false; }
 
             float winding = 0f;
             for (int i = 0; i < vertices.Length; i++)
@@ -119,7 +123,7 @@ namespace Bomb.CanonicalDestruction
             this.cells = cells.ToArray();
         }
 
-        public IReadOnlyList<CanonicalPolygon2D> Cells => cells;
+        public IReadOnlyList<CanonicalPolygon2D> Cells => Array.AsReadOnly(cells);
         public float Area => cells.Sum(cell => cell.Area);
 
         public Vector2 Centroid
@@ -151,6 +155,11 @@ namespace Bomb.CanonicalDestruction
                 }
                 if (!cell.TryValidate(out error)) return false;
             }
+
+            for (int i = 0; i < cells.Length; i++)
+                for (int j = i + 1; j < cells.Length; j++)
+                    if (CanonicalGeometry.InteriorOverlap(cells[i], cells[j]))
+                    { error = "Canonical cells must not overlap in area."; return false; }
 
             if (!PolygonConnectivity.IsConnected(cells))
             {
@@ -189,6 +198,13 @@ namespace Bomb.CanonicalDestruction
             MassPerArea = massPerArea;
         }
 
+        public CanonicalMaterialState(MaterialEntityId id, CanonicalMaterialShape shape, uint geometryRevision,
+            Vector2 position, float rotationRadians, Vector2 linearVelocity, float angularVelocityRadians,
+            CanonicalBodyMode bodyMode, BodyDefinitionSelection selection, BombCountdown countdown = null)
+            : this(id, shape, geometryRevision, position, rotationRadians, linearVelocity, angularVelocityRadians,
+                bodyMode, 0, 0)
+        { Selection = selection ?? throw new ArgumentNullException(nameof(selection)); Countdown = countdown; }
+
         public MaterialEntityId Id { get; }
         public CanonicalMaterialShape Shape { get; }
         public uint GeometryRevision { get; }
@@ -199,6 +215,13 @@ namespace Bomb.CanonicalDestruction
         public CanonicalBodyMode BodyMode { get; }
         public float Depth { get; }
         public float MassPerArea { get; }
+        public BodyDefinitionSelection Selection { get; }
+        public BombCountdown Countdown { get; }
+        public bool IsCharacter => Selection != null && Selection.IsCharacter;
+        public bool IsBomb => Selection != null && Selection.IsBomb;
+        public float Mass(DefinitionSet definitions) => Shape.Area * (Selection == null ? MassPerArea : definitions.Resolve(Selection.Material).density);
+        public Vector2 ToWorld(Vector2 local) => Position + CanonicalGeometry.Rotate(local, RotationRadians);
+        public Vector2 ToLocal(Vector2 world) => CanonicalGeometry.Rotate(world - Position, -RotationRadians);
 
         public CanonicalMaterialState WithGeometry(
             MaterialEntityId id,
@@ -208,15 +231,25 @@ namespace Bomb.CanonicalDestruction
             float angularVelocityRadians,
             CanonicalBodyMode bodyMode)
         {
-            return new CanonicalMaterialState(id, shape, revision, Position, RotationRadians,
-                linearVelocity, angularVelocityRadians, bodyMode, Depth, MassPerArea);
+            return Selection == null ? new CanonicalMaterialState(id, shape, revision, Position, RotationRadians,
+                linearVelocity, angularVelocityRadians, bodyMode, Depth, MassPerArea)
+                : new CanonicalMaterialState(id, shape, revision, Position, RotationRadians,
+                    linearVelocity, angularVelocityRadians, bodyMode, Selection, Countdown);
         }
 
         public CanonicalMaterialState WithMotion(Vector2 position, float rotationRadians, Vector2 velocity, float angularVelocityRadians)
         {
-            return new CanonicalMaterialState(Id, Shape, GeometryRevision, position, rotationRadians,
-                velocity, angularVelocityRadians, BodyMode, Depth, MassPerArea);
+            return Selection == null ? new CanonicalMaterialState(Id, Shape, GeometryRevision, position, rotationRadians,
+                velocity, angularVelocityRadians, BodyMode, Depth, MassPerArea)
+                : new CanonicalMaterialState(Id, Shape, GeometryRevision, position, rotationRadians,
+                    velocity, angularVelocityRadians, BodyMode, Selection, Countdown);
         }
+
+        public CanonicalMaterialState WithCountdown(BombCountdown countdown) => new CanonicalMaterialState(Id, Shape,
+            GeometryRevision, Position, RotationRadians, LinearVelocity, AngularVelocityRadians, BodyMode, Selection, countdown);
+        public CanonicalMaterialState WithSelection(BodyDefinitionSelection selection, CanonicalBodyMode mode) =>
+            new CanonicalMaterialState(Id, Shape, GeometryRevision, Position, RotationRadians, LinearVelocity,
+                AngularVelocityRadians, mode, selection);
 
         public bool TryValidate(out string error)
         {
@@ -242,11 +275,14 @@ namespace Bomb.CanonicalDestruction
                 error = "Canonical pose and velocity must be finite.";
                 return false;
             }
-            if (!float.IsFinite(Depth) || Depth <= 0f || !float.IsFinite(MassPerArea) || MassPerArea <= 0f)
+            if (!Enum.IsDefined(typeof(CanonicalBodyMode), BodyMode)) { error = "Invalid body mode."; return false; }
+            if (Selection == null && (!float.IsFinite(Depth) || Depth <= 0f || !float.IsFinite(MassPerArea) || MassPerArea <= 0f))
             {
                 error = "Canonical depth and mass density must be positive and finite.";
                 return false;
             }
+            if ((IsBomb && (Countdown == null || !Countdown.IsValid)) || (!IsBomb && Countdown != null))
+            { error = "Bomb lifecycle does not match the body's role."; return false; }
 
             error = null;
             return true;
