@@ -22,11 +22,16 @@ No matching 1.5.0 checkpoint was found among the BOM handbook candidates in Down
 |---|---|
 | Downloads `BOM-Team-Handbook.html` and `BOM-Team-Handbook (1).html` | 1.0 / v0.10 / DEC-051 |
 | Downloads `BOM-Team-Handbook (2).html` | 1.3 / v0.10 / DEC-051 |
+| Downloads `index (1).html` through `index (5).html` | 1.3.2 / v0.11 / DEC-056 |
 | Downloads `BOM-Team-Handbook-Source.zip` | 1.0 / v0.10 / DEC-051 |
 | Downloads `BOM-Checkpoint-2026-10-06.zip` | 1.3.1 / v0.10 / DEC-051 |
 | Extracted `BOM-Codex-CLI-Checkpoint-2026-10-06` handbook data | 1.3.1 / v0.10 / DEC-051 |
 
 The filename search reported one inaccessible temporary directory inside an unrelated Downloads project. This search does not establish that no other copy exists anywhere on the machine. An exact path to a supplied matching checkpoint would resolve that uncertainty.
+
+James subsequently supplied `C:\Users\jblic\Downloads\index (4).html`. Its embedded JSON contains Handbook **1.3.2**, Architecture **v0.11**, **DEC-056**, with `sourceHash` **`cb8bb50d80e432c6815b5239c367946e3f3fda17c811300f0cc2a0244b2fdbcd`**. Its whole-file SHA-256 is `fcfeddd1153e879d21cdc1d9ffa59292049edf0996fbd71405e7bfc207486f00`. The supplied copy therefore fails the required checkpoint identity check. The adjacent numbered HTML copies also contain that older baseline. A fresh remote-head check still found `gh-pages` at `65cd6086626d916f99b9389c589fecf9356bf67d`. The prerequisite remains unmet; no source review or computational proposal proceeded against these older copies.
+
+The next supplied file, `C:\Users\jblic\Downloads\blast-conformance.md`, is the experiment prompt itself. It repeats the required 1.5.0 / v0.13 / DEC-066 checkpoint and expected hash, but contains neither that checkpoint's embedded JSON nor its complete six source documents. Its whole-file SHA-256 is `8f1918539e123179e7dabc10ead2bcb5e8a43660d9c82da98e2ddc422e1cbc5f`. The newly arrived `index (5).html` is byte-identical to `index (4).html`. Neither resolves the prerequisite, and the published branch remained unchanged on another remote-head check.
 
 ## Preserved state and inspection limits
 
