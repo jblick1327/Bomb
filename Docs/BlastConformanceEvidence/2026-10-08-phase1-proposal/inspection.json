@@ -1,0 +1,718 @@
+{
+  "phase": "Phase 1; read-only inspection and proposed bounds; no implementation or Unity test run",
+  "archive": {
+    "path": "C:\\Users\\jblic\\Downloads\\BOM-Handbook-1.5.0-Source.zip",
+    "bytes": 415916,
+    "sha256": "49deb9ece85b84086ed4b3dcccd76bcc32e518f1c9d91210d5bc3343098491f8"
+  },
+  "checkpoint": {
+    "version": "1.5.0",
+    "baseline": "Architecture v0.13 \u00b7 DEC-066",
+    "sourceHash": "ef1d9430e490e7b4757e38f57daf12b1dfe19ff3cd2272610aea3147f9e93a0c",
+    "publication": "Prepared local checkpoint; uncommitted and not pushed.",
+    "files": {
+      "README.md": "3128b40e0d0eb2b1de421848bb32eb57453b9cefb08ea1cbb5f3924065a00832",
+      "index.html": "a7573dec0be5c1a6d47e7b752c4b83dfe961f67ae3b8d8c4f4a0b919a50c96a9",
+      "handbook/README.md": "a4c8ca87e827c3d041ff9351a9c8520fece373165713a847e89a99a9a624cbf2",
+      "handbook/build.py": "0c012419df2ea606fe2596911e615c7040f974970023e2b2cb79efbb44b533bc",
+      "handbook/handbook.json": "c347bc62af74c1f202154cc509e2b545e35af83cd93fbfd0bdddfb15da421656",
+      "handbook/template.html": "4d007bf9831e1b4ea4e6eb309e6eaf3be7b06327ae3f49f228da3debf4a2faef",
+      "handbook/style.css": "bd84fae983a8c547e29a704a18862635bde2ceefec2b1ff1abf66f771bb20a06",
+      "handbook/app.js": "03acf9e9ff36fc4eb5460b68e003b5aa374c9b7a797edbe1b67c66fb3bd6395b",
+      "handbook/prompts/blast-conformance.md": "8f1918539e123179e7dabc10ead2bcb5e8a43660d9c82da98e2ddc422e1cbc5f",
+      "handbook/sources/BOM Architecture.md": "e7295c7e8722dd9f0ba4ee1079dcd36a8fd912555e0dc755dfb21db0eedf179d",
+      "handbook/sources/BOM Decision Log.md": "545fe7f9e042f8ae42ac9aad6ff622445e30d7eba2cb710e2bc3976dfb6d4b20",
+      "handbook/sources/BOM Open Questions.md": "008cb1a037dc4d59e34625f99924186da6f57d667bb68f703b6179273485eb79",
+      "handbook/sources/BOM Model Interview Handoff.md": "8aadea81ceacbdfde4b0effcd689dcc63f71ae17213e1c659df3356f572f23b1",
+      "handbook/sources/BOM-Team-Model-Handoff.md": "b7636f83a938f944f1619bf5cd235e37a865a100456873459aa16ab906ee3852",
+      "handbook/sources/BOM-Candidate-Component-Map.md": "374ecdaf4c83156f4fede3e4333c50b4bbba9c91ca688290603f70d82dd12594"
+    }
+  },
+  "embeddedIdentity": {
+    "version": "1.5.0",
+    "baseline": "Architecture v0.13 \u00b7 DEC-066",
+    "sourceHash": "ef1d9430e490e7b4757e38f57daf12b1dfe19ff3cd2272610aea3147f9e93a0c"
+  },
+  "independentlyRecomputedSourceHash": "ef1d9430e490e7b4757e38f57daf12b1dfe19ff3cd2272610aea3147f9e93a0c",
+  "checkpointFileChecks": [
+    {
+      "path": "README.md",
+      "bytes": 2867,
+      "sha256": "3128b40e0d0eb2b1de421848bb32eb57453b9cefb08ea1cbb5f3924065a00832",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "index.html",
+      "bytes": 1505248,
+      "sha256": "a7573dec0be5c1a6d47e7b752c4b83dfe961f67ae3b8d8c4f4a0b919a50c96a9",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/README.md",
+      "bytes": 3210,
+      "sha256": "a4c8ca87e827c3d041ff9351a9c8520fece373165713a847e89a99a9a624cbf2",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/build.py",
+      "bytes": 45625,
+      "sha256": "0c012419df2ea606fe2596911e615c7040f974970023e2b2cb79efbb44b533bc",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/handbook.json",
+      "bytes": 43408,
+      "sha256": "c347bc62af74c1f202154cc509e2b545e35af83cd93fbfd0bdddfb15da421656",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/template.html",
+      "bytes": 2198,
+      "sha256": "4d007bf9831e1b4ea4e6eb309e6eaf3be7b06327ae3f49f228da3debf4a2faef",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/style.css",
+      "bytes": 11915,
+      "sha256": "bd84fae983a8c547e29a704a18862635bde2ceefec2b1ff1abf66f771bb20a06",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/app.js",
+      "bytes": 8779,
+      "sha256": "03acf9e9ff36fc4eb5460b68e003b5aa374c9b7a797edbe1b67c66fb3bd6395b",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/prompts/blast-conformance.md",
+      "bytes": 10061,
+      "sha256": "8f1918539e123179e7dabc10ead2bcb5e8a43660d9c82da98e2ddc422e1cbc5f",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM Architecture.md",
+      "bytes": 64763,
+      "sha256": "e7295c7e8722dd9f0ba4ee1079dcd36a8fd912555e0dc755dfb21db0eedf179d",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM Decision Log.md",
+      "bytes": 60812,
+      "sha256": "545fe7f9e042f8ae42ac9aad6ff622445e30d7eba2cb710e2bc3976dfb6d4b20",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM Open Questions.md",
+      "bytes": 23700,
+      "sha256": "008cb1a037dc4d59e34625f99924186da6f57d667bb68f703b6179273485eb79",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM Model Interview Handoff.md",
+      "bytes": 36754,
+      "sha256": "8aadea81ceacbdfde4b0effcd689dcc63f71ae17213e1c659df3356f572f23b1",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM-Team-Model-Handoff.md",
+      "bytes": 26914,
+      "sha256": "b7636f83a938f944f1619bf5cd235e37a865a100456873459aa16ab906ee3852",
+      "matchesCheckpoint": true
+    },
+    {
+      "path": "handbook/sources/BOM-Candidate-Component-Map.md",
+      "bytes": 29554,
+      "sha256": "374ecdaf4c83156f4fede3e4333c50b4bbba9c91ca688290603f70d82dd12594",
+      "matchesCheckpoint": true
+    }
+  ],
+  "sourceChecks": [
+    {
+      "path": "handbook/sources/BOM Architecture.md",
+      "version": "0.13",
+      "lines": 937,
+      "sha256": "e7295c7e8722dd9f0ba4ee1079dcd36a8fd912555e0dc755dfb21db0eedf179d",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    },
+    {
+      "path": "handbook/sources/BOM Decision Log.md",
+      "version": "0.13",
+      "lines": 877,
+      "sha256": "545fe7f9e042f8ae42ac9aad6ff622445e30d7eba2cb710e2bc3976dfb6d4b20",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    },
+    {
+      "path": "handbook/sources/BOM Open Questions.md",
+      "version": "0.12",
+      "lines": 304,
+      "sha256": "008cb1a037dc4d59e34625f99924186da6f57d667bb68f703b6179273485eb79",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    },
+    {
+      "path": "handbook/sources/BOM Model Interview Handoff.md",
+      "version": "0.14",
+      "lines": 161,
+      "sha256": "8aadea81ceacbdfde4b0effcd689dcc63f71ae17213e1c659df3356f572f23b1",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    },
+    {
+      "path": "handbook/sources/BOM-Team-Model-Handoff.md",
+      "version": "0.9",
+      "lines": 179,
+      "sha256": "b7636f83a938f944f1619bf5cd235e37a865a100456873459aa16ab906ee3852",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    },
+    {
+      "path": "handbook/sources/BOM-Candidate-Component-Map.md",
+      "version": "0.7",
+      "lines": 215,
+      "sha256": "374ecdaf4c83156f4fede3e4333c50b4bbba9c91ca688290603f70d82dd12594",
+      "matchesEmbeddedMarkdown": true,
+      "matchesEmbeddedSha256": true
+    }
+  ],
+  "preservedEvidence": [
+    {
+      "path": "Docs/ConformanceEvidence/SHA256SUMS.txt",
+      "entries": 55,
+      "mismatches": []
+    },
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/SHA256SUMS.txt",
+      "entries": 15,
+      "mismatches": []
+    },
+    {
+      "path": "Docs/BlastConformanceEvidence/2026-10-08-phase1-baseline/SHA256SUMS.txt",
+      "entries": 5,
+      "mismatches": []
+    }
+  ],
+  "historicalTests": [
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/editmode-after-result.json",
+      "status": "completed",
+      "duration": 2.4,
+      "summary": {
+        "total": 50,
+        "passed": 50,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "actualPassedResults": 50,
+      "rerunInPhase1": false
+    },
+    {
+      "path": "Docs/ConformanceEvidence/Correction-2026-10-08/playmode-after-result.json",
+      "status": "completed",
+      "duration": 1.8,
+      "summary": {
+        "total": 12,
+        "passed": 12,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "actualPassedResults": 12,
+      "rerunInPhase1": false
+    }
+  ],
+  "sourceAndSettingsInventory": [
+    {
+      "path": "Assets/Game/Destruction/Bomb.CanonicalDestruction.asmdef",
+      "sha256": "1d63ee6498283fefb4f3e3992643851412a941658bc256498eadcb2997d4efa9",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/Bomb.CanonicalDestruction.asmdef.meta",
+      "sha256": "7a7af4f47a8c151b4726f18cd3aa9a398c0187819a9932e5af2b2fd8ec22961e",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalBombContactSensor.cs",
+      "sha256": "ef10256d1212688d0f439b0749a0104d341d4ebe5728cb24b2965d937549e383",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalBombContactSensor.cs.meta",
+      "sha256": "caf4bde35c3c0cc6522d860f55b7850d5799c9abc6ec0efe8cd12e8ea99fbb5c",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalDefinitions.cs",
+      "sha256": "d13966c8665c73645b5c96da8e01808cee0a1c8dedcc0bc058f4dcda5fe91722",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalDefinitions.cs.meta",
+      "sha256": "eb3bd011e3247620d4e9e61909fdf49eca56bbf59e826caf70fb831dbfb9e6f1",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalDestructionService.cs",
+      "sha256": "4f0a45d14ab81f0ecdc5aa73343f249f5c23380a5a4a1a5c1167cc46ec9b4a9b",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalDestructionService.cs.meta",
+      "sha256": "c451de2fa7df08772067c5bcdccfa04fb4d615ede31d75334855b7b42f18e7b1",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalGeometry.cs",
+      "sha256": "87875527f55f3d8021c4c830bfbd3009735e9aa80af963bffce912e75cd88c3e",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalGeometry.cs.meta",
+      "sha256": "c587f8dcc71be54e049e8d7d12f37511ebca1d79beb97a871094ce54a207b7f4",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialRuntimeProjector.cs",
+      "sha256": "91040cdff698adb2fdf5b3725591c39289526e87347247fe6d4405ac94c08be7",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialRuntimeProjector.cs.meta",
+      "sha256": "293f84a68ed26306247fd646275a8a1ea8438787f25464c2acbca39214c85d79",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialSnapshot.cs",
+      "sha256": "f40697f086a9daf41a61788780287a6462c520c5eca80e759f92c13c2eff604d",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialSnapshot.cs.meta",
+      "sha256": "7df188a7c39d259879d665d61571d4c12eb8533f336483580c8510f450021cf6",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialState.cs",
+      "sha256": "ce4e34e516ce06f672c88b5cf6dead9b751b20266a48a20905b4ba29379899d4",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialState.cs.meta",
+      "sha256": "6b8b7862cf184a0cee34610cad7b1c0de7a6e8bb745da25f470825dbea090f41",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialWorld.cs",
+      "sha256": "87a28548ec623f0dca8123d5f98f8346118a51e08f5845b4ed5037ef94ba9145",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalMaterialWorld.cs.meta",
+      "sha256": "d7d0739f4426b716cf50e1824ae8eead4538cdbf4c31a9bbc7007808d54d140b",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalOutcomePlanner.cs",
+      "sha256": "bd718dbd99eac002e21cfd4607df8aae6638c8bc8a8813b1ec1c88ae78f70e80",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalOutcomePlanner.cs.meta",
+      "sha256": "6e6fb825b8df08184a7e9ea181091227cd68ba4a518bf64f9dcc60951b5e1e57",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalRelationships.cs",
+      "sha256": "a8b7361d0f17c512fe89c58df4f5fbcf58bda508432723789ec119774c5aa9f1",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalRelationships.cs.meta",
+      "sha256": "d7a90e21d0694ec98a6a187da253e39bc38c2dfc27baf0a3ebdaba22a97c5eb1",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalShapeMesh.cs",
+      "sha256": "fabad44cfcb53b82363097111577ce58fe39641019bb70418268725b31eadedb",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalShapeMesh.cs.meta",
+      "sha256": "70a78c8a53cbb3084ea7af95ff25cb4df4d18bfc55b52cd13f753751496f5df5",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalSimulationHost.cs",
+      "sha256": "a23ef9e988a4a2adfbde796a93441594cddbaff574d9e3960af27f5d563a8da5",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalSimulationHost.cs.meta",
+      "sha256": "bd39169fe077be3e712ddf45d5cf5fed287a710234e712835a958c0ce35603e1",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalWorldRuntime2D.cs",
+      "sha256": "2a9c36a06f863aaabfd54a9d5a73a6acc92ec3766684ceb621530ddd5488fca6",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/CanonicalWorldRuntime2D.cs.meta",
+      "sha256": "5f603c35809dc367ed348fad88ce9a1d16b40392ad9d73516e22111df40f9de2",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/DestructionGeometry.cs",
+      "sha256": "5ff4c6236ea0be65c97f87deb6b0a64af6f5b82dd55189aa6524f7ddc455808b",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/DestructionGeometry.cs.meta",
+      "sha256": "66fc4dcc344a352d9633acf2fcde3f83fa82ca2f2a5e6f4a912f241065ece85d",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/HandbookConformanceFixture.cs",
+      "sha256": "0958e6a1b52e83c9f0744e6866a6c44cb9ad8731149b299444aff6de8facfee2",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/HandbookConformanceFixture.cs.meta",
+      "sha256": "15f5ac395794e7905024ac49f985bb9901b227d0748559b6e38e141235b52743",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/HandbookConformanceScene.cs",
+      "sha256": "5a60c2a298d25fe29962b6061a7c9ab4256ea8e0e324c73e932b74012d0c8b77",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/HandbookConformanceScene.cs.meta",
+      "sha256": "4e638e835755e7f5879a24d82c3399dfc2344218a79d60433e0c4e10ba3223d5",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/MaterialEntityId.cs",
+      "sha256": "d18881d7b2bcfb01bb499289641fe9db3bae64df0a6035a7483d7ec15a8f26cd",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Game/Destruction/MaterialEntityId.cs.meta",
+      "sha256": "f74017bc6f42cfc41b8675d6fc89d6650f3459f767c3d49f8e369083bf09d85d",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode.meta",
+      "sha256": "5595e639f1710f2f026c6c5cd03cd87063dc9eb747ecd4f4a92646c355390925",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/Bomb.CanonicalDestruction.EditModeTests.asmdef",
+      "sha256": "ce452c2fdcbeea4be666ba8bf204b2fac5cc34b01ca46b74081064941b374e0f",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/Bomb.CanonicalDestruction.EditModeTests.asmdef.meta",
+      "sha256": "d933b1a0225b32dd967bc0d989564b4498a775d3b5b5da567403743abfcbcbb7",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/CanonicalDestructionTests.cs",
+      "sha256": "902fbb62e08d1cd9f0f2e08ce1a36b4d17a921d84ea38f532b8e8614b10108de",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/CanonicalDestructionTests.cs.meta",
+      "sha256": "842113c95c0cda42968b114b964f6b78663846bb1b13546b2a3e45dad2c42548",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/HandbookConformanceTests.cs",
+      "sha256": "61364708d3954dbec8ced89fcaa468a514a9ff2d95df2f07e6acfa95c4ca8a43",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/EditMode/HandbookConformanceTests.cs.meta",
+      "sha256": "b8428cf18c73d0ec76e94fd90d72a39d1969a722d7792da4068774a22fd529ed",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode.meta",
+      "sha256": "bbd32e83b82fa86de8ce6947d2d85e68c1e718bf4db8762d3d577ab185ce0326",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/Bomb.CanonicalDestruction.PlayModeTests.asmdef",
+      "sha256": "e4e14626b47614848097c0682e8e6f24023ef207b2e133ea2e07b50d0f00181f",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/Bomb.CanonicalDestruction.PlayModeTests.asmdef.meta",
+      "sha256": "d4a9fcc7346772b2cf8f28c41d97d3fb752b4049bc6f9d9a328cc9e69beabd3a",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/CanonicalRuntimeReconstructionTests.cs",
+      "sha256": "8904dc594c3bfd338125717d2ce588b0eca4a4ed044f4ef23fcad2dbb73e8c79",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/CanonicalRuntimeReconstructionTests.cs.meta",
+      "sha256": "c057d2e36925740df8c12648cfdc3a261ce5867ed1aea90e1c9132572bac5820",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/HandbookConformanceRuntimeTests.cs",
+      "sha256": "794dadc371e6bcac039fddf5fb5d93afe81002782b8aef549f6fa792cd4ccd6e",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Assets/Tests/PlayMode/HandbookConformanceRuntimeTests.cs.meta",
+      "sha256": "0bcbfadeb010a3ce9e5de9f69442a052d4bb93d87885b98bd8a9ebaaf7ac2001",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Packages/manifest.json",
+      "sha256": "cad67b3a80c34c98dcd0e96d4f0d9c225d0abe89da0d083b18492c50b96bf92b",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "Packages/packages-lock.json",
+      "sha256": "327cf1e45de1c6f7e880d0577442ba23c6e88e6e00fb2eee537456e3f440597a",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/AudioManager.asset",
+      "sha256": "aeedeb3243f07b61dbbe854aa08b5ef6f0b5274dd9852ad9f6129dde3e105a31",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/ClusterInputManager.asset",
+      "sha256": "40e65dd214bf254955d2c8829ca8ce2130fd3510485560ce012e9a1ddd93e623",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/DynamicsManager.asset",
+      "sha256": "b7c9a9dc08b98990109d4346f68745e15e238de400f96c583e53e1c83c743a78",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/EditorBuildSettings.asset",
+      "sha256": "3b8b9f11395df137c186477480e43b60784f72c5cbb9f92bdd83f1b8c1e1343d",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/EditorSettings.asset",
+      "sha256": "32d6a9be4c9aa9795a96bd951820a2d9be1bfefab82ed05a5db111af0863938f",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "sha256": "9c1bb28a2aac0fee9d3cfd844f6f345fe573f18d35a5c9fd3048b9e9a066c4df",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/InputManager.asset",
+      "sha256": "7a1bb836a1008d26d0860d143e9d9df7ca41731d30a72901b518063819c62df2",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/MemorySettings.asset",
+      "sha256": "1e8379a461b10ae09f3f696911088c16875d63e87ed5f2d95df9e1892703f9fd",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/MultiplayerManager.asset",
+      "sha256": "aba89fd1a1ddad182727ad82727e536d27372e90328a8196da2a4560398983dd",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/NavMeshAreas.asset",
+      "sha256": "80106cfa7e6181a1928b142c075f3e510d527441e3d79bc83590e4ac91e7cd66",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/PackageManagerSettings.asset",
+      "sha256": "a7dabba589abe7fc2b45bd3d3fba3fe9be97043492703f716da2d9131c13a807",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/Packages/com.unity.ai.assistant/Settings.json",
+      "sha256": "54ba37aabe4a7d2663325e93f66f063c6dcfdcad92316cbaddbad55fcbcb5698",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/Physics2DSettings.asset",
+      "sha256": "e3cbdbf0be15244b7b67d2f07bdb8e8981911c11a8c7fe8035f5261272fec658",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/PresetManager.asset",
+      "sha256": "29c125923fe6e29f90190d4fce1c82d660e7051546e2c9d02908d18c9cf2436c",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/ProjectSettings.asset",
+      "sha256": "324e6cbb3e306ddc98b5cb81aa3107ece5e751fd0301629c12cb0bc1a10fb5b9",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/ProjectVersion.txt",
+      "sha256": "a5ba4d8827f8b58a50c0934415bede5cbcb0965f30e99ce469c11b5a8b3bbe68",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/QualitySettings.asset",
+      "sha256": "6814d6cc3eb850dd7d2a069a8b17ba9f7591deba8b1758a855978bd9c8627643",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/SceneTemplateSettings.json",
+      "sha256": "bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/ShaderGraphSettings.asset",
+      "sha256": "cdba1e5d65bcf6e3269d76ed3e60b6c21f98322002996642c9d74f1eb89f6b91",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/TagManager.asset",
+      "sha256": "23fc56b484aa3d7edf5914cd3591f7a823ccef5e3f3496f8a51f30388ead63dc",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/TimeManager.asset",
+      "sha256": "1a83e54adbbda7c9f4851103a0c6ab7f6448a3343d4ea5b7620452fa08416ecd",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/URPProjectSettings.asset",
+      "sha256": "596d5c8bf4f957b03684c949bebc252ae1918f25415a1147a00684c4b086efda",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/UnityConnectSettings.asset",
+      "sha256": "b7dd1e8290598f5ce86919ba1c98b42b766c8c42191a30fa2c4d12195c4ecd00",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/VFXManager.asset",
+      "sha256": "f066c6483919961332415ee64204f74fe52f38c02e82892eb02b7a5b2e381f0e",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/VersionControlSettings.asset",
+      "sha256": "e7bda45bf7a394745fee1316e6c71fa676004d591ad1f3aa247fd3e4ceb86071",
+      "identicalToExperimentBase": true
+    },
+    {
+      "path": "ProjectSettings/XRSettings.asset",
+      "sha256": "edd2beb4a2e388312b4b7da241aa51070434005d82c59363f1237dd2e567585f",
+      "identicalToExperimentBase": true
+    }
+  ],
+  "independentExpectations": {
+    "kind": "Independent closed-form fixture expectations; not implementation output",
+    "inputs": {
+      "air": 1,
+      "coverThickness": 1,
+      "coverResistance": 4,
+      "coreThickness": 2,
+      "coreResistance": 1
+    },
+    "costToCore": 6,
+    "costThroughCore": 10,
+    "radius5CoverPenetration": 0.8,
+    "radius5CoverRemaining": 0.19999999999999996,
+    "radius8CorePenetration": 1.0,
+    "wideLayerOffAxis": [
+      {
+        "degrees": 0,
+        "costToCore": 6.0,
+        "radius5CoverEndpointX": 1.8,
+        "radius8CoreEndpointX": 3.0
+      },
+      {
+        "degrees": 10,
+        "costToCore": 6.09255967131447,
+        "radius5CoverEndpointX": 1.784807753012208,
+        "radius8CoreEndpointX": 2.939231012048832
+      },
+      {
+        "degrees": 20,
+        "costToCore": 6.385066634855472,
+        "radius5CoverEndpointX": 1.7396926207859085,
+        "radius8CoreEndpointX": 2.7587704831436337
+      },
+      {
+        "degrees": 30,
+        "costToCore": 6.928203230275509,
+        "radius5CoverEndpointX": 1.6660254037844386,
+        "radius8CoreEndpointX": 2.464101615137755
+      }
+    ],
+    "coveredCharacterMinimumCost": 10.1,
+    "radius8OpeningHalfAngleDegrees": 41.40962210927086,
+    "radius8CoverBackOpeningHalfHeight": 1.763834207376394,
+    "emptySpaceMaxSectorDegreesForQuarterMillimeterSagittaAtRadius10": 0.8102863726448388,
+    "narrowCoverSilhouetteDegrees": 0.3819704487193749,
+    "narrowCover": {
+      "resistance": 16,
+      "thickness": 0.02,
+      "radius": 5,
+      "centralReach": 4.68,
+      "rotated37DegreeCentralReach": 4.599316589390008
+    },
+    "thinWideLayer": {
+      "front": 1,
+      "thickness": 0.02,
+      "resistance": 4,
+      "radius": 1.05,
+      "penetration": 0.010000000000000009,
+      "costToBack": 1.1
+    },
+    "cavity": {
+      "materialIntervals": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "resistance": 1,
+      "radius": 5,
+      "costToBackWall": 4,
+      "backWallPenetration": 0.5,
+      "endpoint": 3.5
+    },
+    "coveredCorner": {
+      "radius": 7,
+      "characterBounds": [
+        [
+          3.4,
+          1.4
+        ],
+        [
+          3.6,
+          1.6
+        ]
+      ],
+      "minimumDirectCost": 8.002784982370104,
+      "airDetourLength": 5.5742316524018705
+    }
+  },
+  "reportCheckout": {
+    "path": "C:\\Users\\jblic\\Desktop\\Bomb\\.worktrees\\blast-conformance-plan",
+    "branch": "feature/blast-conformance-plan",
+    "inspectionHead": "61c70c0c94cdf73dd94fd3d448129bfeae2a0845",
+    "experimentBase": "3f652e9178a78777bd41514441229827f7e611ad",
+    "preReportSourceAndSettingsDiff": ""
+  }
+}

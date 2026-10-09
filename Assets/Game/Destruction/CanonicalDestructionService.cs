@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Bomb.CanonicalDestruction
@@ -118,6 +119,25 @@ namespace Bomb.CanonicalDestruction
             if (!world.TryCommit(plan, out StructuralCommitResult commit, out error)) return false;
             outcome = new DestructionCommitOutcome(true, commit);
             return true;
+        }
+
+        public bool TryEvaluateBlast(CanonicalMaterialState source, BoundedBlastField field, out GeometryEvaluationResult evaluation, out string error)
+        {
+            evaluation = null; error = null;
+            try
+            {
+                if (field == null || field.OriginalGeneration != world.Generation)
+                { error = "Blast field is missing or belongs to a different world generation."; return false; }
+                if (!field.Inputs.Any(input => input.Body.Id == source.Id))
+                { evaluation = GeometryEvaluationResult.Success(false, new[] { source.Shape }); return true; }
+                var response = world.Definitions.Resolve(source.Selection.Response);
+                evaluation = response.destructible
+                    ? new ConvexSubtractionGeometryEvaluator(response.minimumRetainedCellArea).EvaluateBlast(source, field)
+                    : GeometryEvaluationResult.Success(false, new[] { source.Shape });
+                if (!evaluation.Succeeded) { error = evaluation.Error; return false; }
+                return true;
+            }
+            catch (Exception exception) { error = "Blast geometry failed: " + exception.Message; return false; }
         }
 
         public bool TryEvaluate(CanonicalMaterialState source, DestructionRequest request, out GeometryEvaluationResult evaluation, out string error)

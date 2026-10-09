@@ -1,0 +1,1179 @@
+{
+    "schemaVersion": 3,
+    "allocatorPrefix": "blast-",
+    "nextEntitySequence": "6",
+    "materials": [
+        {
+            "id": "blast-0000000000000001",
+            "geometryRevision": 1,
+            "position": {
+                "x": -0.0000010349227750339197,
+                "y": 0.4115564525127411
+            },
+            "rotationRadians": 0.0003427764168009162,
+            "linearVelocity": {
+                "x": 0.00007470459240721539,
+                "y": -1.1258492804699927e-8
+            },
+            "angularVelocityRadians": 1.5579280443489552e-7,
+            "bodyMode": "Dynamic",
+            "depth": 0.0,
+            "massPerArea": 0.0,
+            "cells": [
+                {
+                    "points": [
+                        {
+                            "x": -0.20000000298023225,
+                            "y": -0.4000000059604645
+                        },
+                        {
+                            "x": 0.20000000298023225,
+                            "y": -0.4000000059604645
+                        },
+                        {
+                            "x": 0.20000000298023225,
+                            "y": 0.4000000059604645
+                        },
+                        {
+                            "x": -0.20000000298023225,
+                            "y": 0.4000000059604645
+                        }
+                    ]
+                }
+            ],
+            "selection": {
+                "material": {
+                    "kind": 0,
+                    "id": "bomb",
+                    "hash": "06cb16787847b42530ecce0927667324133a3231817c30a993dd41564a802582"
+                },
+                "response": {
+                    "kind": 1,
+                    "id": "indestructible",
+                    "hash": "061f6d79fffe3b7ef211b0a28ae1d4303bf39d1efb8d4d9c46414ff90e07a55e"
+                },
+                "appearance": {
+                    "kind": 2,
+                    "id": "terrain",
+                    "hash": "21b8bf799d57e5219885e6a03df562fb7be0f39544c04fcdf0d2639cdf9bb322"
+                },
+                "role": {
+                    "kind": 6,
+                    "id": "fixture-bomb",
+                    "hash": "b104d486300d313ff376454ba660279dd9cd4015792e036c192186898e876d6a"
+                }
+            },
+            "countdown": {
+                "active": true,
+                "remaining": 8.0
+            },
+            "hasSelection": true,
+            "hasCountdown": true
+        },
+        {
+            "id": "blast-0000000000000002",
+            "geometryRevision": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotationRadians": 0.0,
+            "linearVelocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "angularVelocityRadians": 0.0,
+            "bodyMode": "Static",
+            "depth": 0.0,
+            "massPerArea": 0.0,
+            "cells": [
+                {
+                    "points": [
+                        {
+                            "x": -0.05000000074505806,
+                            "y": -0.5
+                        },
+                        {
+                            "x": 0.05000000074505806,
+                            "y": -0.5
+                        },
+                        {
+                            "x": 0.05000000074505806,
+                            "y": 0.0
+                        },
+                        {
+                            "x": -0.05000000074505806,
+                            "y": 0.0
+                        }
+                    ]
+                }
+            ],
+            "selection": {
+                "material": {
+                    "kind": 0,
+                    "id": "cover",
+                    "hash": "b60b46684713232c12ebf8fb00f1871e7e4317c780cbf1eb5894ff101ff87bb2"
+                },
+                "response": {
+                    "kind": 1,
+                    "id": "indestructible",
+                    "hash": "061f6d79fffe3b7ef211b0a28ae1d4303bf39d1efb8d4d9c46414ff90e07a55e"
+                },
+                "appearance": {
+                    "kind": 2,
+                    "id": "terrain",
+                    "hash": "21b8bf799d57e5219885e6a03df562fb7be0f39544c04fcdf0d2639cdf9bb322"
+                },
+                "role": {
+                    "kind": 3,
+                    "id": "platform",
+                    "hash": "e2319853def96e06b6d10cd770a218144c7fba3626453d2f49941176fa33d5c0"
+                }
+            },
+            "countdown": {
+                "active": false,
+                "remaining": 0.0
+            },
+            "hasSelection": true,
+            "hasCountdown": false
+        },
+        {
+            "id": "blast-0000000000000003",
+            "geometryRevision": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotationRadians": 0.0,
+            "linearVelocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "angularVelocityRadians": 0.0,
+            "bodyMode": "Static",
+            "depth": 0.0,
+            "massPerArea": 0.0,
+            "cells": [
+                {
+                    "points": [
+                        {
+                            "x": 1.0,
+                            "y": -6.0
+                        },
+                        {
+                            "x": 2.0,
+                            "y": -6.0
+                        },
+                        {
+                            "x": 2.0,
+                            "y": 6.0
+                        },
+                        {
+                            "x": 1.0,
+                            "y": 6.0
+                        }
+                    ]
+                }
+            ],
+            "selection": {
+                "material": {
+                    "kind": 0,
+                    "id": "cover",
+                    "hash": "b60b46684713232c12ebf8fb00f1871e7e4317c780cbf1eb5894ff101ff87bb2"
+                },
+                "response": {
+                    "kind": 1,
+                    "id": "bounded-subtraction",
+                    "hash": "ef25aad1731e419f3a931ece08d29d28b56f293f9c3d4afa03e12708ffa484ea"
+                },
+                "appearance": {
+                    "kind": 2,
+                    "id": "terrain",
+                    "hash": "21b8bf799d57e5219885e6a03df562fb7be0f39544c04fcdf0d2639cdf9bb322"
+                },
+                "role": {
+                    "kind": 3,
+                    "id": "platform",
+                    "hash": "e2319853def96e06b6d10cd770a218144c7fba3626453d2f49941176fa33d5c0"
+                }
+            },
+            "countdown": {
+                "active": false,
+                "remaining": 0.0
+            },
+            "hasSelection": true,
+            "hasCountdown": false
+        },
+        {
+            "id": "blast-0000000000000004",
+            "geometryRevision": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotationRadians": 0.0,
+            "linearVelocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "angularVelocityRadians": 0.0,
+            "bodyMode": "Static",
+            "depth": 0.0,
+            "massPerArea": 0.0,
+            "cells": [
+                {
+                    "points": [
+                        {
+                            "x": 2.0,
+                            "y": -6.0
+                        },
+                        {
+                            "x": 4.0,
+                            "y": -6.0
+                        },
+                        {
+                            "x": 4.0,
+                            "y": 6.0
+                        },
+                        {
+                            "x": 2.0,
+                            "y": 6.0
+                        }
+                    ]
+                }
+            ],
+            "selection": {
+                "material": {
+                    "kind": 0,
+                    "id": "core",
+                    "hash": "13538ce654a0b8cd7c2504cdaadd012f15537532472edeb5d703b69698824927"
+                },
+                "response": {
+                    "kind": 1,
+                    "id": "bounded-subtraction",
+                    "hash": "ef25aad1731e419f3a931ece08d29d28b56f293f9c3d4afa03e12708ffa484ea"
+                },
+                "appearance": {
+                    "kind": 2,
+                    "id": "terrain",
+                    "hash": "21b8bf799d57e5219885e6a03df562fb7be0f39544c04fcdf0d2639cdf9bb322"
+                },
+                "role": {
+                    "kind": 3,
+                    "id": "platform",
+                    "hash": "e2319853def96e06b6d10cd770a218144c7fba3626453d2f49941176fa33d5c0"
+                }
+            },
+            "countdown": {
+                "active": false,
+                "remaining": 0.0
+            },
+            "hasSelection": true,
+            "hasCountdown": false
+        },
+        {
+            "id": "blast-0000000000000005",
+            "geometryRevision": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotationRadians": 0.0,
+            "linearVelocity": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "angularVelocityRadians": 0.0,
+            "bodyMode": "Static",
+            "depth": 0.0,
+            "massPerArea": 0.0,
+            "cells": [
+                {
+                    "points": [
+                        {
+                            "x": 4.099999904632568,
+                            "y": 0.30000001192092898
+                        },
+                        {
+                            "x": 4.300000190734863,
+                            "y": 0.30000001192092898
+                        },
+                        {
+                            "x": 4.300000190734863,
+                            "y": 0.5
+                        },
+                        {
+                            "x": 4.099999904632568,
+                            "y": 0.5
+                        }
+                    ]
+                }
+            ],
+            "selection": {
+                "material": {
+                    "kind": 0,
+                    "id": "clay",
+                    "hash": "2646a3e517a220245e8862183c9cb76466e592d55b29c181167ceb9c97888d2d"
+                },
+                "response": {
+                    "kind": 1,
+                    "id": "indestructible",
+                    "hash": "061f6d79fffe3b7ef211b0a28ae1d4303bf39d1efb8d4d9c46414ff90e07a55e"
+                },
+                "appearance": {
+                    "kind": 2,
+                    "id": "terrain",
+                    "hash": "21b8bf799d57e5219885e6a03df562fb7be0f39544c04fcdf0d2639cdf9bb322"
+                },
+                "role": {
+                    "kind": 5,
+                    "id": "fixture-claymate",
+                    "hash": "6868a9acf733b9fbcfb5a85dc03dd284eb1398ba5263bd04efd6dc8444dd89a0"
+                }
+            },
+            "countdown": {
+                "active": false,
+                "remaining": 0.0
+            },
+            "hasSelection": true,
+            "hasCountdown": false
+        }
+    ],
+    "definitions": [
+        {
+            "kind": 0,
+            "id": "bomb",
+            "density": 3.0,
+            "friction": 0.4000000059604645,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": true,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 0,
+            "id": "clay",
+            "density": 1.0,
+            "friction": 0.4000000059604645,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": true,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 0,
+            "id": "core",
+            "density": 3.0,
+            "friction": 0.4000000059604645,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": true,
+            "blastResistance": 1.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 0,
+            "id": "cover",
+            "density": 2.0,
+            "friction": 0.4000000059604645,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": true,
+            "blastResistance": 4.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 1,
+            "id": "bounded-subtraction",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": true,
+            "minimumRetainedCellArea": 0.000009999999747378752,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 1,
+            "id": "convex-subtraction",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": true,
+            "minimumRetainedCellArea": 0.009999999776482582,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 1,
+            "id": "indestructible",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 2,
+            "id": "clay",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 1.0,
+                "g": 0.6600000262260437,
+                "b": 0.1599999964237213,
+                "a": 1.0
+            },
+            "depth": 0.20000000298023225,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 2,
+            "id": "terrain",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.23999999463558198,
+                "g": 0.33000001311302187,
+                "b": 0.38999998569488528,
+                "a": 1.0
+            },
+            "depth": 0.20000000298023225,
+            "bodyMode": 0,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 3,
+            "id": "corpse",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 1,
+            "holdEligible": false,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 3,
+            "id": "platform",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": true,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 5,
+            "id": "fixture-claymate",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 0,
+            "holdEligible": true,
+            "leftHand": {
+                "x": -0.20000000298023225,
+                "y": 0.30000001192092898
+            },
+            "rightHand": {
+                "x": 0.20000000298023225,
+                "y": 0.30000001192092898
+            },
+            "leftFoot": {
+                "x": -0.15000000596046449,
+                "y": -0.3499999940395355
+            },
+            "rightFoot": {
+                "x": 0.15000000596046449,
+                "y": -0.3499999940395355
+            },
+            "handReach": 1.5,
+            "footReach": 1.0,
+            "corpseRole": {
+                "kind": 3,
+                "id": "corpse",
+                "hash": "d865ffba4b3ea3bb646447aa37b4eb38c48943d2683c9537dd8d5cd520b05ff8"
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "clay",
+                "hash": "2646a3e517a220245e8862183c9cb76466e592d55b29c181167ceb9c97888d2d"
+            },
+            "corpseResponse": {
+                "kind": 1,
+                "id": "convex-subtraction",
+                "hash": "c709e793c9bdb1274f059826c0a7dc7db739bb3e6329366229897b39608dfeb2"
+            },
+            "corpseAppearance": {
+                "kind": 2,
+                "id": "clay",
+                "hash": "0f7f4d4dec117dcb7d859ee931fd8f51de3a0ec7f4e65ffb56e725ba0f8b55bd"
+            },
+            "countdownSeconds": 0.0,
+            "blastPower": 0.0,
+            "blastRadius": 0.0,
+            "levelCells": []
+        },
+        {
+            "kind": 6,
+            "id": "fixture-bomb",
+            "density": 0.0,
+            "friction": 0.0,
+            "restitution": 0.0,
+            "linearDamping": 0.0,
+            "angularDamping": 0.0,
+            "hasBlastResistance": false,
+            "blastResistance": 0.0,
+            "destructible": false,
+            "minimumRetainedCellArea": 0.0,
+            "tint": {
+                "r": 0.0,
+                "g": 0.0,
+                "b": 0.0,
+                "a": 0.0
+            },
+            "depth": 0.0,
+            "bodyMode": 1,
+            "holdEligible": true,
+            "leftHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightHand": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "leftFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rightFoot": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "handReach": 0.0,
+            "footReach": 0.0,
+            "corpseRole": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseMaterial": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseResponse": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "corpseAppearance": {
+                "kind": 0,
+                "id": "",
+                "hash": ""
+            },
+            "countdownSeconds": 8.0,
+            "blastPower": 1.0,
+            "blastRadius": 8.0,
+            "levelCells": []
+        }
+    ],
+    "connectors": [],
+    "holds": [],
+    "participants": []
+}

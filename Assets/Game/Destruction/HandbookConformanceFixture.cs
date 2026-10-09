@@ -20,7 +20,8 @@ namespace Bomb.CanonicalDestruction
         {
             var specs = new List<DefinitionSpec>();
             foreach (var item in new[] { ("terrain", 2f), ("clay", 1f), ("bomb", 3f), ("light", 0.2f) })
-                specs.Add(new DefinitionSpec { kind = DefinitionKind.Material, id = item.Item1, density = item.Item2, friction = 0.4f });
+                specs.Add(new DefinitionSpec { kind = DefinitionKind.Material, id = item.Item1, density = item.Item2, friction = 0.4f,
+                    hasBlastResistance = true, blastResistance = 0 });
             specs.Add(new DefinitionSpec { kind = DefinitionKind.Response, id = "convex-subtraction", destructible = true, minimumRetainedCellArea = 0.01f });
             specs.Add(new DefinitionSpec { kind = DefinitionKind.Response, id = "indestructible" });
             foreach (var item in new[] { ("terrain", new Color(0.24f,0.33f,0.39f)), ("clay", new Color(1,0.66f,0.16f)),

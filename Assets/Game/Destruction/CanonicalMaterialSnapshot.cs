@@ -7,7 +7,7 @@ namespace Bomb.CanonicalDestruction
 {
     public static class CanonicalMaterialSnapshotCodec
     {
-        private const int CurrentSchemaVersion = 2;
+        private const int CurrentSchemaVersion = 3;
 
         public static string Serialize(CanonicalMaterialWorld world, bool prettyPrint = false)
         {

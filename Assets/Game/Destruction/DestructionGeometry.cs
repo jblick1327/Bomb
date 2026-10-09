@@ -60,6 +60,9 @@ namespace Bomb.CanonicalDestruction
             this.minimumRetainedCellArea = Mathf.Max(Epsilon, minimumRetainedCellArea);
         }
 
+        public GeometryEvaluationResult EvaluateBlast(CanonicalMaterialState source, BoundedBlastField field)
+            => BoundedBlastGeometry.Evaluate(source, field, minimumRetainedCellArea);
+
         public GeometryEvaluationResult Evaluate(CanonicalMaterialState source, DestructionRequest request)
         {
             if (source == null) return GeometryEvaluationResult.Failure("The destruction source is missing.");

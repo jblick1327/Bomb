@@ -1,0 +1,69 @@
+{
+  "success": true,
+  "command": "command console",
+  "data": {
+    "command": "console",
+    "parameters": {
+      "tail": "200",
+      "level": "warn"
+    },
+    "result": {
+      "entries": [
+        {
+          "seq": 1,
+          "timestampUtc": "2026-10-09T10:13:28.7144488Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Camera Main Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.",
+          "stackTrace": "UnityEngine.GUIUtility:ProcessEvent (int,intptr,bool&)\n",
+          "seeded": false
+        },
+        {
+          "seq": 2,
+          "timestampUtc": "2026-10-09T10:13:31.9488562Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Camera Main Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.",
+          "stackTrace": "UnityEngine.GUIUtility:ProcessEvent (int,intptr,bool&)\n",
+          "seeded": false
+        },
+        {
+          "seq": 13,
+          "timestampUtc": "2026-10-09T10:17:44.1923659Z",
+          "level": "warn",
+          "logType": "Warning",
+          "message": "Camera Main Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.",
+          "stackTrace": "UnityEngine.GUIUtility:ProcessEvent (int,intptr,bool&)\n",
+          "seeded": false
+        }
+      ],
+      "cursor": 34,
+      "session": "28b9a88000d54ccfaecd228008daae1a",
+      "returned": 3,
+      "dropped": false,
+      "reset": false,
+      "counts": {
+        "error": 0,
+        "warn": 3,
+        "log": 31
+      },
+      "groundTruth": {
+        "sampledUtc": "2026-10-09T10:22:54.9716543Z",
+        "ageMs": 27,
+        "compilationFailed": false,
+        "compiling": false,
+        "consoleErrors": 0,
+        "consoleWarnings": 0,
+        "consoleLogs": 10,
+        "seeded": true
+      }
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7802,
+      "projectPath": "C:\\Users\\jblic\\Desktop\\Bomb\\.worktrees\\blast-conformance-probe"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

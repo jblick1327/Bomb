@@ -29,6 +29,8 @@ namespace Bomb.CanonicalDestruction
         public DefinitionKind kind;
         public string id;
         public float density, friction, restitution, linearDamping, angularDamping;
+        public bool hasBlastResistance;
+        public float blastResistance;
         public bool destructible;
         public float minimumRetainedCellArea;
         public Color tint;
@@ -48,6 +50,8 @@ namespace Bomb.CanonicalDestruction
         {
             error = "Invalid definition: " + id;
             if (string.IsNullOrWhiteSpace(id) || !Enum.IsDefined(typeof(DefinitionKind), kind)) return false;
+            if (kind == DefinitionKind.Material && (!hasBlastResistance || !Nonnegative(blastResistance)))
+            { error = "Material requires explicitly authored finite nonnegative blast resistance: " + id; return false; }
             if (kind == DefinitionKind.Material && (!Positive(density) || !Nonnegative(friction)
                 || !Nonnegative(restitution) || restitution > 1 || !Nonnegative(linearDamping) || !Nonnegative(angularDamping))) return false;
             if (kind == DefinitionKind.Response && (!Nonnegative(minimumRetainedCellArea)
@@ -79,7 +83,8 @@ namespace Bomb.CanonicalDestruction
         {
             foreach (var spec in definitions ?? Array.Empty<DefinitionSpec>())
             {
-                if (spec == null || !spec.TryValidate(out _)) throw new ArgumentException("Invalid definition input.");
+                if (spec == null) throw new ArgumentException("Missing definition input.");
+                if (!spec.TryValidate(out var error)) throw new ArgumentException(error);
                 frozen.Add(Key(spec.kind, spec.id), JsonUtility.ToJson(spec));
             }
         }

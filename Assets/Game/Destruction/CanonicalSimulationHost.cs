@@ -35,6 +35,7 @@ namespace Bomb.CanonicalDestruction
         public IReadOnlyDictionary<MaterialEntityId, ConnectorLoad> LastLoads { get; private set; } = new Dictionary<MaterialEntityId, ConnectorLoad>();
         public Vector2? LastExplosionCenter { get; private set; }
         public StructuralCommitResult LastStructuralCommit { get; private set; }
+        public BlastDiagnostics LastBlastDiagnostics { get; private set; }
         public void QueueHold(HoldRequest request) => pending.Enqueue(request);
         public bool TryHold(HoldRequest request, out CanonicalHold hold, out string error)
         {
@@ -108,55 +109,64 @@ namespace Bomb.CanonicalDestruction
         private bool TryResolve(IReadOnlyList<MaterialEntityId> bombs, IReadOnlyList<MaterialEntityId> failedConnectors,
             IEnumerable<MaterialEntityId> explicitDeaths, out string error)
         {
+            // Each independent explosion sees the previous complete publication. No
+            // intervening physics/fuse step, and no persistent immunity state.
+            if (bombs.Count == 0) return TryResolveOne(null, failedConnectors, explicitDeaths, out error);
+            bool first = true;
+            foreach (var id in bombs.OrderBy(id => id))
+            {
+                var bomb = World.View.Body(id);
+                if (bomb?.IsBomb != true) { error = "Due bomb no longer exists."; return false; }
+                if (!TryResolveOne(bomb, first ? failedConnectors : Array.Empty<MaterialEntityId>(),
+                    first ? explicitDeaths : null, out error)) return false;
+                first = false;
+            }
+            error = null; return true;
+        }
+        private bool TryResolveOne(CanonicalMaterialState bomb, IReadOnlyList<MaterialEntityId> failedConnectors,
+            IEnumerable<MaterialEntityId> explicitDeaths, out string error)
+        {
             var replacements = new Dictionary<MaterialEntityId, IReadOnlyList<CanonicalMaterialState>>();
             var deaths = new HashSet<MaterialEntityId>(explicitDeaths ?? Array.Empty<MaterialEntityId>());
-            var blasts = bombs.Select(id => World.View.Body(id)).ToArray();
+            BoundedBlastField field = null;
+            if (bomb != null && !BoundedBlastEvaluator.TryCreate(World, bomb, out field, out error)) return false;
+            if (field != null) LastBlastDiagnostics = field.Diagnostics;
             var service = new CanonicalDestructionService(World);
             foreach (var source in World.View.Bodies.Where(b => !b.IsBomb))
             {
                 if (source.IsCharacter)
                 {
-                    foreach (var bomb in blasts)
-                    {
-                        var spec = World.Definitions.Resolve(bomb.Selection.Role);
-                        if (spec.blastPower >= 1 && CanonicalGeometry.Distance(source.Shape, source.ToLocal(bomb.Position)) <= spec.blastRadius) deaths.Add(source.Id);
-                    }
+                    if (field?.IsExposed(source.Id) == true) deaths.Add(source.Id);
                     if (deaths.Contains(source.Id))
                     {
                         var character = World.Definitions.Resolve(source.Selection.Role);
                         var selection = new BodyDefinitionSelection(character.corpseMaterial, character.corpseResponse, character.corpseAppearance, character.corpseRole);
                         replacements[source.Id] = new[] { source.WithSelection(selection, World.Definitions.Resolve(selection.Role).bodyMode) };
                     }
-                    continue; // A newly installed corpse is not carved by the same blast.
+                    continue; // This explosion alone preserves the killed character's shape.
                 }
-                var pieces = new List<CanonicalMaterialShape> { source.Shape };
-                bool changed = false;
-                foreach (var bomb in blasts)
+                if (field == null) continue;
+                if (!service.TryEvaluateBlast(source, field, out var evaluated, out error)) return false;
+                if (evaluated.Changed)
                 {
-                    var spec = World.Definitions.Resolve(bomb.Selection.Role);
-                    var cutter = HandbookConformanceFixture.Circle(bomb.Position, spec.blastRadius, 24);
-                    var next = new List<CanonicalMaterialShape>();
-                    foreach (var piece in pieces)
-                    {
-                        var temporary = source.WithGeometry(source.Id, piece, source.GeometryRevision, source.LinearVelocity, source.AngularVelocityRadians, source.BodyMode);
-                        if (!service.TryEvaluate(temporary, new DestructionRequest(source.Id, cutter, bomb.Position, 0), out var evaluated, out error)) return false;
-                        changed |= evaluated.Changed; next.AddRange(evaluated.ConnectedResults);
-                    }
-                    pieces = next;
-                }
-                if (changed)
-                {
+                    var pieces = evaluated.ConnectedResults;
                     var policy = new PreserveMotionAndApplyBlastPolicy();
-                    replacements[source.Id] = pieces.Select((shape, i) => policy.BuildResult(source,
-                        pieces.Count == 1 ? source.Id : new MaterialEntityId("__blast-child-" + i), shape,
-                        pieces.Count == 1 ? new DefaultGeometryRevisionPolicy().NextRevision(source.GeometryRevision) : 1,
-                        new DestructionRequest(source.Id, null, Vector2.zero, 0))).ToArray();
+                    replacements[source.Id] = pieces.Select((shape, i) =>
+                    {
+                        var result = policy.BuildResult(source, source.Id, shape,
+                            pieces.Count == 1 ? new DefaultGeometryRevisionPolicy().NextRevision(source.GeometryRevision) : 1,
+                            new DestructionRequest(source.Id, null, Vector2.zero, 0));
+                        return pieces.Count == 1 ? result : BoundedBlastGeometry.RecenterExactly(source, result,
+                            new MaterialEntityId("__blast-child-" + i), field.Diagnostics);
+                    }).ToArray();
                 }
             }
-            if (!CanonicalOutcomePlanner.TryPlan(World, replacements, bombs, out var plan, out error, retireConnectors: failedConnectors)) return false;
+            if (field != null && !field.TryValidateRemoval(replacements, out error)) return false;
+            if (!CanonicalOutcomePlanner.TryPlan(World, replacements,
+                bomb == null ? Array.Empty<MaterialEntityId>() : new[] { bomb.Id }, out var plan, out error, retireConnectors: failedConnectors)) return false;
             if (!World.TryCommit(plan, out var commit, out error)) return false;
             LastStructuralCommit = commit;
-            if (blasts.Length > 0) LastExplosionCenter = blasts[blasts.Length - 1].Position;
+            if (bomb != null) { LastExplosionCenter = bomb.Position; LastBlastDiagnostics = field.Diagnostics; }
             return true;
         }
         public bool TryCapture(out string json, out string error)

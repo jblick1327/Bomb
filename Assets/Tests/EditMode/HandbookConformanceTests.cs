@@ -381,7 +381,7 @@ namespace Bomb.Tests.EditMode
             Assert.That(changed,Is.Not.EqualTo(json)); Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(changed,out var rejected,out _),Is.False); Assert.That(rejected,Is.Null);
             var missing = new DefinitionSet(world.Definitions.Export().Where(s => s.kind != DefinitionKind.Material || s.id != "terrain"));
             Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json,out rejected,out _,missing),Is.False); Assert.That(rejected,Is.Null);
-            Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json.Replace("\"schemaVersion\":2","\"schemaVersion\":1"),out _,out _),Is.False);
+            Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json.Replace("\"schemaVersion\":3","\"schemaVersion\":1"),out _,out _),Is.False);
             Assert.That(CanonicalMaterialSnapshotCodec.TryDeserialize(json.Replace("\"nextEntitySequence\":\"8\"","\"nextEntitySequence\":\"1\""),out _,out _),Is.False);
         }
         [TestCase("1","match-")]
