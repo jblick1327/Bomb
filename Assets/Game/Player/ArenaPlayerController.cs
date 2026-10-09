@@ -36,6 +36,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     // Used to remember the player's original scale.
     private Vector3 originalScale;
+    private float fixedZPosition;
 
     private void Awake()
     {
@@ -44,17 +45,19 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
         // Save the player's starting scale.
         originalScale = transform.localScale;
+        fixedZPosition = transform.position.z;
     }
 
     private void Update()
     {
         float input = ReadMovement();
 
-        animator.SetBool("Running", Mathf.Abs(input) > 0.01f);
+        if (animator != null)
+            animator.SetBool("Running", Mathf.Abs(input) > 0.01f);
 
         // Flip the player depending on movement direction.
         UpdateFacing(input);
-
+        
         bool grounded = controller.isGrounded;
 
         if (grounded && !wasGrounded)
@@ -88,6 +91,14 @@ public sealed class ArenaPlayerController : MonoBehaviour
         );
 
         controller.Move(velocity * Time.deltaTime);
+
+        // Keep the player on the side-view plane even if a collision moves it in Z.
+        Vector3 position = transform.position;
+        if (!Mathf.Approximately(position.z, fixedZPosition))
+        {
+            position.z = fixedZPosition;
+            transform.position = position;
+        }
 
         if ((controller.collisionFlags & CollisionFlags.Above) != 0
             && verticalSpeed > 0f)

@@ -37,6 +37,21 @@ public sealed class BombDropper : MonoBehaviour
     private float rubbleImpulse = 2.5f;
     [SerializeField] private bool enableCrater = true;
     [SerializeField] private bool enableRubble = true;
+    [SerializeField, Tooltip("Development shortcut: allow B to drop an extra bomb.")]
+    private bool enableSpawning = false;
+
+    [Header("Automatic bomb drops")]
+    [SerializeField, Min(0.1f), InspectorName("Starting minimum interval (seconds)")]
+    private float minimumDropInterval = 2f;
+    [SerializeField, Min(0.1f), InspectorName("Starting maximum interval (seconds)")]
+    private float maximumDropInterval = 5f;
+    [SerializeField, Min(0.1f), InspectorName("Fastest interval (seconds)")]
+    private float fastestDropInterval = 0.75f;
+    [SerializeField, Min(1f), InspectorName("Time to reach fastest rate (seconds)")]
+    private float timeToFastestRate = 60f;
+    private float dropTimer;
+    private float roundElapsedTime;
+    public int DroppedBombCount { get; private set; }
 
     [SerializeField, Min(0.05f), InspectorName("Bomb radius (units)")]
     private float bombRadius = 0.25f;
@@ -86,11 +101,41 @@ public sealed class BombDropper : MonoBehaviour
     private void Awake()
     {
         ResolveGround();
+        roundElapsedTime = 0f;
+        ResetDropTimer();
     }
 
     private void Update()
     {
-        if (CanRun && Keyboard.current != null && Keyboard.current.bKey.wasPressedThisFrame) DropBomb();
+        if (!CanRun) return;
+
+        roundElapsedTime += Time.deltaTime;
+
+        // B is an optional development shortcut. Automatic drops always continue.
+        if (enableSpawning && Keyboard.current != null && Keyboard.current.bKey.wasPressedThisFrame)
+            DropBomb();
+
+        dropTimer -= Time.deltaTime;
+        if (dropTimer <= 0f && DropBomb() != null) ResetDropTimer();
+    }
+
+    private void ResetDropTimer()
+    {
+        float fastestInterval = Mathf.Max(0.1f, fastestDropInterval);
+        float startingMin = Mathf.Max(0.1f, Mathf.Min(minimumDropInterval, maximumDropInterval));
+        float startingMax = Mathf.Max(minimumDropInterval, maximumDropInterval);
+        float rampDuration = Mathf.Max(1f, timeToFastestRate);
+        float ramp = Mathf.Clamp01(roundElapsedTime / rampDuration);
+        float minInterval = Mathf.Lerp(startingMin, fastestInterval, ramp);
+        float maxInterval = Mathf.Lerp(startingMax, fastestInterval, ramp);
+        dropTimer = Random.Range(minInterval, maxInterval);
+    }
+
+    public void ResetSpawnRamp()
+    {
+        roundElapsedTime = 0f;
+        DroppedBombCount = 0;
+        ResetDropTimer();
     }
 
     public FallingBomb DropBomb()
@@ -134,6 +179,7 @@ public sealed class BombDropper : MonoBehaviour
 
         var bomb = body.AddComponent<FallingBomb>();
         bomb.Initialize(this, fallAcceleration, bombLifetime);
+        DroppedBombCount++;
         return bomb;
     }
 
@@ -159,8 +205,8 @@ public sealed class BombDropper : MonoBehaviour
         if (player != null && player.gameObject.activeInHierarchy
             && player.DistanceToBody(center) <= lethalRadius)
         {
-            //if (session != null) session.KillPlayer();
-           // else player.gameObject.SetActive(false);
+            if (session != null) session.KillPlayer();
+            else player.gameObject.SetActive(false);
         }
 
         ShowBlast(center);

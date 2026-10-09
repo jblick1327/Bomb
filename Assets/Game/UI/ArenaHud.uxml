@@ -1,9 +1,19 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <ui:VisualElement name="hud-root" class="hud-root">
-        <ui:Label name="controls" class="controls" text="A/D or arrows: move    Space: jump    B: drop bomb    R: restart" />
+        <ui:Label name="timer" text="00:00" class="timer" />
+        <ui:Label name="bomb-counter" text="Bombs dropped: 0" class="bomb-counter" />
+        <ui:Label name="controls" text="A/D or arrows: move    Space: jump    R: restart" class="controls" />
         <ui:VisualElement name="death-panel" class="death-panel">
-            <ui:Label class="death-title" text="YOU DIED" />
-            <ui:Label class="death-subtitle" text="Press R to restart" />
+            <ui:Label text="GAME OVER" class="death-title" />
+            <ui:Label name="result-bombs" text="Bombs Dodged: 0" class="result-item" />
+            <ui:Label name="result-time" text="Time Survived: 00:00" class="result-item" />
+            <ui:Label name="result-xp" text="XP Gained: 0" class="result-item" />
+            <ui:VisualElement name="level-track" class="level-track result-item">
+                <ui:Label name="current-level" text="Lvl 1" class="level-label" />
+                <ui:VisualElement class="level-bar"><ui:VisualElement name="level-fill" class="level-fill" /></ui:VisualElement>
+                <ui:Label name="next-level" text="Lvl 2" class="level-label" />
+            </ui:VisualElement>
+            <ui:Label text="Press R to restart" class="death-subtitle" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
