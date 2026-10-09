@@ -17,6 +17,8 @@ public sealed class ArenaSession : MonoBehaviour
 
     public ArenaRoundState State { get; private set; } = ArenaRoundState.Playing;
     public bool IsPlaying => State == ArenaRoundState.Playing;
+    public float TimeSurvived { get; private set; }
+    public int BombsDodged => bombs != null ? bombs.DroppedBombCount : 0;
     public event Action<ArenaRoundState> StateChanged;
 
     private void Start()
@@ -28,6 +30,7 @@ public sealed class ArenaSession : MonoBehaviour
 
     private void Update()
     {
+        if (IsPlaying) TimeSurvived += Time.deltaTime;
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) RestartRound();
     }
 
@@ -43,6 +46,7 @@ public sealed class ArenaSession : MonoBehaviour
     public void RestartRound()
     {
         bombs.ClearTransientObjects();
+        bombs.ResetSpawnRamp();
         foreach (DestructibleGround terrain in FindObjectsByType<DestructibleGround>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             terrain.ResetGround();
         foreach (ArenaGameplayGround terrain in FindObjectsByType<ArenaGameplayGround>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -66,6 +70,7 @@ public sealed class ArenaSession : MonoBehaviour
         player.transform.position = spawn;
         controller.enabled = true;
         State = ArenaRoundState.Playing;
+        TimeSurvived = 0f;
         player.gameObject.SetActive(true);
         Physics.SyncTransforms();
         StateChanged?.Invoke(State);
