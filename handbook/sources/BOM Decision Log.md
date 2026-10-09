@@ -1,7 +1,7 @@
 # BOM Architecture Decision Log
 
-**Version:** 0.12  
-**Last updated:** 2026-10-08  
+**Version:** 0.14  
+**Last updated:** 2026-10-09  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Purpose
@@ -808,3 +808,77 @@ The discussed geometry assumed a blast could originate inside intact material. T
 **Unresolved:** Material-resistance inputs, their definition/instance source and relation to other properties, values and units, propagation/thickness calculation, and exact power/radius mapping. No formula, raycasting algorithm, new ECS record, or persistent blast entity was selected.
 
 **Experiment boundary:** The reviewed conformance branch tested radius-only explosions against Architecture v0.11 / `DEC-056`. Its reported successes do not demonstrate this newly accepted shielding rule. Updating the probe's blast model and evidence is later implementation work, not part of this handbook checkpoint.
+
+### DEC-062 — Author blast resistance independently in shared material properties
+
+**Status:** Accepted  
+**Date:** 2026-10-08  
+**Affects:** `MAT-010`, `ECS-005`, `ECS-007`, `WORLD-007`
+
+**Decision:** Blast resistance is independently authored through the shared recoverable material-property source. It is independent of density, connector strength and destruction response, and greater resistance costs more reach for the same thickness.
+
+**Rationale:** James preferred the clearer name "blast resistance" and accepted its independent source. This resolves the source/property part left open in `DEC-061` without selecting a field name, asset layout, actual values or encoding.
+
+### DEC-063 — Require a breach before removing material behind a layer
+
+**Status:** Accepted  
+**Date:** 2026-10-08  
+**Affects:** `WORLD-009`, `WORLD-007`, `CHAR-005`
+
+**Decision:** Removal along one blast path must breach intervening material before carving material behind it. A separate exposed path may reach that material independently. Destroyed cover keeps its original reach cost.
+
+**Rationale:** James required a strong outer layer to protect a weak core while it remains unbreached. His mention of Darryn described informal observations from playing with his own experiments, not a formal test or a reproduced bug. The requirement was accepted on its own merits; no specific Darryn result is claimed fixed.
+
+### DEC-064 — Add linear material cost to ordinary travel distance
+
+**Status:** Accepted  
+**Date:** 2026-10-08  
+**Affects:** `WORLD-008`, `WORLD-007`, `MAT-010`
+
+**Decision:** Additional reach consumed equals blast resistance × thickness crossed. Ordinary travel distance also consumes reach, including distance inside material. Successive unambiguous layers add costs; original material remains chargeable even when removed.
+
+**Rationale:** James accepted this simple, inspectable propagation calculation. The worked 1 m air / 1 m cover at resistance 4 / 2 m core at resistance 1 example illustrates costs of 6 m to the core and 10 m through it; these are not adopted game defaults. Numerical geometry, overlaps and actual authoring values remain open.
+
+### DEC-065 — Propagate straight outward without corner wrapping
+
+**Status:** Accepted  
+**Date:** 2026-10-08  
+**Affects:** `WORLD-010`, `WORLD-008`, `WORLD-009`, `CHAR-005`
+
+**Decision:** Evaluate straight outward paths from the current bomb position using original material and effective reach. Paths do not turn or spread around corners. Geometry removal and character exposure use this same propagation basis.
+
+**Rationale:** James accepted direct propagation. No raycasting API, sample count or polygon algorithm was selected.
+
+### DEC-066 — Preserve the new corpse through its killing explosion
+
+**Status:** Accepted  
+**Date:** 2026-10-08  
+**Affects:** `CHAR-006`, `CHAR-003`, `CHAR-004`, `LIMB-009`, `COMMIT-002`
+
+**Decision:** The killing explosion preserves the new corpse's shape, geometry revision and body ID. Install the ordinary authored death configuration and control/hold consequences. A later independent explosion uses the corpse's selected environment response; there is no whole-tick immunity or new timer.
+
+**Rationale:** James explicitly preferred leaving the newly dead character uncarved because it adds humour. This is an accepted current-build policy. Independent-explosion ordering was still open at this checkpoint.
+
+### DEC-067 — Make indestructible cover completely opaque
+
+**Status:** Accepted  
+**Date:** 2026-10-09  
+**Affects:** `WORLD-011`, `WORLD-009`, `WORLD-010`, `CHAR-005`
+
+**Decision:** Indestructible cover blocks both carving and character exposure behind its original first intersection along a blast path, even when reach remains. Separate exposed paths can still reach a target.
+
+**Rationale:** In reviewing the bounded blast proposal, James accepted complete blocking as the consistent solution even if the case rarely appears in the game. This closes indestructible-cover transmission, not numerical shadow handling or every living-character/corpse response choice.
+
+### DEC-068 — Scope ordering and recovery choices to the bounded blast experiment
+
+**Status:** Accepted  
+**Date:** 2026-10-09  
+**Affects:** `CHAR-006`, `MAT-010`, `STATE-001`, `COMMIT-002`
+
+**Scope:** `feature/blast-conformance-probe`; experimental implementation conventions, not global game scheduling or a production save/wire-format requirement.
+
+**Decision:** Simultaneously due independent explosions commit individually in stable body-ID order; each reads the previous complete result without another physics/fuse step. Explicit consecutive calls use caller order. Recovery preserves explicitly authored resistance, including zero; the reviewed probe uses schema 3 and rejects older/missing inputs without historical migration. Codex owns numerical methods, computational limits, encoding and fixture details within the agreed experiment and reports measured results and limitations.
+
+**Rationale:** James separately accepted the proposed explosion order and recovery approach, then clarified that test specifics are Codex's concern. The continuation permitted numerical method/budget revisions while preserving accepted rules and independent expected outcomes. A choice changing gameplay, the canonical representation or agreed architecture still returns for review.
+
+**Evidence boundary:** The implementation at `24e79ff0533eabf51627859b097f3503af5f54a1` records 83/83 EditMode and 15/15 PlayMode passes. These are bounded fixture results; they do not ratify production performance, arbitrary geometry, a new framework, historical migration, staffing or a merge into the assignment prototype. The team handoff records the measured limits.

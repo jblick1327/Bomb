@@ -1,38 +1,31 @@
 # BOM — Simulation model source
 
-Handbook 1.4.0, dated 8 October 2026. Model baseline: Architecture v0.12 through DEC-061.
+Handbook **1.6.0**, dated **9 October 2026**. Model baseline: Architecture **v0.14** through **DEC-068**.
 
-The published page is the repository's root `index.html`. It contains all styles, diagrams, navigation, search, and six complete source documents. It can also be opened locally without a server or internet connection.
+Root `index.html` is the page output. It embeds styles, diagrams, navigation, search and the complete six source documents and works offline.
 
 ## Edit and rebuild
 
-Edit model decisions in `sources/BOM Architecture.md`, preserve rationale and supersession in the Decision Log, and narrow the Open Questions. Reconcile the candidate map, team summary, interview handoff, `handbook.json`, and generated reference text in `build.py`.
-
-From the repository root:
+Edit accepted requirements in `sources/BOM Architecture.md`, append scoped decisions/history in the Decision Log, narrow Open Questions and synchronize the candidate map, team summary and interview handoff. Reconcile `handbook.json` and source-derived reference text in `build.py`.
 
 ```sh
 python3 handbook/build.py
 cp handbook/dist/index.html index.html
 ```
 
-The build also writes an identical standalone HTML copy, readable Markdown, and extracted JSON under `handbook/dist/`. Only root `index.html` is the published output. Build artifacts in `dist/` are ignored.
+The build writes identical HTML, readable Markdown and extracted JSON under ignored `dist/`. Commit source and root output together when requested.
 
 ## Current checkpoint
 
-- Local-frame poses and current centre-of-mass velocity have explicit meanings. Motion-preserving geometry/frame changes preserve surviving material movement, including same-ID results.
-- Density × current gameplay area supplies mass for environment pieces, living characters and live bombs.
-- Connector capacities are `Fmax = S × L` and `Tmax = ½ × S × L²`, from one authored strength per length and current surviving attachment length.
-- The first valid landing starts a continuous fuse. Handling, support loss and later landings preserve progress; expiry detonates at the current position.
-- Material and thickness consume effective blast reach, including cover destroyed by that same blast.
+- Independent shared blast resistance, ordinary travel plus resistance × thickness, original cover cost, breach continuity and straight paths are accepted (`DEC-062` to `DEC-065`).
+- The killing explosion preserves the new corpse shape/ID; later independent blasts use its current environment response (`DEC-066`).
+- Indestructible cover fully blocks carving and exposure along its path (`DEC-067`).
+- Stable body-ID explosion order and explicit-resistance recovery are accepted for the bounded probe; its schema 3, numerical method/caps and fixture values remain experiment conventions (`DEC-068`).
 
-DEC-057 through DEC-061 record these choices. Historical decisions and their supersession trail remain intact; the current architecture contains no provisional rules. Remaining numerical values, geometry contracts, COM/inertia derivation, attachment-length/load measurement, landing detection, blast-resistance inputs/calculation, encoding, controls and tuning retain their actual scope.
+`BOM-Team-Model-Handoff.md` owns the blast handoff example and reviewed evidence sections reused by the walkthrough/reference pages. The probe at `24e79ff` records 83/83 EditMode and 15/15 PlayMode passes against the supplied 1.5.0 target plus reviewed conventions. The 0.777 mm measured deficit is bounded evidence; layered computation cost, the original opaque-support rejection, unsupported inputs and older hold stretch remain explicit limits. Current 1.6 source changes were not separately run in Unity.
 
-The reviewed conformance probe at `3f652e9` records 50 EditMode and 12 PlayMode tests passing against the earlier Architecture v0.11 / DEC-056 baseline. It informed the first four decisions. Its radius-only blast model does not exercise the new shielding rule; extreme-load hold reach remains a documented limit. The Unity code and evidence are unchanged by this handbook checkpoint.
-
-The approved layout, walkthrough navigation, stable reference routes, and ten work deliveries are preserved. Earlier recommendations about the first shared milestone, candidate authoring organization, networking-start wording, and destruction expansion were not accepted by this policy review.
-
-Reader-facing accepted rules omit the repeated status label, including in search results. The embedded source documents and decision history retain their original metadata.
+The approved presentation assets, stable routes and ten existing work deliveries/dependencies/order are preserved. The new routes are `#walkthrough/explosion`, `#reference/blast` and `#reference/blast-evidence`. Rules/search omit repeated Accepted labels while source metadata/history remain. Earlier Start work/milestone/staffing and authoring-organization recommendations are still unratified.
 
 ## Verification
 
-Before committing, rebuild and check the changed rules, embedded sources, reference pages, and work cards together. Check internal routes and unchanged presentation assets. Model edits must leave the complete structural outcomes reconstructable without dangling references or retired-parent dependencies.
+Rebuild and check rule/source hashes, decision history, internal routes, all affected cards and previous/next navigation together. The evidence page must distinguish normative rules, experiment conventions, successful geometry and expected rejection tests. Preserve valid complete recoverable outcomes without retired-parent dependencies. This documentation checkpoint changes no Unity branch, packages, solver or project settings.

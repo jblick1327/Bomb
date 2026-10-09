@@ -44,12 +44,15 @@ def ref_list(ids):
 
 def inline(s):
     out=[]
-    token=re.compile(r'(`[^`]+`|\*\*.+?\*\*|\b(?:OQ-)?[A-Z]+-\d{3}\b)')
+    token=re.compile(r'(\[[^\]\n]+\]\(https://[^\s)]+\)|`[^`]+`|\*\*.+?\*\*|\b(?:OQ-)?[A-Z]+-\d{3}\b)')
     cursor=0
     for m in token.finditer(s):
         out.append(esc(s[cursor:m.start()]))
         t=m[0]
-        if t.startswith('`'):
+        if t.startswith('['):
+            link=re.fullmatch(r'\[([^\]\n]+)\]\((https://[^\s)]+)\)',t)
+            out.append('<a href="'+esc(link[2],quote=True)+'">'+esc(link[1])+'</a>')
+        elif t.startswith('`'):
             t=t[1:-1]
             out.append(ref(t) if t in entries else '<code>'+esc(t)+'</code>')
         elif t.startswith('**'): out.append('<strong>'+inline(t[2:-2])+'</strong>')
@@ -196,7 +199,7 @@ accepted=['BodyMotion2D','BodyShape2D','MaterialProperties','DestructionBehaviou
 summaries={
 'BodyMotion2D':('World-space local-frame pose; current COM linear velocity and angular velocity.','Environment, characters, bombs.'),
 'BodyShape2D':('Current body-local gameplay shape.','Physical bodies.'),
-'MaterialProperties':('Selected material inputs, including explicit density.','Environment, characters, bombs.'),
+'MaterialProperties':('Selected material inputs, including independently authored density and blast resistance.','Environment, characters, bombs.'),
 'DestructionBehaviour':('Destructibility and independently selected response.','Applicable environment pieces.'),
 'InteractionPolicy':('Effective interaction eligibility.','Applicable target bodies.'),
 'CharacterState':('Character definition and selected lasting gameplay inputs.','Living characters.'),
@@ -205,10 +208,10 @@ summaries={
 record_rules={
 'BodyMotion2D':['ECS-007','WORLD-006','AUTH-003'],
 'BodyShape2D':['ECS-007','MAT-007','WORLD-006','IDENTITY-001','INTERACT-002'],
-'MaterialProperties':['ECS-007','MAT-005','MAT-009'],
+'MaterialProperties':['ECS-007','MAT-005','MAT-009','MAT-010'],
 'DestructionBehaviour':['ECS-007','MAT-006','MAT-008'],
 'InteractionPolicy':['ECS-007','INTERACT-002','LIMB-005','LIMB-007'],
-'CharacterState':['ECS-007','CHAR-002','CHAR-004','CHAR-005','LIMB-011','PLAYER-002'],
+'CharacterState':['ECS-007','CHAR-002','CHAR-004','CHAR-005','CHAR-006','LIMB-011','PLAYER-002'],
 'BombState':['ECS-007','BOMB-001','BOMB-002','BOMB-003','BOMB-004'],
 'StructuralConnection':['CON-004','CON-008','CON-009','CON-010','CON-011','CON-013','CON-014'],
 'LimbAttachment':['LIMB-001','LIMB-002','LIMB-008','LIMB-009','LIMB-010','LIMB-011','LIMB-012'],
@@ -219,12 +222,16 @@ record_rules={
 for refs in record_rules.values():
     assert all(id in rules for id in refs), refs
 topic_pages={}
+def team_section(title):
+    body=sources['BOM-Team-Model-Handoff.md'].split('## '+title+'\n',1)[1]
+    return body.split('\n## ',1)[0].strip()
+
 body_rows=[]
 for name in accepted:
     body_rows.append(['[RECORD:'+name+']',*summaries[name]])
 def resolve_record_links(s):
     return re.sub(r'\[RECORD:([^\]]+)\]',lambda m:'<a href="#reference/map/'+esc(m[1])+'"><code>'+esc(m[1])+'</code></a>',s)
-topic_pages['bodies']=resolve_record_links('<h1>Body components</h1><p class="section-intro">These seven groupings are accepted. Reusable definitions supply selected inputs; engine objects derive from current records.</p>'+table(['Component','Stores or selects','Applies to'],body_rows,'record-index')+'''<h2>Fixed supports</h2><p>Level/world data supplies fixed wall geometry, fixed behaviour and stable endpoint identities. A connector restricts the attached piece’s motion. Fixedness is not inferred from zero velocity.</p><h2>Appearance</h2><p>Colour can vary independently of physical material. Current bodies and resulting pieces need recoverable appearance inputs. A separate <a href="#reference/map/VisualBinding"><code>VisualBinding</code></a> component remains unaccepted.</p><h2>Physical configuration</h2><p>Environment pieces, living characters and live bombs all derive mass from resolved material density × current 2D gameplay area. COM/inertia and further physical derivations remain open.</p><p>Attachment restrictions derive from their relationships. <code>BodyPhysics</code> is not an accepted component; further physical inputs must have recoverable sources without duplicating those restrictions.</p>'''+ref_list(['ECS-007','WORLD-005','MAT-005','MAT-009','WORLD-006','MAT-007']))
+topic_pages['bodies']=resolve_record_links('<h1>Body components</h1><p class="section-intro">These seven groupings are accepted. Reusable definitions supply selected inputs; engine objects derive from current records.</p>'+table(['Component','Stores or selects','Applies to'],body_rows,'record-index')+'''<h2>Fixed supports</h2><p>Level/world data supplies fixed wall geometry, fixed behaviour and stable endpoint identities. A connector restricts the attached piece’s motion. Fixedness is not inferred from zero velocity.</p><h2>Appearance</h2><p>Colour can vary independently of physical material. Current bodies and resulting pieces need recoverable appearance inputs. A separate <a href="#reference/map/VisualBinding"><code>VisualBinding</code></a> component remains unaccepted.</p><h2>Physical configuration</h2><p>Environment pieces, living characters and live bombs derive mass from density × current 2D gameplay area and resolve independently authored blast resistance from the shared material-property source. COM/inertia and further physical derivations remain open.</p><p><a href="#reference/blast">Blast reach and the complete destruction result.</a></p><p>Attachment restrictions derive from their relationships. <code>BodyPhysics</code> is not an accepted component; further physical inputs must have recoverable sources without duplicating those restrictions.</p>'''+ref_list(['ECS-007','WORLD-005','MAT-005','MAT-009','WORLD-006','MAT-007']))
 topic_pages['relationships']='''<h1>Relationships</h1><p>Structural connectors and limb attachments have identities and persistent state, but no physics bodies.</p>'''+table(['Relationship','Stored facts','Derived objects'],[
 ['[RECORD:StructuralConnection]','Endpoint IDs; paired endpoint-local regions sufficient to recover the intended rigid fit; authored strength and applicable failure inputs.','Rigid constraint and effective force/torque limits.'],
 ['[RECORD:LimbAttachment]','Character ID, limb slot, target ID and target-local held location.','Reach constraint, visible held-limb pose and slot lookup.']
@@ -249,18 +256,20 @@ topic_pages['lifecycles']='''<h1>Lifecycles</h1>'''+table(['Event','Identity and
 ['Validated grab','Create one limb attachment.','The new attachment owns the chosen slot and target-local held location.'],
 ['Piece changes without splitting','Keep the piece ID and update its shape/state.','Resolve surviving attachment locations against the new geometry.'],
 ['Piece becomes disconnected children','Retire the original piece; assign new IDs to every child.','Keep/remap a single surviving connector or hold; retire lost relationships. Multiple valid connector results receive new connector IDs.'],
-['Character dies','Keep the surviving one-piece body ID and install environment selections from the character definition.','Clear control and outgoing holds. Preserve incoming holds on surviving locations.'],
+['Character dies','Keep shape, geometry revision and body ID through the killing explosion; install environment selections from the character definition.','Clear control and outgoing holds. Preserve incoming holds on surviving locations.'],
 ['Bomb detonates','Retire the bomb; produce no persistent bomb fragments.','Retire holds targeting the bomb and commit complete lasting world consequences.']
-])+'''<h2>Complete structural outcomes</h2><p>Resolve geometry, identities, behaviour, control and relationships together. Commit the complete outcome with valid references. Engine objects, indexes and exposed semantic results derive from that committed state.</p><h2>Result properties</h2><p>Material, destruction response and reusable appearance inputs inherit by default unless the selected response changes them. Other component inheritance is not automatically settled. Each child needs its own motion and reconstructable inputs.</p><h2>Continuous bomb fuse</h2><p>The first valid landing starts the configured remaining-duration countdown. Holding, throwing, support loss and further landings do not pause, restart or extend it. Expiry detonates at the current position.</p><h2>Blast reach and character lethality</h2><p>Nominal radius is maximum reach through empty space. Material and thickness consume reach; a blast may penetrate and continue while reach remains. Cover destroyed by that same blast still contributes to its reach cost.</p><p>Damage does not accumulate. A qualifying blast causes immediate death after accounting for effective reach. Exact power/radius values, geometric evaluation, resistance inputs/source and propagation calculation remain open.</p>'''+ref_list(['IDENTITY-001','MAT-008','CON-011','CON-014','LIMB-008','LIMB-009','CHAR-003','CHAR-004','CHAR-005','BOMB-002','BOMB-003','BOMB-004','WORLD-007','COMMIT-002'])
+])+'''<h2>Complete structural outcomes</h2><p>Resolve geometry, identities, behaviour, control and relationships together. Commit the complete outcome with valid references. Engine objects, indexes and exposed semantic results derive from that committed state.</p><h2>Result properties</h2><p>Material, destruction response and reusable appearance inputs inherit by default unless the selected response changes them. Other component inheritance is not automatically settled. Each child needs its own motion and reconstructable inputs.</p><h2>Continuous bomb fuse</h2><p>The first valid landing starts the configured remaining-duration countdown. Holding, throwing, support loss and further landings do not pause, restart or extend it. Expiry detonates at the current position.</p><h2>Blast reach and character lethality</h2><p>Straight paths consume ordinary distance plus independently authored resistance × crossed thickness from original material. Carving must breach intervening layers; indestructible cover blocks carving and exposure through that path. Removing cover keeps its cost.</p><p>A qualifying blast causes immediate death without accumulated damage and leaves the new corpse uncarved. A later independent blast uses its current environment response. Exact power/radius mapping, character boundary lethality and production numerical geometry remain open.</p><p><a href="#reference/blast">Blast contract</a> · <a href="#reference/blast-evidence">Bounded evidence and implementation limits</a></p>'''+ref_list(['IDENTITY-001','MAT-008','CON-011','CON-014','LIMB-008','LIMB-009','CHAR-003','CHAR-004','CHAR-005','CHAR-006','BOMB-002','BOMB-003','BOMB-004','MAT-010','WORLD-007','WORLD-008','WORLD-009','WORLD-010','WORLD-011','COMMIT-002'])
 topic_pages['unresolved']='''<h1>Unresolved details</h1><p>The following items remain implementation and authoring choices. They do not reopen the accepted identity, ownership, coordinate-frame or lifecycle rules.</p>'''+table(['Item','Settled boundary','Remaining work'],[
 ['Exchange conventions','World/body-local frame roles are accepted.','Record units, local origins, the first geometry format and definition lookup. Simulation and authoring own the fixture exchange.'],
 ['Additional physical inputs','Environment pieces, characters and bombs share MaterialProperties and all derive mass from density × current gameplay area. COM velocity semantics are settled.','Resolve remaining physical inputs and derivations. Do not silently rely on undocumented engine defaults or duplicate attachment restrictions.'],
 ['Appearance','Colour can vary; resulting pieces recover their own appearance inputs.','Choose definition/instance placement, shape alignment and regeneration. A separate VisualBinding is unaccepted.'],
 ['Connector failure','Rigid fit, identity outcomes, Fmax = S × L / Tmax = ½ × S × L² and optional percentage failure are accepted. References follow connector identity.','Choose explicit fixture values, paired length measurement, load conversion and encoding. No universal percentage cutoff is selected.'],
 ['Interaction and movement','Minimum holds, fixed roots, authored reach and shared Boolean hand/foot eligibility are accepted. Bombs use ordinary eligibility; applied force alone does not release holds.','Choose constraint realization, active controls, tuning, authoring defaults and eligibility encoding.'],
-['Bomb activation and blasts','The first valid landing starts a continuous remaining-duration fuse; material/thickness reduce blast reach, including cover destroyed by that blast. Qualifying blasts kill without accumulated damage.','Choose landing classification, duration values/precision, material-resistance inputs/source, propagation calculation, power/radius mapping and detailed update order.'],
+['Bomb activation and blasts','Continuous activated fuse; independent resistance; distance-plus-thickness cost; straight paths; breach continuity; opaque indestructible cover; uncarved killing-explosion corpse.','Choose landing classification, values/units/encoding, production geometry support/performance, character boundary lethality, power/radius mapping and general update order. See the bounded evidence for measured limits.'],
 ['Data and networking encoding','Current state and validated dependencies must reconstruct the world.','Choose formats, dependency validation, IDs/revisions and networking encoding without altering the semantic contracts.']
 ],'open-table')+'''<details><summary>All open questions</summary>'''+''.join('<details><summary>'+esc(q['id']+' — '+q['title'])+'</summary><div class="rule-body">'+q['html']+'</div></details>' for q in questions.values() if q['status']!='Resolved')+'''</details>'''
+topic_pages['blast']='<h1>Blast reach and destruction</h1>'+md(team_section('Blast reach and destruction handoff'))+'<p><a href="#reference/blast-evidence">Reviewed conformance evidence and remaining implementation limits</a></p>'+ref_list(['MAT-010','WORLD-007','WORLD-008','WORLD-009','WORLD-010','WORLD-011','CHAR-006','COMMIT-002'])
+topic_pages['blast-evidence']='<h1>Blast conformance</h1>'+md(team_section('Blast conformance evidence and implementation limits'))
 topic_pages['rules']='<h1>Architectural rules</h1><div class="rule-index">'+''.join('<details id="rule-'+r['id']+'"><summary><code>'+esc(r['id'])+'</code><span>'+esc(r['title'])+'</span>'+('<span class="rule-status">'+esc(r['status'])+'</span>' if r['status']!='Accepted' else '')+'</summary><div class="rule-body">'+r['html']+'<p><a href="#reference/rules/'+r['id']+'">Permanent link</a></p></div></details>' for r in rules.values())+'</div>'
 topic_pages['sources']='<h1>Source documents</h1><ul class="topic-list">'+''.join('<li><a href="#reference/sources/'+esc(name)+'">'+esc(name)+'</a><p>Version '+esc(re.search(r'\*\*Version:\*\* (\S+)',text)[1])+'</p></li>' for name,text in sources.items())+'</ul>'
 record_pages={}
@@ -291,6 +300,8 @@ def walk_page(c,result='split'):
     key=' · '.join('<code>'+esc(id)+'</code> '+esc(label) for id,label in fig_key)
     caption='The body reconstructed as environment, without its former living state or death history.' if c['id']=='recovery' and result=='death' else c['caption']
     details='<details class="walk-detail"><summary>Records and applicable rules</summary><p class="record-key">'+key+'</p>'+table(['Concern','Outcome'],c['changes'])+'<div class="detail-columns"><section><h2>Stored or selected</h2>'+list_html(c['remember'])+'</section><section><h2>Derived</h2>'+list_html(c['derive'])+'</section></div><p class="case-caveat">'+inline(c['caveat'])+'</p>'+ref_list(c['refs'])+'</details>'
+    if c['id']=='explosion':
+        details+='<section class="blast-example">'+md(team_section('Blast reach and destruction handoff'))+'<p><a href="#reference/blast-evidence">Measured evidence and remaining implementation limits</a></p></section>'
     if c['id']=='recovery' and result=='death':
         details='<details class="walk-detail"><summary>Records and applicable rules</summary><p class="record-key">'+key+'</p>'+list_html(['K: ordinary environment records; no former CharacterState is required.','R: participant identity survives and its controlled-body reference is empty.','The outgoing L is absent. Existing incoming holds on surviving locations retain their relationship state.','Validated definitions restore the same effective properties and behaviour.'])+ref_list(['STATE-001','STATE-003','CHAR-004','PLAYER-002','LIMB-009'])+'</details>'
     switch=''
@@ -309,7 +320,7 @@ task_map={t['id']:t for t in book['tasks']}
 first_tasks={'simulation':'UNITY-01','assets':'ASSET-01','level':'LEVEL-01','networking':'NET-01','shared':'SHARED-01'}
 first_starts={
 'UNITY-01':'Begin the loader with hand-authored wall, platform, Claymate and bomb inputs. Agree the prototype import contract with authoring, then consume the shared asset and level outputs. Derive the bond from its paired attachment regions.',
-'ASSET-01':'Author one platform section. Declare its 2D silhouette and origin, align its appearance, and select a material with explicit density and an independent destruction response.',
+'ASSET-01':'Author one platform section. Declare its 2D silhouette and origin, align its appearance, and select a material with explicit density and independent blast resistance, plus an independently selected destruction response.',
 'LEVEL-01':'Lay out the wall, platform and bond now. Mark attachment regions in each endpoint’s local space, and include a Claymate spawn and bomb configuration. Integrate the shared platform asset and exchange conventions as they become available.',
 'NET-01':'Agree intent, committed-result and current-state recovery interfaces with Unity integration. Mock them against the same fixture while the simulation path develops.',
 'SHARED-01':task_map['SHARED-01']['start']

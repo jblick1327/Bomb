@@ -1,9 +1,9 @@
 # BOM — Candidate Component and Data Map
 
-**Version:** 0.6  
-**Date:** 2026-10-08  
+**Version:** 0.8  
+**Date:** 2026-10-09  
 **Status:** Review map containing accepted conceptual groupings and explicitly marked candidates  
-**Baseline:** `BOM Architecture.md` v0.12; decisions through `DEC-061`
+**Baseline:** `BOM Architecture.md` v0.14; decisions through `DEC-068`
 
 This map assembles the current model. Architecture controls if a summary or example conflicts with it. Seven groupings are accepted under `ECS-007`; that acceptance does not ratify every remaining field, definition placement, numeric type, or implementation boundary. Other groupings below remain candidates. A row describes semantic contents, not a serializer, engine class, memory layout, or requirement for one implementation component per row.
 
@@ -28,7 +28,7 @@ Persistent physical entities have match-scoped identity metadata. Identity need 
 |---|---|---|---|---|
 | `BodyMotion2D` | Accepted grouping | World-space pose of the local frame; world-space velocity of the current centre of mass; rate of change of body angle (`WORLD-006`). | Environment pieces, living characters, live bombs. | Unity body state/interpolation derive from committed motion. Geometry/frame changes intended to preserve motion preserve surviving material movement, including same-ID results. Numeric types, units, COM/inertia derivation and other motion policies remain open. |
 | `BodyShape2D` | Accepted grouping | Recoverable current body-local 2D gameplay shape, or an eligible validated immutable shape reference. Geometry revision is a candidate field here. | Physical bodies. | Colliders, area, bounds, and render geometry derive. Body-local frame meaning is accepted under `WORLD-006`; shape format, local origin/pivot, revision encoding, units, and immutable-reference contract remain open. |
-| `MaterialProperties` | Accepted grouping and shared applicability | Selected material definition/effective material-property inputs. | Environment/material pieces, living characters, live bombs; corpses use installed environment selections (`MAT-009`, `CHAR-004`). | Explicit density resolves from material definitions; mass for environment pieces, living characters, and live bombs derives as density × current gameplay area. Further physical inputs/derivations, values, units, and instance overrides remain open. Blast-resistance inputs and their source remain open under `OQ-GEO-004`. |
+| `MaterialProperties` | Accepted grouping and shared applicability | Shared effective material selection/inputs for environment pieces, living characters and live bombs (`MAT-009`), with independently authored density (`MAT-005`) and blast resistance (`MAT-010`). | Environment/material pieces, living characters, live bombs; corpses use installed environment selections (`CHAR-004`). | Mass derives from density × current gameplay area. Resistance contributes extra reach cost under `WORLD-008` and is independent of density, connector strength and response. Reconstruct the same effective values. Other physical inputs, authoring values/units, encoding, validation and overrides remain open. |
 | `DestructionBehaviour` | Accepted grouping | Destructibility and independently selected effective destruction response/settings, where applicable. | Environment/material pieces. | Response algorithms produce shape/property outcomes. Exact settings and indestructibility representation remain open; shattering is not required. |
 | `InteractionPolicy` | Accepted grouping | Effective interaction-eligibility setting or validated policy inputs needed by host validation. | Applicable target bodies. | One authored Boolean governs hand and deliberate foot holds, including live bombs (`LIMB-005`, `LIMB-007`). Host validation still applies. Authoring defaults, record placement, and encoding remain implementation work. |
 | `VisualBinding` | Candidate grouping | Reusable appearance inputs and the alignment needed to interpret them with gameplay shape; colour is at least one variable input. | Bodies as needed; material results carry their own recoverable appearance inputs. | Meshes/presentation derive locally. A separate record, colour's definition/instance ownership, alignment encoding, and regeneration remain open. Results must not depend on a retired parent. |
@@ -50,7 +50,7 @@ Living characters and live bombs also use `MaterialProperties` (`MAT-009`), alon
 
 Fixed roots/reach are definition inputs, not changing copies on every hold. There is no separately changing authoritative limb-root pose in the accepted baseline. The definition may still have other authoring/presentation inputs, and a later selected movement mechanic may expose additional canonical character state.
 
-Death keeps the body's identity and changes it to environment behaviour under `CHAR-003`. A `CharacterState` → environment composition change is a candidate realization. A separate `is_dead` flag is unnecessary merely to duplicate that composition; any independently meaningful match/result fact must be represented if its mechanic is selected. The character definition supplies the environment selections installed on death (`CHAR-004`): material, destruction response, interaction eligibility, and reusable appearance. Thereafter, the corpse reconstructs from ordinary environment records and validated definitions without former living state or replaying death. Actual values and transition/reference encoding remain open; no inheritance/override default is selected.
+Death keeps the body's identity and changes it to environment behaviour under `CHAR-003`. A `CharacterState` → environment composition change is a candidate realization. A separate `is_dead` flag is unnecessary merely to duplicate that composition; any independently meaningful match/result fact must be represented if its mechanic is selected. The character definition supplies the environment selections installed on death (`CHAR-004`): material, destruction response, interaction eligibility, and reusable appearance. The killing explosion leaves the new corpse uncarved with the same shape, geometry revision and ID (`CHAR-006`); a subsequent independent explosion uses its current environment response. Thereafter, the corpse reconstructs from ordinary environment records and validated definitions without former living state or replaying death. Actual values and transition/reference encoding remain open; no inheritance/override default is selected.
 
 ## 4. Persistent physical relationships
 
@@ -89,7 +89,7 @@ Definitions are reusable inputs, not additional physical entities. The following
 
 | Definition/configuration source | Inputs it supplies or may supply |
 |---|---|
-| Material definition | Explicit density and shared material input ownership for environment pieces, living characters, and live bombs are accepted; all three derive mass from density × current area. Additional physical and blast-resistance inputs/derivations remain open. |
+| Material definition | Explicit independently authored density and blast resistance through the shared source (`MAT-005`, `MAT-009`, `MAT-010`). Mass derives from density × area; extra reach cost derives from resistance × thickness plus ordinary distance. Additional physical derivations, actual values/units and encoding remain open. |
 | Destruction-response definition | Independently selected response and parameters. Presets can offer defaults; effective selection remains recoverable. |
 | Appearance inputs | Reusable visual settings and shape alignment; colour may vary. Definition/instance division and a separate `VisualBinding` remain open. |
 | Character definition | Fixed body-local limb roots and authored maximum reach are accepted. It supplies the environment configuration installed on death: material, destruction response, interaction eligibility, and reusable appearance. Actual values, other movement inputs, and encoding remain open. |
@@ -148,7 +148,7 @@ Suppose a character holds platform P, connector C joins P to fixed support W, an
 | What must be recovered | Current source | Remaining contract |
 |---|---|---|
 | Body arrangement and motion | Entity identities plus `BodyMotion2D`; local-frame poses and current COM velocity use world space | Numeric units/types and exact pose encoding. |
-| Shapes and material inputs | Body-local `BodyShape2D` plus shared `MaterialProperties`; all physical roles derive mass from density/area | Shape/reference validation, consistent units, and further physical derivations. |
+| Shapes and material inputs | Body-local `BodyShape2D` plus shared `MaterialProperties`; all physical roles recover independently authored density and blast resistance, and derive mass from density/area | Shape/reference validation, consistent units, and further physical derivations. |
 | W stays fixed | Level/world definition supplies geometry, fixed behaviour, and stable endpoint identities | Exact validated-reference and configuration encoding remain open; do not infer fixedness from zero velocity. |
 | C preserves its intended fit | Endpoint IDs and paired local attachment data; extra rest data only if necessary | Canonical region encoding within the accepted endpoint-local frames. Current displaced poses do not redefine the bond. |
 | C's percentage test remains meaningful | C's lifetime reference and current attached measure | Reference encoding and length measure; no retired-parent dependency. |
@@ -181,9 +181,9 @@ If several relationships survive and C passes its old test, retire C and create 
 
 ### Character death
 
-A blast satisfying its power/radius lethality condition causes immediate death; character damage does not accumulate (`CHAR-005`). Effective reach accounts for material and thickness under `WORLD-007`, including cover destroyed by that blast. Exact values, geometric evaluation, resistance inputs and propagation calculation remain open.
+A blast satisfying its power/radius lethality condition causes immediate death; character damage does not accumulate (`CHAR-005`). Effective reach follows the shared independent resistance, distance-plus-thickness cost, straight paths and indestructible blocking (`MAT-010`, `WORLD-007` to `WORLD-011`). Exact values, numerical geometry and the character boundary/lethality test remain open.
 
-1. Keep the surviving body's ID and resolve the character-to-environment behaviour change. Concurrent geometry changes use ordinary identity rules.
+1. Keep the body's shape, geometry revision and ID through the killing explosion (`CHAR-006`) and resolve the character-to-environment behaviour change. A subsequent independent blast uses its current environment response and ordinary geometry/identity rules.
 2. Resolve the environment configuration from the selected character definition and install its material, destruction-response, interaction-eligibility, and reusable appearance selections into the body's environment records. Actual values and encoding remain open.
 3. Clear the participant control reference and retire the dying character's outgoing holds.
 4. Preserve incoming holds on surviving locations. Starting a new hold uses corpse eligibility; it does not silently cancel accepted continuing holds.
@@ -193,8 +193,8 @@ A blast satisfying its power/radius lethality condition causes immediate death; 
 
 1. The first valid landing activates the canonical countdown and initializes remaining duration from selected bomb/fuse configuration.
 2. The host advances active remaining duration; a current snapshot retains activation and progress. Holding, throwing, support loss and later landings do not pause, restart or extend it.
-3. Expiry detonates at the current position, retires the bomb and produces no persistent bomb fragments. Material-dependent blast reach follows `WORLD-007`; lasting destruction/relationship outcomes commit through structural resolution.
-4. Landing classification, numeric fuse values/precision, blast-resistance inputs/calculation and detailed update ordering remain open.
+3. Expiry detonates at the current position, retires the bomb and produces no persistent bomb fragments. Material-dependent blast reach follows `WORLD-007` to `WORLD-011` and `MAT-010`; lasting destruction/relationship outcomes commit through structural resolution.
+4. Landing classification, numeric fuse values/precision, production numerical geometry, actual blast inputs/encoding and general update ordering remain open. `DEC-068` records ordering only for the bounded experiment.
 
 ## 9. Gaps exposed by the map
 
@@ -203,9 +203,15 @@ A blast satisfying its power/radius lethality condition causes immediate death; 
 | Coordinate and alignment encoding | The accepted world/body-local convention must be implemented consistently, including material-location-preserving transforms after splitting. | Semantic frame roles are settled (`WORLD-006`); exact units, origins/pivots, shape format, scaling/alignment encoding, transformations, and tolerances remain open. |
 | Definition/reference recovery | Reconstruction must recover the same effective values without a retired parent. | Dependency validation and encoding remain open; no hash/version scheme is selected. |
 | World configuration encoding and further physical inputs | W must recover level/world-supplied fixed behaviour and endpoints; all physical roles share material inputs and may need further nonduplicated inputs. | The wall and material input sources are settled (`WORLD-005`, `MAT-009`); encoding and further derivations remain open. No duplicate attachment-imposed restrictions or separate `BodyPhysics` are assumed. |
-| Blast reach calculation | Intervening material and thickness consume reach, including cover destroyed by the same blast; penetration can continue while reach remains. | Material-resistance inputs/source, propagation and thickness calculation, values/units and power/radius mapping remain open (`WORLD-007`, `OQ-GEO-004`). |
+| Production blast geometry | Straight paths consume ordinary distance plus independent resistance × original crossed thickness; breach continuity and opaque cover protect material behind them. | The source and cost are settled (`MAT-010`, `WORLD-007` to `WORLD-011`). Numerical intersections/representation, supported domain, performance, values/units/encoding and character power/radius mapping remain open (`OQ-GEO-004`). The bounded probe's shadow rejection and computation cost remain visible in the team handoff. |
 | Appearance ownership | Variable colour and reusable appearance inputs need a recoverable source and must suit changed shapes. | Definition/instance placement, a separate `VisualBinding`, alignment, and regeneration remain open. |
 | Corpse values and other result settings | Death installs environment configuration supplied by the character definition; destruction does not automatically copy every component. | The corpse source and resulting environment-record ownership are settled (`CHAR-004`). Actual values, transition/reference encoding, and result inputs beyond accepted material/response/appearance inheritance remain open. |
 | Additional movement and implementation contracts | The accepted hold baseline is represented; selected active controls may expose additional lasting inputs. | Active controls, constraints/tuning, physics interfaces, and detailed scheduling remain open. |
 
 Use `BOM-Team-Handbook.html` for the walkthrough, source-linked reference, and proposed starting work. Next take this map and the team summary into cross-role review for reconstruction completeness and duplicate ownership. Trace the supported/held scene, split, death, and countdown. No further semantic decision needs forcing before that review; raise a focused question only when a concrete case exposes a material gap. This checkpoint selects no networking schema, ECS framework, geometry library, numerical cutoff, new movement mechanic, or additional destruction-response algorithm.
+
+## Blast evaluation and bounded implementation evidence
+
+Blast resistance belongs to the shared material-property source, not a new persistent blast component. One explosion evaluates original shapes/selections along straight paths, applying ordinary distance plus extra resistance × thickness (`WORLD-008`), breach continuity (`WORLD-009`), straight propagation (`WORLD-010`) and opaque indestructible cover (`WORLD-011`). Geometry and character exposure use that same basis. Complete lasting identities, geometry, relationships, behaviour and control commit under the existing structural rules.
+
+The bounded probe at `24e79ff` uses transient calculation data and existing planner/recovery ownership. Its schema 3, presence flag, numeric limits, dyadic frame choices and stable explosion order are implementation conventions. Recorded 83/83 EditMode and 15/15 PlayMode passes demonstrate listed fixtures; the opaque-support rejection and layered computation cost remain limits. See the team handoff for exact evidence identity and scope. No additional ECS grouping, production geometry method or network/storage format is accepted by those results.

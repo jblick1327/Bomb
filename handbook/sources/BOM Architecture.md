@@ -1,8 +1,8 @@
 # BOM Simulation Architecture
 
-**Version:** 0.12  
+**Version:** 0.14  
 **Review state:** Current source of truth; accepted rules govern the current build  
-**Last updated:** 2026-10-08  
+**Last updated:** 2026-10-09  
 **Companion files:** `BOM Decision Log.md`, `BOM Open Questions.md`
 
 ## 1. Purpose
@@ -172,7 +172,7 @@ The first-pass catalogue assigns the following state responsibilities. The conce
 | Participant record | Participant identity and optional controlled-body reference | Canonical match roster |
 | Match progression | Lasting spawning and round facts required by the chosen mechanics | Match-level canonical state |
 
-Each fact still has one canonical source under `STATE-004`. Destructibility, motion, and interaction eligibility remain independent concerns. Material density and density-times-area mass derivation apply to environment pieces, living characters, and live bombs under `MAT-005` and `MAT-009`. Other physical-property inputs and derivations remain open under `OQ-MAT-001`. Destruction response is independently selectable under `MAT-006`. Authored section shape/visual alignment and resulting-piece property inheritance follow `MAT-007` and `MAT-008`. Rigid-connector reconstruction preserves the intended relationship under `CON-013`. Limb holds constrain reach while permitting body movement and rotation under `LIMB-010`; fixed character-local roots and maximum reach resolve from the character definition under `LIMB-011`, and minimum hold state follows `LIMB-012`. Exact coordinate encoding, further movement inputs, and match mechanics remain open. `ECS-006` assigns coarse system responsibilities; exact implementation partitioning and execution order remain open.
+Each fact still has one canonical source under `STATE-004`. Destructibility, motion, and interaction eligibility remain independent concerns. Material density and density-times-area mass derivation apply to environment pieces, living characters, and live bombs under `MAT-005` and `MAT-009`. Independently authored blast resistance resolves through the same shared material-property source under `MAT-010`; it is not inferred from density or destruction response. Other physical-property inputs and derivations remain open under `OQ-MAT-001`. Destruction response is independently selectable under `MAT-006`. Authored section shape/visual alignment and resulting-piece property inheritance follow `MAT-007` and `MAT-008`. Rigid-connector reconstruction preserves the intended relationship under `CON-013`. Limb holds constrain reach while permitting body movement and rotation under `LIMB-010`; fixed character-local roots and maximum reach resolve from the character definition under `LIMB-011`, and minimum hold state follows `LIMB-012`. Exact coordinate encoding, further movement inputs, and match mechanics remain open. `ECS-006` assigns coarse system responsibilities; exact implementation partitioning and execution order remain open.
 
 ### ECS-006 — Coarse system responsibilities
 
@@ -204,7 +204,7 @@ The following names and groupings are accepted for the conceptual component map:
 |---|---|
 | `BodyMotion2D` | World-space local-frame pose, current centre-of-mass linear velocity, and angular velocity under `WORLD-006` |
 | `BodyShape2D` | Recoverable current 2D gameplay shape |
-| `MaterialProperties` | Shared material properties/definition inputs for environment pieces, living characters, and live bombs under `MAT-009`, including explicit density under `MAT-005` |
+| `MaterialProperties` | Shared material properties/definition inputs for environment pieces, living characters, and live bombs under `MAT-009`, including explicit density under `MAT-005` and independently authored blast resistance under `MAT-010` |
 | `DestructionBehaviour` | Destructibility and independently selected destruction response |
 | `InteractionPolicy` | Effective interaction eligibility used by host validation |
 | `CharacterState` | Character-specific definition selection and lasting gameplay state |
@@ -295,7 +295,47 @@ A bomb's nominal blast radius is its maximum reach through empty space. Interven
 
 Material destroyed by a blast still contributes to what that same blast had to overcome. Removing a barrier during structural resolution does not restore the reach spent passing through it.
 
-The material-resistance inputs and their source, numerical values, propagation and thickness calculation, and exact power/radius mapping remain open. This rule does not select a raycasting algorithm, a resistance formula, or a new persistent blast entity.
+The shared resistance source is settled by `MAT-010`. `WORLD-008` supplies the linear reach cost, `WORLD-009` requires a breach before material removal behind a layer, `WORLD-010` fixes straight outward paths, and `WORLD-011` makes indestructible cover opaque. Exact authoring values, units/encoding, numerical geometry and character power/radius mapping remain open under `OQ-GEO-004`. No raycasting API or persistent blast entity is selected.
+
+### WORLD-008 — Distance plus resistance-times-thickness consumes reach
+
+**Status:** Accepted  
+**Kind:** Blast propagation rule
+
+Ordinary distance travelled consumes blast reach, including distance inside material. Crossing material consumes additional reach equal to its independently authored blast resistance multiplied by the thickness crossed along that path:
+
+`remaining reach = nominal radius − distance travelled − sum(blast resistance × thickness crossed)`
+
+Successive unambiguous material segments add their extra costs. Evaluate a single explosion against its original geometry and material selections; a segment still contributes when the planned result removes it. This is the extra reach cost, not a replacement for ordinary travel distance. The path stops when its reach is exhausted or it encounters opaque cover under `WORLD-011`.
+
+Actual values, units/encoding, numerical intersection method and overlapping-material composition remain open. The metre-based walkthrough is illustrative authoring, not a game default.
+
+### WORLD-009 — Breach intervening material before carving behind it
+
+**Status:** Accepted  
+**Kind:** Destruction continuity rule
+
+Along any one blast path, material removal must breach intervening material before continuing into material behind it. A strong outer layer cannot remain unbreached while that same path independently carves a buried hole in a weaker layer. A separate exposed path can affect the target on its own merits.
+
+The complete geometric result must satisfy this rule before publication. Retained fragments must not be silently discarded to create a breach. Original material still consumes reach under `WORLD-007` and `WORLD-008` even where it is removed. Numerical implementation and its supported domain remain implementation work.
+
+### WORLD-010 — Straight outward blast paths
+
+**Status:** Accepted  
+**Kind:** Blast propagation and exposure rule
+
+Blast paths travel straight outward from the bomb's current detonation position. They do not turn or spread around corners. Original intervening geometry and material costs determine each path's effective reach and the resulting 2D cut.
+
+Character exposure uses that same original material and effective reach under `CHAR-005`. A target inside the nominal radius can remain protected. A separate unobstructed path can reach a target even when another path is blocked. This rule selects neither a ray count nor a sampling, polygon or numerical algorithm.
+
+### WORLD-011 — Indestructible cover blocks a blast path completely
+
+**Status:** Accepted  
+**Kind:** Blast blocking rule
+
+Indestructible cover stops blast propagation at its original first intersection along that path, regardless of reach remaining. Material behind it is not carved and characters behind it are not exposed through that path. A separate exposed path is evaluated independently under `WORLD-010`.
+
+Destruction response remains independent of material resistance: a finite resistance does not make indestructible cover penetrable. This policy applies to the cover's selected non-destructible behaviour; it does not select every living-character response, corpse configuration or numerical shadow-boundary method.
 
 ## 7. Environment/material entities and destruction identity
 
@@ -377,6 +417,15 @@ This rule settles inheritance for the named properties, not an automatic copy of
 Living characters and live bombs use `MaterialProperties` as well as environment/material pieces. Their material inputs resolve through the shared material-property source; `CharacterState` and `BombState` retain their role-specific behaviour. Effective material selections must remain recoverable under `STATE-001` and have one canonical source under `STATE-004`.
 
 Material definitions supply explicit density and all three physical roles use density-times-area mass derivation under `MAT-005`. Remaining physical inputs, centre-of-mass and inertia derivation, values, units, and overrides remain open under `OQ-MAT-001`; shared record applicability does not settle every additional body property.
+
+### MAT-010 — Independently authored blast resistance
+
+**Status:** Accepted  
+**Kind:** Shared material input and recovery rule
+
+Material definitions independently author blast resistance through the shared recoverable `MaterialProperties` source used by environment pieces, living characters and live bombs. Reconstruction must resolve the same effective value. Higher resistance consumes more reach for the same thickness under `WORLD-008`.
+
+Blast resistance is independent of density, connector strength and destruction response. Do not infer it from another property or duplicate it as a separately authoritative body or role value. Exact field names, asset organization, authoring values, units/encoding, validation and override policy remain open. The bounded probe's presence flag, numeric type and snapshot version are implementation conventions, not this rule's required representation.
 
 ### IDENTITY-001 — Material outcome identity
 
@@ -600,7 +649,16 @@ The host's gameplay evaluation applies the lethality test and triggers the exist
 
 The lethality test uses effective blast reach after accounting for intervening material and thickness under `WORLD-007`. Being inside the nominal radius alone does not establish exposure. A barrier destroyed by this blast still contributes to its reach cost.
 
-Exact power/radius values and their relationship, the geometric distance/overlap test, material-resistance inputs, and the blast propagation calculation remain open. This rule does not select those details or add other death causes.
+Material resistance, distance-plus-thickness cost, straight propagation, breach continuity and indestructible blocking follow `MAT-010` and `WORLD-007` through `WORLD-011`. The killing explosion preserves the new corpse under `CHAR-006`. Exact power/radius mapping and the geometric character boundary/lethality test remain open; no additional death cause is selected.
+
+### CHAR-006 — The killing explosion leaves the new corpse uncarved
+
+**Status:** Accepted  
+**Kind:** Current-build death and destruction policy
+
+An explosion that kills a living character does not carve the resulting corpse. That death transition retains the body's existing shape, geometry revision and ID while installing its authored environment configuration under `CHAR-003` and `CHAR-004`. Ordinary control and hold consequences still commit with the transition.
+
+A subsequent independent explosion evaluates the corpse using its current ordinary environment destruction response. This exception belongs to the killing explosion alone; it is not whole-tick immunity and requires no new immunity timer or persistent blast state. General scheduling of independent explosions remains open. The bounded experiment's stable body-ID order is recorded in `DEC-068`, within that experiment's scope.
 
 ### HAND-001 — Hands as slots
 
@@ -863,7 +921,9 @@ The course implementation currently requires:
 - The first valid landing starts a bomb countdown represented canonically as inactive or active with remaining duration. It continues through holding, throwing, support loss, and later landings, then detonates at the current position.
 - The first-pass component responsibilities under `ECS-005` and the accepted conceptual groupings under `ECS-007`, with remaining fields/encodings open.
 - Connector capacity is `Fmax = S × L` and `Tmax = ½ × S × L²` under `CON-009`; optional authored percentage failure uses identity-based references under `CON-010` and `CON-014`.
-- Nominal blast radius gives maximum reach through empty space. Material and thickness consume reach, including material destroyed by that same blast (`WORLD-007`).
+- Nominal blast radius gives maximum reach through empty space. Straight paths consume ordinary distance plus independently authored resistance × thickness from original material, including cover removed by that explosion (`WORLD-007` to `WORLD-010`, `MAT-010`).
+- A path must breach intervening material before carving behind it; indestructible cover fully blocks carving and character exposure through that path (`WORLD-009`, `WORLD-011`).
+- The killing explosion leaves the resulting corpse uncarved; a subsequent independent explosion uses its ordinary current environment response (`CHAR-006`).
 - One authored Boolean eligibility policy governs deliberate hand and foot holds, including live-bomb targets, under `LIMB-005` and `LIMB-007`.
 - Applied force alone does not release limb holds in the current build under `LIMB-006`.
 - The coarse system responsibilities under `ECS-006`, with execution order still open.

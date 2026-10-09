@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
-  "date": "2026-10-08",
+  "version": "1.6.0",
+  "date": "2026-10-09",
   "title": "BOM Team Handbook",
   "principles": [
     {
@@ -186,6 +186,70 @@
       "caption": "The bomb has landed on the platform and its countdown is active."
     },
     {
+      "id": "explosion",
+      "short": "Explosion",
+      "title": "Blast reach and the complete result",
+      "scene": "countdown",
+      "intro": "At expiry, the bomb detonates at its current position. Straight paths consume reach through original material before any result is published.",
+      "notice": "A layer must be breached before that path carves material behind it. Indestructible cover blocks the path completely.",
+      "facts": [
+        "Each path costs ordinary distance plus independently authored blast resistance × crossed thickness. Removed cover keeps its original cost.",
+        "Geometry and character exposure use the same original-world calculation; another exposed path can reach a protected target independently.",
+        "Resolve the complete geometry, identities, connectors, held locations and death/control consequences before committing. The killing explosion leaves its new corpse uncarved."
+      ],
+      "remember": [
+        "Current bomb position/configuration; original body shapes and recoverable material/response selections.",
+        "Current connectors, holds, control, countdown and ID allocator state; complete lasting results replace them atomically."
+      ],
+      "derive": [
+        "Transient blast evaluation and the final numerical cut; no new persistent blast entity.",
+        "Unity bodies, colliders, joints and presentation; committed semantic results and recovery state for Odin."
+      ],
+      "changes": [
+        [
+          "Reach",
+          "Distance + resistance × thickness; original costs remain"
+        ],
+        [
+          "Cover",
+          "Breach before carving behind; indestructible cover ends a path"
+        ],
+        [
+          "Body identity",
+          "Zero/one/many connected results follow ordinary identity rules"
+        ],
+        [
+          "Relationships",
+          "Evaluate old connector failure, then replacements; preserve only surviving held locations"
+        ],
+        [
+          "Death",
+          "The killing explosion keeps the corpse shape/ID and applies ordinary control/hold changes"
+        ],
+        [
+          "Commit and recovery",
+          "Publish the complete valid result; rebuild from current records and definitions"
+        ]
+      ],
+      "refs": [
+        "MAT-010",
+        "WORLD-007",
+        "WORLD-008",
+        "WORLD-009",
+        "WORLD-010",
+        "WORLD-011",
+        "IDENTITY-001",
+        "CON-014",
+        "LIMB-008",
+        "CHAR-006",
+        "COMMIT-002",
+        "REBUILD-001"
+      ],
+      "speaker": "Use the separate one-path numerical example in the details to explain reach and shielding, then connect its geometric result to the existing split/death/recovery rules. Illustrative values are not tuning defaults. The blast conformance reference records the actual bounded results and remaining shadow/performance limits.",
+      "caveat": "The drawing is the supported, held world before detonation; it does not depict the separate numerical layer fixture. The probe establishes listed cases, including expected rejections, rather than arbitrary geometry or real-time performance.",
+      "caption": "Pre-blast input: the supported, held world with an active bomb. The layer table in the details is a separate illustrative path."
+    },
+    {
       "id": "split",
       "short": "Split",
       "title": "Splitting a piece",
@@ -247,7 +311,7 @@
       "title": "Character death",
       "scene": "death",
       "intro": "In a separate case, a qualifying blast kills the Claymate immediately. Character damage does not accumulate.",
-      "notice": "The surviving body keeps its ID and begins behaving as environment.",
+      "notice": "The killing explosion keeps the body’s shape and ID; it begins behaving as environment.",
       "remember": [
         "K: ordinary environment records with installed material, destruction-response, interaction, and reusable appearance selections.",
         "R: its controlled-body reference is now empty.",
@@ -259,7 +323,7 @@
       "changes": [
         [
           "Keep",
-          "Body ID K"
+          "Body shape, geometry revision and ID K"
         ],
         [
           "Install",
@@ -285,15 +349,22 @@
         "PLAYER-002",
         "LIMB-009",
         "COMMIT-002",
-        "WORLD-007"
+        "WORLD-007",
+        "CHAR-006",
+        "WORLD-008",
+        "WORLD-009",
+        "WORLD-010",
+        "WORLD-011",
+        "MAT-010"
       ],
-      "speaker": "The source is settled; actual corpse values are not. No health counter is required. Effective blast reach accounts for material and thickness even when that blast destroys the cover; its resistance inputs and calculation remain open. Concurrent geometry changes still use ordinary identity rules. Applicable consequences of one explosion commit consistently together.",
+      "speaker": "The killing explosion preserves the new corpse shape, geometry revision and ID; a later independent blast uses its installed ordinary environment response. Apply control/outgoing-hold removal and incoming-hold survival together. Resistance/source, distance-plus-thickness cost, straight paths and indestructible blocking are accepted. Actual corpse settings, character boundary lethality and production numerical geometry remain open.",
       "facts": [
         "The character definition supplies the environment settings installed on death.",
         "Control and outgoing holds end. Other characters’ incoming holds continue on surviving material locations.",
-        "Intervening material and thickness consume blast reach, including cover destroyed by that same blast."
+        "Intervening material and thickness consume blast reach, including cover destroyed by that same blast.",
+        "The killing explosion leaves the resulting corpse uncarved; later independent blasts use its current environment response."
       ],
-      "caveat": "Concurrent geometry changes use the ordinary identity rules. These split and death examples do not establish tick order; applicable consequences of one explosion commit together.",
+      "caveat": "The corpse exception applies to the killing explosion alone. It establishes no whole-tick immunity. Stable body-ID ordering is a bounded experiment convention; general game scheduling remains open.",
       "caption": "The body remains; its character behaviour and outgoing hold have ended."
     },
     {
@@ -415,7 +486,8 @@
       "start": "Produce a simple section with a declared 2D gameplay shape and visuals aligned in its local frame.",
       "inputs": [
         "SHARED-01's exchange conventions.",
-        "Explicit material density and independently selected destruction response."
+        "Explicit material density and independently selected destruction response.",
+        "Independently authored blast resistance from the shared material-property source; it does not derive from density or response."
       ],
       "deliverable": "One reusable platform section with shape, aligned appearance, material selection and response selection. Use simple visuals before polishing art.",
       "steps": [
@@ -426,7 +498,8 @@
       "checks": [
         "The declared silhouette is used for physics, destruction, mass calculation, and attachments.",
         "Material and response can be selected independently.",
-        "Reusable appearance inputs can be carried by changed pieces without needing the retired parent."
+        "Reusable appearance inputs can be carried by changed pieces without needing the retired parent.",
+        "Recovery resolves the same selected blast resistance alongside density and independent destruction response."
       ],
       "dependencies": [
         "SHARED-01"
@@ -436,7 +509,8 @@
         "MAT-006",
         "MAT-007",
         "MAT-008",
-        "ECS-007"
+        "ECS-007",
+        "MAT-010"
       ],
       "open": "Appearance ownership/encoding and a separate VisualBinding remain open. Fixture values and temporary authoring records are working choices; supporting independent responses does not require shattering."
     },
@@ -660,7 +734,8 @@
         "Recovery preserves activation and remaining progress without landing replay or a required shared deadline clock.",
         "Detonation retires B and creates no persistent bomb fragments.",
         "Committed world consequences remain separate from transient explosion presentation.",
-        "Holding, throwing, support loss and further landings do not pause, restart or extend the active fuse."
+        "Holding, throwing, support loss and further landings do not pause, restart or extend the active fuse.",
+        "Material costs are evaluated from original geometry; no carving behind unbreached cover or exposure through indestructible cover."
       ],
       "dependencies": [
         "UNITY-01"
@@ -672,9 +747,14 @@
         "BOMB-004",
         "EVENT-001",
         "ECS-006",
-        "WORLD-007"
+        "WORLD-007",
+        "WORLD-008",
+        "WORLD-009",
+        "WORLD-010",
+        "WORLD-011",
+        "MAT-010"
       ],
-      "open": "Choose and document landing classification, duration values/units/precision and detailed update order. Continuous active progress is settled. Blast-resistance inputs/calculation and exact power/radius values remain open; material-dependent reach is required by WORLD-007."
+      "open": "Landing classification, duration values/units/precision, actual resistance and power/radius values, production numerical geometry and general update order remain choices. The resistance source, distance-plus-thickness cost, straight paths, breach continuity and opaque indestructible cover are accepted. The bounded probe supplies listed evidence with explicit geometry/performance limits; its scheduler, codec and fixture values are not global requirements."
     },
     {
       "id": "DEATH-01",
@@ -689,17 +769,18 @@
       ],
       "deliverable": "A death outcome that installs environment records on the surviving body, clears control/outgoing holds, and preserves valid incoming holds.",
       "steps": [
-        "Evaluate lethality on the host using effective blast reach under WORLD-007; use no accumulated health/damage value.",
-        "Install the selected environment configuration while keeping K's ID when its body remains one surviving piece.",
+        "Evaluate lethality on the host using original material and effective reach under WORLD-007 through WORLD-011; use no accumulated health/damage value.",
+        "Preserve K's shape, geometry revision and ID through the killing explosion while installing the selected environment configuration.",
         "Clear the roster's control reference and retire outgoing holds in the same complete outcome.",
-        "Check an incoming-hold example and concurrent lost-location geometry, then reconstruct the corpse from current environment state."
+        "Preserve incoming holds and reconstruct the corpse from current environment state. A subsequent independent explosion uses its current response and ordinary held-location survival rules."
       ],
       "checks": [
         "A qualifying blast causes immediate death; nonqualifying hits do not leave accumulated damage.",
         "Death alone preserves K's body ID and ends its control and outgoing holds.",
         "Incoming holds continue on surviving locations; destroyed locations release.",
         "The corpse reconstructs without old CharacterState or death-event replay.",
-        "Cover contributes to this blast’s reach cost even when the blast destroys it; penetration can continue if reach remains."
+        "Cover contributes to this blast’s reach cost even when the blast destroys it; penetration can continue if reach remains.",
+        "The killing explosion leaves the new corpse uncarved; subsequent independent blasts use its installed response without an immunity timer."
       ],
       "dependencies": [
         "HOLD-01",
@@ -714,9 +795,15 @@
         "LIMB-008",
         "LIMB-009",
         "COMMIT-002",
-        "WORLD-007"
+        "WORLD-007",
+        "CHAR-006",
+        "MAT-010",
+        "WORLD-008",
+        "WORLD-009",
+        "WORLD-010",
+        "WORLD-011"
       ],
-      "open": "Exact power/radius mapping, distance-versus-overlap test, material-resistance inputs/source and propagation calculation remain open. Material-dependent reach, including the cost of cover destroyed by that blast, is accepted under WORLD-007. Actual corpse values and transition encoding remain configurable/unselected."
+      "open": "Exact power/radius mapping, the character distance/overlap and boundary-lethality test, actual material/corpse values, numeric geometry support/cost and transition encoding remain choices. Independent resistance, linear reach cost, straight paths, breach continuity, opaque indestructible blocking and the killing-explosion corpse exception are accepted. General scheduling remains open; stable body-ID order is scoped to the bounded probe."
     },
     {
       "id": "NET-01",
@@ -782,6 +869,14 @@
     [
       "lifecycles",
       "Lifecycles"
+    ],
+    [
+      "blast",
+      "Blast reach"
+    ],
+    [
+      "blast-evidence",
+      "Blast conformance"
     ],
     [
       "unresolved",
