@@ -6,6 +6,10 @@ using UnityEngine.InputSystem;
 [AddComponentMenu("Arena/Player Controller")]
 public sealed class ArenaPlayerController : MonoBehaviour
 {
+    [Header("Player")]
+    [SerializeField, Range(1, 2), Tooltip("Player 1 uses A/D and W or Space. Player 2 uses the arrow keys.")]
+    private int playerNumber = 1;
+
     [Header("Movement")]
     [SerializeField, Min(0f), InspectorName("Move speed (units/s)")]
     private float moveSpeed = 7f;
@@ -33,13 +37,17 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private float jumpBufferRemaining;
     private bool wasGrounded;
     private Animator animator;
+    private ArenaSession session;
 
     // Used to remember the player's original scale.
     private Vector3 originalScale;
     private float fixedZPosition;
 
+    public int PlayerNumber => playerNumber;
+
     private void Awake()
     {
+        session = FindFirstObjectByType<ArenaSession>();
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
 
@@ -50,6 +58,11 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (session != null && !session.IsPlaying)
+        {
+            if (animator != null) animator.SetBool("Running", false);
+            return;
+        }
         float input = ReadMovement();
 
         if (animator != null)
@@ -134,30 +147,35 @@ public sealed class ArenaPlayerController : MonoBehaviour
         transform.localScale = scale;
     }
 
-    private static float ReadMovement()
+    private float ReadMovement()
     {
         float input = 0f;
-
         Keyboard keyboard = Keyboard.current;
 
         if (keyboard != null)
         {
-            if (keyboard.aKey.isPressed ||
-                keyboard.leftArrowKey.isPressed)
+            if (playerNumber == 1)
             {
-                input -= 1f;
-            }
+                if (keyboard.aKey.isPressed)
+                    input -= 1f;
 
-            if (keyboard.dKey.isPressed ||
-                keyboard.rightArrowKey.isPressed)
+                if (keyboard.dKey.isPressed)
+                    input += 1f;
+            }
+            else
             {
-                input += 1f;
+                if (keyboard.leftArrowKey.isPressed)
+                    input -= 1f;
+
+                if (keyboard.rightArrowKey.isPressed)
+                    input += 1f;
             }
         }
 
-        if (Gamepad.current != null)
+        Gamepad gamepad = GetPlayerGamepad();
+        if (gamepad != null)
         {
-            float stick = Gamepad.current.leftStick.ReadValue().x;
+            float stick = gamepad.leftStick.ReadValue().x;
 
             if (Mathf.Abs(stick) > Mathf.Abs(input))
                 input = stick;
@@ -166,16 +184,45 @@ public sealed class ArenaPlayerController : MonoBehaviour
         return Mathf.Clamp(input, -1f, 1f);
     }
 
-    private static bool JumpPressed()
+    private bool JumpPressed()
     {
         Keyboard keyboard = Keyboard.current;
+        bool keyboardJump = false;
 
-        return (keyboard != null &&
-                (keyboard.spaceKey.wasPressedThisFrame
-                || keyboard.wKey.wasPressedThisFrame
-                || keyboard.upArrowKey.wasPressedThisFrame))
-                || (Gamepad.current != null &&
-                    Gamepad.current.buttonSouth.wasPressedThisFrame);
+        if (keyboard != null)
+        {
+            if (playerNumber == 1)
+            {
+                keyboardJump = keyboard.spaceKey.wasPressedThisFrame
+                               || keyboard.wKey.wasPressedThisFrame;
+            }
+            else
+            {
+                keyboardJump = keyboard.upArrowKey.wasPressedThisFrame;
+            }
+        }
+
+        Gamepad gamepad = GetPlayerGamepad();
+        bool gamepadJump = gamepad != null && gamepad.buttonSouth.wasPressedThisFrame;
+
+        return keyboardJump || gamepadJump;
+    }
+
+    private Gamepad GetPlayerGamepad()
+    {
+        int gamepadIndex = playerNumber - 1;
+
+        if (Gamepad.all.Count > gamepadIndex)
+            return Gamepad.all[gamepadIndex];
+
+        return null;
+    }
+
+    public void SetPlayerNumber(int number) => playerNumber = Mathf.Clamp(number, 1, 2);
+
+    private void OnEnable()
+    {
+        fixedZPosition = transform.position.z;
     }
 
     private void OnDisable()
@@ -197,6 +244,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private void OnValidate()
     {
         gravity = Mathf.Min(gravity, -0.1f);
+        playerNumber = Mathf.Clamp(playerNumber, 1, 2);
     }
 
     // Measure distance to the capsule side in XY, accounting for the capsule end caps.
@@ -211,12 +259,12 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
         float radius =
             body.radius *
-            Mathf.Max(transform.lossyScale.x, transform.lossyScale.z);
+            Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.z));
 
         float halfSegment =
             Mathf.Max(
                 0f,
-                body.height * transform.lossyScale.y * 0.5f - radius
+                body.height * Mathf.Abs(transform.lossyScale.y) * 0.5f - radius
             );
 
         Vector2 closest = new Vector2(
