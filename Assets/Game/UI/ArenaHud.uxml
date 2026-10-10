@@ -4,7 +4,7 @@
         <ui:Label name="bomb-counter" text="Bombs dropped: 0" class="bomb-counter" />
         <ui:Label name="controls" text="A/D or arrows: move    Space: jump    R: restart" class="controls" />
         <ui:VisualElement name="death-panel" class="death-panel">
-            <ui:Label text="GAME OVER" class="death-title" />
+            <ui:Label name="winner" text="GAME OVER" class="death-title" />
             <ui:Label name="result-bombs" text="Bombs Dodged: 0" class="result-item" />
             <ui:Label name="result-time" text="Time Survived: 00:00" class="result-item" />
             <ui:Label name="result-xp" text="XP Gained: 0" class="result-item" />

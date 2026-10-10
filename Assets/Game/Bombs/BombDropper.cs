@@ -100,6 +100,7 @@ public sealed class BombDropper : MonoBehaviour
 
     private void Awake()
     {
+        if (session == null) session = FindFirstObjectByType<ArenaSession>();
         ResolveGround();
         roundElapsedTime = 0f;
         ResetDropTimer();
@@ -202,12 +203,19 @@ public sealed class BombDropper : MonoBehaviour
         DestroyDebrisInBlast(center);
         AffectBlastReceivers(center);
         if (enableRubble) SpawnRubble(center);
-        if (player != null && player.gameObject.activeInHierarchy
-            && player.DistanceToBody(center) <= lethalRadius)
+        if (session != null)
         {
-            if (session != null) session.KillPlayer();
-            else player.gameObject.SetActive(false);
+            foreach (ArenaPlayerController target in new[] { session.Player1, session.Player2 })
+            {
+                if (target == null || !target.gameObject.activeInHierarchy) continue;
+                if (target.DistanceToBody(center) > lethalRadius) continue;
+                session.KillPlayer(target);
+                break; // The first death ends the round.
+            }
         }
+        else if (player != null && player.gameObject.activeInHierarchy
+                 && player.DistanceToBody(center) <= lethalRadius)
+            player.gameObject.SetActive(false);
 
         ShowBlast(center);
     }

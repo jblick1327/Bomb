@@ -15,7 +15,7 @@ public sealed class ArenaHudDocument : MonoBehaviour
 
     private UIDocument document;
     private VisualElement root, deathPanel, levelFill, levelTrack;
-    private Label controls, timer, bombCounter, bombResult, timeResult, xpResult, currentLevel, nextLevel;
+    private Label winner, controls, timer, bombCounter, bombResult, timeResult, xpResult, currentLevel, nextLevel;
     private IVisualElementScheduledItem timerUpdate;
 
     private void Awake()
@@ -25,6 +25,7 @@ public sealed class ArenaHudDocument : MonoBehaviour
         root = document.rootVisualElement.Q<VisualElement>("hud-root");
         if (styleSheet != null) root.styleSheets.Add(styleSheet);
         deathPanel = root.Q<VisualElement>("death-panel");
+        winner = root.Q<Label>("winner");
         controls = root.Q<Label>("controls");
         timer = root.Q<Label>("timer");
         bombCounter = root.Q<Label>("bomb-counter");
@@ -60,7 +61,8 @@ public sealed class ArenaHudDocument : MonoBehaviour
     private void Refresh(ArenaRoundState state)
     {
         bool dead = state == ArenaRoundState.Dead;
-        if (controls != null) controls.text = dead ? "R: restart" : "A/D or arrows: move    Space: jump    R: restart";
+        if (winner != null) winner.text = session != null ? session.WinnerMessage : "Game Over";
+        if (controls != null) controls.text = dead ? "R: restart" : "P1: A/D + W/Space    P2: arrows + Up    R: restart";
         if (controls != null) controls.style.display = dead ? DisplayStyle.None : DisplayStyle.Flex;
         if (deathPanel != null) deathPanel.style.display = dead ? DisplayStyle.Flex : DisplayStyle.None;
         if (timer != null) timer.style.display = dead ? DisplayStyle.None : DisplayStyle.Flex;

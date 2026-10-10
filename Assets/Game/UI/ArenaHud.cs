@@ -26,9 +26,9 @@ public sealed class ArenaHud : MonoBehaviour
 
     private void Refresh(ArenaRoundState state)
     {
-        deathPanel.SetActive(state == ArenaRoundState.Dead);
-        controls.text = state == ArenaRoundState.Playing
-            ? "A/D or arrows: move    Space: jump    R: restart"
+        if (deathPanel != null) deathPanel.SetActive(state == ArenaRoundState.Dead);
+        if (controls != null) controls.text = state == ArenaRoundState.Playing
+            ? "P1: A/D + W/Space    P2: arrows + Up    R: restart"
             : "R: restart";
     }
 }
