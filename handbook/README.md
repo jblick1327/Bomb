@@ -1,6 +1,6 @@
 # BOM — Simulation model source
 
-Handbook **1.6.0**, dated **9 October 2026**. Model baseline: Architecture **v0.14** through **DEC-068**.
+Handbook **1.7.0**, dated **11 October 2026**. Model baseline: Architecture **v0.15** through **DEC-069**.
 
 Root `index.html` is the page output. It embeds styles, diagrams, navigation, search and the complete six source documents and works offline.
 
@@ -17,14 +17,16 @@ The build writes identical HTML, readable Markdown and extracted JSON under igno
 
 ## Current checkpoint
 
+- Host-produced gameplay geometry and resulting entity/relationship state are the replication baseline (`NET-002`, `DEC-069`). Encoding, compression, delivery, correction and recovery remain implementation choices under narrowed `OQ-GEO-002`.
+- The seven decision-audit findings are reconciled: blast scope, canonical committed shapes, work proposals, candidate asset organization, networking timing and Decision Log section hierarchy now agree. All 68 prior decision bodies are unchanged.
 - Independent shared blast resistance, ordinary travel plus resistance × thickness, original cover cost, breach continuity and straight paths are accepted (`DEC-062` to `DEC-065`).
 - The killing explosion preserves the new corpse shape/ID; later independent blasts use its current environment response (`DEC-066`).
 - Indestructible cover fully blocks carving and exposure along its path (`DEC-067`).
 - Stable body-ID explosion order and explicit-resistance recovery are accepted for the bounded probe; its schema 3, numerical method/caps and fixture values remain experiment conventions (`DEC-068`).
 
-`BOM-Team-Model-Handoff.md` owns the blast handoff example and reviewed evidence sections reused by the walkthrough/reference pages. The probe at `24e79ff` records 83/83 EditMode and 15/15 PlayMode passes against the supplied 1.5.0 target plus reviewed conventions. The 0.777 mm measured deficit is bounded evidence; layered computation cost, the original opaque-support rejection, unsupported inputs and older hold stretch remain explicit limits. Current 1.6 source changes were not separately run in Unity.
+`BOM-Team-Model-Handoff.md` owns the blast handoff example and reviewed evidence sections reused by the walkthrough/reference pages. The candidate map owns the definition-organization qualifier reused by the definitions reference. The probe at `24e79ff` records 83/83 EditMode and 15/15 PlayMode passes against the supplied 1.5.0 target plus reviewed conventions. The 0.777 mm measured deficit is bounded evidence; layered computation cost, the original opaque-support rejection, unsupported inputs and older hold stretch remain explicit limits. The 1.6 and 1.7 documentation changes were not separately run in Unity.
 
-The approved presentation assets, stable routes and ten existing work deliveries/dependencies/order are preserved. The new routes are `#walkthrough/explosion`, `#reference/blast` and `#reference/blast-evidence`. Rules/search omit repeated Accepted labels while source metadata/history remain. Earlier Start work/milestone/staffing and authoring-organization recommendations are still unratified.
+The approved layout/diagrams, stable routes and ten existing work deliveries/dependencies/order are preserved. Work navigation and pages now identify proposals explicitly; no shared milestone or staffing is ratified. Routes `#walkthrough/explosion`, `#reference/blast` and `#reference/blast-evidence` remain. Rules/search omit repeated Accepted labels while source metadata/history remain. Required authoring inputs stay authoritative; the exact asset organization remains a candidate.
 
 ## Verification
 

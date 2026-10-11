@@ -1,6 +1,6 @@
 {
-  "version": "1.6.0",
-  "date": "2026-10-09",
+  "version": "1.7.0",
+  "date": "2026-10-11",
   "title": "BOM Team Handbook",
   "principles": [
     {
@@ -199,11 +199,12 @@
       ],
       "remember": [
         "Current bomb position/configuration; original body shapes and recoverable material/response selections.",
-        "Current connectors, holds, control, countdown and ID allocator state; complete lasting results replace them atomically."
+        "Current connectors, holds, control, countdown and ID allocator state; complete lasting results replace them atomically.",
+        "Committed gameplay shapes, entity identities and relationship/control outcomes; Odin carries this canonical result."
       ],
       "derive": [
-        "Transient blast evaluation and the final numerical cut; no new persistent blast entity.",
-        "Unity bodies, colliders, joints and presentation; committed semantic results and recovery state for Odin."
+        "Temporary blast calculations and the uncommitted cut/mutation plan; no new persistent blast entity.",
+        "Unity bodies, colliders, joints and presentation reconstructed from the committed state."
       ],
       "changes": [
         [
@@ -228,7 +229,7 @@
         ],
         [
           "Commit and recovery",
-          "Publish the complete valid result; rebuild from current records and definitions"
+          "Publish the complete valid result, including host-produced geometry; rebuild from current records and definitions"
         ]
       ],
       "refs": [
@@ -243,7 +244,9 @@
         "LIMB-008",
         "CHAR-006",
         "COMMIT-002",
-        "REBUILD-001"
+        "REBUILD-001",
+        "WORLD-002",
+        "NET-002"
       ],
       "speaker": "Use the separate one-path numerical example in the details to explain reach and shielding, then connect its geometric result to the existing split/death/recovery rules. Illustrative values are not tuning defaults. The blast conformance reference records the actual bounded results and remaining shadow/performance limits.",
       "caveat": "The drawing is the supported, held world before detonation; it does not depict the separate numerical layer fixture. The probe establishes listed cases, including expected rejections, rather than arbitrary geometry or real-time performance.",
@@ -809,9 +812,9 @@
       "id": "NET-01",
       "role": "networking",
       "title": "Connect requests, committed results and recovery",
-      "stage": "When networking resumes",
+      "stage": "Interfaces can begin independently",
       "purpose": "Build against the shared semantic boundary while keeping serialization and delivery choices replaceable.",
-      "start": "Agree request, committed-result and current-state recovery interfaces with Unity integration; mock those interfaces while the fixture is being built.",
+      "start": "Agree request, host-produced geometry/relationship-result and current-state recovery interfaces with Unity integration; mock those interfaces independently of the completed fixture.",
       "inputs": [
         "Host-owned control/interaction validation and canonical state capture.",
         "Accepted body/relationship semantics and validated definition dependencies."
@@ -819,14 +822,14 @@
       "deliverable": "An Odin-to-Unity boundary and a second-instance recovery exercise using the same fixture and its current outcomes.",
       "steps": [
         "Carry participant intent to the host, which validates and decides the result.",
-        "Expose complete committed results and current recovery state from Unity.",
+        "Expose host-produced gameplay geometry with complete entity/relationship outcomes and current recovery state from Unity.",
         "Resolve the same definition inputs and rebuild initial, held, split and death results on another instance.",
         "Keep transport, serializer and compatibility choices documented as networking implementation work."
       ],
       "checks": [
         "Odin owns networking, while Unity remains the sole authoritative gameplay simulation.",
         "Recovery uses current records/dependencies without event replay or engine-object serialization.",
-        "Observers receive complete structural outcomes with valid references."
+        "Observers receive host-produced gameplay geometry and complete structural outcomes with valid references; runtime objects reconstruct from that state."
       ],
       "dependencies": [
         "UNITY-01"
@@ -838,7 +841,7 @@
         "STATE-001",
         "COMMIT-001"
       ],
-      "open": "Networking remains deprioritized for the immediate handoff. Final message fields, serializer, transport/channels, rates, compatibility and correction strategy are not selected. Mocking can begin before the full fixture is complete."
+      "open": "The networking owner chooses timing. Interface design and mocks can begin independently; integrated recovery needs the compatible Unity capture/reconstruction path. Result encoding/compression, message boundaries, serializer, transport/channels, rates, compatibility and correction strategy remain open."
     }
   ],
   "topics": [
@@ -899,7 +902,7 @@
     "shared"
   ],
   "implementation": {
-    "title": "Build and reconstruct one scene",
+    "title": "Proposed implementation slice",
     "goal": "Use one platform bonded to a fixed wall, one player-controlled Claymate and one bomb. Capture the scene’s current records, remove its derived Unity objects, then reconstruct it from that capture and its selected definitions.",
     "begin": "Simulation integration and asset authoring begin with one simple platform. Record the fixture’s units, local origin, shape exchange and definition lookup, then verify that both paths interpret the same example.",
     "contributions": [
@@ -938,6 +941,7 @@
         "DEATH-01",
         "Install environment behaviour, clear control/outgoing holds and preserve valid incoming holds."
       ]
-    ]
+    ],
+    "status": "The first shared milestone and precise work order remain unchosen (OQ-SCOPE-002). The supported-platform fixture and role deliveries below are a proposal; accepted model requirements apply independently."
   }
 }

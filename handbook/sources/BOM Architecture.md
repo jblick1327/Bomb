@@ -1,8 +1,8 @@
 # BOM Simulation Architecture
 
-**Version:** 0.14  
+**Version:** 0.15  
 **Review state:** Current source of truth; accepted rules govern the current build  
-**Last updated:** 2026-10-09  
+**Last updated:** 2026-10-11  
 **Companion files:** `BOM Decision Log.md`, `BOM Open Questions.md`
 
 ## 1. Purpose
@@ -890,7 +890,7 @@ The network protocol communicates semantic simulation state and operations rathe
 **Status:** Accepted  
 **Kind:** Architectural invariant
 
-Once the host commits an interaction or structural consequence, the canonical result is replicated. Clients may derive noncanonical presentation and runtime consequences locally where appropriate.
+Once the host commits an interaction or structural consequence, the canonical result is replicated. For geometry changes, this includes the host-produced gameplay geometry and the resulting entity and relationship state. Clients reconstruct colliders, render meshes, and other runtime representations from that committed state. Clients may derive noncanonical presentation and runtime consequences locally where appropriate.
 
 ## 14. Course implementation boundary
 
@@ -928,14 +928,15 @@ The course implementation currently requires:
 - Applied force alone does not release limb holds in the current build under `LIMB-006`.
 - The coarse system responsibilities under `ECS-006`, with execution order still open.
 - Client interaction proposals validated against authoritative current state.
+- Host-produced gameplay geometry replicated with the resulting entity and relationship state; clients reconstruct runtime representations from the committed result under `NET-002`.
 
 The following are not implied by this document and remain open or deferred:
 
 - Exact ECS framework, unaccepted record boundaries and remaining fields/encodings, and system/commit ordering.
 - Exact geometry representation, units, numeric encoding, local origins/pivots, quantization, and polygon library.
 - Additional physical-property inputs/derivations, actual corpse settings, and fixed-wall/definition reference encoding.
-- Blast-resistance inputs and their source, propagation and thickness calculation, and exact power/radius mapping.
+- Actual blast authoring values/units and encoding; numerical intersections and crossed-thickness measurement; supported geometry and computation cost; exact character boundary/lethality evaluation and power/radius mapping. The shared resistance source, reach-cost model, and straight-path propagation behaviour are accepted.
 - Exact fixed-timestep rate, snapshot rate, transport, rollback, or correction strategy.
-- Geometry-operation versus result-contour replication.
+- Geometry-result encoding, compression, delivery boundaries, correction, and snapshot recovery. Host-produced geometry is the accepted replication baseline.
 - Non-rigid environmental connector implementations.
 - Final multiplayer capacity.

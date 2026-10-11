@@ -1,7 +1,7 @@
 # BOM Architecture Decision Log
 
-**Version:** 0.14  
-**Last updated:** 2026-10-09  
+**Version:** 0.15  
+**Last updated:** 2026-10-11  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Purpose
@@ -679,6 +679,9 @@ YAML, JSON Schema, a custom DSL, or a knowledge graph may become useful later. I
 **Status:** Rejected as a required course case
 
 The discussed geometry assumed a blast could originate inside intact material. That assumption contradicts the game's falling-bomb behavior.
+
+## 5. Later accepted decisions
+
 ### DEC-052 — Accept connector strength per surviving attachment length
 
 **Date:** 2026-10-07  
@@ -882,3 +885,15 @@ The discussed geometry assumed a blast could originate inside intact material. T
 **Rationale:** James separately accepted the proposed explosion order and recovery approach, then clarified that test specifics are Codex's concern. The continuation permitted numerical method/budget revisions while preserving accepted rules and independent expected outcomes. A choice changing gameplay, the canonical representation or agreed architecture still returns for review.
 
 **Evidence boundary:** The implementation at `24e79ff0533eabf51627859b097f3503af5f54a1` records 83/83 EditMode and 15/15 PlayMode passes. These are bounded fixture results; they do not ratify production performance, arbitrary geometry, a new framework, historical migration, staffing or a merge into the assignment prototype. The team handoff records the measured limits.
+
+### DEC-069 — Make host-produced geometry replication explicit
+
+**Status:** Accepted  
+**Date:** 2026-10-11  
+**Affects:** `NET-002`, `WORLD-002`, `COMMIT-001`, `COMMIT-002`, `STATE-001`
+
+**Decision:** Geometry-changing commits replicate the host-produced gameplay geometry and the resulting entity and relationship state. Clients reconstruct colliders, render meshes, and other runtime representations from that committed state. The host produces the authoritative shapes; result encoding and delivery are separate implementation choices.
+
+**Rationale:** James recalled that clients receiving produced geometry had already been settled. The decision audit found the general canonical-result rule and later recorded direction, but could not recover the exact original geometry-specific acceptance turn. After reviewing explicit NET-002 wording and the proposed reconciliation, James authorized this checkpoint. This entry records that current confirmation on its actual date; it does not invent a recovered or backdated approval.
+
+**Scope:** Complete shapes, geometry deltas, or validated references may encode the committed result. Compression, message boundaries, delivery, correction, and snapshot recovery remain open. This selects no wire format, geometry library, mandatory full-shape packet, new physics authority, or team milestone. Existing prediction and complete structural-commit requirements continue to apply.

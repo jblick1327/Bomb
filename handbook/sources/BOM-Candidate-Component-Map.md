@@ -1,9 +1,9 @@
 # BOM — Candidate Component and Data Map
 
-**Version:** 0.8  
-**Date:** 2026-10-09  
+**Version:** 0.9  
+**Date:** 2026-10-11  
 **Status:** Review map containing accepted conceptual groupings and explicitly marked candidates  
-**Baseline:** `BOM Architecture.md` v0.14; decisions through `DEC-068`
+**Baseline:** `BOM Architecture.md` v0.15; decisions through `DEC-069`
 
 This map assembles the current model. Architecture controls if a summary or example conflicts with it. Seven groupings are accepted under `ECS-007`; that acceptance does not ratify every remaining field, definition placement, numeric type, or implementation boundary. Other groupings below remain candidates. A row describes semantic contents, not a serializer, engine class, memory layout, or requirement for one implementation component per row.
 
@@ -85,12 +85,12 @@ This section is a recommended presentation boundary for the review map. These fa
 
 ## 6. Definitions and entity composition
 
-Definitions are reusable inputs, not additional physical entities. The following is a candidate authoring organization. Its required facts and accepted placements are marked explicitly.
+Definitions are reusable inputs, not additional physical entities. The following is a candidate authoring organization. Its required facts and accepted sources are marked explicitly. Independent, recoverable destruction-response selection is required under `MAT-006`; a separate reusable response asset and the precise asset/reference organization remain implementation choices.
 
 | Definition/configuration source | Inputs it supplies or may supply |
 |---|---|
 | Material definition | Explicit independently authored density and blast resistance through the shared source (`MAT-005`, `MAT-009`, `MAT-010`). Mass derives from density × area; extra reach cost derives from resistance × thickness plus ordinary distance. Additional physical derivations, actual values/units and encoding remain open. |
-| Destruction-response definition | Independently selected response and parameters. Presets can offer defaults; effective selection remains recoverable. |
+| Destruction-response definition | Candidate reusable packaging for independently selected response and parameters. Presets can offer defaults; effective selection remains recoverable under `MAT-006`. |
 | Appearance inputs | Reusable visual settings and shape alignment; colour may vary. Definition/instance division and a separate `VisualBinding` remain open. |
 | Character definition | Fixed body-local limb roots and authored maximum reach are accepted. It supplies the environment configuration installed on death: material, destruction response, interaction eligibility, and reusable appearance. Actual values, other movement inputs, and encoding remain open. |
 | Bomb definition/configuration | Selected fuse/explosion inputs; exact values/encoding and physical defaults remain open. |

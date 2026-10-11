@@ -242,7 +242,8 @@ topic_pages['control']='''<h1>Control assignment</h1><p>The canonical match rost
 ['Which limb slot holds which target.','[RECORD:LimbAttachment].','Character-slot-to-attachment lookup.']
 ])+'''<p>The character does not duplicate participant ownership or hold references. Connection mapping, scoring and respawn rules remain open.</p><h2>Match progression</h2><p>Lasting round/spawn facts belong to canonical state when selected mechanics require them. Broad <code>MatchState</code> contents are outside this body-and-relationship catalogue. The accepted bomb countdown needs no shared deadline clock.</p>'''+ref_list(['PLAYER-001','PLAYER-002','LIMB-002','BOMB-004'])
 topic_pages['control']=resolve_record_links(topic_pages['control'])
-topic_pages['definitions']='''<h1>Definitions and compositions</h1><p>Definitions supply reusable inputs selected by current state. Reconstruction must resolve the same effective values. A changed piece must not need its retired parent to recover its properties or appearance.</p>'''+table_from_source('Definition/configuration source')+'''<h2>Body compositions</h2>'''+table(['Role','Required semantic contents'],[
+definition_organization=map_text.split('## 6. Definitions and entity composition\n',1)[1].split('\n| Definition/configuration source',1)[0].strip()
+topic_pages['definitions']='''<h1>Definitions and compositions</h1>'''+md(definition_organization)+'''<p>Reconstruction must resolve the same effective values. A changed piece must not need its retired parent to recover its properties or appearance.</p>'''+table_from_source('Definition/configuration source')+'''<h2>Body compositions</h2>'''+table(['Role','Required semantic contents'],[
 ['Environment piece','Identity, motion, shape, material, destruction behaviour, applicable interaction eligibility and recoverable appearance inputs.'],
 ['Living character','Identity, motion, shape, shared material inputs, CharacterState, applicable interaction eligibility and appearance inputs.'],
 ['Live bomb','Identity, motion, shape, shared material inputs, BombState, applicable interaction eligibility and appearance inputs.'],
@@ -266,7 +267,7 @@ topic_pages['unresolved']='''<h1>Unresolved details</h1><p>The following items r
 ['Connector failure','Rigid fit, identity outcomes, Fmax = S × L / Tmax = ½ × S × L² and optional percentage failure are accepted. References follow connector identity.','Choose explicit fixture values, paired length measurement, load conversion and encoding. No universal percentage cutoff is selected.'],
 ['Interaction and movement','Minimum holds, fixed roots, authored reach and shared Boolean hand/foot eligibility are accepted. Bombs use ordinary eligibility; applied force alone does not release holds.','Choose constraint realization, active controls, tuning, authoring defaults and eligibility encoding.'],
 ['Bomb activation and blasts','Continuous activated fuse; independent resistance; distance-plus-thickness cost; straight paths; breach continuity; opaque indestructible cover; uncarved killing-explosion corpse.','Choose landing classification, values/units/encoding, production geometry support/performance, character boundary lethality, power/radius mapping and general update order. See the bounded evidence for measured limits.'],
-['Data and networking encoding','Current state and validated dependencies must reconstruct the world.','Choose formats, dependency validation, IDs/revisions and networking encoding without altering the semantic contracts.']
+['Data and networking encoding','The host produces committed gameplay geometry and replicates it with entity/relationship outcomes. Current state and validated dependencies reconstruct the world.','Choose result encoding, compression, delivery, correction and recovery, plus IDs/revisions and dependency validation. See OQ-GEO-002.']
 ],'open-table')+'''<details><summary>All open questions</summary>'''+''.join('<details><summary>'+esc(q['id']+' — '+q['title'])+'</summary><div class="rule-body">'+q['html']+'</div></details>' for q in questions.values() if q['status']!='Resolved')+'''</details>'''
 topic_pages['blast']='<h1>Blast reach and destruction</h1>'+md(team_section('Blast reach and destruction handoff'))+'<p><a href="#reference/blast-evidence">Reviewed conformance evidence and remaining implementation limits</a></p>'+ref_list(['MAT-010','WORLD-007','WORLD-008','WORLD-009','WORLD-010','WORLD-011','CHAR-006','COMMIT-002'])
 topic_pages['blast-evidence']='<h1>Blast conformance</h1>'+md(team_section('Blast conformance evidence and implementation limits'))
@@ -309,7 +310,7 @@ def walk_page(c,result='split'):
     def step_link(href,label,destination,cls,rel):
         return '<a class="'+cls+'" href="'+href+'" rel="'+rel+'" aria-label="'+esc(label+': '+destination)+'"><span class="pager-label">'+esc(label)+'</span><span class="pager-destination">'+esc(destination)+'</span></a>'
     previous=step_link('#walkthrough/'+book['cases'][index-1]['id'],'Previous',book['cases'][index-1]['title'],'pager-previous','prev') if index else ''
-    next_link=step_link('#walkthrough/'+book['cases'][index+1]['id'],'Next',book['cases'][index+1]['title'],'pager-next','next') if index<len(book['cases'])-1 else step_link('#work/overview','Start work','First shared milestone','pager-next','next')
+    next_link=step_link('#walkthrough/'+book['cases'][index+1]['id'],'Next',book['cases'][index+1]['title'],'pager-next','next') if index<len(book['cases'])-1 else step_link('#work/overview','Start work','Work proposals','pager-next','next')
     controls=previous+next_link
     heading='<div class="step-top"><div class="step-heading"><h1>'+esc(c['title'])+'</h1><span class="step-number">Step '+str(index+1)+' of '+str(len(book['cases']))+'</span></div><nav class="pager pager-top" aria-label="Walkthrough navigation">'+controls+'</nav></div>'
     return heading+switch+'<div class="walk-canvas"><figure class="scene-figure"><div class="scene-diagram" tabindex="0" role="region" aria-label="Scene diagram">'+scenes[scene]['svg']+'</div><figcaption>'+caption+'</figcaption></figure><div class="explanation"><p>'+inline(intro)+'</p><p class="consequence">'+inline(notice)+'</p>'+list_html(facts)+'</div></div>'+details+'<nav class="pager pager-bottom" aria-label="Walkthrough navigation at end of step">'+controls+'</nav>'
@@ -322,13 +323,14 @@ first_starts={
 'UNITY-01':'Begin the loader with hand-authored wall, platform, Claymate and bomb inputs. Agree the prototype import contract with authoring, then consume the shared asset and level outputs. Derive the bond from its paired attachment regions.',
 'ASSET-01':'Author one platform section. Declare its 2D silhouette and origin, align its appearance, and select a material with explicit density and independent blast resistance, plus an independently selected destruction response.',
 'LEVEL-01':'Lay out the wall, platform and bond now. Mark attachment regions in each endpoint’s local space, and include a Claymate spawn and bomb configuration. Integrate the shared platform asset and exchange conventions as they become available.',
-'NET-01':'Agree intent, committed-result and current-state recovery interfaces with Unity integration. Mock them against the same fixture while the simulation path develops.',
+'NET-01':'Agree intent, host-produced geometry/relationship results and current-state recovery interfaces with Unity integration. Interface design and mocks can begin independently; use a compatible capture/reconstruction path for integration checks.',
 'SHARED-01':task_map['SHARED-01']['start']
 }
 def task_page(t,include_followups=False):
     id=t['id']
     intro='<p class="work-role">'+esc(role_names[t['role']])+' · <code>'+esc(id)+'</code></p><h1>'+esc(t['title'])+'</h1>'
-    if id=='NET-01': intro+='<p>Networking is deferred for the immediate handoff. When it resumes, use the same scene and recovery boundary.</p>'
+    intro+='<p>Suggested delivery within the <a href="#work/overview">proposed implementation slice</a>. The shared milestone and work order remain unchosen ('+ref('OQ-SCOPE-002')+').</p>'
+    if id=='NET-01': intro+='<p>The networking owner chooses timing. Interface design and mocks can begin independently; integrated recovery needs the compatible Unity capture/reconstruction path.</p>'
     start=first_starts.get(id,t['start'])
     out=intro+'<p class="delivery"><strong>Deliver:</strong> '+inline(t['deliverable'])+'</p><p class="first-action">'+inline(start)+'</p>'
     if id=='ASSET-01': out+='<p class="parallel-work">Begin <a href="#work/CHARACTER-01">character-definition inputs</a> alongside the platform. The hold and death checks will need them.</p>'
@@ -343,17 +345,17 @@ def task_page(t,include_followups=False):
     if include_followups:
         later=[x for x in book['tasks'] if x['role']==t['role'] and x['id']!=id]
         if later:
-            out+='<details class="work-order"><summary>'+('Subsequent simulation checks' if t['role']=='simulation' else 'Additional authoring delivery')+'</summary><ul class="followup-list">'+''.join('<li><a href="#work/'+x['id']+'">'+esc(x['title'])+'</a><p>'+inline(x['deliverable'])+'</p></li>' for x in later)+'</ul></details>'
-        out+='<p class="work-return"><a href="#work/overview">First shared milestone</a></p>'
+            out+='<details class="work-order"><summary>'+('Suggested additional simulation checks' if t['role']=='simulation' else 'Suggested additional authoring delivery')+'</summary><ul class="followup-list">'+''.join('<li><a href="#work/'+x['id']+'">'+esc(x['title'])+'</a><p>'+inline(x['deliverable'])+'</p></li>' for x in later)+'</ul></details>'
+        out+='<p class="work-return"><a href="#work/overview">Work proposals</a></p>'
     return out
 task_pages={t['id']:task_page(t) for t in book['tasks']}
 role_pages={role:task_page(task_map[id],True) for role,id in first_tasks.items()}
 implementation=book['implementation']
-work_overview='<h1>'+esc(implementation['title'])+'</h1><p class="delivery">'+inline(implementation['goal'])+'</p><h2>Begin with the shared platform</h2><p class="body-text">'+inline(implementation['begin'])+' <a href="#work/shared">Record the exchange conventions.</a></p>'
-work_overview+=table(['Role','First delivery'],[['[ROLE:'+x['role']+']',x['deliverable']] for x in implementation['contributions']],'milestone-table')
+work_overview='<h1>'+esc(implementation['title'])+'</h1><p class="section-intro">'+inline(implementation['status'])+'</p><p class="delivery">'+inline(implementation['goal'])+'</p><h2>Suggested starting fixture</h2><p class="body-text">'+inline(implementation['begin'])+' <a href="#work/shared">Record the exchange conventions.</a></p>'
+work_overview+=table(['Role','Suggested contribution'],[['[ROLE:'+x['role']+']',x['deliverable']] for x in implementation['contributions']],'milestone-table')
 work_overview=re.sub(r'\[ROLE:([^\]]+)\]',lambda m:'<a href="#work/'+esc(m[1])+'">'+esc(role_names[m[1]])+'</a>',work_overview)
-work_overview+='<section class="completion"><h2>Shared completion check</h2>'+list_html(implementation['checks'])+'</section><p class="body-text">Networking resumes against this same capture and reconstruction boundary. <a href="#work/networking">Networking delivery.</a></p>'
-work_overview+='<details class="work-order"><summary>Checks after reconstruction</summary><ul class="followup-list">'+''.join('<li><a href="#work/'+id+'">'+esc(task_map[id]['title'])+'</a><p>'+inline(description)+'</p></li>' for id,description in implementation['followups'])+'</ul></details>'
+work_overview+='<section class="completion"><h2>Fixture completion checks</h2>'+list_html(implementation['checks'])+'</section><p class="body-text">Networking interface design and mocks can begin independently. Integration uses the compatible capture and reconstruction boundary. <a href="#work/networking">Networking delivery.</a></p>'
+work_overview+='<details class="work-order"><summary>Suggested follow-up checks</summary><ul class="followup-list">'+''.join('<li><a href="#work/'+id+'">'+esc(task_map[id]['title'])+'</a><p>'+inline(description)+'</p></li>' for id,description in implementation['followups'])+'</ul></details>'
 source_data={name:{'name':name,'version':re.search(r'\*\*Version:\*\* (\S+)',text)[1],'markdown':text,'html':md(text),'sha256':hashlib.sha256(text.encode()).hexdigest()} for name,text in sources.items()}
 signature=hashlib.sha256((json.dumps(book,sort_keys=True,ensure_ascii=False)+''.join(sources.values())).encode()).hexdigest()
 data={**book,'baseline':baseline,'sourceHash':signature,'rules':rules,'entries':entries,'records':records,'sources':source_data,'scenes':scenes,'roleNames':role_names,'recordTopics':record_topics,'topicPages':topic_pages,'recordPages':record_pages,'casePages':case_pages,'recoveryPages':recovery_pages,'taskPages':task_pages,'rolePages':role_pages,'workOverview':work_overview}
@@ -369,7 +371,7 @@ assert '@@' not in page
 parts=['# BOM — Simulation model',f'**Handbook:** {book["version"]}  \n**Date:** {book["date"]}  \n**Baseline:** {baseline}','## Walkthrough']
 for c in book['cases']:
     parts+=['### '+c['title'],c['intro'],c['notice'], '\n'.join('- '+s for s in c['facts']),'| Concern | Outcome |\n|---|---|\n'+'\n'.join('| '+a+' | '+b+' |' for a,b in c['changes']),'Rules: '+', '.join(id for id in c['refs']),c['caveat']]
-parts+=['## Body and relationship reference',map_text[map_text.index('## 1.'):map_text.index('## 9.')], '## Implementation deliveries','### '+implementation['title'],implementation['goal'],implementation['begin'],'| Role | First delivery |\n|---|---|\n'+'\n'.join('| '+role_names[x['role']]+' | '+x['deliverable']+' |' for x in implementation['contributions']),'**Shared completion check**\n\n'+'\n'.join('- '+x for x in implementation['checks']),'### Exchange conventions','| Convention | Record for the fixture | Coordinating roles |\n|---|---|---|\n'+'\n'.join('| '+c['title']+' | '+c['prompt']+' | '+c['roles']+' |' for c in book['choices'])]
+parts+=['## Body and relationship reference',map_text[map_text.index('## 1.'):map_text.index('## 9.')], '## Proposed implementation deliveries','### '+implementation['title'],implementation['status'],implementation['goal'],implementation['begin'],'| Role | Suggested contribution |\n|---|---|\n'+'\n'.join('| '+role_names[x['role']]+' | '+x['deliverable']+' |' for x in implementation['contributions']),'**Fixture completion checks**\n\n'+'\n'.join('- '+x for x in implementation['checks']),'### Exchange conventions','| Convention | Record for the fixture | Coordinating roles |\n|---|---|---|\n'+'\n'.join('| '+c['title']+' | '+c['prompt']+' | '+c['roles']+' |' for c in book['choices'])]
 for role in book['roleOrder']:
     parts+=['### '+role_names[role]]
     tasks=[task_map[first_tasks[role]]]+[t for t in book['tasks'] if t['role']==role and t['id']!=first_tasks[role]]

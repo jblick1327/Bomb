@@ -8,7 +8,7 @@
   const routes = {
     walkthrough: D.cases.map(c => ({href:'#walkthrough/' + c.id, title:c.short, key:c.id})),
     reference: D.topics.map(t => ({href:'#reference/' + t[0], title:t[1], key:t[0]})),
-    work: [{href:'#work/overview', title:'First milestone', key:'overview'}, ...D.roleOrder.map(role => ({href:'#work/' + role, title:roleNames[role], key:role}))]
+    work: [{href:'#work/overview', title:'Work proposals', key:'overview'}, ...D.roleOrder.map(role => ({href:'#work/' + role, title:roleNames[role], key:role}))]
   };
   function navigation(active) {
     const items = routes[view];

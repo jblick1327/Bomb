@@ -1,7 +1,7 @@
 # BOM Architecture Open Questions
 
-**Version:** 0.13  
-**Last updated:** 2026-10-09  
+**Version:** 0.14  
+**Last updated:** 2026-10-11  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Interpretation
@@ -27,12 +27,14 @@ These priorities describe implementation needs, not the order of the conceptual 
 
 Authored material sections declare a 2D gameplay shape and aligned visual data under `MAT-007`. What exact data structure represents initial and changed canonical geometry? This includes contour representation, numeric precision or quantization, winding and hole semantics, validation, and the polygon-processing library.
 
-### OQ-GEO-002 — Geometry replication form
+### OQ-GEO-002 — Geometry-result encoding and delivery
 
 **Priority:** P0  
 **Related rules:** `NET-001`, `NET-002`, `WORLD-002`
 
-After subtraction, does the host primarily replicate the destruction operation, the resulting contours, or a hybrid with authoritative correction?
+The host produces and commits gameplay geometry; clients receive that geometry with the resulting entity and relationship state under `NET-002`. Who produces the authoritative shapes is settled.
+
+Which encoding and delivery contract carries those committed results efficiently and supports correction and current-state recovery? Complete shapes, geometry deltas, or validated references may encode the host's result; the representation must determine that committed geometry and preserve complete structural outcomes. Compression, message boundaries, ordering, and recovery-stream integration remain implementation choices. A message describing only the blast or cutter inputs does not supply the authoritative produced geometry.
 
 ### OQ-GEO-003 — Minimum valid material geometry
 
@@ -292,7 +294,7 @@ Resolve the conflict between the older ten-player GDD target and the newer four-
 **Priority:** P0  
 **Related rules:** Section 14 of `BOM Architecture.md`
 
-Select the smallest ordered implementation slice that proves the canonical model. Its contents and precise order have not yet been accepted.
+Select the smallest ordered implementation slice that proves the canonical model. Its contents and precise order have not yet been accepted. The handbook's supported-platform fixture, role deliveries, and dependency sequence are a proposal, not an approved team milestone. Acceptance of bounded conformance experiments did not select that shared work plan.
 
 ## 9. Deferred extensions
 
