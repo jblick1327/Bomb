@@ -1,7 +1,7 @@
 {
-  "version": "1.8.0",
+  "version": "1.8.1",
   "date": "2026-10-13",
-  "title": "BOM Team Handbook",
+  "title": "BOM Game Specification",
   "principles": [
     {
       "title": "Unity commits gameplay",
@@ -905,16 +905,8 @@
       "Blast reach"
     ],
     [
-      "blast-evidence",
-      "Blast conformance"
-    ],
-    [
       "snapshots",
       "Snapshot baseline"
-    ],
-    [
-      "authoring-evidence",
-      "Authoring v4 evidence"
     ],
     [
       "unresolved",
@@ -927,6 +919,14 @@
     [
       "sources",
       "Source documents"
+    ],
+    [
+      "blast-evidence",
+      "Blast verification"
+    ],
+    [
+      "authoring-evidence",
+      "Authoring verification"
     ]
   ],
   "roleOrder": [
@@ -939,7 +939,7 @@
   "implementation": {
     "title": "Proposed implementation slice",
     "goal": "Use one platform bonded to a fixed wall, one player-controlled Claymate and one bomb. Capture the scene’s current records, remove its derived Unity objects, then reconstruct it from that capture and its selected definitions.",
-    "begin": "The local v4 environment authoring/destruction path is reviewed. Use its approved piece and connected scene for a hands-on check and shared exchange reconciliation, then extend toward the integrated character/bomb fixture below.",
+    "begin": "Use an approved piece and connected scene to establish a compatible capture/reconstruction boundary, then extend it with the character and bomb cases.",
     "contributions": [
       {
         "role": "simulation",
@@ -977,6 +977,6 @@
         "Install environment behaviour, clear control/outgoing holds and preserve valid incoming holds."
       ]
     ],
-    "status": "Local v4 authoring/destruction evidence is recorded separately. The first integrated game milestone, precise work order and assignees remain unchosen (OQ-SCOPE-002); the deliveries below are proposals, with accepted requirements applying independently."
+    "status": "Suggested work, separate from accepted requirements. The first integrated milestone, order and assignees remain open (OQ-SCOPE-002)."
   }
 }

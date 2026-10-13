@@ -1,6 +1,6 @@
 # BOM Architecture Open Questions
 
-**Version:** 0.15  
+**Version:** 0.16  
 **Last updated:** 2026-10-13  
 **Normative source:** `BOM Architecture.md`
 
@@ -14,9 +14,7 @@ Priority meanings:
 - **P1:** Needed for a robust networked prototype but not for the earliest local slice.
 - **P2:** Can remain deferred until testing or expansion exposes the need.
 
-These priorities describe implementation needs, not the order of the conceptual design interview. Component responsibilities, coarse system ownership, and seven conceptual groupings are accepted under `ECS-005` to `ECS-007`. Fixed limb roots/reach, minimum hold contents, remaining-duration bomb countdowns, and connector reference lifetimes are also settled. Character definitions now supply death-to-environment configuration; `MaterialProperties` applies to living characters and bombs; level/world data supplies fixed walls; world/body-local frame roles are settled. Remaining values, fields/encodings, execution order, and detailed coordination stay open. The immediate goal is a team-facing conceptual handoff for Unity, art, and level design. The networking owner chooses implementation timing; the initial full-snapshot/dependency/ordering baseline is now settled under `NET-003` to `NET-005`. A useful model can retain explicit unresolved policies; the questions below are not an exhaustive serial interview.
-
-**Resolution status:** Earlier accepted policies remain in force through `DEC-061`. `DEC-062` through `DEC-066` settle the shared independent resistance source, linear extra cost, breach continuity, straight propagation and the uncarved killing-explosion corpse. `DEC-067` makes indestructible cover opaque. `DEC-068` accepts ordering/recovery conventions only for the bounded probe. Remaining model choices and implementation limits below retain their actual scope; the experiment does not establish a production algorithm, performance guarantee, serializer or global schedule. `OQ-CON-004` remains resolved by `CON-014` / `DEC-046`. `DEC-070` to `DEC-077` record full snapshots, host-supplied dependencies and the Unity authoring v1 workflow. The reviewed local implementation is evidence; its numeric/kernel/schema conventions are not automatically the shared exchange contract.
+Priorities describe implementation needs. The Architecture contains settled behaviour; this file identifies the remaining representation, tuning and integration choices. Proposed work and implementation evidence do not add requirements.
 
 ## 2. Geometry and destruction
 
@@ -32,7 +30,7 @@ Unity authoring v1 supports one connected concave profile with enclosed holes; d
 **Priority:** P0  
 **Related rules:** `NET-001`, `NET-002`, `NET-003`, `NET-004`, `NET-005`, `WORLD-002`
 
-The host produces authoritative geometry. Initial structural replication uses complete current snapshots, host-supplied dependencies and match-scoped newer-capture application. Do not reopen operation replay versus host-produced geometry or initial full snapshots.
+The host produces authoritative geometry. Initial structural replication uses complete current snapshots, host-supplied dependencies and match-scoped newer-capture application.
 
 Which shared decoded shape/result records and lossless encoding implement that baseline efficiently? Resolve precision, dependency references, compression, packet assembly and eventual smaller ongoing updates while preserving complete structural outcomes. A blast-input message alone does not supply the authoritative produced geometry. The exchange v0.1 candidate and local Unity schema still need reconciliation.
 
@@ -49,11 +47,11 @@ What happens to tiny, degenerate, or numerically invalid geometry results? Defin
 **Priority:** P0  
 **Related rules:** `WORLD-003`, `WORLD-007`, `WORLD-008`, `WORLD-009`, `WORLD-010`, `WORLD-011`, `MAT-010`, `CHAR-005`, `CHAR-006`
 
-The shared resistance source, extra resistance × thickness cost plus ordinary distance, straight paths, original-material cost, breach-before-buried-removal, indestructible blocking and killing-explosion corpse exception are settled. Do not reopen those as unanswered gameplay choices.
+The shared resistance source, extra resistance × thickness cost plus ordinary distance, straight paths, original-material cost, breach-before-buried-removal, indestructible blocking and killing-explosion corpse exception are settled.
 
 What numerical geometry contract implements these rules over the game's required domain with acceptable computation cost? Specify full 2D intersections, supported features/clearances, boundary/tangent handling, overlapping materials, cavities and lossless canonical output. Exact character distance/overlap and boundary lethality, power/radius mapping, actual material values/units/encoding, source/other-bomb interactions and general independent-explosion scheduling remain open. The probe's excluded source-bomb shape, opaque living-character fixture response, threshold 1, schema 3 and stable body-ID order are experiment conventions, not global answers.
 
-The bounded implementation at `24e79ff` demonstrates the listed wide/narrow/cavity/corner cases and recovery, including the strong-cover/weak-core requirement. It still rejects one reachable opaque-support shadow case and takes roughly 0.6–3 seconds for layered host detonations. These are known implementation limits recorded in the team handoff. Numerical revision and tests belong with Codex within the accepted contract; ask James when a proposed change would alter gameplay, state ownership, canonical representation or scope. Passing negative rejection tests does not establish successful detonation for those inputs.
+The archived blast probe has known opaque-support and layered-computation limits; see [bounded blast verification](https://github.com/jblick1327/Bomb/blob/gh-pages/handbook/evidence/blast-probe.md). Rejected inputs do not establish support for those detonations.
 
 ### OQ-MAT-001 — Canonical material and body properties
 
@@ -108,9 +106,9 @@ Will BOM use Unity Entities, a custom ECS, or another data-oriented implementati
 **Priority:** P0  
 **Related rules:** `ECS-005`, `ECS-006`, `ECS-007`, all entity sections
 
-`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The current map is `BOM-Candidate-Component-Map.md` v0.10; source rules control its status labels.
+`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The candidate component map distinguishes accepted responsibilities from proposed records.
 
-Review the assembled map and its reconstruction/transition checks before opening another detailed question. Avoid repeatedly debating names or tuning values when the underlying fact is already represented. Framework, memory/wire layout, and scheduling remain distinct decisions.
+Framework, memory/wire layout and scheduling remain separate implementation choices.
 
 ### OQ-COMMIT-001 — Simulation and commit pipeline
 
@@ -305,7 +303,7 @@ Resolve the conflict between the older ten-player GDD target and the newer four-
 **Priority:** P0  
 **Related rules:** Section 14 of `BOM Architecture.md`
 
-Select the smallest ordered implementation slice that proves the canonical model. Its contents and precise order have not yet been accepted. The handbook's supported-platform fixture, role deliveries, and dependency sequence are a proposal, not an approved team milestone. Acceptance of bounded conformance experiments did not select that shared work plan.
+Select the smallest ordered implementation slice that proves the canonical model. Its contents and precise order have not yet been accepted. The handbook's supported-platform fixture, role deliveries and dependency sequence remain proposals.
 
 ## 9. Deferred extensions
 

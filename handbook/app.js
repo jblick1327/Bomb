@@ -31,6 +31,9 @@
     if (location.hash === '#page-content' || location.hash === '#main') return;
     let parts;
     try { parts = location.hash.slice(1).split('/').map(decodeURIComponent); } catch { parts = []; }
+    if (parts[0] === 'reference' && parts[1] === 'sources' && D.sourceAliases[parts[2]]) {
+      parts = ['reference', D.sourceAliases[parts[2]]];
+    }
     view = ['walkthrough','reference','work'].includes(parts[0]) ? parts[0] : 'walkthrough';
     if (view === 'walkthrough') {
       const found = D.cases.findIndex(c => c.id === parts[1]);

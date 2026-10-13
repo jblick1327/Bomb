@@ -7,9 +7,14 @@ import re
 ROOT=Path(__file__).resolve().parent
 OUT=ROOT/'dist'
 OUT.mkdir(exist_ok=True)
-book=json.loads((ROOT/'handbook.json').read_text())
-names=['BOM Architecture.md','BOM Decision Log.md','BOM Open Questions.md','BOM Model Interview Handoff.md','BOM-Team-Model-Handoff.md','BOM-Candidate-Component-Map.md']
-sources={name:(ROOT/'sources'/name).read_text() for name in names}
+book=json.loads((ROOT/'handbook.json').read_text(encoding='utf-8'))
+names=['BOM Architecture.md','BOM Decision Log.md','BOM Open Questions.md','BOM-Candidate-Component-Map.md']
+sources={name:(ROOT/'sources'/name).read_text(encoding='utf-8') for name in names}
+reference={name:(ROOT/'reference'/f'{name}.md').read_text(encoding='utf-8') for name in ['authoring','snapshots','blast','split']}
+evidence={
+    'blast-evidence':(ROOT/'evidence'/'blast-probe.md').read_text(encoding='utf-8'),
+    'authoring-evidence':(ROOT/'evidence'/'authoring-v4'/'summary.md').read_text(encoding='utf-8')
+}
 arch=sources[names[0]]
 arch_version=re.search(r'\*\*Version:\*\* (\S+)',arch)[1]
 last_decision=re.findall(r'^### (DEC-\d{3})',sources[names[1]],re.M)[-1]
@@ -222,9 +227,6 @@ record_rules={
 for refs in record_rules.values():
     assert all(id in rules for id in refs), refs
 topic_pages={}
-def team_section(title):
-    body=sources['BOM-Team-Model-Handoff.md'].split('## '+title+'\n',1)[1]
-    return body.split('\n## ',1)[0].strip()
 
 body_rows=[]
 for name in accepted:
@@ -269,13 +271,13 @@ topic_pages['unresolved']='''<h1>Unresolved details</h1><p>The following items r
 ['Bomb activation and blasts','Continuous activated fuse; independent resistance; distance-plus-thickness cost; straight paths; breach continuity; opaque indestructible cover; uncarved killing-explosion corpse.','Choose landing classification, values/units/encoding, production geometry support/performance, character boundary lethality, power/radius mapping and general update order. See the bounded evidence for measured limits.'],
 ['Data and networking encoding','Initial full current snapshots; host supplies required initial dependencies; newer complete match-scoped captures can skip numbers.','Reconcile the candidate decoded records with local Unity, then choose lossless encoding, compression, transport/cadence, correction and online reset scope. See OQ-GEO-002 and OQ-ASSET-002.']
 ],'open-table')+'''<details><summary>All open questions</summary>'''+''.join('<details><summary>'+esc(q['id']+' — '+q['title'])+'</summary><div class="rule-body">'+q['html']+'</div></details>' for q in questions.values() if q['status']!='Resolved')+'''</details>'''
-topic_pages['blast']='<h1>Blast reach and destruction</h1>'+md(team_section('Blast reach and destruction handoff'))+'<p><a href="#reference/blast-evidence">Reviewed conformance evidence and remaining implementation limits</a></p>'+ref_list(['MAT-010','WORLD-007','WORLD-008','WORLD-009','WORLD-010','WORLD-011','CHAR-006','COMMIT-002'])
-topic_pages['blast-evidence']='<h1>Blast conformance</h1>'+md(team_section('Blast conformance evidence and implementation limits'))
-topic_pages['authoring']='<h1>Unity authoring v1</h1>'+md(team_section('Unity authoring v1'))+ref_list(['ASSET-001','ASSET-002','ASSET-003','ASSET-004','ASSET-005','ASSET-006','ASSET-007','ASSET-008','ASSET-009','CON-015'])
-topic_pages['snapshots']='<h1>Initial snapshot replication</h1>'+md(team_section('Initial snapshot replication'))+ref_list(['NET-002','NET-003','NET-004','NET-005','STATE-001','COMMIT-001'])
-topic_pages['authoring-evidence']='<h1>Authoring v4 verification</h1>'+md(team_section('Authoring v4 verification'))
+topic_pages['blast']='<h1>Blast reach and destruction</h1>'+md(reference['blast'])+'<p>The bounded probe has known shadow, geometry-support and performance limits. <a href="#reference/blast-evidence">Dated verification and limits.</a></p>'+ref_list(['MAT-010','WORLD-007','WORLD-008','WORLD-009','WORLD-010','WORLD-011','CHAR-006','COMMIT-002'])
+topic_pages['blast-evidence']=md(evidence['blast-evidence'])
+topic_pages['authoring']='<h1>Unity authoring v1</h1>'+md(reference['authoring'])+ref_list(['ASSET-001','ASSET-002','ASSET-003','ASSET-004','ASSET-005','ASSET-006','ASSET-007','ASSET-008','ASSET-009','CON-015'])+'<p><a href="#reference/authoring-evidence">Dated local verification and limits.</a></p>'
+topic_pages['snapshots']='<h1>Initial snapshot replication</h1>'+md(reference['snapshots'])+ref_list(['NET-002','NET-003','NET-004','NET-005','STATE-001','COMMIT-001'])
+topic_pages['authoring-evidence']=md(evidence['authoring-evidence'])
 topic_pages['rules']='<h1>Architectural rules</h1><div class="rule-index">'+''.join('<details id="rule-'+r['id']+'"><summary><code>'+esc(r['id'])+'</code><span>'+esc(r['title'])+'</span>'+('<span class="rule-status">'+esc(r['status'])+'</span>' if r['status']!='Accepted' else '')+'</summary><div class="rule-body">'+r['html']+'<p><a href="#reference/rules/'+r['id']+'">Permanent link</a></p></div></details>' for r in rules.values())+'</div>'
-topic_pages['sources']='<h1>Source documents</h1><ul class="topic-list">'+''.join('<li><a href="#reference/sources/'+esc(name)+'">'+esc(name)+'</a><p>Version '+esc(re.search(r'\*\*Version:\*\* (\S+)',text)[1])+'</p></li>' for name,text in sources.items())+'</ul>'
+topic_pages['sources']='<h1>Source documents</h1><p>The Architecture defines accepted requirements. Open Questions identifies missing decisions; the component map explains responsibilities and candidate records.</p><ul class="topic-list">'+''.join('<li><a href="#reference/sources/'+esc(name)+'">'+esc(name)+'</a></li>' for name in names if name!='BOM Decision Log.md')+'</ul><h2>History and verification</h2><p><a href="#reference/sources/BOM%20Decision%20Log.md">Decision Log</a> · <a href="#reference/blast-evidence">Blast verification</a> · <a href="#reference/authoring-evidence">Authoring verification</a></p>'
 record_pages={}
 for name,r in records.items():
     if name in ['StructuralConnection','ParticipantRecord','MatchState','VisualBinding']:
@@ -305,7 +307,9 @@ def walk_page(c,result='split'):
     caption='The body reconstructed as environment, without its former living state or death history.' if c['id']=='recovery' and result=='death' else c['caption']
     details='<details class="walk-detail"><summary>Records and applicable rules</summary><p class="record-key">'+key+'</p>'+table(['Concern','Outcome'],c['changes'])+'<div class="detail-columns"><section><h2>Stored or selected</h2>'+list_html(c['remember'])+'</section><section><h2>Derived</h2>'+list_html(c['derive'])+'</section></div><p class="case-caveat">'+inline(c['caveat'])+'</p>'+ref_list(c['refs'])+'</details>'
     if c['id']=='explosion':
-        details+='<section class="blast-example">'+md(team_section('Blast reach and destruction handoff'))+'<p><a href="#reference/blast-evidence">Measured evidence and remaining implementation limits</a></p></section>'
+        details+='<section class="blast-example">'+md(reference['blast'])+'<p><a href="#reference/blast-evidence">Dated verification and limits</a></p></section>'
+    if c['id']=='split':
+        details+='<details class="walk-detail"><summary>Worked split: expected outcomes</summary>'+md(reference['split'])+ref_list(['IDENTITY-001','MAT-005','MAT-008','WORLD-006','CON-013','CON-014','LIMB-008','COMMIT-002'])+'</details>'
     if c['id']=='recovery' and result=='death':
         details='<details class="walk-detail"><summary>Records and applicable rules</summary><p class="record-key">'+key+'</p>'+list_html(['K: ordinary environment records; no former CharacterState is required.','R: participant identity survives and its controlled-body reference is empty.','The outgoing L is absent. Existing incoming holds on surviving locations retain their relationship state.','Validated definitions restore the same effective properties and behaviour.'])+ref_list(['STATE-001','STATE-003','CHAR-004','PLAYER-002','LIMB-009'])+'</details>'
     switch=''
@@ -313,7 +317,7 @@ def walk_page(c,result='split'):
     def step_link(href,label,destination,cls,rel):
         return '<a class="'+cls+'" href="'+href+'" rel="'+rel+'" aria-label="'+esc(label+': '+destination)+'"><span class="pager-label">'+esc(label)+'</span><span class="pager-destination">'+esc(destination)+'</span></a>'
     previous=step_link('#walkthrough/'+book['cases'][index-1]['id'],'Previous',book['cases'][index-1]['title'],'pager-previous','prev') if index else ''
-    next_link=step_link('#walkthrough/'+book['cases'][index+1]['id'],'Next',book['cases'][index+1]['title'],'pager-next','next') if index<len(book['cases'])-1 else step_link('#work/overview','Start work','Work proposals','pager-next','next')
+    next_link=step_link('#walkthrough/'+book['cases'][index+1]['id'],'Next',book['cases'][index+1]['title'],'pager-next','next') if index<len(book['cases'])-1 else step_link('#reference/rules','Reference','Accepted requirements','pager-next','next')
     controls=previous+next_link
     heading='<div class="step-top"><div class="step-heading"><h1>'+esc(c['title'])+'</h1><span class="step-number">Step '+str(index+1)+' of '+str(len(book['cases']))+'</span></div><nav class="pager pager-top" aria-label="Walkthrough navigation">'+controls+'</nav></div>'
     return heading+switch+'<div class="walk-canvas"><figure class="scene-figure"><div class="scene-diagram" tabindex="0" role="region" aria-label="Scene diagram">'+scenes[scene]['svg']+'</div><figcaption>'+caption+'</figcaption></figure><div class="explanation"><p>'+inline(intro)+'</p><p class="consequence">'+inline(notice)+'</p>'+list_html(facts)+'</div></div>'+details+'<nav class="pager pager-bottom" aria-label="Walkthrough navigation at end of step">'+controls+'</nav>'
@@ -354,18 +358,19 @@ work_overview=re.sub(r'\[ROLE:([^\]]+)\]',lambda m:'<a href="#work/'+esc(m[1])+'
 work_overview+='<section class="completion"><h2>Fixture completion checks</h2>'+list_html(implementation['checks'])+'</section><p class="body-text">Networking interface design and mocks can begin independently. Integration uses the compatible capture and reconstruction boundary. <a href="#work/networking">Networking delivery.</a></p>'
 work_overview+='<details class="work-order"><summary>Suggested follow-up checks</summary><ul class="followup-list">'+''.join('<li><a href="#work/'+id+'">'+esc(task_map[id]['title'])+'</a><p>'+inline(description)+'</p></li>' for id,description in implementation['followups'])+'</ul></details>'
 source_data={name:{'name':name,'version':re.search(r'\*\*Version:\*\* (\S+)',text)[1],'markdown':text,'html':md(text),'sha256':hashlib.sha256(text.encode()).hexdigest()} for name,text in sources.items()}
-signature=hashlib.sha256((json.dumps(book,sort_keys=True,ensure_ascii=False)+''.join(sources.values())).encode()).hexdigest()
-data={**book,'baseline':baseline,'sourceHash':signature,'rules':rules,'entries':entries,'records':records,'sources':source_data,'scenes':scenes,'roleNames':role_names,'recordTopics':record_topics,'topicPages':topic_pages,'recordPages':record_pages,'casePages':case_pages,'recoveryPages':recovery_pages,'taskPages':task_pages,'rolePages':role_pages,'workOverview':work_overview}
+signature=hashlib.sha256((json.dumps(book,sort_keys=True,ensure_ascii=False)+''.join(sources.values())+''.join(reference.values())+''.join(evidence.values())).encode()).hexdigest()
+source_aliases={'BOM-Team-Model-Handoff.md':'bodies','BOM Model Interview Handoff.md':'sources'}
+data={**book,'baseline':baseline,'sourceHash':signature,'rules':rules,'entries':entries,'records':records,'sources':source_data,'sourceAliases':source_aliases,'scenes':scenes,'roleNames':role_names,'recordTopics':record_topics,'topicPages':topic_pages,'recordPages':record_pages,'casePages':case_pages,'recoveryPages':recovery_pages,'taskPages':task_pages,'rolePages':role_pages,'workOverview':work_overview}
 initial_nav=''.join('<a href="#walkthrough/'+c['id']+'"'+(' aria-current="page"' if i==0 else '')+'>'+esc(c['short'])+'</a>' for i,c in enumerate(book['cases']))
 initial_options=''.join('<option value="#walkthrough/'+c['id']+'">'+esc(c['short'])+'</option>' for c in book['cases'])
-replacements={'@@BASELINE@@':esc(baseline),'@@VERSION@@':book['version'],'@@STYLE@@':(ROOT/'style.css').read_text(),'@@SCRIPT@@':(ROOT/'app.js').read_text(),'@@INITIAL_NAV@@':initial_nav,'@@INITIAL_OPTIONS@@':initial_options,'@@INITIAL_PAGE@@':case_pages[book['cases'][0]['id']],'@@NOSCRIPT@@':topic_pages['bodies']+topic_pages['relationships']+work_overview+''.join(role_pages.values()),'@@DATA@@':json.dumps(data,ensure_ascii=False).replace('<','\\u003c')}
-page=(ROOT/'template.html').read_text()
+replacements={'@@BASELINE@@':esc(baseline),'@@VERSION@@':book['version'],'@@DATE@@':book['date'],'@@STYLE@@':(ROOT/'style.css').read_text(encoding='utf-8'),'@@SCRIPT@@':(ROOT/'app.js').read_text(encoding='utf-8'),'@@INITIAL_NAV@@':initial_nav,'@@INITIAL_OPTIONS@@':initial_options,'@@INITIAL_PAGE@@':case_pages[book['cases'][0]['id']],'@@NOSCRIPT@@':topic_pages['bodies']+topic_pages['relationships']+work_overview+''.join(role_pages.values()),'@@DATA@@':json.dumps(data,ensure_ascii=False).replace('<','\\u003c')}
+page=(ROOT/'template.html').read_text(encoding='utf-8')
 for key,value in replacements.items(): page=page.replace(key,value)
 assert '@@' not in page
-(OUT/'index.html').write_text(page)
-(OUT/'BOM-Team-Handbook.html').write_text(page)
-(OUT/'handbook-data.json').write_text(json.dumps(data,ensure_ascii=False,indent=2))
-parts=['# BOM — Simulation model',f'**Handbook:** {book["version"]}  \n**Date:** {book["date"]}  \n**Baseline:** {baseline}','## Walkthrough']
+(OUT/'index.html').write_bytes(page.encode('utf-8'))
+(OUT/'BOM-Team-Handbook.html').write_bytes(page.encode('utf-8'))
+(OUT/'handbook-data.json').write_bytes(json.dumps(data,ensure_ascii=False,indent=2).encode('utf-8'))
+parts=['# BOM — Game specification',f'**Handbook:** {book["version"]}  \n**Date:** {book["date"]}  \n**Baseline:** {baseline}','## Walkthrough']
 for c in book['cases']:
     parts+=['### '+c['title'],c['intro'],c['notice'], '\n'.join('- '+s for s in c['facts']),'| Concern | Outcome |\n|---|---|\n'+'\n'.join('| '+a+' | '+b+' |' for a,b in c['changes']),'Rules: '+', '.join(id for id in c['refs']),c['caveat']]
 parts+=['## Body and relationship reference',map_text[map_text.index('## 1.'):map_text.index('## 9.')], '## Proposed implementation deliveries','### '+implementation['title'],implementation['status'],implementation['goal'],implementation['begin'],'| Role | Suggested contribution |\n|---|---|\n'+'\n'.join('| '+role_names[x['role']]+' | '+x['deliverable']+' |' for x in implementation['contributions']),'**Fixture completion checks**\n\n'+'\n'.join('- '+x for x in implementation['checks']),'### Exchange conventions','| Convention | Record for the fixture | Coordinating roles |\n|---|---|---|\n'+'\n'.join('| '+c['title']+' | '+c['prompt']+' | '+c['roles']+' |' for c in book['choices'])]
@@ -374,5 +379,5 @@ for role in book['roleOrder']:
     tasks=[task_map[first_tasks[role]]]+[t for t in book['tasks'] if t['role']==role and t['id']!=first_tasks[role]]
     for t in tasks:
         parts+=['#### '+t['id']+' — '+t['title'],'**Deliver:** '+t['deliverable'],first_starts.get(t['id'],t['start']),'**Inputs**\n\n'+'\n'.join('- '+x for x in t['inputs']),'**Done when**\n\n'+'\n'.join('- '+x for x in t['checks']),'**Remaining choices:** '+t['open'],'Rules: '+', '.join(t['refs'])]
-(OUT/'BOM-Team-Handbook.md').write_text('\n\n'.join(parts)+'\n')
+(OUT/'BOM-Team-Handbook.md').write_bytes(('\n\n'.join(parts)+'\n').encode('utf-8'))
 print(json.dumps({'baseline':baseline,'rules':len(rules),'records':len(records),'cases':len(book['cases']),'deliveries':len(book['tasks']),'version':book['version'],'bytes':len(page.encode())}))

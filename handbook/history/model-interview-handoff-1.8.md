@@ -1,3 +1,7 @@
+# Historical editor handoff
+
+Archived from Handbook 1.8.0. These notes describe the earlier editing process; current game requirements are in the Architecture.
+
 # BOM Model Interview Handoff
 
 **Version:** 0.17  

@@ -1,6 +1,6 @@
 # BOM — Candidate Component and Data Map
 
-**Version:** 0.10  
+**Version:** 0.11  
 **Date:** 2026-10-13  
 **Status:** Review map containing accepted conceptual groupings and explicitly marked candidates  
 **Baseline:** `BOM Architecture.md` v0.16; decisions through `DEC-077`
@@ -76,7 +76,7 @@ A child at 100% has not regained the old bond's absolute strength. Under the acc
 
 ## 5. Canonical match dependencies
 
-This section is a recommended presentation boundary for the review map. These facts remain in the same authoritative simulation. The user questioned their relevance as body components; their separate placement here is not an accepted storage partition or a transfer to networking.
+Match dependencies are shown separately for readability. They remain in the same authoritative simulation; this presentation does not prescribe a storage partition or transfer ownership to networking.
 
 | Canonical match dependency | Status | Canonical contents | Relevance to this slice |
 |---|---|---|---|
@@ -203,22 +203,22 @@ A blast satisfying its power/radius lethality condition causes immediate death; 
 | Coordinate and alignment encoding | The accepted world/body-local convention must be implemented consistently, including material-location-preserving transforms after splitting. | Semantic frame roles are settled (`WORLD-006`); exact units, origins/pivots, shape format, scaling/alignment encoding, transformations, and tolerances remain open. |
 | Definition/reference recovery | Reconstruction must recover the same effective values without a retired parent. | Dependency validation and encoding remain open; no hash/version scheme is selected. |
 | World configuration encoding and further physical inputs | W must recover level/world-supplied fixed behaviour and endpoints; all physical roles share material inputs and may need further nonduplicated inputs. | The wall and material input sources are settled (`WORLD-005`, `MAT-009`); encoding and further derivations remain open. No duplicate attachment-imposed restrictions or separate `BodyPhysics` are assumed. |
-| Production blast geometry | Straight paths consume ordinary distance plus independent resistance × original crossed thickness; breach continuity and opaque cover protect material behind them. | The source and cost are settled (`MAT-010`, `WORLD-007` to `WORLD-011`). Numerical intersections/representation, supported domain, performance, values/units/encoding and character power/radius mapping remain open (`OQ-GEO-004`). The bounded probe's shadow rejection and computation cost remain visible in the team handoff. |
+| Production blast geometry | Straight paths consume ordinary distance plus independent resistance × original crossed thickness; breach continuity and opaque cover protect material behind them. | The source and cost are settled (`MAT-010`, `WORLD-007` to `WORLD-011`). Numerical intersections/representation, supported domain, performance, values/units/encoding and character power/radius mapping remain open (`OQ-GEO-004`). Known probe limits are recorded in the separate blast verification material. |
 | Appearance ownership | Variable colour/image inputs need a recoverable source and must suit changed shapes. Unity v1 uses current-profile extrusion with stable surviving samples. | Exact definition/instance records, a separate `VisualBinding`, alignment encoding and dependency delivery remain open. |
 | Corpse values and other result settings | Death installs environment configuration supplied by the character definition; destruction does not automatically copy every component. | The corpse source and resulting environment-record ownership are settled (`CHAR-004`). Actual values, transition/reference encoding, and result inputs beyond accepted material/response/appearance inheritance remain open. |
 | Additional movement and implementation contracts | The accepted hold baseline is represented; selected active controls may expose additional lasting inputs. | Active controls, constraints/tuning, physics interfaces, and detailed scheduling remain open. |
 
-Use `BOM-Team-Handbook.html` for the walkthrough, source-linked reference, and proposed starting work. Next take this map and the team summary into cross-role review for reconstruction completeness and duplicate ownership. Trace the supported/held scene, split, death, and countdown. No further semantic decision needs forcing before that review; raise a focused question only when a concrete case exposes a material gap. This checkpoint selects no networking schema, ECS framework, geometry library, numerical cutoff, new movement mechanic, or additional destruction-response algorithm.
+Check a build against the Architecture and the reconstruction/transition cases above. Resolve the listed representation gaps without duplicating canonical facts or treating candidate records as requirements.
 
-## Blast evaluation and bounded implementation evidence
+## Blast evaluation
 
 Blast resistance belongs to the shared material-property source, not a new persistent blast component. One explosion evaluates original shapes/selections along straight paths, applying ordinary distance plus extra resistance × thickness (`WORLD-008`), breach continuity (`WORLD-009`), straight propagation (`WORLD-010`) and opaque indestructible cover (`WORLD-011`). Geometry and character exposure use that same basis. Complete lasting identities, geometry, relationships, behaviour and control commit under the existing structural rules.
 
-The bounded probe at `24e79ff` uses transient calculation data and existing planner/recovery ownership. Its schema 3, presence flag, numeric limits, dyadic frame choices and stable explosion order are implementation conventions. Recorded 83/83 EditMode and 15/15 PlayMode passes demonstrate listed fixtures; the opaque-support rejection and layered computation cost remain limits. See the team handoff for exact evidence identity and scope. No additional ECS grouping, production geometry method or network/storage format is accepted by those results.
+Blast calculation data is transient. [Bounded blast verification](https://github.com/jblick1327/Bomb/blob/gh-pages/handbook/evidence/blast-probe.md) records the probe conventions and limitations separately.
 
-## Unity authoring and exchange checkpoint
+## Authoring and exchange boundary
 
-`ASSET-001` to `ASSET-009` and `CON-015` now settle the Unity v1 workflow: one import per initial piece; connected concave/holed profiles; explicit correction/approval; independent defaults and placement overrides; uniform extrusion with stable surviving appearance; touching-boundary bonds; frozen local tests and complete current reconstruction. The tooling supplies managed runtime machinery. These choices add no required `BodyPhysics`, `VisualBinding` or canonical assembly component.
+`ASSET-001` to `ASSET-009` and `CON-015` define the Unity v1 workflow: one import per initial piece; connected concave/holed profiles; explicit correction/approval; independent defaults and placement overrides; uniform extrusion with stable surviving appearance; touching-boundary bonds; frozen local tests and complete current reconstruction. The tooling supplies managed runtime machinery. These choices add no required `BodyPhysics`, `VisualBinding` or canonical assembly component.
 
 The reviewed local code uses its own geometry grid, float vectors, match/kind/sequence string IDs, content-hash definitions, paired line segments and appearance/image closure. Those are implementation conventions. The archived exchange v0.1 proposal uses a different candidate decoded representation and does not automatically supersede those records. Reconcile a shared boundary under `OQ-ASSET-002` and `OQ-GEO-001`; do not treat either serializer as architectural authority.
 

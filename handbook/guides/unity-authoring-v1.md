@@ -1,46 +1,58 @@
-# First use: author a destructible structure
+# Unity authoring guide
 
-Workflow guide for the reviewed v4 Unity tool. Handbook 1.8.0 / Architecture v0.16 (`ASSET-001` to `ASSET-009`, `CON-015`) owns current requirements. UI labels and supported FBX/numeric conventions describe this implementation; they do not freeze the Unity/Odin schema.
+Open **BOM > Authoring workspace**. See the [Unity project README](https://github.com/jblick1327/BOM/blob/886f536a3ff49ed19c7d4db9cd52e90f6edda104/README.md) for setup and an example level. This guide follows that tool revision; the Architecture defines required behaviour.
 
-Open **BOM > Authoring workspace**. The numbered tabs follow the normal workflow. To explore a finished example first, open `Assets/BOM/Fixtures/ReferenceLevel.unity`.
+## Import
 
-## 1. Import and edit a piece
+1. Import a static FBX into Unity, then drop it into **Model (FBX)**. Choose **Front**, **Top**, or **Side** from the silhouette previews.
+2. Compare **Source + outline** with **Result**. Click points in either view to select; edit in the flat outline. Right-drag the model preview to orbit.
+3. Check dimensions and the scale bar. Width/height are in metres; proportions start locked. Imported root unit scaling is preserved. Gameplay runs in XY; thickness is visual. Mass = solid area × density.
+4. Choose **Physics material** and **Response**: initially **Default** and **Standard**, then your last saved choices. Use **Presets** to switch.
+5. **Import appearance** copies a Unity material's base colour and texture into BOM's extrusion shader. Source shaders, UV layouts and multiple material slots are not reproduced.
+6. Resolve validation messages, then **Save piece** or **Save and place**. The output folder and material/response choices are remembered. Choose a saved **Piece** to edit it.
 
-1. Export a static FBX from Blender and drag it into Unity's **Project** window. Drag the imported model into **Model (FBX)** in the workspace. An outline is proposed automatically; no existing approved piece is changed.
-2. Check **Projection plane**: XY is the front view, XZ the top view, and YZ the side view. Choose the view that gives the intended solid silhouette. All displayed profile coordinates are in metres.
-3. Edit the flat outline: drag cyan outer points or orange hole points. Double-click an edge to insert a point; select a point and press Delete or use **Remove selected point** to remove it. A contour always retains at least three points. Click empty space to clear selection.
-4. Use **Add hole** to create an enclosed hole in solid material. Use **Contour** to choose a hole and **Remove selected hole** to remove it. Red outlines are disconnected proposed regions; correct the retained outline and explicitly discard unwanted regions before approval.
-5. Scroll over the outline to zoom, middle-drag to pan, and use **Fit outline** to restore framing. Optional grid snapping uses the displayed grid spacing. Select a point to enter an exact position. Escape cancels an active drag; Ctrl+Z / Ctrl+Y undo and redo draft edits.
-6. Choose a **Gameplay material**, or use **Create material...** and edit its initial density/resistance in the Inspector. For destructible pieces, choose or create a **Destruction response** as well. These editable initial values are not calibrated game tuning.
-7. Review the 3D appearance preview, thickness, colours and optional face image. **Fit image to outline** gives a simple bounds-fitted planar mapping. Import proposes the first source material; it does not reproduce every material slot or arbitrary source UV seams.
-8. When validation says the outline and settings are ready, use **Approve and continue to placement** and choose a new asset path. Existing approved pieces receive an explicit new version instead. Invalid data cannot be approved.
+Drag points to edit; double-click an edge to add a point; Delete removes it. Scroll to zoom, middle-drag to pan, or **Fit**. **Add hole** creates an opening. Escape cancels a drag; Undo/Redo are supported.
 
-The source settings, exact contour coordinate lists and texture mapping vectors are under **Advanced**. Source conversion changes refresh an unedited projection automatically. If you have corrected the outline manually, it stays intact and approval is blocked until you explicitly **Update projection**; replacing those edits requires confirmation. Colours, material, response and other pending selections survive regeneration.
+For disconnected outlines, click a region and **Keep selected region**; one connected region is allowed per piece. **Rebuild outline** confirms before replacing manual edits. Source conversion, exact contour coordinates and texture mapping are under **Advanced**. Canvas and coordinate edits stay synchronized; finish a point drag before typing coordinates. Repairing a failed projection retains your explicit material, response and appearance choices.
 
-Advanced coordinate lists stay synchronized with canvas movement, insertion, deletion and Escape cancellation. The numeric fields are disabled only while a canvas drag is active; release the drag before typing exact coordinates. If the initial projection is edge-on and fails, you can still choose gameplay definitions and edit appearance while correcting the plane. Explicit choices survive repair; untouched appearance settings are inferred when the first usable outline is proposed.
+## Starter presets
 
-**Cancel proposal** restores the last approved draft. Closing a window with a pending draft prompts Save / Discard / Cancel; Save approves only valid data, Discard retains the last approved asset, and Cancel keeps editing. A new unapproved draft has no saved piece yet.
+`Assets/BOM/Presets` contains materials, responses and explosions; `Assets/BOM/Fixtures` contains verification examples. Starters are read-only in the authoring window: **Duplicate** to customize. Inline **Shared** edits save immediately and affect every use; discarding piece edits does not undo them. **BOM > Create missing starter presets** restores missing starters without overwriting existing assets.
 
-## 2. Place pieces and choose fixed supports
+| Material | Density (kg/m²) | Blast resistance |
+| --- | ---: | ---: |
+| Default | 2 | 1 |
+| Light | 1 | 1 |
+| Heavy | 4 | 1 |
+| Tough | 2 | 3 |
 
-Select a **Level**, or use **Create level authoring group**. Select the approved piece and use **Place piece**. Each placement is a separate physical body.
+All use friction 0.5, no bounce, and linear/angular damping 0.1. These are gameplay values. Density changes mass; resistance reduces penetration. **Standard** applies blast push; **No push** destroys without adding speed. Added speed is multiplied by the response and piece's **Push multiplier**, independent of density.
 
-Use Unity's Scene handles to move, rotate about Z, or apply positive X/Y scale. Z position must be zero, Z scale must be one, and parent transforms must not introduce shear or reflection.
+| Explosion | Max radius (m) | Reach budget | Added speed (m/s) |
+| --- | ---: | ---: | ---: |
+| Small | 0.8 | 1.6 | 0.3 |
+| Medium | 2 | 4 | 1 |
+| Large | 4 | 8 | 2 |
 
-Select placements in the Scene or Hierarchy and use **Make selected pieces fixed supports** for pieces that should not move. **Make selected pieces movable** reverses that choice. Material, destruction and grab eligibility have independent placement overrides and reset buttons in the placement Inspector. Save reusable groups as ordinary Unity prefabs.
+Reach costs 1 unit/m in air and 1 + resistance in solids. Radius caps reach; position, shape and shielding determine damage.
 
-## 3. Connect a structure
+## Place and connect
 
-Select two placements and use **Use two selected pieces**, then **Propose shared-boundary bond**. They must share an edge: gaps, point-only contact and solid overlap are not attachments. **Preview alignment of parallel boundaries** proposes a translation without applying it yet.
+**Save and place** previews scene size against the grid, creating a level group if needed. Click to place; Escape cancels. In **Place**, **Place in scene** also previews; **Place at view centre** places immediately and frames the piece.
 
-Review the highlighted attachment, strength and optional attachment-loss rule, then **Confirm connection**. Cancel leaves the transforms and saved bonds unchanged. Confirm returns to creation mode; editing an existing bond requires its explicit Inspector review action.
+Move in XY and rotate about Z. Use positive X/Y scales; keep Z scale = 1, including parent groups, and avoid shear. The placement Inspector shows scene dimensions, mass and overrides. Scaling changes area and mass.
 
-## 4. Playtest
+Mark floors or anchors as fixed supports. Select two pieces with touching edges in **Connect**, propose their shared boundary, and confirm the highlighted attachment. Alignment is a preview until confirmed.
 
-Choose or **Create preset and add to level...** in Playtest. A shared preset has a name, radius, reach budget and fragment impulse speed. Its initial values are editable in the Inspector. At least one valid preset and one approved placement are required before starting.
+## Playtest
 
-Validate the level, then **Enter Play mode**. The level starts its local simulation automatically. Select the named captured preset and Shift-click exterior air in Scene view, or enter an XY origin and use **Run explosion**. Blasts remove material, create physical fragments and remap surviving bonds and fixed supports.
+New level groups include **Medium**. Choose blasts through **Presets** and **Add selected preset to level**. Select one to inspect its values; **Duplicate** makes this level use an editable copy.
 
-**Reset to last captured start** restores the frozen starting level; approved assets are not damaged. **Start / capture a new initial configuration** recompiles current authoring inputs. Changing a preset asset or reordering authoring presets does not change the running world's captured presets.
+**Validate full level**, then **Enter Play mode**. Choose a captured preset and Shift-click exterior air in Scene view, or enter an XY origin and **Run explosion**. Origins inside solids or enclosed holes are unsupported.
 
-The snapshot tools remain under **Advanced**. This is local authoring/playtesting, not multiplayer transport or a complete bomb/fuse/player-damage system. Exterior-only blast origins and numerical complexity/precision refusals remain explicit restrictions.
+**Reset to last captured start** restores the captured level. Stop Play mode to edit; restart to capture changes. Saved pieces are preserved.
+
+
+## Scope
+
+This tool authors environment pieces and connections. Live characters, holds, bomb countdowns and multiplayer require their own implementation and verification. Advanced snapshots support local capture/reconstruction; local reset is separate from ordered network snapshot application.
