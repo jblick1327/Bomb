@@ -1,0 +1,338 @@
+{
+  "kind": "WorldSnapshot",
+  "schemaVersion": "0.1-draft",
+  "matchId": "64ba32c6-9816-4c1f-9f60-7b59d380181a",
+  "number": "11",
+  "hostSimulationTimeSeconds": 0.5,
+  "nextEntityId": "204",
+  "worldDefinitionRef": {
+    "id": "world.example",
+    "revision": 1
+  },
+  "bodies": [
+    {
+      "id": "101",
+      "geometryRevision": "1",
+      "shape": {
+        "outer": [
+          [
+            -2.5,
+            -0.25
+          ],
+          [
+            2.5,
+            -0.25
+          ],
+          [
+            2.5,
+            0.25
+          ],
+          [
+            -2.5,
+            0.25
+          ]
+        ],
+        "holes": []
+      },
+      "motion": {
+        "pose": {
+          "position": [
+            0.0,
+            -0.25
+          ],
+          "angle": 0.0
+        },
+        "comLinearVelocity": [
+          0.0,
+          0.0
+        ],
+        "angularVelocity": 0.0
+      },
+      "bodyConfigRef": {
+        "id": "body.fixed-example",
+        "revision": 1
+      },
+      "behaviour": {
+        "kind": "environment",
+        "destruction": {
+          "kind": "indestructible"
+        }
+      }
+    },
+    {
+      "id": "102",
+      "geometryRevision": "1",
+      "shape": {
+        "outer": [
+          [
+            -2.0,
+            0.0
+          ],
+          [
+            2.0,
+            0.0
+          ],
+          [
+            2.0,
+            1.0
+          ],
+          [
+            -2.0,
+            1.0
+          ]
+        ],
+        "holes": []
+      },
+      "motion": {
+        "pose": {
+          "position": [
+            0.0,
+            0.0
+          ],
+          "angle": 0.0
+        },
+        "comLinearVelocity": [
+          0.0,
+          0.0
+        ],
+        "angularVelocity": 0.0
+      },
+      "bodyConfigRef": {
+        "id": "body.grabbable-example",
+        "revision": 1
+      },
+      "behaviour": {
+        "kind": "environment",
+        "destruction": {
+          "kind": "carvable",
+          "responseRef": {
+            "id": "response.example",
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "103",
+      "geometryRevision": "1",
+      "shape": {
+        "outer": [
+          [
+            -0.3,
+            -0.45
+          ],
+          [
+            0.3,
+            -0.45
+          ],
+          [
+            0.3,
+            0.45
+          ],
+          [
+            -0.3,
+            0.45
+          ]
+        ],
+        "holes": []
+      },
+      "motion": {
+        "pose": {
+          "position": [
+            2.3,
+            1.5
+          ],
+          "angle": 0.0
+        },
+        "comLinearVelocity": [
+          0.0,
+          0.0
+        ],
+        "angularVelocity": 0.0
+      },
+      "bodyConfigRef": {
+        "id": "body.grabbable-example",
+        "revision": 1
+      },
+      "behaviour": {
+        "kind": "character",
+        "characterRef": {
+          "id": "character.example",
+          "revision": 1
+        }
+      }
+    },
+    {
+      "id": "104",
+      "geometryRevision": "1",
+      "shape": {
+        "outer": [
+          [
+            -0.2,
+            -0.2
+          ],
+          [
+            0.2,
+            -0.2
+          ],
+          [
+            0.2,
+            0.2
+          ],
+          [
+            -0.2,
+            0.2
+          ]
+        ],
+        "holes": []
+      },
+      "motion": {
+        "pose": {
+          "position": [
+            0.0,
+            1.2
+          ],
+          "angle": 0.0
+        },
+        "comLinearVelocity": [
+          0.0,
+          0.0
+        ],
+        "angularVelocity": 0.0
+      },
+      "bodyConfigRef": {
+        "id": "body.grabbable-example",
+        "revision": 1
+      },
+      "behaviour": {
+        "kind": "bomb",
+        "bombRef": {
+          "id": "bomb.example",
+          "revision": 1
+        },
+        "countdown": {
+          "kind": "active",
+          "remainingSeconds": 4.5
+        }
+      }
+    },
+    {
+      "id": "107",
+      "geometryRevision": "1",
+      "shape": {
+        "outer": [
+          [
+            -0.3,
+            -0.45
+          ],
+          [
+            0.3,
+            -0.45
+          ],
+          [
+            0.3,
+            0.45
+          ],
+          [
+            -0.3,
+            0.45
+          ]
+        ],
+        "holes": []
+      },
+      "motion": {
+        "pose": {
+          "position": [
+            1.2,
+            2.5
+          ],
+          "angle": 0.0
+        },
+        "comLinearVelocity": [
+          0.0,
+          0.0
+        ],
+        "angularVelocity": 0.0
+      },
+      "bodyConfigRef": {
+        "id": "body.grabbable-example",
+        "revision": 1
+      },
+      "behaviour": {
+        "kind": "character",
+        "characterRef": {
+          "id": "character.example",
+          "revision": 1
+        }
+      }
+    }
+  ],
+  "connectors": [
+    {
+      "id": "201",
+      "endpointA": "101",
+      "endpointB": "102",
+      "attachmentPairs": [
+        {
+          "a": [
+            [
+              -1.8,
+              0.25
+            ],
+            [
+              -0.8,
+              0.25
+            ]
+          ],
+          "b": [
+            [
+              -1.8,
+              0.0
+            ],
+            [
+              -0.8,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "strengthNPerM": 100.0,
+      "attachmentLoss": {
+        "minimumSurvivingFraction": 0.4,
+        "referenceLengthM": 1.0
+      }
+    }
+  ],
+  "holds": [
+    {
+      "id": "202",
+      "characterId": "103",
+      "slot": "leftHand",
+      "targetId": "102",
+      "heldPoint": [
+        1.5,
+        1.0
+      ]
+    },
+    {
+      "id": "203",
+      "characterId": "107",
+      "slot": "rightHand",
+      "targetId": "103",
+      "heldPoint": [
+        -0.3,
+        0.45
+      ]
+    }
+  ],
+  "participants": [
+    {
+      "id": "1",
+      "controlledBodyId": "103"
+    },
+    {
+      "id": "2",
+      "controlledBodyId": "107"
+    }
+  ]
+}

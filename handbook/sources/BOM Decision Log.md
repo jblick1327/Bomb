@@ -1,7 +1,7 @@
 # BOM Architecture Decision Log
 
-**Version:** 0.15  
-**Last updated:** 2026-10-11  
+**Version:** 0.16  
+**Last updated:** 2026-10-13  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Purpose
@@ -897,3 +897,87 @@ The discussed geometry assumed a blast could originate inside intact material. T
 **Rationale:** James recalled that clients receiving produced geometry had already been settled. The decision audit found the general canonical-result rule and later recorded direction, but could not recover the exact original geometry-specific acceptance turn. After reviewing explicit NET-002 wording and the proposed reconciliation, James authorized this checkpoint. This entry records that current confirmation on its actual date; it does not invent a recovered or backdated approval.
 
 **Scope:** Complete shapes, geometry deltas, or validated references may encode the committed result. Compression, message boundaries, delivery, correction, and snapshot recovery remain open. This selects no wire format, geometry library, mandatory full-shape packet, new physics authority, or team milestone. Existing prediction and complete structural-commit requirements continue to apply.
+
+### DEC-070 — Record the full-snapshot starting baseline
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `NET-003`, `NET-005`, `NET-002`, `STATE-001`
+
+**Decision:** Begin structural replication with complete current-world snapshots and review actual size/cost early. Complete captures use increasing match-scoped numbers; ready newer captures may skip intermediate numbers and delayed captures cannot overwrite newer applied state.
+
+**Rationale:** The follow-on exchange discussion accepted full current snapshots, early performance review and match-scoped capture numbers after the geometry-replication baseline. This checkpoint publishes that direction; its date is the documentation checkpoint, not an invented earlier acceptance timestamp.
+
+**Scope:** No transport, codec, cadence, universal bandwidth cutoff, transient-event policy or smaller ongoing update format is selected. The online reset identity boundary remains open. The previous general encoding alternatives in `DEC-069` remain historical context; `NET-003` now selects the initial baseline.
+
+### DEC-071 — Supply initial state and required dependencies from the host
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `NET-004`, `STATE-001`, `STATE-004`, `REBUILD-001`
+
+**Decision:** The host supplies initial world state and required reusable definitions/appearance assets. New dependencies must be validated before applying state that needs them. Reconstruction must not assume identical preinstalled assets or use opaque Unity object references.
+
+**Rationale:** Initial data delivery was accepted alongside the full-snapshot direction. The authoring reconstruction checks make the same dependency boundary concrete, including image data. References, versioning, caching and byte delivery remain exchange work.
+
+### DEC-072 — Import one physical piece and compose separate parts explicitly
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `ASSET-001`, `ASSET-002`, `MAT-001`, `MAT-002`, `MAT-007`
+
+**Decision:** Blender-origin sources are reviewed/composed through Unity tooling. One import is one initial piece even with multiple meshes or material slots. Independently behaving parts are imported individually and connected afterward. Support connected concave profiles with enclosed holes; disconnected proposals require explicit correction, not silent physical splitting.
+
+**Rationale:** James explicitly chose the single-piece table default and separate imports for deliberate separate pieces while resolving the authoring ambiguities. Runtime splits retain the existing identity rules. FBX, Unity asset layouts, projection algorithms and numeric formats are reviewed implementation conventions rather than universal exchange requirements.
+
+### DEC-073 — Require reviewable correction and independent authoring selections
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `ASSET-003`, `ASSET-004`, `ASSET-006`, `MAT-005`, `MAT-006`, `MAT-010`, `LIMB-007`
+
+**Decision:** Inferences are presented immediately for approval/edit with a simple correction workflow. Keep graphical/exact views consistent and approved state intact through cancellation or failed approval. Material, destruction and grab defaults are independent, with per-placement overrides/provenance/reset. Save/reimport preserves authored choices unless explicitly replaced; repairing an invalid first projection also preserves explicit pending selections.
+
+**Rationale:** James accepted immediate assumptions with an approval/correction path and requested an authoring specification. The reviewed v3/v4 interaction fixes establish the concrete preservation cases. Density/resistance still resolve through material definitions; appearance stays separate. Native UI classes, field names and tuning values are not ratified by the workflow.
+
+### DEC-074 — Use current-shape extrusion from the outset
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `ASSET-005`, `MAT-007`, `MAT-008`, `WORLD-006`, `MAT-005`
+
+**Decision:** The v1 visual is a uniform extrusion of the current connected gameplay profile, with editable thickness, face colour/image mapping and separate original-side/cut appearance. Preserve surviving outline/texture samples after damage, including when rebuilding the entire mesh. Thickness does not change gameplay mass.
+
+**Rationale:** The model/cut discussion selected a consistent appearance before and after damage rather than a first-cut change of representation. This is a scoped authoring choice; precise UV/edge/dependency encoding remains implementation work.
+
+### DEC-075 — Limit v1 structural authoring to touching boundaries
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `CON-015`, `ASSET-007`, `CON-008`, `CON-013`, `CON-014`
+
+**Decision:** Author rigid connections only between pieces sharing nonzero gameplay boundary. Gaps, point-only contact and solid-area overlap do not form a valid authored bond. Review/edit regions and strength; preview/confirm alignment; separate creating a new bond from editing a saved one. Confirm/compile rechecks changed geometry and transforms.
+
+**Rationale:** James explicitly said connections between touching pieces were sufficient. The implementation review closed accidental bond replacement and stale-overlap confirmation. Runtime displacement still does not redefine the intended fit or become an authoring rejection criterion during recovery. Tolerance, length measurement and joint realization remain conventions.
+
+### DEC-076 — Freeze local tests and reconstruct complete outcomes
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `ASSET-008`, `ASSET-009`, `STATE-001`, `COMMIT-001`, `COMMIT-002`, `REBUILD-001`
+
+**Decision:** The Unity authoring slice includes real local destruction, captured initial configuration/presets, reset without persisted runtime damage, full compilation validation and current-state fresh reconstruction with required dependencies. Managed runtime objects derive from those approved/captured inputs.
+
+**Rationale:** These boundaries were captured in the requested authoring specification and exercised by the reviewed implementation, including a real split with surviving connectors and displaced-pose reconstruction. Local debug rollback is not proof of network ordering/reset correctness; multiplayer and the other gameplay requirements retain separate verification.
+
+### DEC-077 — Keep requirements authoritative and evidence scoped
+
+**Status:** Accepted  
+**Date:** 2026-10-13  
+**Affects:** `CON-009`, `CON-010`, `ASSET-001`, `NET-003`, `NET-004`, `NET-005`
+
+**Decision:** Publish the settled authoring/snapshot additions in Architecture, synchronize the handbook sources/pages, and record v4 authoring evidence separately. Preserve the earlier decisions. The exchange v0.1 schema/examples remain a candidate to reconcile with the working Unity implementation; its field types, definition packaging and geometry/connector representation are not frozen by this checkpoint.
+
+**Status correction:** The authoring specification/review notes described the capacity formulas and optional percentage policy as provisional. That wording was inconsistent with the existing accepted `CON-009`, `CON-010` and ratification history. The formulas `Fmax = S × L` and `Tmax = ½ × S × L²` and optional authored percentage failure remain accepted. Paired length measurement, load conversion, encoding, authoring defaults and actual cutoff/strength values remain open. This corrects explanatory status; it does not alter or backdate the original decisions.
+
+**Evidence boundary:** V4 records 56 EditMode and 12 PlayMode passes in Unity 6000.6.5f1. Review checked the supplied source/reports and 281 payload hashes; Unity was not rerun in the documentation environment. It establishes the tested local authoring/destruction cases, not a complete character/bomb/hold/multiplayer implementation, production performance or shared exchange compatibility.

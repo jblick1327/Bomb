@@ -2,7 +2,7 @@
 
 This `gh-pages` branch publishes the team handbook through root `index.html`. The Unity gameplay project is maintained on separate branches.
 
-Handbook **1.7.0**, dated **11 October 2026**, uses Architecture **v0.15** and decisions through **DEC-069**. The standalone HTML also works offline and embeds all six complete model sources.
+Handbook **1.8.0**, dated **13 October 2026**, uses Architecture **v0.16** and decisions through **DEC-077**. The standalone HTML also works offline and embeds all six complete model sources.
 
 ## Source and build
 
@@ -17,7 +17,7 @@ cp handbook/dist/index.html index.html
 
 Commit source changes and root `index.html` together when requested. Preserve stable routes, the approved layout and prominent walkthrough navigation. No package installation or local server is needed.
 
-## Decision reconciliation checkpoint
+## Previous decision reconciliation checkpoint
 
 `DEC-069` explicitly records host-produced gameplay geometry replicated with the resulting entity and relationship state. Clients reconstruct runtime representations from that result. Geometry-result encoding, compression, delivery, correction and recovery remain open; the earlier operation-versus-contour question is narrowed accordingly. The entry records the current confirmation, not a backdated acceptance transcript.
 
@@ -34,3 +34,13 @@ The [bounded blast probe](https://github.com/jblick1327/Bomb/blob/24e79ff0533eab
 Layered host medians around **0.64–1.23 s**, and **3.05 s** for a recovered second rotated blast, remain a performance limit. The original **0.4 m-wide opaque-support** corner still rejects the whole explosion; the positive live-layered proof uses **0.1 m-wide support**. The old case remains an expected rejection test, not a repaired/supported detonation. Unsupported geometry and the older extreme-force hold stretch remain visible in the team handoff.
 
 The architecture contains no provisional rules. Reader-facing rules/search omit the repeated Accepted label; source status metadata and all previously published decision history remain. This checkpoint changes no Unity code or prototype branch. Production numerical geometry/performance, authoring values/encoding, exact character boundary lethality and general scheduling retain their open scope. The ten work deliveries, dependencies and order are preserved; no staffing or first milestone is ratified.
+
+## Authoring and snapshot checkpoint — 1.8.0
+
+Architecture is the requirements authority. ASSET-001–009 and CON-015 now record the accepted Unity authoring v1 workflow; NET-003–005 record initial full snapshots, host-supplied dependencies and newer complete match-scoped captures. All earlier decision bodies are preserved; DEC-070–077 publish the new checkpoint and correct the earlier authoring notes' provisional label for already-accepted connector formulas/percentage policy.
+
+The six sources and reader pages are synchronized. Reference pages now cover Unity authoring, snapshot application and scoped v4 evidence. The first-use guide is under `handbook/guides/`, archived candidate schema/examples under `handbook/drafts/exchange-v0.1/`, and dated result exports under `handbook/evidence/authoring-v4/`. The exchange proposal remains a candidate; the local schema is not claimed compatible.
+
+V4 records 56 EditMode / 12 PlayMode passes supplied from Unity 6000.6.5f1, with all 281 payload hashes checked independently. No Unity rerun or complete-game/network conformance is claimed. Local runtime files/reference scene are unchanged by the final authoring fixes. The older bounded blast probe and its limits remain separate evidence. This documentation change edits no Unity branch, package, solver or gameplay scene.
+
+Build with `python3 handbook/build.py`, copy the generated `handbook/dist/index.html` to root, and commit the sources and root page together. Preserve stable routes/layout and the ten proposed role deliveries; this checkpoint selects no new shared game milestone or staff assignment.

@@ -1,0 +1,175 @@
+{
+  "kind": "DefinitionBundle",
+  "schemaVersion": "0.1-draft",
+  "matchId": "64ba32c6-9816-4c1f-9f60-7b59d380181a",
+  "definitions": [
+    {
+      "kind": "material",
+      "id": "material.example",
+      "revision": 1,
+      "densityKgPerM2": 2.0,
+      "blastResistance": 0.5
+    },
+    {
+      "kind": "material",
+      "id": "material.corpse-example",
+      "revision": 1,
+      "densityKgPerM2": 3.0,
+      "blastResistance": 0.8
+    },
+    {
+      "kind": "appearance",
+      "id": "appearance.example",
+      "revision": 1,
+      "profile": "colour-extrusion-candidate",
+      "colourLinearRGBA": [
+        0.4,
+        0.6,
+        0.8,
+        1.0
+      ],
+      "extrusionDepthM": 0.25
+    },
+    {
+      "kind": "bodyConfig",
+      "id": "body.grabbable-example",
+      "revision": 1,
+      "materialRef": {
+        "id": "material.example",
+        "revision": 1
+      },
+      "appearanceRef": {
+        "id": "appearance.example",
+        "revision": 1
+      },
+      "grabAllowed": true,
+      "collisionLayer": 0,
+      "friction": 0.4,
+      "restitution": 0.05,
+      "linearDampingPerSecond": 0.0,
+      "angularDampingPerSecond": 0.0
+    },
+    {
+      "kind": "bodyConfig",
+      "id": "body.fixed-example",
+      "revision": 1,
+      "materialRef": {
+        "id": "material.example",
+        "revision": 1
+      },
+      "appearanceRef": {
+        "id": "appearance.example",
+        "revision": 1
+      },
+      "grabAllowed": false,
+      "collisionLayer": 0,
+      "friction": 0.4,
+      "restitution": 0.05,
+      "linearDampingPerSecond": 0.0,
+      "angularDampingPerSecond": 0.0
+    },
+    {
+      "kind": "bodyConfig",
+      "id": "body.corpse-example",
+      "revision": 1,
+      "materialRef": {
+        "id": "material.corpse-example",
+        "revision": 1
+      },
+      "appearanceRef": {
+        "id": "appearance.example",
+        "revision": 1
+      },
+      "grabAllowed": false,
+      "collisionLayer": 0,
+      "friction": 0.4,
+      "restitution": 0.05,
+      "linearDampingPerSecond": 0.0,
+      "angularDampingPerSecond": 0.0
+    },
+    {
+      "kind": "destructionResponse",
+      "id": "response.example",
+      "revision": 1,
+      "profile": "boundary-carve-candidate"
+    },
+    {
+      "kind": "character",
+      "id": "character.example",
+      "revision": 1,
+      "limbs": {
+        "leftHand": {
+          "root": [
+            -0.35,
+            0.2
+          ],
+          "maxReachM": 1.5
+        },
+        "rightHand": {
+          "root": [
+            0.35,
+            0.2
+          ],
+          "maxReachM": 1.5
+        },
+        "leftFoot": {
+          "root": [
+            -0.25,
+            -0.35
+          ],
+          "maxReachM": 1.0
+        },
+        "rightFoot": {
+          "root": [
+            0.25,
+            -0.35
+          ],
+          "maxReachM": 1.0
+        }
+      },
+      "corpse": {
+        "bodyConfigRef": {
+          "id": "body.corpse-example",
+          "revision": 1
+        },
+        "destruction": {
+          "kind": "carvable",
+          "responseRef": {
+            "id": "response.example",
+            "revision": 1
+          }
+        }
+      }
+    },
+    {
+      "kind": "bomb",
+      "id": "bomb.example",
+      "revision": 1,
+      "fuseSeconds": 5.0,
+      "nominalRadiusM": 3.0,
+      "blastProfile": "material-reach-candidate"
+    },
+    {
+      "kind": "world",
+      "id": "world.example",
+      "revision": 1,
+      "gravityMPerS2": [
+        0.0,
+        -9.81
+      ],
+      "physicsProfile": "uniform-lamina-2d-candidate",
+      "fixedBodyIds": [
+        "101"
+      ],
+      "collisionPairs": [
+        {
+          "layerA": 0,
+          "layerB": 0,
+          "enabled": true
+        }
+      ],
+      "geometryToleranceM": 1e-06,
+      "contactProjectionLimitM": 0.01
+    }
+  ]
+}

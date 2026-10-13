@@ -1,0 +1,30 @@
+{
+  "source_record": "v3-review-preview-before-fix.json",
+  "source_sha256": "6d3c3c03d36105988fc98850002a09ef9c96da2aa740a51c06e25f8ecaf4bb2f",
+  "result": {
+    "status": "completed",
+    "duration": 2.15,
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "inconclusive": 0
+    },
+    "results": [
+      {
+        "FullName": "BOM.Tests.AuthoringUsabilityTests.ClosedWorkspaceCannotAllocatePreviewFromLateUpdateCallback",
+        "Status": "Failed",
+        "Duration": 1.8867672,
+        "Message": "  A late callback must not recreate an unowned preview after the window closes.\r\n  Expected: False\r\n  But was:  True\r\n",
+        "StackTrace": "[Local filesystem stack trace omitted.]"
+      }
+    ]
+  },
+  "redactions": {
+    "omitted_fields": [
+      "root.result.results[0].StackTrace"
+    ],
+    "reason": "Absolute developer filesystem paths are omitted from public evidence."
+  }
+}

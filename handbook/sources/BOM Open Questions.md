@@ -1,7 +1,7 @@
 # BOM Architecture Open Questions
 
-**Version:** 0.14  
-**Last updated:** 2026-10-11  
+**Version:** 0.15  
+**Last updated:** 2026-10-13  
 **Normative source:** `BOM Architecture.md`
 
 ## 1. Interpretation
@@ -14,27 +14,27 @@ Priority meanings:
 - **P1:** Needed for a robust networked prototype but not for the earliest local slice.
 - **P2:** Can remain deferred until testing or expansion exposes the need.
 
-These priorities describe implementation needs, not the order of the conceptual design interview. Component responsibilities, coarse system ownership, and seven conceptual groupings are accepted under `ECS-005` to `ECS-007`. Fixed limb roots/reach, minimum hold contents, remaining-duration bomb countdowns, and connector reference lifetimes are also settled. Character definitions now supply death-to-environment configuration; `MaterialProperties` applies to living characters and bombs; level/world data supplies fixed walls; world/body-local frame roles are settled. Remaining values, fields/encodings, execution order, and detailed coordination stay open. The immediate goal is a team-facing conceptual handoff for Unity, art, and level design. Networking refinement can wait for its owner. A useful model can retain explicit unresolved policies; the questions below are not an exhaustive serial interview.
+These priorities describe implementation needs, not the order of the conceptual design interview. Component responsibilities, coarse system ownership, and seven conceptual groupings are accepted under `ECS-005` to `ECS-007`. Fixed limb roots/reach, minimum hold contents, remaining-duration bomb countdowns, and connector reference lifetimes are also settled. Character definitions now supply death-to-environment configuration; `MaterialProperties` applies to living characters and bombs; level/world data supplies fixed walls; world/body-local frame roles are settled. Remaining values, fields/encodings, execution order, and detailed coordination stay open. The immediate goal is a team-facing conceptual handoff for Unity, art, and level design. The networking owner chooses implementation timing; the initial full-snapshot/dependency/ordering baseline is now settled under `NET-003` to `NET-005`. A useful model can retain explicit unresolved policies; the questions below are not an exhaustive serial interview.
 
-**Resolution status:** Earlier accepted policies remain in force through `DEC-061`. `DEC-062` through `DEC-066` settle the shared independent resistance source, linear extra cost, breach continuity, straight propagation and the uncarved killing-explosion corpse. `DEC-067` makes indestructible cover opaque. `DEC-068` accepts ordering/recovery conventions only for the bounded probe. Remaining model choices and implementation limits below retain their actual scope; the experiment does not establish a production algorithm, performance guarantee, serializer or global schedule. `OQ-CON-004` remains resolved by `CON-014` / `DEC-046`.
+**Resolution status:** Earlier accepted policies remain in force through `DEC-061`. `DEC-062` through `DEC-066` settle the shared independent resistance source, linear extra cost, breach continuity, straight propagation and the uncarved killing-explosion corpse. `DEC-067` makes indestructible cover opaque. `DEC-068` accepts ordering/recovery conventions only for the bounded probe. Remaining model choices and implementation limits below retain their actual scope; the experiment does not establish a production algorithm, performance guarantee, serializer or global schedule. `OQ-CON-004` remains resolved by `CON-014` / `DEC-046`. `DEC-070` to `DEC-077` record full snapshots, host-supplied dependencies and the Unity authoring v1 workflow. The reviewed local implementation is evidence; its numeric/kernel/schema conventions are not automatically the shared exchange contract.
 
 ## 2. Geometry and destruction
 
 ### OQ-GEO-001 — Canonical geometry representation
 
 **Priority:** P0  
-**Related rules:** `WORLD-002`, `MAT-007`, `IDENTITY-001`
+**Related rules:** `WORLD-002`, `MAT-007`, `ASSET-002`, `ASSET-003`, `IDENTITY-001`
 
-Authored material sections declare a 2D gameplay shape and aligned visual data under `MAT-007`. What exact data structure represents initial and changed canonical geometry? This includes contour representation, numeric precision or quantization, winding and hole semantics, validation, and the polygon-processing library.
+Unity authoring v1 supports one connected concave profile with enclosed holes; disconnected proposals require correction. Which exact common representation, winding/closure rules, normalization, numeric precision/quantization and tolerances connect import, destruction, reconstruction and Unity/Odin exchange? The reviewed local Clipper2/integer-grid/float path is recorded evidence, not a frozen cross-system representation.
 
 ### OQ-GEO-002 — Geometry-result encoding and delivery
 
 **Priority:** P0  
-**Related rules:** `NET-001`, `NET-002`, `WORLD-002`
+**Related rules:** `NET-001`, `NET-002`, `NET-003`, `NET-004`, `NET-005`, `WORLD-002`
 
-The host produces and commits gameplay geometry; clients receive that geometry with the resulting entity and relationship state under `NET-002`. Who produces the authoritative shapes is settled.
+The host produces authoritative geometry. Initial structural replication uses complete current snapshots, host-supplied dependencies and match-scoped newer-capture application. Do not reopen operation replay versus host-produced geometry or initial full snapshots.
 
-Which encoding and delivery contract carries those committed results efficiently and supports correction and current-state recovery? Complete shapes, geometry deltas, or validated references may encode the host's result; the representation must determine that committed geometry and preserve complete structural outcomes. Compression, message boundaries, ordering, and recovery-stream integration remain implementation choices. A message describing only the blast or cutter inputs does not supply the authoritative produced geometry.
+Which shared decoded shape/result records and lossless encoding implement that baseline efficiently? Resolve precision, dependency references, compression, packet assembly and eventual smaller ongoing updates while preserving complete structural outcomes. A blast-input message alone does not supply the authoritative produced geometry. The exchange v0.1 candidate and local Unity schema still need reconciliation.
 
 ### OQ-GEO-003 — Minimum valid material geometry
 
@@ -62,7 +62,7 @@ The bounded implementation at `24e79ff` demonstrates the listed wide/narrow/cavi
 
 Density placement and mass derivation for environment pieces, living characters, and live bombs are settled under `MAT-005` and `MAT-009`: material definitions explicitly author density, and all three roles derive mass from resolved density multiplied by current gameplay 2D area. `WORLD-006` defines linear velocity at the current centre of mass and angular velocity as the rate of change of body angle.
 
-Which additional material/body properties are canonical, and how are centre of mass, inertia, collision category, friction, damping, and other engine inputs derived? Define units, definition/reference validation, and any per-instance override policy without duplicating canonical facts. Independently authored blast resistance and its shared source are settled under `MAT-010`. Actual values/units, encoding, validation and override policy remain open; mass derivation does not determine resistance.
+Which additional material/body properties are canonical, and how are centre of mass, inertia, collision category, friction, damping, and other engine inputs derived? Define units and definition/reference validation without duplicating canonical facts. Independently authored blast resistance and its shared source are settled under `MAT-010`; mass derivation does not determine resistance. Unity authoring v1 permits a placement to select an overriding material definition under `ASSET-004`, with density/resistance resolved from that selection. Actual values/units, encoding, validation and policies for any additional properties remain open.
 
 ### OQ-MAT-002 — Destruction-response authoring and implementation
 
@@ -74,9 +74,18 @@ Independent response selection and ordinary material-result semantics are settle
 ### OQ-ASSET-001 — Shape/visual alignment and reconstruction encoding
 
 **Priority:** P0  
-**Related rules:** `MAT-007`, `MAT-008`, `WORLD-002`, `WORLD-006`, `STATE-001`, `REBUILD-001`
+**Related rules:** `MAT-007`, `MAT-008`, `WORLD-006`, `ASSET-004`, `ASSET-005`, `NET-004`
 
-The declared shape/visual contract, default result-property inheritance, and semantic frame roles are settled. `WORLD-006` puts body poses in world space and gameplay shapes, roots, and endpoint attachments in their respective body-local spaces; visual geometry aligns with the local shape. Which exact units, local origins/pivots, scaling/alignment data, numeric encoding, validated definition references, and reusable visual inputs implement those contracts? How do changed pieces reconstruct appropriate visuals without requiring a retired parent's state? Colour is at least one variable appearance input identified in review. Its definition/instance ownership and whether these inputs form a separate `VisualBinding` record remain open. No visual regeneration algorithm or exact authoring format has been chosen.
+Uniform current-profile extrusion, editable visual thickness, face colour/image mapping, separate original-side/cut appearance and stable surviving texture samples are settled for Unity authoring v1. Piece defaults and independent placement overrides are settled. The approved profile is the gameplay source of truth.
+
+Which exact units, origins, transform/mapping fields, boundary metadata, immutable definition references and image/asset-delivery records connect the working local path to shared exchange? Preserve surviving material samples and direct child dependencies without retired-parent lookup. FBX, affine UV vectors, PNG embedding and the local asset/schema layout are reviewed conventions, not universal protocol choices. A separate `VisualBinding` ECS grouping remains unaccepted.
+
+### OQ-ASSET-002 — Reconcile reviewed authoring and candidate exchange
+
+**Priority:** P1  
+**Related rules:** `ASSET-001`, `ASSET-009`, `NET-003`, `NET-004`, `NET-005`, `STATE-004`
+
+The local v4 authoring path is reviewed with recorded tests; the common Unity/Odin contract remains a candidate. Reconcile entity/capture types, local numeric/grid conventions, definition/appearance closure, connector correspondence/intended-fit representation and runtime configuration. Keep the accepted behaviour stable while selecting one compatible decoded boundary. Test Unity capture → Odin encode/decode → fresh Unity reconstruction with current fragments and surviving bonds. Character, bomb, hold and participant cases require their own integrated verification; the local authoring slice does not establish them.
 
 ### OQ-WORLD-001 — Indestructible geometry reconstruction contract
 
@@ -99,7 +108,7 @@ Will BOM use Unity Entities, a custom ECS, or another data-oriented implementati
 **Priority:** P0  
 **Related rules:** `ECS-005`, `ECS-006`, `ECS-007`, all entity sections
 
-`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The current map is `BOM-Candidate-Component-Map.md` v0.8; source rules control its status labels.
+`BodyMotion2D`, `BodyShape2D`, `MaterialProperties`, `DestructionBehaviour`, `InteractionPolicy`, `CharacterState`, and `BombState` are accepted conceptual groupings. Which remaining fields, definition inputs, unaccepted groupings, and system interfaces are needed by demonstrated reconstruction or transition gaps? A separate `BodyPhysics` and `VisualBinding` are not accepted. Showing roster/match data as dependencies outside the body/relationship catalogue is a recommendation, not an accepted storage or authority split. Shared material applicability and the death/fixed-wall input sources are settled under `MAT-009`, `CHAR-004`, and `WORLD-005`; frame roles follow `WORLD-006`. The current map is `BOM-Candidate-Component-Map.md` v0.10; source rules control its status labels.
 
 Review the assembled map and its reconstruction/transition checks before opening another detailed question. Avoid repeatedly debating names or tuning values when the underlying fact is already represented. Framework, memory/wire layout, and scheduling remain distinct decisions.
 
@@ -200,9 +209,9 @@ Resolved by `DEC-054`: live bombs are valid hold targets subject to their effect
 ### OQ-LIMB-005 — Grab-eligibility authoring and encoding
 
 **Priority:** P1  
-**Related rules:** `LIMB-007`, `LIMB-004`, `INTERACT-002`, `STATE-001`
+**Related rules:** `LIMB-007`, `ASSET-004`, `STATE-001`
 
-The authored Boolean and shared hand/deliberate-foot scope are accepted by `DEC-056`. What authoring defaults, exact record placement, and definition/reference encoding make the effective value available for host validation and reconstruction? `is_grabbable` is an illustrative name, not a required component field. Existing hold continuity remains governed by `LIMB-008` and `LIMB-009`.
+The authored Boolean and shared hand/deliberate-foot scope remain accepted. Unity authoring v1 has independent piece defaults, placement overrides, provenance and reset. Which actual default values and shared definition/reference encoding expose the effective policy to host validation and reconstruction? `is_grabbable` remains illustrative. Existing hold continuity remains governed by `LIMB-008` and `LIMB-009`.
 
 ### OQ-CHAR-001 — Canonical death-to-environment transition
 
@@ -236,14 +245,14 @@ Participant placement and control ownership are settled: canonical match-roster 
 **Priority:** P1  
 **Related rules:** `NET-001`
 
-Select the networking library and determine reliable versus unreliable delivery for lifecycle changes, geometry, snapshots, inputs, and transient events.
+Odin owns networking. Select its concrete transport and determine reliable versus unreliable delivery for lifecycle changes, geometry, snapshots, inputs, and transient events.
 
 ### OQ-NET-002 — Tick and replication rates
 
 **Priority:** P1  
 **Related rules:** `AUTH-001`, `NET-002`
 
-Choose the authoritative simulation rate, input-send rate, snapshot or correction rate, and interpolation buffer. Previously suggested numerical values are not accepted decisions.
+Choose the authoritative simulation rate, input-send rate, snapshot or correction rate, and interpolation buffer. Previously suggested numerical values are not accepted decisions. Measure real payload, capture/application cost and delay early under `NET-003`; the local test step is not a selected network cadence.
 
 ### OQ-NET-003 — Client correction strategy
 
@@ -255,9 +264,11 @@ Define how clients reconcile predicted pose, limb attachments, geometry, and con
 ### OQ-NET-004 — Join and recovery snapshot
 
 **Priority:** P1  
-**Related rules:** `STATE-001`, `REBUILD-001`
+**Related rules:** `STATE-001`, `REBUILD-001`, `NET-003`, `NET-004`, `NET-005`, `ECS-001`
 
-Define snapshot boundaries, ordering, and validation for joining or rebuilding a client from current canonical state.
+Complete current snapshots, initial host-supplied dependencies, increasing match-scoped captures and skipping intermediate snapshots are settled. Define assembly/dependency readiness, the expected-match application boundary and protocol validation/error results without reopening those semantics.
+
+Define the online round/reset identity scope and ordered-application boundary. The reviewed local debug reset restores its original match/allocator and may reuse fragment IDs across reset cycles; it must not be treated as an ordinary network receiver or silently establish online reset policy. Resolve new match/generation versus an explicitly isolated rollback scope before using that path online.
 
 ### OQ-NET-005 — Host departure
 
@@ -278,7 +289,7 @@ Which transient events are sent over the network, how are late or duplicate deli
 **Priority:** P1  
 **Related rules:** `NET-001`, `NET-002`, `STATE-001`
 
-How are Unity and Odin schemas coordinated as gameplay state and message types evolve? Choose the compatibility/version policy, message/field evolution rules, and any supported historical versions. The discussion recommended a provisional semantic contract and matching compatible builds, but no serializer or compatibility policy has been accepted. New lasting state must remain recoverable under `STATE-001`. This is networking-owner work and can wait while the team-facing baseline is prepared.
+How are Unity and Odin schemas coordinated as gameplay state and message types evolve? Choose the compatibility/version policy, message/field evolution rules, and any supported historical versions. The exchange candidate proposes a decoded contract and compatible builds, but no serializer or compatibility policy has been accepted. New lasting state must remain recoverable under `STATE-001`. This is networking-owner work; reconcile the candidate with the reviewed local implementation under `OQ-ASSET-002`.
 
 ## 8. Scope and production constraints
 

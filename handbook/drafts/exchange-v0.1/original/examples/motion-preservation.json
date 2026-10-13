@@ -1,0 +1,118 @@
+{
+  "fixtureOnly": true,
+  "description": "Same-ID connected result; unchanged local origin, changed COM. No connector or impulse. Preserve velocity at surviving local point.",
+  "before": {
+    "id": "301",
+    "geometryRevision": "1",
+    "shape": {
+      "outer": [
+        [
+          -2.0,
+          0.0
+        ],
+        [
+          2.0,
+          0.0
+        ],
+        [
+          2.0,
+          1.0
+        ],
+        [
+          -2.0,
+          1.0
+        ]
+      ],
+      "holes": []
+    },
+    "motion": {
+      "pose": {
+        "position": [
+          0.0,
+          0.0
+        ],
+        "angle": 0.0
+      },
+      "comLinearVelocity": [
+        1.0,
+        0.0
+      ],
+      "angularVelocity": 2.0
+    },
+    "bodyConfigRef": {
+      "id": "body.grabbable-example",
+      "revision": 1
+    },
+    "behaviour": {
+      "kind": "environment",
+      "destruction": {
+        "kind": "carvable",
+        "responseRef": {
+          "id": "response.example",
+          "revision": 1
+        }
+      }
+    }
+  },
+  "after": {
+    "id": "301",
+    "geometryRevision": "2",
+    "shape": {
+      "outer": [
+        [
+          -2.0,
+          0.0
+        ],
+        [
+          -0.25,
+          0.0
+        ],
+        [
+          -0.25,
+          1.0
+        ],
+        [
+          -2.0,
+          1.0
+        ]
+      ],
+      "holes": []
+    },
+    "motion": {
+      "pose": {
+        "position": [
+          0.0,
+          0.0
+        ],
+        "angle": 0.0
+      },
+      "comLinearVelocity": [
+        1.0,
+        -2.25
+      ],
+      "angularVelocity": 2.0
+    },
+    "bodyConfigRef": {
+      "id": "body.grabbable-example",
+      "revision": 1
+    },
+    "behaviour": {
+      "kind": "environment",
+      "destruction": {
+        "kind": "carvable",
+        "responseRef": {
+          "id": "response.example",
+          "revision": 1
+        }
+      }
+    }
+  },
+  "survivingLocalPoint": [
+    -1.5,
+    0.5
+  ],
+  "expectedWorldPointVelocity": [
+    1.0,
+    -3.0
+  ]
+}

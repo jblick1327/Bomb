@@ -1,8 +1,8 @@
 # BOM Simulation Architecture
 
-**Version:** 0.15  
+**Version:** 0.16  
 **Review state:** Current source of truth; accepted rules govern the current build  
-**Last updated:** 2026-10-11  
+**Last updated:** 2026-10-13  
 **Companion files:** `BOM Decision Log.md`, `BOM Open Questions.md`
 
 ## 1. Purpose
@@ -346,6 +346,8 @@ Destruction response remains independent of material resistance: a finite resist
 
 An authored level object is an authoring container rather than necessarily one canonical entity. A composite object is instantiated as multiple material entities connected by connector entities. A single material section may instantiate as one material entity.
 
+Unity authoring v1 uses one imported model as one initial material piece under `ASSET-002`. Designers import independently behaving pieces separately and compose them with explicit connectors. The authoring container still adds no canonical assembly entity.
+
 ### MAT-002 — Separate physics bodies
 
 **Status:** Accepted  
@@ -397,6 +399,8 @@ This establishes an extension point, not a requirement to implement shattering o
 Each authored material section declares a two-dimensional gameplay shape and its alignment with the visual representation. An authoring tool may generate that shape; manual shape editing is not required by this contract. Physics, destruction, material mass calculation, and structural attachment placement refer to the declared gameplay shape.
 
 This establishes the shape/visual contract between authoring and simulation. The semantic coordinate convention follows `WORLD-006`; exact geometry formats, units, visual definitions, and alignment encoding remain open. Runtime geometry can change under the existing destruction rules.
+
+The selected Unity authoring workflow adds review and correction under `ASSET-003` and uniform current-shape extrusion under `ASSET-005`. The declared-shape contract does not require every imported profile to be edited manually.
 
 ### MAT-008 — Resulting pieces inherit selected properties by default
 
@@ -583,6 +587,15 @@ Before creating replacement connectors, evaluate the old connector's attachment-
 The reference must remain recoverable from the current connector's state or permitted validated dependencies. Later current geometry alone cannot recover a reference that has already lost attachment; reconstruction must not require the retired parent.
 
 Starting at 100% does not restore the old bond's absolute load capacity. Under `CON-009`, capacity uses actual surviving attachment length. Optional authored percentage failure is accepted under `CON-010`; actual cutoff values, authoring defaults, measurement formula, and exact canonical encoding remain open. The illustrated 40% cutoff is not an accepted value.
+
+### CON-015 — Author connections between touching pieces
+
+**Status:** Accepted  
+**Kind:** Unity authoring v1 scope and validation rule
+
+Create a rigid structural connection only where two approved gameplay pieces share a boundary of nonzero length. A gap, point-only contact or positive-area solid overlap is not a valid authored attachment. Visual overlap does not establish contact. The exact contact tolerance and paired-region encoding remain implementation conventions.
+
+A proposed connection or alignment must be reviewed under `ASSET-007`. Recheck current approved geometry and transforms before confirming it and when compiling an edited level. This authoring contact check does not prohibit temporary runtime displacement: reconstruction still preserves the intended rigid fit under `CON-013`.
 
 ## 9. Players, characters, limb slots, and attachments
 
@@ -892,6 +905,35 @@ The network protocol communicates semantic simulation state and operations rathe
 
 Once the host commits an interaction or structural consequence, the canonical result is replicated. For geometry changes, this includes the host-produced gameplay geometry and the resulting entity and relationship state. Clients reconstruct colliders, render meshes, and other runtime representations from that committed state. Clients may derive noncanonical presentation and runtime consequences locally where appropriate.
 
+### NET-003 — Begin with full current-world snapshots
+
+**Status:** Accepted  
+**Kind:** Initial replication baseline
+
+Begin structural replication with complete current-world canonical snapshots. Each snapshot describes one complete committed result, including current host-produced geometry and its entity and relationship state. It can reconstruct the current world with its validated dependencies without receiving every earlier split, explosion or snapshot.
+
+Review actual encoded size, capture/reconstruction cost and delivery delay early on representative scenes. Compression, coalescing, delivery channels, cadence and smaller ongoing updates remain implementation work. This baseline does not select a transport, codec, packet boundary, tick rate or universal bandwidth cutoff, and it does not require retransmitting unchanged assets in every snapshot.
+
+### NET-004 — Host supplies initial state and dependencies
+
+**Status:** Accepted  
+**Kind:** Join and reconstruction input rule
+
+The host supplies the initial world state and the required reusable definitions and appearance/asset data. A client must resolve the same effective configuration and geometry/appearance inputs through validated dependencies; it cannot depend on opaque Unity object references or an assumed identical local asset installation.
+
+When subsequent current state requires new or changed dependencies, those dependencies must be available and validated before that state is applied. Exact references, versions, content validation, caching and delivery mechanisms belong to the exchange implementation. Each lasting fact still has one canonical source under `STATE-004`.
+
+### NET-005 — Apply newer complete captures within their match
+
+**Status:** Accepted  
+**Kind:** Snapshot ordering and application rule
+
+Complete captures have increasing match-scoped capture numbers, distinct from body geometry revisions. A ready, valid newer complete snapshot may skip intermediate numbers. After capture 40, complete capture 42 can apply without 41; delayed or duplicate captures must not overwrite newer applied state.
+
+Apply only within the expected match context, with required dependencies resolved. Expose the reconstructed result atomically; invalid or incomplete input leaves the previously usable state intact. This orders current-state application, not transient audio/effects or request deduplication.
+
+A deliberate local debug rollback/reset is a separate operation. The online round/reset identity scope and its application boundary remain open under `OQ-NET-004` and `OQ-MATCH-001`; the reviewed local reset is not an ordered network receiver.
+
 ## 14. Course implementation boundary
 
 The course implementation currently requires:
@@ -929,6 +971,8 @@ The course implementation currently requires:
 - The coarse system responsibilities under `ECS-006`, with execution order still open.
 - Client interaction proposals validated against authoritative current state.
 - Host-produced gameplay geometry replicated with the resulting entity and relationship state; clients reconstruct runtime representations from the committed result under `NET-002`.
+- Full current-world snapshots initially, host-supplied state and dependencies, and newer complete capture application under `NET-003` to `NET-005`.
+- The Unity authoring v1 workflow under `ASSET-001` to `ASSET-009`, including one import per initial piece, reviewable profiles, independent defaults/overrides, uniform extrusion, touching-piece connections and frozen local tests.
 
 The following are not implied by this document and remain open or deferred:
 
@@ -937,6 +981,101 @@ The following are not implied by this document and remain open or deferred:
 - Additional physical-property inputs/derivations, actual corpse settings, and fixed-wall/definition reference encoding.
 - Actual blast authoring values/units and encoding; numerical intersections and crossed-thickness measurement; supported geometry and computation cost; exact character boundary/lethality evaluation and power/radius mapping. The shared resistance source, reach-cost model, and straight-path propagation behaviour are accepted.
 - Exact fixed-timestep rate, snapshot rate, transport, rollback, or correction strategy.
-- Geometry-result encoding, compression, delivery boundaries, correction, and snapshot recovery. Host-produced geometry is the accepted replication baseline.
+- Geometry-result encoding, compression, delivery channels/cadence, prediction correction, dependency-delivery mechanics and online reset scope. Full current snapshots and match-scoped newer-capture application are the initial baseline.
 - Non-rigid environmental connector implementations.
 - Final multiplayer capacity.
+
+## 15. Unity authoring v1
+
+These accepted requirements define the local asset/level/destruction workflow. Its reviewed implementation and numerical conventions are dated evidence, not a wire schema or proof that every character, live-bomb, hold and multiplayer requirement is implemented.
+
+### ASSET-001 — Blender sources and Unity composition
+
+**Status:** Accepted  
+**Kind:** Authoring workflow and runtime ownership rule
+
+Use Blender-origin models as source input and native Unity tooling to review reusable pieces, compose levels and test destruction. The tooling establishes managed physics, collision, rendering and joint representations from approved inputs. Designers do not add that runtime machinery individually; conflicting managed components produce actionable validation errors.
+
+Class names, asset-file layouts, ECS storage and the exact model-exchange format remain implementation choices. The reviewed v1 route uses static Blender-exported FBX, Unity definition assets and scene/prefab authoring components.
+
+### ASSET-002 — One import is one initial piece
+
+**Status:** Accepted  
+**Kind:** Import identity and topology rule
+
+One imported model becomes one approved initial physical material piece, including when its source contains multiple meshes or render-material slots. Names and slots do not select physical sections. A designer wanting independently behaving parts imports those parts individually and connects them afterward.
+
+Support connected concave gameplay regions and enclosed holes. A disconnected proposed profile must be corrected or explicitly reduced to the intended single region before approval; it must not silently become several pieces. Runtime destruction can produce several pieces under `IDENTITY-001`.
+
+### ASSET-003 — Infer, review, correct and explicitly approve
+
+**Status:** Accepted  
+**Kind:** Authoring approval and correction rule
+
+Present inferred profile, orientation, scale, origin, thickness, appearance and gameplay selections immediately for approval or editing. Show the actual proposed extrusion together with its gameplay outline, holes and disconnected regions. The approved profile is the source for physics, destruction, mass and attachments.
+
+Provide a simple correction workflow for orientation/scale/origin, outer and hole vertices/contours, adding/removing vertices and holes, appearance and gameplay selections without returning to Blender for every correction. Graphical and exact-coordinate views must edit the same current draft and remain synchronized after insertion, deletion and cancellation.
+
+Approval saves a coherent reusable piece. Invalid geometry or unresolved required definitions blocks approval with a field/region explanation and correction action. Pending or cancelled edits do not replace approved assets or silently change placements. Cancelled interactions cannot leave active controls writing to discarded data.
+
+Approved regions are finite, simple, nondegenerate and connected. Holes are strictly enclosed and do not touch/intersect each other or the outer boundary. An offered repair must itself be reviewed; invalid boundaries must not silently be filled or discarded. Exact numerical limits remain implementation conventions.
+
+### ASSET-004 — Independent defaults and placement overrides
+
+**Status:** Accepted  
+**Kind:** Authoring selection and inheritance rule
+
+Gameplay material, destruction selection and grab eligibility are independently selectable. A reusable piece supplies defaults; each placement inherits each field unless it has an explicit override. Show the effective value's source and provide a reset per override. Changing a default affects inheriting placements while preserving explicit overrides; editing one placement affects that placement.
+
+Rendering appearance is separate from gameplay material. Density and blast resistance resolve from the selected material definition under `MAT-005` and `MAT-010`; a placement material override selects another definition rather than introducing independently authoritative copies of those values. This selects no universal material, response, eligibility value or gameplay tuning preset.
+
+### ASSET-005 — Uniform extrusion and stable surviving appearance
+
+**Status:** Accepted  
+**Kind:** Unity authoring v1 visual contract
+
+Render a piece as a uniform extrusion of its approved/current gameplay region from the outset, with editable visual thickness. Use the same current region for rendering and collision, including concavities and holes. Visual thickness does not enter density-times-gameplay-area mass.
+
+Provide face colour or image inputs with an explicit mapping and separately editable original-side/new-cut appearance. Geometry changes may rebuild the whole mesh, but surviving material keeps its outline and corresponding texture samples outside the cut. Do not rescale the texture to each fragment's bounds or switch from an arbitrary intact mesh to a different extrusion style on first damage. Frame changes transform appearance alignment to preserve surviving material locations.
+
+The precise mapping, edge metadata, numeric encoding and appearance/dependency records remain exchange implementation work. The uniform-extrusion choice is scoped to this workflow.
+
+### ASSET-006 — Save and reimport without losing authored choices
+
+**Status:** Accepted  
+**Kind:** Authoring persistence and update rule
+
+Place, move, rotate and resize supported pieces with their actual gameplay outlines visible and transforms resolved consistently for geometry, appearance and attachments. Save/reload levels and reusable assemblies with piece references, independent overrides, fixed supports and connection settings intact. Each material piece retains its own body; an assembly is an authoring container. Fixed behaviour resolves from level/world foundation data under `WORLD-005`.
+
+Source reimport presents changed results for review. Permit keeping the approved profile or explicitly accepting a regenerated proposal; preserve Unity-authored gameplay selections, placement overrides and manual corrections unless the designer replaces them. Cancellation retains the prior approved state, and missing source references are actionable errors. Changed profiles/transforms revalidate affected connections before compilation.
+
+Repairing an initially failed projection preserves explicit pending selections independently of geometry validity. Untouched appearance inputs may still receive their first successful inference. Source conversion and the displayed profile must agree before approval.
+
+### ASSET-007 — Explicit connection creation, editing and alignment
+
+**Status:** Accepted  
+**Kind:** Connection authoring workflow
+
+For touching pieces under `CON-015`, propose and highlight paired attachment regions. Let the designer edit their extent and the single authored strength before confirming. Any snapping/alignment transform is previewed and confirmed; cancellation retains placements and saved bonds.
+
+Creation and saved-bond editing are explicit operations. Creating another bond must not overwrite an earlier bond; saved bonds remain selectable, editable and removable. Revalidate changed endpoints, profiles and transforms before confirmation/compilation. Store both endpoint-local regions and data sufficient for the original intended fit under `CON-013`.
+
+Expose the accepted strength/optional attachment-loss policies under `CON-008` to `CON-010` and `CON-014`, with authored values and applicable lifetime references. Raw engine limits derive. No universal cutoff, paired-length convention or engine constraint type is selected here.
+
+### ASSET-008 — Real local destruction and frozen reset
+
+**Status:** Accepted  
+**Kind:** Authoring test workflow
+
+Compile the authored level and run Unity's actual simulation/destruction path using explicit shared test presets and approved geometry. Tests exercise current mass, collision, extrusion, identity and relationship outcomes, including cuts, complete removal and splits. Origins respect reachable free space under `WORLD-003`; local numerical/domain restrictions must be reported.
+
+Capture the resolved initial scene, effective definitions and test configuration at start. Later authoring/preset edits take effect at a subsequent start. Reset reconstructs that frozen initial world; runtime damage, fragments, failed bonds and motion do not mutate authored assets or placements. The online reset/match boundary remains a separate integration decision.
+
+### ASSET-009 — Validate and reconstruct complete current state
+
+**Status:** Accepted  
+**Kind:** Compilation, reconstruction and failure boundary
+
+Validate the complete authored level before publishing a new test world. Resolve effective selections, bake supported transforms, establish runtime identities and consistently resolve endpoint/foundation references. Errors identify selectable authoring targets or field/region locations and offer corrections.
+
+Capture one complete committed state. Current geometry, identities, effective configuration, appearance and relationships plus their validated definition/asset closure must reconstruct a fresh runtime without retired-parent lookup, event replay, engine objects or solver history. Required image/texture inputs participate in that closure. Invalid compilation, approval or reconstruction retains the previously valid state rather than publishing a partial world.

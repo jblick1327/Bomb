@@ -1,9 +1,9 @@
 # BOM — Candidate Component and Data Map
 
-**Version:** 0.9  
-**Date:** 2026-10-11  
+**Version:** 0.10  
+**Date:** 2026-10-13  
 **Status:** Review map containing accepted conceptual groupings and explicitly marked candidates  
-**Baseline:** `BOM Architecture.md` v0.15; decisions through `DEC-069`
+**Baseline:** `BOM Architecture.md` v0.16; decisions through `DEC-077`
 
 This map assembles the current model. Architecture controls if a summary or example conflicts with it. Seven groupings are accepted under `ECS-007`; that acceptance does not ratify every remaining field, definition placement, numeric type, or implementation boundary. Other groupings below remain candidates. A row describes semantic contents, not a serializer, engine class, memory layout, or requirement for one implementation component per row.
 
@@ -18,7 +18,7 @@ The design focus is the information that must survive and the systems that chang
 | Derived values and machinery | Density-times-area mass for all physical roles, connector capacities, transformed limb roots/held points, constraints, Unity objects, visual meshes, indexes, and caches. |
 | Transient work | Requests, contact/load observations, triggers, pending structural plans, and notifications. Lasting consequences enter canonical state. |
 
-A snapshot plus its permitted, validated dependencies must reconstruct the world. A definition reference does not make a required input optional. Store each fact once: avoid a resolved value beside an independently authoritative definition of that same fact.
+Initial structural replication uses full current-world snapshots, host-supplied dependencies and newer match-scoped captures under `NET-003` to `NET-005`. A snapshot plus its permitted, validated dependencies must reconstruct the world. A definition reference does not make a required input optional. Store each fact once: avoid a resolved value beside an independently authoritative definition of that same fact.
 
 ## 2. Body and property records
 
@@ -28,10 +28,10 @@ Persistent physical entities have match-scoped identity metadata. Identity need 
 |---|---|---|---|---|
 | `BodyMotion2D` | Accepted grouping | World-space pose of the local frame; world-space velocity of the current centre of mass; rate of change of body angle (`WORLD-006`). | Environment pieces, living characters, live bombs. | Unity body state/interpolation derive from committed motion. Geometry/frame changes intended to preserve motion preserve surviving material movement, including same-ID results. Numeric types, units, COM/inertia derivation and other motion policies remain open. |
 | `BodyShape2D` | Accepted grouping | Recoverable current body-local 2D gameplay shape, or an eligible validated immutable shape reference. Geometry revision is a candidate field here. | Physical bodies. | Colliders, area, bounds, and render geometry derive. Body-local frame meaning is accepted under `WORLD-006`; shape format, local origin/pivot, revision encoding, units, and immutable-reference contract remain open. |
-| `MaterialProperties` | Accepted grouping and shared applicability | Shared effective material selection/inputs for environment pieces, living characters and live bombs (`MAT-009`), with independently authored density (`MAT-005`) and blast resistance (`MAT-010`). | Environment/material pieces, living characters, live bombs; corpses use installed environment selections (`CHAR-004`). | Mass derives from density × current gameplay area. Resistance contributes extra reach cost under `WORLD-008` and is independent of density, connector strength and response. Reconstruct the same effective values. Other physical inputs, authoring values/units, encoding, validation and overrides remain open. |
+| `MaterialProperties` | Accepted grouping and shared applicability | Shared effective material selection/inputs for environment pieces, living characters and live bombs (`MAT-009`), with independently authored density (`MAT-005`) and blast resistance (`MAT-010`). | Environment/material pieces, living characters, live bombs; corpses use installed environment selections (`CHAR-004`). | Mass derives from density × current gameplay area. Resistance contributes extra reach cost under `WORLD-008` and is independent of density, connector strength and response. Reconstruct the same effective values. Unity authoring v1 permits per-placement material-definition overrides (`ASSET-004`). Other physical inputs, actual values/units and shared encoding/validation remain open. |
 | `DestructionBehaviour` | Accepted grouping | Destructibility and independently selected effective destruction response/settings, where applicable. | Environment/material pieces. | Response algorithms produce shape/property outcomes. Exact settings and indestructibility representation remain open; shattering is not required. |
 | `InteractionPolicy` | Accepted grouping | Effective interaction-eligibility setting or validated policy inputs needed by host validation. | Applicable target bodies. | One authored Boolean governs hand and deliberate foot holds, including live bombs (`LIMB-005`, `LIMB-007`). Host validation still applies. Authoring defaults, record placement, and encoding remain implementation work. |
-| `VisualBinding` | Candidate grouping | Reusable appearance inputs and the alignment needed to interpret them with gameplay shape; colour is at least one variable input. | Bodies as needed; material results carry their own recoverable appearance inputs. | Meshes/presentation derive locally. A separate record, colour's definition/instance ownership, alignment encoding, and regeneration remain open. Results must not depend on a retired parent. |
+| `VisualBinding` | Candidate grouping | Reusable appearance inputs and the alignment needed to interpret them with gameplay shape; colour is at least one variable input. | Bodies as needed; material results carry their own recoverable appearance inputs. | Meshes/presentation derive locally. Unity authoring v1 selects current-profile extrusion, stable face mapping and separate side/cut appearance (`ASSET-005`). A separate record, exact ownership/alignment encoding and shared dependency format remain open. Results must not depend on a retired parent. |
 
 ### Physical inputs and fixed supports
 
@@ -154,7 +154,7 @@ Suppose a character holds platform P, connector C joins P to fixed support W, an
 | C's percentage test remains meaningful | C's lifetime reference and current attached measure | Reference encoding and length measure; no retired-parent dependency. |
 | Character remains held within reach | Minimum hold record, fixed definition root/reach, endpoint poses | Coordinate/definition validation and engine realization. |
 | Bomb remains on its path to detonation | Selected bomb configuration and active remaining duration | Units/types and update ordering; no landing-event replay or shared deadline clock is required. |
-| Appearance matches current shape | Recoverable visual settings/alignment, including applicable colour | Appearance ownership and regeneration. |
+| Appearance matches current shape | Recoverable visual settings/alignment, including applicable colour | Exact appearance/dependency encoding; Unity v1 extrusion and surviving sample stability are accepted. |
 
 The accepted hold, timer, and connector-lifetime semantics have concrete sources. Shared material inputs, fixed-wall sources, and frame roles also have accepted homes. The whole-scene audit still exposes exact configuration/reference encoding, further physical derivations, and validation contracts. The map does not claim those unspecified parts are already a complete executable schema.
 
@@ -204,7 +204,7 @@ A blast satisfying its power/radius lethality condition causes immediate death; 
 | Definition/reference recovery | Reconstruction must recover the same effective values without a retired parent. | Dependency validation and encoding remain open; no hash/version scheme is selected. |
 | World configuration encoding and further physical inputs | W must recover level/world-supplied fixed behaviour and endpoints; all physical roles share material inputs and may need further nonduplicated inputs. | The wall and material input sources are settled (`WORLD-005`, `MAT-009`); encoding and further derivations remain open. No duplicate attachment-imposed restrictions or separate `BodyPhysics` are assumed. |
 | Production blast geometry | Straight paths consume ordinary distance plus independent resistance × original crossed thickness; breach continuity and opaque cover protect material behind them. | The source and cost are settled (`MAT-010`, `WORLD-007` to `WORLD-011`). Numerical intersections/representation, supported domain, performance, values/units/encoding and character power/radius mapping remain open (`OQ-GEO-004`). The bounded probe's shadow rejection and computation cost remain visible in the team handoff. |
-| Appearance ownership | Variable colour and reusable appearance inputs need a recoverable source and must suit changed shapes. | Definition/instance placement, a separate `VisualBinding`, alignment, and regeneration remain open. |
+| Appearance ownership | Variable colour/image inputs need a recoverable source and must suit changed shapes. Unity v1 uses current-profile extrusion with stable surviving samples. | Exact definition/instance records, a separate `VisualBinding`, alignment encoding and dependency delivery remain open. |
 | Corpse values and other result settings | Death installs environment configuration supplied by the character definition; destruction does not automatically copy every component. | The corpse source and resulting environment-record ownership are settled (`CHAR-004`). Actual values, transition/reference encoding, and result inputs beyond accepted material/response/appearance inheritance remain open. |
 | Additional movement and implementation contracts | The accepted hold baseline is represented; selected active controls may expose additional lasting inputs. | Active controls, constraints/tuning, physics interfaces, and detailed scheduling remain open. |
 
@@ -215,3 +215,11 @@ Use `BOM-Team-Handbook.html` for the walkthrough, source-linked reference, and p
 Blast resistance belongs to the shared material-property source, not a new persistent blast component. One explosion evaluates original shapes/selections along straight paths, applying ordinary distance plus extra resistance × thickness (`WORLD-008`), breach continuity (`WORLD-009`), straight propagation (`WORLD-010`) and opaque indestructible cover (`WORLD-011`). Geometry and character exposure use that same basis. Complete lasting identities, geometry, relationships, behaviour and control commit under the existing structural rules.
 
 The bounded probe at `24e79ff` uses transient calculation data and existing planner/recovery ownership. Its schema 3, presence flag, numeric limits, dyadic frame choices and stable explosion order are implementation conventions. Recorded 83/83 EditMode and 15/15 PlayMode passes demonstrate listed fixtures; the opaque-support rejection and layered computation cost remain limits. See the team handoff for exact evidence identity and scope. No additional ECS grouping, production geometry method or network/storage format is accepted by those results.
+
+## Unity authoring and exchange checkpoint
+
+`ASSET-001` to `ASSET-009` and `CON-015` now settle the Unity v1 workflow: one import per initial piece; connected concave/holed profiles; explicit correction/approval; independent defaults and placement overrides; uniform extrusion with stable surviving appearance; touching-boundary bonds; frozen local tests and complete current reconstruction. The tooling supplies managed runtime machinery. These choices add no required `BodyPhysics`, `VisualBinding` or canonical assembly component.
+
+The reviewed local code uses its own geometry grid, float vectors, match/kind/sequence string IDs, content-hash definitions, paired line segments and appearance/image closure. Those are implementation conventions. The archived exchange v0.1 proposal uses a different candidate decoded representation and does not automatically supersede those records. Reconcile a shared boundary under `OQ-ASSET-002` and `OQ-GEO-001`; do not treat either serializer as architectural authority.
+
+For this authoring workflow, material/destruction/grab defaults and independent per-placement override/reset are accepted (`ASSET-004`). Values and shared encoding remain open. Current-profile extrusion is selected (`ASSET-005`); the exact appearance record/asset-delivery representation remains open. The seven conceptual body groupings remain unchanged.

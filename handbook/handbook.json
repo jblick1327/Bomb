@@ -1,6 +1,6 @@
 {
-  "version": "1.7.0",
-  "date": "2026-10-11",
+  "version": "1.8.0",
+  "date": "2026-10-13",
   "title": "BOM Team Handbook",
   "principles": [
     {
@@ -437,13 +437,13 @@
     {
       "id": "geometry",
       "title": "Geometry exchange",
-      "prompt": "The initial prototype shape format, validation, and handoff example.",
+      "prompt": "Reconcile the reviewed local concave/holed profile representation with the candidate shared decoded schema, including validation and precision.",
       "roles": "Simulation + assets"
     },
     {
       "id": "definitions",
       "title": "Definition lookup",
-      "prompt": "How selected material, response, character, bomb and world inputs resolve consistently.",
+      "prompt": "Reconcile selected material/response/appearance dependencies and initial host delivery; add character/bomb/world records as their implemented mechanics require.",
       "roles": "Simulation + assets + level"
     }
   ],
@@ -454,15 +454,15 @@
       "title": "Agree the fixture handoff",
       "stage": "Start now",
       "purpose": "Give the first asset and scene a common interpretation so authoring and integration can exchange usable inputs.",
-      "start": "Simulation integration records a prototype import contract with asset authoring. Use one platform to settle the four exchange conventions, then load that same example through both paths.",
+      "start": "Use the reviewed local authoring/capture path and the exchange v0.1 candidate to record one compatible import/capture/reconstruction boundary.",
       "inputs": [
         "Accepted world/body-local convention and declared shape/visual contract.",
         "One platform shape and an example material/response selection."
       ],
       "deliverable": "A short prototype import contract and one example accepted by both the authoring and simulation paths.",
       "steps": [
-        "Asset authoring supplies one simple platform shape with a declared local origin and aligned visuals.",
-        "Simulation integration records units, origin handling, initial shape exchange and definition lookup; authoring checks those choices against the example.",
+        "Take one approved concave or holed piece and a connected fixture from the local authoring workflow.",
+        "Reconcile units, origins, geometry precision, IDs, definition/appearance closure and paired connector records; keep the candidate wire schema status explicit until compatibility is verified.",
         "Round-trip the example and keep the import contract beside it, recording any required defaults or assumptions."
       ],
       "checks": [
@@ -476,7 +476,11 @@
         "MAT-007",
         "MAT-005",
         "STATE-001",
-        "STATE-004"
+        "STATE-004",
+        "ASSET-009",
+        "NET-003",
+        "NET-004",
+        "NET-005"
       ],
       "open": "These are working implementation conventions. Framework, final geometry format, and other physical derivations remain open. The team's chosen conventions must be recorded before exchanging integrated assets."
     },
@@ -486,7 +490,7 @@
       "title": "Author the platform example",
       "stage": "Start now",
       "purpose": "Give level composition and simulation integration one asset that satisfies the accepted authoring contract.",
-      "start": "Produce a simple section with a declared 2D gameplay shape and visuals aligned in its local frame.",
+      "start": "Use the Unity import/review workflow for one Blender-origin piece, correct its profile if needed, and explicitly approve its independent selections.",
       "inputs": [
         "SHARED-01's exchange conventions.",
         "Explicit material density and independently selected destruction response.",
@@ -494,7 +498,7 @@
       ],
       "deliverable": "One reusable platform section with shape, aligned appearance, material selection and response selection. Use simple visuals before polishing art.",
       "steps": [
-        "Declare the section's shape and alignment; include a variable colour input where the chosen authoring format places it.",
+        "Import one initial physical piece; review its concave/holed outline, source conversion and uniform extrusion. Separate behaving parts are separate imports.",
         "Supply a material definition with explicit density, and a separate effective response selection.",
         "Hand the example to integration and level composition, then check it against the loaded result."
       ],
@@ -502,7 +506,8 @@
         "The declared silhouette is used for physics, destruction, mass calculation, and attachments.",
         "Material and response can be selected independently.",
         "Reusable appearance inputs can be carried by changed pieces without needing the retired parent.",
-        "Recovery resolves the same selected blast resistance alongside density and independent destruction response."
+        "Recovery resolves the same selected blast resistance alongside density and independent destruction response.",
+        "The reviewed local UI preserves pending/approved choices through correction, cancellation and source refresh."
       ],
       "dependencies": [
         "SHARED-01"
@@ -513,7 +518,12 @@
         "MAT-007",
         "MAT-008",
         "ECS-007",
-        "MAT-010"
+        "MAT-010",
+        "ASSET-002",
+        "ASSET-003",
+        "ASSET-004",
+        "ASSET-005",
+        "ASSET-006"
       ],
       "open": "Appearance ownership/encoding and a separate VisualBinding remain open. Fixture values and temporary authoring records are working choices; supporting independent responses does not require shattering."
     },
@@ -558,7 +568,7 @@
       "title": "Compose the shared scene",
       "stage": "Start now",
       "purpose": "Exercise pieces, fixed supports, and connectors using the same fixture the other roles consume.",
-      "start": "Lay out fixed W, platform P and connector C; mark the intended attachment regions on both endpoints.",
+      "start": "Compose approved pieces with nonzero touching boundaries, explicit fixed-support references and separately authored bonds in the Unity workflow.",
       "inputs": [
         "Platform section and agreed exchange conventions.",
         "Recoverable world inputs for wall geometry, fixed behaviour, and endpoint identity."
@@ -572,7 +582,8 @@
       "checks": [
         "Every material section instantiates with its own body.",
         "C resolves valid endpoint identities and an unambiguous intended fit.",
-        "The fixture's wall reconstructs as fixed and its settings are reproducible."
+        "The fixture's wall reconstructs as fixed and its settings are reproducible.",
+        "A second bond does not overwrite the first; alignment cancellation leaves placements/bonds intact and stale overlap cannot confirm."
       ],
       "dependencies": [
         "SHARED-01",
@@ -588,7 +599,11 @@
         "CON-013",
         "CON-009",
         "CON-010",
-        "CON-014"
+        "CON-014",
+        "CON-015",
+        "ASSET-006",
+        "ASSET-007",
+        "ASSET-008"
       ],
       "open": "The capacity formulas Fmax = S × L and Tmax = ½ × S × L² are settled. ID allocation, attachment encoding, paired length measurement, load conversion, numeric tuning and exact spawn records remain implementation choices. Optional authored percentage failure is accepted; no universal cutoff is selected."
     },
@@ -598,7 +613,7 @@
       "title": "Reconstruct the scene from current state",
       "stage": "Start now",
       "purpose": "Establish the canonical-to-runtime path that asset, level, gameplay and networking work will use.",
-      "start": "Build a local fixture loader and reconstruction path using the agreed meanings of body and relationship state. It can begin with hand-authored inputs while assets arrive.",
+      "start": "Use the reviewed local current-state loader/capture/reconstruction path as the environment baseline, then adapt it to the shared exchange and integrated game records.",
       "inputs": [
         "Accepted body/relationship records and the roster’s sole controlled-body reference.",
         "Shared exchange conventions and fixture definitions."
@@ -629,9 +644,12 @@
         "CON-013",
         "PLAYER-002",
         "MAT-005",
-        "WORLD-006"
+        "WORLD-006",
+        "ASSET-009",
+        "NET-003",
+        "NET-004"
       ],
-      "open": "Framework, exact fields/types and references remain implementation choices. Density-times-area mass is settled for all physical roles; COM/inertia and other body inputs/derivations remain open. Shared MaterialProperties does not automatically settle every engine input. Integrate ASSET-01, CHARACTER-01 and LEVEL-01 for the shared completion check."
+      "open": "Framework, exact fields/types and references remain implementation choices. Density-times-area mass is settled for all physical roles; COM/inertia and other body inputs/derivations remain open. Shared MaterialProperties does not automatically settle every engine input. Integrate ASSET-01, CHARACTER-01 and LEVEL-01 for the shared completion check. The local v4 environment authoring path has scoped evidence; the integrated character/bomb/hold/roster delivery below is not thereby complete."
     },
     {
       "id": "HOLD-01",
@@ -814,7 +832,7 @@
       "title": "Connect requests, committed results and recovery",
       "stage": "Interfaces can begin independently",
       "purpose": "Build against the shared semantic boundary while keeping serialization and delivery choices replaceable.",
-      "start": "Agree request, host-produced geometry/relationship-result and current-state recovery interfaces with Unity integration; mock those interfaces independently of the completed fixture.",
+      "start": "Reconcile the local Unity capture with the exchange candidate, then carry full current snapshots and required dependencies through Odin to a fresh second instance.",
       "inputs": [
         "Host-owned control/interaction validation and canonical state capture.",
         "Accepted body/relationship semantics and validated definition dependencies."
@@ -822,14 +840,16 @@
       "deliverable": "An Odin-to-Unity boundary and a second-instance recovery exercise using the same fixture and its current outcomes.",
       "steps": [
         "Carry participant intent to the host, which validates and decides the result.",
-        "Expose host-produced gameplay geometry with complete entity/relationship outcomes and current recovery state from Unity.",
+        "Capture complete host-produced geometry and entity/relationship state with increasing match-scoped numbers; supply required definitions/appearance assets initially and before new dependencies are applied.",
         "Resolve the same definition inputs and rebuild initial, held, split and death results on another instance.",
         "Keep transport, serializer and compatibility choices documented as networking implementation work."
       ],
       "checks": [
         "Odin owns networking, while Unity remains the sole authoritative gameplay simulation.",
         "Recovery uses current records/dependencies without event replay or engine-object serialization.",
-        "Observers receive host-produced gameplay geometry and complete structural outcomes with valid references; runtime objects reconstruct from that state."
+        "Observers receive host-produced gameplay geometry and complete structural outcomes with valid references; runtime objects reconstruct from that state.",
+        "A ready newer complete capture may skip intermediate numbers; delayed/duplicate/wrong-match state cannot overwrite the current world.",
+        "Measure actual encoded bytes, capture/application time and delivery delay early."
       ],
       "dependencies": [
         "UNITY-01"
@@ -839,9 +859,12 @@
         "NET-001",
         "NET-002",
         "STATE-001",
-        "COMMIT-001"
+        "COMMIT-001",
+        "NET-003",
+        "NET-004",
+        "NET-005"
       ],
-      "open": "The networking owner chooses timing. Interface design and mocks can begin independently; integrated recovery needs the compatible Unity capture/reconstruction path. Result encoding/compression, message boundaries, serializer, transport/channels, rates, compatibility and correction strategy remain open."
+      "open": "Initial full snapshots, host-supplied dependencies and match-scoped newer-capture application are accepted. Decoded record reconciliation, lossless encoding/compression, transport/channels, cadence, request handling, compatibility, correction strategy and online reset scope remain open. This remains a suggested integrated delivery, not a ratified game milestone."
     }
   ],
   "topics": [
@@ -862,6 +885,10 @@
       "Definitions and compositions"
     ],
     [
+      "authoring",
+      "Unity authoring v1"
+    ],
+    [
       "coordinates",
       "Coordinates"
     ],
@@ -880,6 +907,14 @@
     [
       "blast-evidence",
       "Blast conformance"
+    ],
+    [
+      "snapshots",
+      "Snapshot baseline"
+    ],
+    [
+      "authoring-evidence",
+      "Authoring v4 evidence"
     ],
     [
       "unresolved",
@@ -904,7 +939,7 @@
   "implementation": {
     "title": "Proposed implementation slice",
     "goal": "Use one platform bonded to a fixed wall, one player-controlled Claymate and one bomb. Capture the scene’s current records, remove its derived Unity objects, then reconstruct it from that capture and its selected definitions.",
-    "begin": "Simulation integration and asset authoring begin with one simple platform. Record the fixture’s units, local origin, shape exchange and definition lookup, then verify that both paths interpret the same example.",
+    "begin": "The local v4 environment authoring/destruction path is reviewed. Use its approved piece and connected scene for a hands-on check and shared exchange reconciliation, then extend toward the integrated character/bomb fixture below.",
     "contributions": [
       {
         "role": "simulation",
@@ -942,6 +977,6 @@
         "Install environment behaviour, clear control/outgoing holds and preserve valid incoming holds."
       ]
     ],
-    "status": "The first shared milestone and precise work order remain unchosen (OQ-SCOPE-002). The supported-platform fixture and role deliveries below are a proposal; accepted model requirements apply independently."
+    "status": "Local v4 authoring/destruction evidence is recorded separately. The first integrated game milestone, precise work order and assignees remain unchosen (OQ-SCOPE-002); the deliveries below are proposals, with accepted requirements applying independently."
   }
 }

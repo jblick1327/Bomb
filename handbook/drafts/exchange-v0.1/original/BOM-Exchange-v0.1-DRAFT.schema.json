@@ -1,0 +1,1013 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:bom:shared-exchange:0.1-draft",
+  "title": "BOM shared exchange candidate \u2014 not accepted",
+  "description": "Decoded candidate messages. Semantic validation and unresolved profile meanings are documented in the contract. No transport or binary layout selected.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/DefinitionBundle"
+    },
+    {
+      "$ref": "#/$defs/WorldSnapshot"
+    },
+    {
+      "$ref": "#/$defs/GrabRequest"
+    },
+    {
+      "$ref": "#/$defs/ReleaseRequest"
+    }
+  ],
+  "$defs": {
+    "EntityId": {
+      "type": "string",
+      "pattern": "^[1-9][0-9]{0,19}$",
+      "description": "Positive unsigned 64-bit decimal, match scoped."
+    },
+    "U64": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,19})$",
+      "description": "Unsigned 64-bit decimal; semantic validator also checks <= 18446744073709551615."
+    },
+    "Vec2": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "DefinitionRef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "Pose2D": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "angle": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "position",
+        "angle"
+      ],
+      "additionalProperties": false
+    },
+    "Ring": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Vec2"
+      },
+      "minItems": 3
+    },
+    "Shape": {
+      "type": "object",
+      "properties": {
+        "outer": {
+          "$ref": "#/$defs/Ring"
+        },
+        "holes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Ring"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "outer",
+        "holes"
+      ],
+      "additionalProperties": false
+    },
+    "Motion": {
+      "type": "object",
+      "properties": {
+        "pose": {
+          "$ref": "#/$defs/Pose2D"
+        },
+        "comLinearVelocity": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "angularVelocity": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "pose",
+        "comLinearVelocity",
+        "angularVelocity"
+      ],
+      "additionalProperties": false
+    },
+    "Countdown": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "inactive"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "active"
+            },
+            "remainingSeconds": {
+              "type": "number",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "remainingSeconds"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Destruction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "indestructible"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "carvable"
+            },
+            "responseRef": {
+              "$ref": "#/$defs/DefinitionRef"
+            }
+          },
+          "required": [
+            "kind",
+            "responseRef"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Behaviour": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "environment"
+            },
+            "destruction": {
+              "$ref": "#/$defs/Destruction"
+            }
+          },
+          "required": [
+            "kind",
+            "destruction"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "character"
+            },
+            "characterRef": {
+              "$ref": "#/$defs/DefinitionRef"
+            }
+          },
+          "required": [
+            "kind",
+            "characterRef"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "bomb"
+            },
+            "bombRef": {
+              "$ref": "#/$defs/DefinitionRef"
+            },
+            "countdown": {
+              "$ref": "#/$defs/Countdown"
+            }
+          },
+          "required": [
+            "kind",
+            "bombRef",
+            "countdown"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Body": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "geometryRevision": {
+          "$ref": "#/$defs/U64"
+        },
+        "shape": {
+          "$ref": "#/$defs/Shape"
+        },
+        "motion": {
+          "$ref": "#/$defs/Motion"
+        },
+        "bodyConfigRef": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "behaviour": {
+          "$ref": "#/$defs/Behaviour"
+        }
+      },
+      "required": [
+        "id",
+        "geometryRevision",
+        "shape",
+        "motion",
+        "bodyConfigRef",
+        "behaviour"
+      ],
+      "additionalProperties": false
+    },
+    "AttachmentPair": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Vec2"
+          },
+          "minItems": 2
+        },
+        "b": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Vec2"
+          },
+          "minItems": 2
+        }
+      },
+      "required": [
+        "a",
+        "b"
+      ],
+      "additionalProperties": false
+    },
+    "LossPolicy": {
+      "type": "object",
+      "properties": {
+        "minimumSurvivingFraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "referenceLengthM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "minimumSurvivingFraction",
+        "referenceLengthM"
+      ],
+      "additionalProperties": false
+    },
+    "Connector": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "endpointA": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "endpointB": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "attachmentPairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AttachmentPair"
+          },
+          "minItems": 1
+        },
+        "strengthNPerM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "attachmentLoss": {
+          "$ref": "#/$defs/LossPolicy"
+        }
+      },
+      "required": [
+        "id",
+        "endpointA",
+        "endpointB",
+        "attachmentPairs",
+        "strengthNPerM"
+      ],
+      "additionalProperties": false
+    },
+    "Hold": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "characterId": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "slot": {
+          "enum": [
+            "leftHand",
+            "rightHand",
+            "leftFoot",
+            "rightFoot"
+          ]
+        },
+        "targetId": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "heldPoint": {
+          "$ref": "#/$defs/Vec2"
+        }
+      },
+      "required": [
+        "id",
+        "characterId",
+        "slot",
+        "targetId",
+        "heldPoint"
+      ],
+      "additionalProperties": false
+    },
+    "Participant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "controlledBodyId": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/EntityId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "controlledBodyId"
+      ],
+      "additionalProperties": false
+    },
+    "Limb": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "maxReachM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "root",
+        "maxReachM"
+      ],
+      "additionalProperties": false
+    },
+    "Limbs": {
+      "type": "object",
+      "properties": {
+        "leftHand": {
+          "$ref": "#/$defs/Limb"
+        },
+        "rightHand": {
+          "$ref": "#/$defs/Limb"
+        },
+        "leftFoot": {
+          "$ref": "#/$defs/Limb"
+        },
+        "rightFoot": {
+          "$ref": "#/$defs/Limb"
+        }
+      },
+      "required": [
+        "leftHand",
+        "rightHand",
+        "leftFoot",
+        "rightFoot"
+      ],
+      "additionalProperties": false
+    },
+    "CorpseConfig": {
+      "type": "object",
+      "properties": {
+        "bodyConfigRef": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "destruction": {
+          "$ref": "#/$defs/Destruction"
+        }
+      },
+      "required": [
+        "bodyConfigRef",
+        "destruction"
+      ],
+      "additionalProperties": false
+    },
+    "CollisionPair": {
+      "type": "object",
+      "properties": {
+        "layerA": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "layerB": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "layerA",
+        "layerB",
+        "enabled"
+      ],
+      "additionalProperties": false
+    },
+    "MaterialDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "material"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "densityKgPerM2": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "blastResistance": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "densityKgPerM2",
+        "blastResistance"
+      ],
+      "additionalProperties": false
+    },
+    "BodyConfigDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "bodyConfig"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "materialRef": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "appearanceRef": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "grabAllowed": {
+          "type": "boolean"
+        },
+        "collisionLayer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "friction": {
+          "type": "number",
+          "minimum": 0
+        },
+        "restitution": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "linearDampingPerSecond": {
+          "type": "number",
+          "minimum": 0
+        },
+        "angularDampingPerSecond": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "materialRef",
+        "appearanceRef",
+        "grabAllowed",
+        "collisionLayer",
+        "friction",
+        "restitution",
+        "linearDampingPerSecond",
+        "angularDampingPerSecond"
+      ],
+      "additionalProperties": false
+    },
+    "CharacterDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "character"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "limbs": {
+          "$ref": "#/$defs/Limbs"
+        },
+        "corpse": {
+          "$ref": "#/$defs/CorpseConfig"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "limbs",
+        "corpse"
+      ],
+      "additionalProperties": false
+    },
+    "BombDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "bomb"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "fuseSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "nominalRadiusM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "blastProfile": {
+          "const": "material-reach-candidate"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "fuseSeconds",
+        "nominalRadiusM",
+        "blastProfile"
+      ],
+      "additionalProperties": false
+    },
+    "WorldDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "world"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "gravityMPerS2": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "physicsProfile": {
+          "const": "uniform-lamina-2d-candidate"
+        },
+        "fixedBodyIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EntityId"
+          },
+          "minItems": 0
+        },
+        "collisionPairs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CollisionPair"
+          },
+          "minItems": 0
+        },
+        "geometryToleranceM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "contactProjectionLimitM": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "gravityMPerS2",
+        "physicsProfile",
+        "fixedBodyIds",
+        "collisionPairs",
+        "geometryToleranceM",
+        "contactProjectionLimitM"
+      ],
+      "additionalProperties": false
+    },
+    "ResponseDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "destructionResponse"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "profile": {
+          "const": "boundary-carve-candidate"
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "profile"
+      ],
+      "additionalProperties": false
+    },
+    "AppearanceDefinition": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "appearance"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "profile": {
+          "const": "colour-extrusion-candidate"
+        },
+        "colourLinearRGBA": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "extrusionDepthM": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "kind",
+        "id",
+        "revision",
+        "profile",
+        "colourLinearRGBA",
+        "extrusionDepthM"
+      ],
+      "additionalProperties": false
+    },
+    "Definition": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MaterialDefinition"
+        },
+        {
+          "$ref": "#/$defs/BodyConfigDefinition"
+        },
+        {
+          "$ref": "#/$defs/CharacterDefinition"
+        },
+        {
+          "$ref": "#/$defs/BombDefinition"
+        },
+        {
+          "$ref": "#/$defs/WorldDefinition"
+        },
+        {
+          "$ref": "#/$defs/ResponseDefinition"
+        },
+        {
+          "$ref": "#/$defs/AppearanceDefinition"
+        }
+      ]
+    },
+    "DefinitionBundle": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "DefinitionBundle"
+        },
+        "schemaVersion": {
+          "const": "0.1-draft"
+        },
+        "matchId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Definition"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "matchId",
+        "definitions"
+      ],
+      "additionalProperties": false
+    },
+    "WorldSnapshot": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "WorldSnapshot"
+        },
+        "schemaVersion": {
+          "const": "0.1-draft"
+        },
+        "matchId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "number": {
+          "$ref": "#/$defs/U64"
+        },
+        "hostSimulationTimeSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "nextEntityId": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "worldDefinitionRef": {
+          "$ref": "#/$defs/DefinitionRef"
+        },
+        "bodies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Body"
+          },
+          "minItems": 0
+        },
+        "connectors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Connector"
+          },
+          "minItems": 0
+        },
+        "holds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Hold"
+          },
+          "minItems": 0
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Participant"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "matchId",
+        "number",
+        "hostSimulationTimeSeconds",
+        "nextEntityId",
+        "worldDefinitionRef",
+        "bodies",
+        "connectors",
+        "holds",
+        "participants"
+      ],
+      "additionalProperties": false
+    },
+    "GrabRequest": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "GrabRequest"
+        },
+        "schemaVersion": {
+          "const": "0.1-draft"
+        },
+        "matchId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "requestId": {
+          "$ref": "#/$defs/U64"
+        },
+        "slot": {
+          "enum": [
+            "leftHand",
+            "rightHand",
+            "leftFoot",
+            "rightFoot"
+          ]
+        },
+        "targetId": {
+          "$ref": "#/$defs/EntityId"
+        },
+        "candidatePoint": {
+          "$ref": "#/$defs/Vec2"
+        },
+        "observedGeometryRevision": {
+          "$ref": "#/$defs/U64"
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "matchId",
+        "requestId",
+        "slot",
+        "targetId",
+        "candidatePoint",
+        "observedGeometryRevision"
+      ],
+      "additionalProperties": false
+    },
+    "ReleaseRequest": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "ReleaseRequest"
+        },
+        "schemaVersion": {
+          "const": "0.1-draft"
+        },
+        "matchId": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "requestId": {
+          "$ref": "#/$defs/U64"
+        },
+        "slot": {
+          "enum": [
+            "leftHand",
+            "rightHand",
+            "leftFoot",
+            "rightFoot"
+          ]
+        },
+        "expectedHoldId": {
+          "$ref": "#/$defs/EntityId"
+        }
+      },
+      "required": [
+        "kind",
+        "schemaVersion",
+        "matchId",
+        "requestId",
+        "slot",
+        "expectedHoldId"
+      ],
+      "additionalProperties": false
+    },
+    "SceneInput": {
+      "type": "object",
+      "properties": {
+        "definitions": {
+          "$ref": "#/$defs/DefinitionBundle"
+        },
+        "initialWorld": {
+          "$ref": "#/$defs/WorldSnapshot"
+        }
+      },
+      "required": [
+        "definitions",
+        "initialWorld"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

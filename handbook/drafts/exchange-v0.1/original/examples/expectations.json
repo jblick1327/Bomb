@@ -1,0 +1,51 @@
+{
+  "fixtureOnly": true,
+  "labels": {
+    "101": "F: fixed foundation",
+    "102": "P: retired platform",
+    "103": "K: living character then corpse",
+    "104": "B: retired bomb",
+    "107": "second living character",
+    "201": "C: surviving connector",
+    "202": "L: K outgoing hold; remapped then retired",
+    "203": "incoming hold on K; survives death",
+    "204": "P1: new left piece",
+    "205": "P2: new right piece"
+  },
+  "recoveryDependencies": [
+    "00-definitions.json",
+    "13-after-split-world.json"
+  ],
+  "deliveryOrder": [
+    "13-after-split-world.json",
+    "11-held-world.json",
+    "13-after-split-world.json",
+    "10-initial-world.json",
+    "14-after-death-world.json"
+  ],
+  "expectedAppliedNumbers": [
+    "13",
+    "14"
+  ],
+  "split": {
+    "absentEntities": [
+      "102",
+      "104"
+    ],
+    "survivingConnector": "201",
+    "survivingHold": "202",
+    "heldMaterialWorldPoint": [
+      1.5,
+      1.0
+    ]
+  },
+  "death": {
+    "sameBodyId": "103",
+    "sameGeometryRevision": "1",
+    "controlledBodyId": null,
+    "absentHold": "202",
+    "survivingIncomingHold": "203"
+  },
+  "requests": "Separate input examples, not a replay script; the release is not applied in the snapshot sequence.",
+  "limitations": "Synthetic canonical examples; no Unity execution, actual Odin codec, network delivery, host blast calculation or representative bandwidth measurement."
+}
