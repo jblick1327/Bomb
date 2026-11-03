@@ -1,0 +1,259 @@
+package main
+
+import rl "vendor:raylib"
+import b2 "vendor:box2d"
+import "core:math"
+
+SKIN_SPACING :: f32(0.1)
+SKIN_RADIUS :: f32(0.5)
+FILM_PX :: f32(3)
+FILM_COLOR :: rl.Color{105,73,120,255}
+
+Skin_Weight :: struct { id: u64, weight: f32 }
+Skin_Cell :: struct { id: u64, outline: Polygon, lo,hi: Vec2 }
+Skin_Pose :: struct { pose: Pose, rest_center: Vec2 }
+Render_Cache :: struct {
+	owner,revision: u64,
+ anchored: bool,
+	outline: Polygon,
+	triangles: [dynamic]int,
+ draw_edge: []bool,
+	weights: [][dynamic]Skin_Weight,
+ hub: Vec2,
+ hub_weights: [dynamic]Skin_Weight,
+ hub_fan: bool,
+}
+release_render_cache :: proc(cache: ^Render_Cache) {
+	delete(cache.outline.points); delete(cache.triangles); delete(cache.draw_edge)
+	for weights in cache.weights { delete(weights) }
+	delete(cache.weights); delete(cache.hub_weights); cache^={}
+}
+
+fill_point :: proc(outline: Polygon,hub: Vec2,index: int) -> Vec2 {
+ if index==len(outline.points) { return hub }
+ return outline.points[index]
+}
+fill_cross :: proc(a,b,c: Vec2) -> f64 {
+ return (f64(b.x)-f64(a.x))*(f64(c.y)-f64(a.y))-(f64(b.y)-f64(a.y))*(f64(c.x)-f64(a.x))
+}
+skin_hub_fan_valid :: proc(outline: Polygon,hub: Vec2) -> bool {
+ orientation:f64
+ for a,i in outline.points { orientation+=fill_cross(outline.points[0],a,outline.points[(i+1)%len(outline.points)]) }
+ if orientation==0 { return false }
+ for a,i in outline.points {
+  if fill_cross(hub,a,outline.points[(i+1)%len(outline.points)])*orientation<=0 { return false }
+ }
+ return true
+}
+skin_render_point :: proc(rest: Vec2,weights: []Skin_Weight,candidates: map[u64]Skin_Pose) -> Vec2 {
+ point:=Vec2{}
+ for weight in weights {
+  candidate:=candidates[weight.id]
+  posed:=vadd(candidate.pose.position,vrotate(vsub(rest,candidate.rest_center),candidate.pose.angle))
+  point=vadd(point,vmul(posed,weight.weight))
+ }
+ return point
+}
+
+skin_outline :: proc(outline: Polygon) -> Polygon {
+ points:[dynamic]Vec2; defer delete(points)
+ for a,i in outline.points {
+  b:=outline.points[(i+1)%len(outline.points)]
+  lo,hi:=a,b; forward:=a.x<b.x || a.x==b.x && a.y<b.y
+  if !forward { lo,hi=b,a }
+  n:=max(1,int(math.ceil(vlen(vsub(hi,lo))/SKIN_SPACING)))
+  append(&points,a)
+  for k in 1..<n {
+   index:=k; if !forward { index=n-k }
+   append(&points,vadd(lo,vmul(vsub(hi,lo),f32(index)/f32(n))))
+  }
+ }
+ return make_polygon(points[:])
+}
+
+// Candidates depend only on the piece's live rest geometry, in cell-ID order.
+skin_cells :: proc(s: ^Scene,owner: u64) -> [dynamic]Skin_Cell {
+ ids:=sorted_ids(s.pieces[s.piece_rows[owner]].subdivisions[:]); defer delete(ids)
+ cells:[dynamic]Skin_Cell
+ for id in ids {
+  if !is_live_subdivision(s,id) { continue }
+  sub:=s.subdivisions[s.sub_rows[id]]
+  lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
+  for p in sub.outline.points { lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
+  append(&cells,Skin_Cell{id,sub.outline,vsub(lo,{SKIN_RADIUS,SKIN_RADIUS}),vadd(hi,{SKIN_RADIUS,SKIN_RADIUS})})
+ }
+ return cells
+}
+
+skin_weights :: proc(p: Vec2,cells: []Skin_Cell) -> [dynamic]Skin_Weight {
+ weights:[dynamic]Skin_Weight; total:f32
+ for cell in cells {
+  if p.x<cell.lo.x || p.x>cell.hi.x || p.y<cell.lo.y || p.y>cell.hi.y { continue }
+  inside:=false; distance:=f32(1e30)
+  for a,i in cell.outline.points {
+   b:=cell.outline.points[(i+1)%len(cell.outline.points)]; edge:=vsub(b,a)
+   relative:=vsub(p,a); projection:=vdot(relative,edge)
+   t:=clamp(projection/max(vdot(edge,edge),f32(1e-20)),f32(0),f32(1))
+   distance=min(distance,vlen(vsub(p,vadd(a,vmul(edge,t)))))
+   if vcross(edge,relative)==0 && projection>=0 && projection<=vdot(edge,edge) { distance=0 }
+   if (a.y>p.y)!=(b.y>p.y) && p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x { inside=!inside }
+  }
+  if inside { distance=0 }
+  if distance>=SKIN_RADIUS { continue }
+  w:=1-distance/SKIN_RADIUS; w*=w
+  append(&weights,Skin_Weight{cell.id,w}); total+=w
+ }
+ assert(total>0,"A skin vertex must be supported by its own rest cell")
+ for &weight in weights { weight.weight/=total }
+ return weights
+}
+
+triangle_indices :: proc(outline: Polygon,fan: bool = false) -> [dynamic]int {
+	result: [dynamic]int
+ // Keep every subdivided boundary vertex, including collinear rest points.
+ if fan { for i in 1..<len(outline.points)-1 { append(&result,0,i,i+1) }; return result }
+	triangles:=triangulate_polygon(outline)
+	for triangle in triangles {
+		for point in triangle.points {
+			for vertex,i in outline.points { if point==vertex { append(&result,i); break } }
+		}
+		delete(triangle.points)
+	}
+	delete(triangles)
+	return result
+}
+render_static :: proc(sub: Subdivision) -> bool { return sub.body!=b2.nullBodyId && b2.Body_GetType(sub.body)==.staticBody }
+render_together_neighbours :: proc(s: ^Scene,sub: Subdivision) -> [dynamic]u64 {
+ candidates: [dynamic]u64
+ if s.materials[sub.material].flexibility>0 && !render_static(sub) {
+  for link in sub.incident_links {
+   c:=s.connections[s.conn_rows[link]]
+   if !c.live { continue }
+   other:=c.a; if c.a==sub.id { other=c.b }
+   if is_live_subdivision(s,other) { append(&candidates,other) }
+  }
+ } else if s.physics.active {
+  lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
+  for rest in sub.outline.points { p:=posed_point(sub,rest); lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
+  query:=Blast_Query{ids=make(map[u64]bool)}; defer delete(query.ids)
+  box:=b2.AABB{lowerBound={lo.x-0.05,lo.y-0.05},upperBound={hi.x+0.05,hi.y+0.05}}
+  _=b2.World_OverlapAABB(s.physics.world,box,b2.DefaultQueryFilter(),blast_query_shape,&query)
+  for id in query.ids { if is_live_subdivision(s,id) { append(&candidates,id) } }
+ } else { for id in s.pieces[s.piece_rows[sub.owner]].subdivisions { append(&candidates,id) } }
+ result:[dynamic]u64
+ for id in candidates {
+  if id==sub.id { continue }
+  other:=s.subdivisions[s.sub_rows[id]]
+  together:=sub.owner==other.owner && s.materials[sub.material].flexibility==0
+  together=together || render_static(sub) && render_static(other)
+  if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || s.connections[s.conn_rows[c]].live }
+  if !together { continue }
+  boundaries:=shared_segments(sub.outline,other.outline)
+  if len(boundaries)>0 { append(&result,id) }; delete(boundaries)
+ }
+ delete(candidates); sort_ids(result[:]); return result
+}
+ensure_render_cache :: proc(s: ^Scene,id: u64) -> ^Render_Cache {
+	sub:=&s.subdivisions[s.sub_rows[id]]
+	cache:=&sub.render
+	revision:=s.pieces[s.piece_rows[sub.owner]].render_revision
+	anchored:=render_static(sub^)
+ if anchored { revision=s.static_render_revision }
+ if cache.owner==sub.owner && cache.revision==revision && cache.anchored==anchored { return cache }
+	release_render_cache(cache)
+	cache.owner=sub.owner; cache.revision=revision; cache.anchored=anchored
+	cache.outline=make_polygon(sub.outline.points)
+ neighbours:=render_together_neighbours(s,sub^); defer delete(neighbours)
+ for other in neighbours { for rest in s.subdivisions[s.sub_rows[other]].outline.points { insert_boundary_endpoint(&cache.outline,rest) } }
+ flexible:=s.materials[sub.material].flexibility>0 && !anchored
+ if flexible {
+  outline:=skin_outline(cache.outline); delete(cache.outline.points); cache.outline=outline
+  cells:=skin_cells(s,sub.owner); defer delete(cells)
+  cache.weights=make([][dynamic]Skin_Weight,len(cache.outline.points))
+  for rest,i in cache.outline.points { cache.weights[i]=skin_weights(rest,cells[:]) }
+  cache.hub=sub.rest_center
+  cache.hub_weights=skin_weights(cache.hub,cells[:])
+  cache.hub_fan=skin_hub_fan_valid(cache.outline,cache.hub)
+ }
+ if cache.hub_fan {
+  for i in 0..<len(cache.outline.points) { append(&cache.triangles,len(cache.outline.points),i,(i+1)%len(cache.outline.points)) }
+ } else { cache.triangles=triangle_indices(cache.outline,flexible) }
+ cache.draw_edge=make([]bool,len(cache.outline.points))
+ for a,i in cache.outline.points {
+  b:=cache.outline.points[(i+1)%len(cache.outline.points)]
+  cache.draw_edge[i]=true
+  for other in neighbours {
+   neighbour:=s.subdivisions[s.sub_rows[other]]
+   if point_on_boundary(vmul(vadd(a,b),0.5),sub.outline,neighbour.outline) { cache.draw_edge[i]=false; break }
+  }
+ }
+	return cache
+}
+render_outline :: proc(s: ^Scene,sub: Subdivision,poses: map[u64]Pose,surface: bool,frames: map[u64]Pose = nil,hub: ^Vec2 = nil) -> Polygon {
+	cache:=ensure_render_cache(s,sub.id)
+ outline:=make_polygon(cache.outline.points)
+ if s.materials[sub.material].flexibility==0 {
+  frame:=rigid_render_frame(s,sub,poses,frames)
+  for rest,i in cache.outline.points { outline.points[i]=rigid_render_point(frame,rest) }
+  return outline
+ }
+ if surface && len(cache.weights)>0 {
+  // Resolve each candidate once; retain only the fields needed to pose a point.
+  candidates:=make(map[u64]Skin_Pose); defer delete(candidates)
+  for weights in cache.weights { for weight in weights {
+   if _,found:=candidates[weight.id]; found { continue }
+   posed:=render_subdivision(s,s.subdivisions[s.sub_rows[weight.id]],poses)
+   candidates[weight.id]={posed.pose,posed.rest_center}
+  } }
+  for weight in cache.hub_weights {
+   if _,found:=candidates[weight.id]; found { continue }
+   posed:=render_subdivision(s,s.subdivisions[s.sub_rows[weight.id]],poses)
+   candidates[weight.id]={posed.pose,posed.rest_center}
+  }
+  for rest,i in cache.outline.points {
+   outline.points[i]=skin_render_point(rest,cache.weights[i][:],candidates)
+  }
+  if hub!=nil { hub^=skin_render_point(cache.hub,cache.hub_weights[:],candidates) }
+  return outline
+ }
+ posed:=render_subdivision(s,sub,poses)
+ if hub!=nil { hub^=posed_point(posed,cache.hub) }
+ for rest,i in cache.outline.points {
+  outline.points[i]=posed_point(posed,rest)
+ }
+ return outline
+}
+draw_cached_fill :: proc(view: View,outline: Polygon,color: rl.Color,cache: ^Render_Cache,hub: Vec2 = {}) {
+	indices:=cache.triangles[:]
+	for i:=0; i+2<len(indices); i+=3 {
+		a,b,c:=screen_point(view,fill_point(outline,hub,indices[i])),screen_point(view,fill_point(outline,hub,indices[i+1])),screen_point(view,fill_point(outline,hub,indices[i+2]))
+		// Near-collinear triangles can flip orientation after screen rounding.
+		cross:=(f64(b.x)-f64(a.x))*(f64(c.y)-f64(a.y))-(f64(b.y)-f64(a.y))*(f64(c.x)-f64(a.x))
+		if cross<0 { rl.DrawTriangle(a,b,c,color) }
+		else { rl.DrawTriangle(c,b,a,color) }
+	}
+ // Only exposed/cracked boundaries get a fill-coloured seal, even in F3.
+ draw_cached_strokes(view,outline,color,1,cache,false)
+}
+stroke_style :: proc(width: f32,color: rl.Color) -> (f32,rl.Color) {
+ if width<=0 { return 0,color }
+ if width<1 { tint:=color; tint.a=u8(f32(color.a)*width); return 1,tint }
+ return width,color
+}
+draw_cached_strokes :: proc(view: View,outline: Polygon,color: rl.Color,width: f32,cache: ^Render_Cache,region_outlines: bool) {
+ pixels,tint:=stroke_style(width,color)
+ if pixels==0 { return }
+ for point,i in outline.points {
+  if region_outlines || cache.draw_edge[i] { rl.DrawLineEx(screen_point(view,point),screen_point(view,outline.points[(i+1)%len(outline.points)]),pixels,tint) }
+ }
+}
+
+draw_cached_film :: proc(view: View,outline: Polygon,color: rl.Color,width: f32,cache: ^Render_Cache) {
+ pixels:=max(FILM_PX,width)
+ for draw,i in cache.draw_edge {
+  if !draw { continue }
+  a,b:=screen_point(view,outline.points[i]),screen_point(view,outline.points[(i+1)%len(outline.points)])
+  rl.DrawLineEx(a,b,pixels,color)
+  rl.DrawCircleV(a,pixels*0.5,color); rl.DrawCircleV(b,pixels*0.5,color)
+ }
+}

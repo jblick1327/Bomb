@@ -1,0 +1,15 @@
+# Rebuildable binaries and runtime output. Historical evidence stays tracked.
+/build/
+/output/
+*.exe
+*.pdb
+*.obj
+*.ilk
+__pycache__/
+
+# Native binaries produced by the standalone benchmark runner.
+/benchmarks/recursive-blast-bench/bench
+/benchmarks/recursive-blast-bench/seeds
+/benchmarks/recursive-blast-bench/audit
+/benchmarks/recursive-blast-bench/bench-sanitize
+/benchmarks/recursive-blast-bench/audit-sanitize

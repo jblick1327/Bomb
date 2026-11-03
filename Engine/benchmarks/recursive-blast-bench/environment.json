@@ -1,0 +1,131 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "flags": "-std=c++20 -O3 -march=native -DNDEBUG -fno-math-errno -ffp-contract=off",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cpu_info": [
+    {
+      "field": "Architecture:",
+      "data": "x86_64"
+    },
+    {
+      "field": "CPU op-mode(s):",
+      "data": "32-bit, 64-bit"
+    },
+    {
+      "field": "Address sizes:",
+      "data": "46 bits physical, 48 bits virtual"
+    },
+    {
+      "field": "Byte Order:",
+      "data": "Little Endian"
+    },
+    {
+      "field": "CPU(s):",
+      "data": "9"
+    },
+    {
+      "field": "On-line CPU(s) list:",
+      "data": "0-8"
+    },
+    {
+      "field": "Vendor ID:",
+      "data": "AuthenticAMD"
+    },
+    {
+      "field": "Model name:",
+      "data": "AMD EPYC 9V74 80-Core Processor"
+    },
+    {
+      "field": "BIOS Model name:",
+      "data": "  CPU @ 0.0GHz"
+    },
+    {
+      "field": "BIOS CPU family:",
+      "data": "0"
+    },
+    {
+      "field": "CPU family:",
+      "data": "25"
+    },
+    {
+      "field": "Model:",
+      "data": "17"
+    },
+    {
+      "field": "Thread(s) per core:",
+      "data": "1"
+    },
+    {
+      "field": "Core(s) per socket:",
+      "data": "9"
+    },
+    {
+      "field": "Socket(s):",
+      "data": "1"
+    },
+    {
+      "field": "Stepping:",
+      "data": "1"
+    },
+    {
+      "field": "BogoMIPS:",
+      "data": "5192.25"
+    },
+    {
+      "field": "Flags:",
+      "data": "fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves avx512_bf16 clzero xsaveerptr arat npt nrip_save tsc_scale vmcb_clean flushbyasid pausefilter pfthreshold v_vmsave_vmload avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid fsrm arch_capabilities"
+    },
+    {
+      "field": "Hypervisor vendor:",
+      "data": "KVM"
+    },
+    {
+      "field": "Virtualization type:",
+      "data": "full"
+    },
+    {
+      "field": "L1d cache:",
+      "data": "160 KiB (5 instances)"
+    },
+    {
+      "field": "L1i cache:",
+      "data": "160 KiB (5 instances)"
+    },
+    {
+      "field": "L2 cache:",
+      "data": "5 MiB (5 instances)"
+    },
+    {
+      "field": "L3 cache:",
+      "data": "32 MiB (1 instance)"
+    },
+    {
+      "field": "NUMA node(s):",
+      "data": "1"
+    },
+    {
+      "field": "NUMA node0 CPU(s):",
+      "data": "0-8"
+    }
+  ],
+  "method": "serialized, one permitted CPU, 9 interleaved samples per timing row",
+  "node_bytes": 64,
+  "hot_bytes": 32,
+  "cold_bytes": 32,
+  "geometry_vertex_bytes": 16,
+  "local_anchor_pair_bytes": 16,
+  "timed_cpu": 0,
+  "rounds": 2,
+  "source_scope": "native blast geometry/graph transaction outputs; no runtime entity-store or Box2D commit"
+}

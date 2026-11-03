@@ -1,0 +1,27 @@
+# Verification
+
+Run from the project root. Use separate test and playable executables:
+
+```powershell
+.\scripts\bom.ps1 Test
+.\scripts\bom.ps1 Build
+.\scripts\bom.ps1 Smoke
+.\scripts\bom.ps1 SmokeInput
+.\build\BOM.exe --smoke-msaa
+.\build\BOM.exe --soak
+.\build\BOM.exe --soak-fixture
+```
+
+`--smoke` renders the paused editor yard in a hidden window and exits after two frames, saving `output/sandbox-preview.png`. `--smoke-input` drives actual raylib/raygui input: palette selection, rectangle previews and placement, overlap/degenerate rejection, deletion, paused editing, Test/Edit restoration, reset, outlines, UI consumption, movement/jump, inspection, snapshot save/load, Rubber deformation/cell removal, material breakups and falling bombs. Captures go to `output/`. The tower, lab, TCP modes, standalone headless demo and settings-only smoke no longer exist.
+
+Geometry checks include independent area, triangle-intersection, boundary-coverage and edge-intersection predicates. Across 32 seeds, all four palette materials plus the independent Stone floor are checked after pre-splitting, a damaging drop and each of three blasts: every live region meets minimum width, has a simple outline, has collision fixtures, and fills its outline area in f32. A cache regression verifies that unbonded neighbours do not alter topology or bridge a moved gap. Native smoke checks the former dark pixel, every background-coloured pixel analytically inside sampled cached rendered silhouettes, and identical stroke coverage at widths 0.3/0.7 versus 1. Glass impact, Wood pre-split blast and seed-13 frames are captured at widths 0/0.3/0.7/2 without stepping between renders. The seed-13 Wood fill fixture and a pre-split 6x4 block are also rendered at widths 0, 0.5 and 2. Triangulation checks cover translated small corners, duplicate points, scale variation and completion when normal ears stall. Direct clipping replaces the former logical ear-merge regression; collision convex decomposition remains covered.
+
+Destruction checks preserve deterministic birth contexts, no-progress removal, same-blast recursion and connection evaluation, external connection inheritance, broken attachments, the conservative deletion shortcut, one impulse per final survivor, minimum group width and immediate vanishing. Rigid checks cover exact shared rest configuration, shape tags, mass/COM/inertia, largest-body retention, moving split velocities, off-centre blast torque and snapshot reconstruction. Changed collision tiling can alter Box2D contact correction/rocking: the rebound regression permits 0.01 units (twice contact slop), while rest-frame and impulse assertions remain strict. Analytic single-region drop thresholds still pass at 30/60/120 Hz. Pre-split crack thresholds at sizes 1 and 0.5, Glass impact separation, Rubber immunity/deformation, static-floor immunity, player bumps and bomb landings remain checked.
+
+Storage checks cover packed live records, ownership/maps/pairs/incident lists, deterministic storage order, cached outlines, y-only cleanup, same-world replenishment and allocation release. Snapshot encode/decode preserves graph, IDs, geometry and birth seeds. Eight-decimal JSON can shift subsequent cuts by one ULP; that round-trip test bounds vertex/centroid/velocity error while keeping IDs, seeds, topology and angular motion exact. Same-process 600-tick replays must be byte-identical, with no tolerance.
+
+`--soak` runs 20 simulated minutes by default at fixed 60 Hz/four substeps, seed 42, four authored materials, idle player and falling bombs. Every two minutes it replenishes layout and floor in the same world while preserving IDs, allocations and the bomb stream. Minute output includes timings, live/stored counts, memory and bodies/joints; teardown must release all tracked bytes. `--soak-fixture [prefix]` writes the fixed blast-only snapshot and two byte-identical sequential 600-tick replays. See the [README](../README.md) for commands and the current two-phase evidence report for measurements. Historical evidence and benchmark inputs are retained unchanged.
+
+`--smoke-msaa` shares the playable window setup and captures the default framebuffer with the native batch flushed before `LoadImageFromScreen` and before `EndDrawing`. On Windows it asserts GL_SAMPLES = 4 and GL_SAMPLE_BUFFERS = 1. It settles the native Wood placement on the pre-split floor, then a pre-split 6x4 Wood block, and captures each at widths 0 and 2 without intervening ticks. The metric accounts for display DPI, includes bonded seams, excludes points within 2 physical pixels of silhouette/crack strokes, and rejects RGB deviations above 8 from the flat composited material colour. It also checks snapshot bytes before and after rendering. Output: `output/msaa-{yard,wood6x4}-{0,2}.png` and matching snapshots. The bit-identity test checks shared rigid vertices at an interpolated rotated pose, in both surface modes; the flexible seam checks remain.
+
+The MSAA smoke also isolates rigid internal broken bonds and two separate anchored floor pieces, then captures a 6x4 Wood blast at widths 0 and 2. Border tests distinguish same-body rigid boundaries, flexible bonds and static/static neighbours. Finished-cell tests cover repeated impact retention, blast removal, dust removal and an actual Wood throw/drop. Grain-limited pre-split exceptions must prove they cannot generate a legal partition.
