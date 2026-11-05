@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "M0",
+      "status": "in_progress",
+      "dependencies": [],
+      "evidence": [
+        "evidence/M0/summary.json"
+      ],
+      "blocking_reasons": [
+        "Visual captures, scene audit and standalone gates not yet run; installed IL2CPP variation not found"
+      ]
+    },
+    {
+      "id": "M1",
+      "status": "passed",
+      "dependencies": [
+        "M0"
+      ],
+      "evidence": [
+        "evidence/M1/native-proof-20261105T231900001Z.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M2",
+      "status": "in_progress",
+      "dependencies": [
+        "M1"
+      ],
+      "evidence": [
+        "evidence/M2/summary.json",
+        "evidence/M2/udp-smoke.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M3",
+      "status": "pending",
+      "dependencies": [
+        "M2"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M4",
+      "status": "pending",
+      "dependencies": [
+        "M3"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M5",
+      "status": "pending",
+      "dependencies": [
+        "M4"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M6",
+      "status": "pending",
+      "dependencies": [
+        "M5"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M7",
+      "status": "pending",
+      "dependencies": [
+        "M6"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M8",
+      "status": "pending",
+      "dependencies": [
+        "M7"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M9",
+      "status": "pending",
+      "dependencies": [
+        "M8"
+      ],
+      "evidence": [],
+      "blocking_reasons": []
+    }
+  ]
+}

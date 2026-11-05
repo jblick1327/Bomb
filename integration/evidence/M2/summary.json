@@ -1,0 +1,13 @@
+{
+  "milestone": "M2",
+  "gate_status": "in_progress",
+  "scope": "Mechanical shared-settings and drawing-function file separation only",
+  "build_exit_code": 0,
+  "regression_tests": 215,
+  "regression_exit_code": 0,
+  "real_udp_smoke": "udp-smoke.json",
+  "headless_package": "not implemented",
+  "semantic_body_changes": false,
+  "initial_error": "Removed core:slice import still needed for non-render code; restored import and rebuilt/retested.",
+  "source_patch": "patches/M2-initial.patch"
+}

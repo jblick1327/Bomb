@@ -1,0 +1,64 @@
+{
+  "milestone": "M1",
+  "status": "passed",
+  "exit_code": 0,
+  "commands": [
+    {
+      "program": "odin.exe",
+      "log": "odin-build-20261105T232256864Z.log",
+      "arguments": [
+        "build",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\native-proof",
+        "-build-mode:dll",
+        "-out:C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\bomproof.dll",
+        "-ignore-vs-search"
+      ],
+      "exit_code": 0
+    },
+    {
+      "program": "cl.exe",
+      "log": "c-build-20261105T232256864Z.log",
+      "arguments": [
+        "/nologo",
+        "/W4",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\native-proof\\proof_test.c",
+        "/FoC:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\proof_test.obj",
+        "/FeC:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\proof_test.exe",
+        "/link",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\bomproof.lib",
+        "kernel32.lib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "program": "proof_test.exe",
+      "log": "c-test-20261105T232256864Z.log",
+      "arguments": [],
+      "exit_code": 0
+    },
+    {
+      "program": "dotnet",
+      "log": "dotnet-build-20261105T232256864Z.log",
+      "arguments": [
+        "build",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\native-proof\\managed\\Proof.csproj",
+        "--source",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\empty-nuget",
+        "--nologo",
+        "-o",
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\managed"
+      ],
+      "exit_code": 0
+    },
+    {
+      "program": "dotnet",
+      "log": "dotnet-test-20261105T232256864Z.log",
+      "arguments": [
+        "C:\\Users\\rober\\OneDrive\\Documents\\GitHub\\Bomb\\integration\\build\\native-proof\\managed\\Proof.dll"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "errors": [],
+  "dll_sha256": "527ebfcc95cb3c34d8237540f29ad45b16466778de2030d4a08c63d52a687ef5"
+}

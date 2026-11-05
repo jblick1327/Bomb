@@ -1,0 +1,39 @@
+{
+  "milestone": "M0",
+  "status": "in_progress",
+  "commands": [
+    {
+      "command": "scripts/bom.ps1 Build -CompilerArguments -ignore-vs-search",
+      "exit_code": 0,
+      "log": "original-build.log"
+    },
+    {
+      "command": "scripts/bom.ps1 Test -CompilerArguments -ignore-vs-search",
+      "exit_code": 0,
+      "tests_passed": 215,
+      "log": "original-tests.log"
+    },
+    {
+      "command": "scripts/bom.ps1 NetTest -CompilerArguments -ignore-vs-search (with socket access)",
+      "exit_code": 0,
+      "tests_passed": 27,
+      "log": "original-nettest.log"
+    },
+    {
+      "command": "Unity 6000.2.14f1 -batchmode -nographics -quit -projectPath [isolated baseline]",
+      "exit_code": 0,
+      "log": "unity-import.log"
+    }
+  ],
+  "pending": [
+    "Rendered Odin/Unity yard/HUD captures",
+    "Unity standalone build/runtime validation",
+    "Installed IL2CPP Windows module confirmation",
+    "Full object classification/missing-reference audit"
+  ],
+  "notes": [
+    "Short soak summaries are in separate JSON files. Their minutes are simulated time, not real-process soak duration.",
+    "Restricted NetTest failed real socket traffic; unrestricted rerun passed.",
+    "Duplicate Unity retry exited 1 while first isolated import still held the project; first import later completed successfully."
+  ]
+}

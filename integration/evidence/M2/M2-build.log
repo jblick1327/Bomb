@@ -1,0 +1,21 @@
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-76c17948d17d4edd934dba70dacf096b/net_client.odin(161:58) Error: Undeclared name: slice 
+	... queue,Net_Queued{tick=e.tick,event=true,data=slice.clone(data)}) 
+	                                                 ^~~~^ 
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-76c17948d17d4edd934dba70dacf096b/net_client.odin(183:13) Error: Assignment count mismatch '2' = '1' 
+	... else if index,found:=slice.linear_search(c.missing[:],a.tick);  ... 
+	            ^ 
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-76c17948d17d4edd934dba70dacf096b/net_client.odin(183:26) Error: Undeclared name: slice 
+	... ,found:=slice.linear_search(c.missing[:],a.tick); found { unord ... 
+	            ^~~~^ 
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-76c17948d17d4edd934dba70dacf096b/net_client.odin(183:76) Error: No procedures or ambiguous call for procedure group 'unordered_remove' that match with the given arguments 
+	... missing[:],a.tick); found { unordered_remove(&c.missing,index) } 
+	                                ^~~~~~~~~~~~~~~^ 
+	Given argument types: 
+	 • ^[dynamic]u64 
+	 • invalid type 
+Did you mean one of the following overloads? 
+	runtime.unordered_remove_dynamic_array                :: proc(array: ^$D/[dynamic]$T, #any_int index: int, loc := #caller_location) at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/toolchains/odin-dev-2026-05/dist/base/runtime/core_builtin.odin(129:1) 
+	runtime.unordered_remove_fixed_capacity_dynamic_array :: proc(array: ^$D/(BadExpr), #any_int index: int, loc := #caller_location)   at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/toolchains/odin-dev-2026-05/dist/base/runtime/core_builtin.odin(174:1) 
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-76c17948d17d4edd934dba70dacf096b/net_client.odin(245:2) Error: Undeclared name: slice 
+	slice.sort(offsets[:count]) 
+	^~~~^ 

@@ -1,0 +1,39 @@
+{
+  "task": "VerifyEnvironment",
+  "suite": "Content",
+  "started_utc": "20261105T232032642Z",
+  "exit_code": 0,
+  "status": "passed",
+  "checks": [
+    {
+      "name": "Odin source",
+      "available": true
+    },
+    {
+      "name": "Unity Editor",
+      "available": true
+    },
+    {
+      "name": "Odin compiler",
+      "available": true
+    },
+    {
+      "name": ".NET SDK",
+      "available": true
+    },
+    {
+      "name": "System Windows SDK",
+      "available": false
+    },
+    {
+      "name": "Configured portable library directories",
+      "available": true
+    },
+    {
+      "name": "Unity license, native vendor linkage, Mono and IL2CPP runtime",
+      "note": "File presence does not establish these runtime gates.",
+      "status": "unverified"
+    }
+  ],
+  "errors": []
+}
