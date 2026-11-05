@@ -10,24 +10,24 @@ import b2 "vendor:box2d"
 @(test)
 placed_materials_and_floor_survive_support_and_negligible_settling :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
-	choices:=[2]Palette{.Wood,.Stone}
+	choices:=[2]Recipe{.Wood,.Stone}
 	// Include the prior drop rectangle, a translated floor-torque reproducer,
 	// and a larger root whose ordinary support exceeded both preset strengths.
 	cases:=[4][3]f32{{1.5,2.4,0},{2,2.4,0},{1.5,3.8,0},{1.5,3.8,0.005}}
 	for choice in choices {
 		for placement in cases {
-			g:=sandbox_editor_create(); g.editor.palette=choice
+			g:=sandbox_editor_create(); g.editor.palette=recipe_slot(choice)
 			x,size,gap:=placement[0],placement[1],placement[2]
 			testing.expect(t,editor_place(&g,{x,gap},{x+size,gap+size})); sandbox_toggle_editor(&g)
-			object:=g.scene.subdivisions[0].id
-            ground:=g.scene.subdivisions[len(g.scene.subdivisions)-1].id
-			before_regions,before_links,before_pieces:=counts(&g.scene)
-            before_id:=g.scene.next_id
+			object:=g.world.scene.subdivisions[0].id
+            ground:=g.world.scene.subdivisions[len(g.world.scene.subdivisions)-1].id
+			before_regions,before_links,before_pieces:=counts(&g.world.scene)
+            before_id:=g.world.scene.next_id
 			for _ in 0..<300 { sandbox_tick(&g,0,false) }
-			a,b,c:=counts(&g.scene)
-			testing.expectf(t,a==before_regions && b==before_links && c==before_pieces && g.scene.next_id==before_id,"%v size %.1f gap %.3f must stay intact: %d/%d/%d",choice,size,gap,a,b,c)
-			testing.expect(t,is_live_subdivision(&g.scene,object) && is_live_subdivision(&g.scene,ground))
-			expect_valid(t,&g.scene); sandbox_destroy(&g)
+			a,b,c:=counts(&g.world.scene)
+			testing.expectf(t,a==before_regions && b==before_links && c==before_pieces && g.world.scene.next_id==before_id,"%v size %.1f gap %.3f must stay intact: %d/%d/%d",choice,size,gap,a,b,c)
+			testing.expect(t,is_live_subdivision(&g.world.scene,object) && is_live_subdivision(&g.world.scene,ground))
+			expect_valid(t,&g.world.scene); sandbox_destroy(&g)
 		}
 	}
 }
@@ -36,7 +36,7 @@ placed_materials_and_floor_survive_support_and_negligible_settling :: proc(t: ^t
 @(test)
 flat_drops_match_velocity_change_thresholds_and_leave_floor_intact :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
-	choices:=[3]Palette{.Glass,.Stone,.Wood}
+	choices:=[3]Recipe{.Glass,.Stone,.Wood}
 	ratios:=[2]f32{0.7,1.3}
 	for choice in choices {
 		m:=editor_material(choice)
@@ -44,34 +44,34 @@ flat_drops_match_velocity_change_thresholds_and_leave_floor_intact :: proc(t: ^t
 		steps:=[3]f32{1.0/60,1.0/30,1.0/120}
 		for dt in steps { for ratio in ratios {
 			g:=single_region_drop_yard(choice)
-			object,ground:=g.scene.subdivisions[0].id,g.scene.subdivisions[1].id
-			testing.expect(t,len(g.scene.subdivisions)==2 && len(g.scene.connections)==0)
-			body:=subdivision_body(&g.scene,object); pos:=b2.Body_GetPosition(body); pos.y+=threshold*ratio
+			object,ground:=g.world.scene.subdivisions[0].id,g.world.scene.subdivisions[1].id
+			testing.expect(t,len(g.world.scene.subdivisions)==2 && len(g.world.scene.connections)==0)
+			body:=subdivision_body(&g.world.scene,object); pos:=b2.Body_GetPosition(body); pos.y+=threshold*ratio
 			b2.Body_SetTransform(body,pos,b2.MakeRot(0)); b2.Body_SetAwake(body,true)
 			first_speed,first_load:=f32(0),f32(0)
 			for _ in 0..<int(3/dt) {
 				// Inspect events before the structural update invalidates shape IDs.
-				b2.World_Step(g.scene.physics.world,dt,PHYSICS_SUBSTEPS)
-				if first_speed==0 && is_live_subdivision(&g.scene,object) {
-					events:=b2.World_GetContactEvents(g.scene.physics.world)
+				b2.World_Step(g.world.scene.physics.world,dt,PHYSICS_SUBSTEPS)
+				if first_speed==0 && is_live_subdivision(&g.world.scene,object) {
+					events:=b2.World_GetContactEvents(g.world.scene.physics.world)
 					for hit in events.hitEvents[:events.hitCount] {
 						a,b:=b2.Shape_GetBody(hit.shapeIdA),b2.Shape_GetBody(hit.shapeIdB)
 						if a==body || b==body {
 							other:=a; if a==body { other=b }
 							first_speed=max(first_speed,hit.approachSpeed)
-							first_load=max(first_load,contact_damage_load(&g.scene,body,other,hit.approachSpeed,m.impact_scale))
+							first_load=max(first_load,contact_damage_load(&g.world.scene,body,other,hit.approachSpeed,m.impact_scale))
 						}
 					}
 				}
-				physics_read_motion(&g.scene)
-				f:=calculate_physics_loads(&g.scene,dt); apply_failures(&g.scene,f); free_failures(&f)
-				physics_sync_structure(&g.scene)
+				physics_read_motion(&g.world.scene)
+				f:=calculate_physics_loads(&g.world.scene,dt); apply_failures(&g.world.scene,f); free_failures(&f)
+				physics_sync_structure(&g.world.scene)
 			}
-			intact:=is_live_subdivision(&g.scene,object)
+			intact:=is_live_subdivision(&g.world.scene,object)
 			testing.expectf(t,intact==(ratio<1),"%v dt %.5f drop %.4f (%.1fx threshold %.4f)",choice,dt,threshold*ratio,ratio,threshold)
-			testing.expect(t,first_speed>0 && is_live_subdivision(&g.scene,ground),"Static anchored floor must take no contact damage")
+			testing.expect(t,first_speed>0 && is_live_subdivision(&g.world.scene,ground),"Static anchored floor must take no contact damage")
 			if dt==steps[0] { fmt.printf("Drop %v: h=%.4f threshold=%.4f closing=%.4f load=%.4f intact=%v floor_intact=true\n",choice,threshold*ratio,threshold,first_speed,first_load,intact) }
-			expect_valid(t,&g.scene); sandbox_destroy(&g)
+			expect_valid(t,&g.world.scene); sandbox_destroy(&g)
 		} }
 
 	}
@@ -79,21 +79,21 @@ flat_drops_match_velocity_change_thresholds_and_leave_floor_intact :: proc(t: ^t
 @(test)
 rubber_high_drop_survives_and_blasts_still_destroy_every_material :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
-	for choice in Palette {
-		g:=sandbox_editor_create(); g.editor.palette=choice
+	for choice in Recipe {
+		g:=sandbox_editor_create(); g.editor.palette=recipe_slot(choice)
 		gap:=f32(0); if choice==.Rubber { gap=3.6 }
 		testing.expect(t,editor_place(&g,{1.5,gap},{3.9,gap+1.2})); sandbox_toggle_editor(&g)
-		ids:=[dynamic]u64{}; for sub in g.scene.subdivisions { append(&ids,sub.id) }
-		before,initial_links:=g.scene.next_id,len(g.scene.connections)
+		ids:=[dynamic]u64{}; for sub in g.world.scene.subdivisions { append(&ids,sub.id) }
+		before,initial_links:=g.world.scene.next_id,len(g.world.scene.connections)
 		for _ in 0..<240 { sandbox_tick(&g,0,false) }
-		for id in ids { testing.expect(t,is_live_subdivision(&g.scene,id)) }
-		testing.expect(t,g.scene.next_id==before && len(g.scene.connections)==initial_links,"Placement/drop must retain all cells and bonds without refining geometry")
+		for id in ids { testing.expect(t,is_live_subdivision(&g.world.scene,id)) }
+		testing.expect(t,g.world.scene.next_id==before && len(g.world.scene.connections)==initial_links,"Placement/drop must retain all cells and bonds without refining geometry")
 		
-		testing.expect(t,sandbox_blast(&g,{1.45,0.6}))
+		testing.expect(t,sandbox_fixture_blast(&g,{1.45,0.6}))
 		removed:=false
-		for id in ids { if !is_live_subdivision(&g.scene,id) { removed=true } }
-		testing.expectf(t,removed && g.scene.next_id>before,"%v object and floor must still fail from a blast",choice)
-		delete(ids); expect_valid(t,&g.scene); sandbox_destroy(&g)
+		for id in ids { if !is_live_subdivision(&g.world.scene,id) { removed=true } }
+		testing.expectf(t,removed && g.world.scene.next_id>before,"%v object and floor must still fail from a blast",choice)
+		delete(ids); expect_valid(t,&g.world.scene); sandbox_destroy(&g)
 	}
 }
 @(test)
@@ -116,14 +116,14 @@ weld_reactions_never_damage_geometry_or_bonds :: proc(t: ^testing.T) {
 @(test)
 player_and_bomb_contacts_do_not_damage_palette_objects :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
-	for choice in Palette {
-		g:=sandbox_editor_create(); g.editor.palette=choice
+	for choice in Recipe {
+		g:=sandbox_editor_create(); g.editor.palette=recipe_slot(choice)
 		testing.expect(t,editor_place(&g,{-3.5,0},{-1.1,2.4})); sandbox_toggle_editor(&g)
-		before:=g.scene.next_id
+		before:=g.world.scene.next_id
 		// Full speed before contact; then keep running into the rectangle.
-		b2.Body_SetLinearVelocity(g.player.body,{PLAYER_TUNING.speed,0})
+		b2.Body_SetLinearVelocity(g.world.player.body,{PLAYER_TUNING.speed,0})
 		for _ in 0..<120 { sandbox_tick(&g,1,false) }
-		testing.expectf(t,g.scene.next_id==before,"Player must not damage %v",choice)
+		testing.expectf(t,g.world.scene.next_id==before,"Player must not damage %v",choice)
 		// Drop onto both the object and the exposed floor from normal bomb height.
 		positions:=[2]Vec2{{-2.3,BOMB_SKY_HEIGHT},{5,BOMB_SKY_HEIGHT}}
 		for position in positions {
@@ -131,27 +131,27 @@ player_and_bomb_contacts_do_not_damage_palette_objects :: proc(t: ^testing.T) {
 			landed:=false
 			for _ in 0..<180 {
 				sandbox_tick(&g,0,false)
-				if g.bomb_rain.bombs[0].landed { landed=true; break }
+				if g.world.bombs[0].landed { landed=true; break }
 			}
 			testing.expect(t,landed)
 			for _ in 0..<30 { sandbox_tick(&g,0,false) }
-			testing.expectf(t,g.scene.next_id==before,"Bomb landing/fuse must not damage %v or floor",choice)
-			bomb_rain_clear(&g.bomb_rain)
+			testing.expectf(t,g.world.scene.next_id==before,"Bomb landing/fuse must not damage %v or floor",choice)
+			bomb_rain_clear(&g.world)
 		}
-		expect_valid(t,&g.scene); sandbox_destroy(&g)
+		expect_valid(t,&g.world.scene); sandbox_destroy(&g)
 	}
 }
 @(test)
 hit_events_include_impacts_after_contact_begin :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
 	g:=single_region_drop_yard(.Wood); defer sandbox_destroy(&g)
-	for _ in 0..<120 { physics_tick(&g.scene,1.0/60) }
-	body:=g.scene.subdivisions[0].body
+	for _ in 0..<120 { physics_tick(&g.world.scene,1.0/60) }
+	body:=g.world.scene.subdivisions[0].body
 	// Repeated closing motion without separating the existing contact pair.
 	for _ in 0..<2 {
 		b2.Body_SetLinearVelocity(body,{0,-2})
-		b2.World_Step(g.scene.physics.world,1.0/60.0,PHYSICS_SUBSTEPS)
-		events:=b2.World_GetContactEvents(g.scene.physics.world)
+		b2.World_Step(g.world.scene.physics.world,1.0/60.0,PHYSICS_SUBSTEPS)
+		events:=b2.World_GetContactEvents(g.world.scene.physics.world)
 		found:=false
 		for hit in events.hitEvents[:events.hitCount] {
 			if b2.Shape_GetBody(hit.shapeIdA)==body || b2.Shape_GetBody(hit.shapeIdB)==body {
@@ -164,6 +164,8 @@ hit_events_include_impacts_after_contact_begin :: proc(t: ^testing.T) {
 
 @(test)
 render_seams_share_t_junctions_without_changing_simulation :: proc(t: ^testing.T) {
+ cache_state:=Render_Cache_State{}; defer release_render_caches(&cache_state)
+ caches:=&cache_state
 	s:=new_scene(0.1); defer scene_destroy(&s)
 	m:=add_material(&s,editor_material(.Wood)); p:=add_piece(&s,m,42)
 	bounds:=[3][4]Vec2{{{0,0},{1,0},{1,2},{0,2}},{{1,0},{2,0},{2,1},{1,1}},{{1,1},{2,1},{2,2},{1,2}}}
@@ -173,7 +175,8 @@ render_seams_share_t_junctions_without_changing_simulation :: proc(t: ^testing.T
 	s.subdivisions[1].pose.position.x+=0.0002; s.subdivisions[2].pose.position.y+=0.0002
 	poses:=make(map[u64]Pose); defer delete(poses)
 	before,ok:=encode_snapshot(&s); defer delete(before); testing.expect(t,ok)
-	outline:=render_outline(&s,s.subdivisions[0],poses,true); defer delete(outline.points)
+	render_cache_prepass(&s,caches)
+	outline:=render_outline(&s,caches,s.subdivisions[0],poses,true); defer delete(outline.points)
 	testing.expect(t,len(outline.points)==5,"Render copy must include the T junction")
 	after,after_ok:=encode_snapshot(&s); defer delete(after)
 	testing.expect(t,after_ok && string(before)==string(after),"Rendering must not mutate simulation geometry or poses")
@@ -218,8 +221,8 @@ impact_scale_roundtrips_zero_and_old_snapshots_default_to_one :: proc(t: ^testin
 }
 
 // Retain the isolated, single-region analytic test alongside pre-split drop tests.
-single_region_drop_yard :: proc(choice: Palette) -> Sandbox {
- g:=Sandbox{scene=new_scene(0.1)}; s:=&g.scene
+single_region_drop_yard :: proc(choice: Recipe) -> Sandbox {
+ g:=Sandbox{world=World{scene=new_scene(0.1)}}; s:=&g.world.scene
  m:=add_material(s,editor_material(choice)); p:=add_piece(s,m,42)
  vertices:=[4]Vec2{{1.5,0},{3.9,0},{3.9,2.4},{1.5,2.4}}; poly:=Polygon{points=vertices[:]}
  add_subdivision(s,p,poly,Pose{position=centroid(poly)})

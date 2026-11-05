@@ -9,21 +9,25 @@ hub_test_rest_point :: proc(cache: ^Render_Cache,index: int,center: Vec2) -> Vec
  return cache.outline.points[index]
 }
 hub_test_vertex_fan :: proc(cache: ^Render_Cache) -> bool { return !cache.hub_fan }
-hub_test_render :: proc(s: ^Scene,sub: Subdivision) -> (Polygon,Vec2) {
- hub:Vec2; outline:=render_outline(s,sub,nil,true,nil,&hub)
+hub_test_render :: proc(s: ^Scene,caches: ^Render_Cache_State,sub: Subdivision) -> (Polygon,Vec2) {
+ render_cache_prepass(s,caches)
+ hub:Vec2; outline:=render_outline(s,caches,sub,nil,true,nil,&hub)
  return outline,hub
 }
 
 @(test)
 rubber_fill_triangles_have_positive_rest_area_and_keep_orientation :: proc(t: ^testing.T) {
+ cache_state:=Render_Cache_State{}; defer release_render_caches(&cache_state)
+ caches:=&cache_state
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  angles:=[2]f32{10,30}
  for degrees in angles {
   s:=rubber_bend_scene(degrees)
+  render_cache_prepass(&s,caches)
   invalid,flipped:=0,0
   for sub in s.subdivisions {
-   cache:=ensure_render_cache(&s,sub.id)
-   outline,hub:=hub_test_render(&s,sub)
+   outline,hub:=hub_test_render(&s,caches,sub)
+   cache:=&caches.cells[sub.id]
    orientation:=partition_area(cache.outline.points)
    for i:=0; i<len(cache.triangles); i+=3 {
     rest,world:[3]Vec2
@@ -43,20 +47,23 @@ rubber_fill_triangles_have_positive_rest_area_and_keep_orientation :: proc(t: ^t
   fmt.printf("Hub checks 1/2: degrees=%.0f invalid_rest=%d flipped_world=%d\n",degrees,invalid,flipped)
   testing.expect(t,invalid==0 && flipped==0)
   scene_destroy(&s)
+  release_render_caches(caches)
  }
 }
 
 @(test)
 rubber_editor_blast_needs_no_vertex_fan_fallback :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
- g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=.Rubber
+ g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=recipe_slot(.Rubber)
  testing.expect(t,editor_place(&g,{0,0},{3,1})); sandbox_toggle_editor(&g)
+ caches:=&g.render_caches
  for stage in 0..<2 {
-  if stage==1 { sandbox_set_radius(&g,6); sandbox_explode(&g,{1.5,0.5}) }
+  if stage==1 { sandbox_fixture_radius(&g,6); sandbox_explode(&g,{1.5,0.5}) }
+  render_cache_prepass(&g.world.scene,caches)
   fallback,cells:=0,0
-  for sub in g.scene.subdivisions {
-   if g.scene.materials[sub.material].flexibility<=0 { continue }
-   cache:=ensure_render_cache(&g.scene,sub.id); cells+=1
+  for sub in g.world.scene.subdivisions {
+   if g.world.scene.materials[sub.material].flexibility<=0 { continue }
+   cache:=&caches.cells[sub.id]; cells+=1
    if hub_test_vertex_fan(cache) { fallback+=1 }
   }
   fmt.printf("Hub check 3: stage=%d vertex_fan_cells=%d live_rubber_cells=%d\n",stage,fallback,cells)

@@ -1,8 +1,10 @@
 package main
+import "core:time"
 
 import rl "vendor:raylib"
 import b2 "vendor:box2d"
 import "core:math"
+import "core:slice"
 
 SKIN_SPACING :: f32(0.1)
 SKIN_RADIUS :: f32(0.5)
@@ -10,7 +12,7 @@ FILM_PX :: f32(3)
 FILM_COLOR :: rl.Color{105,73,120,255}
 
 Skin_Weight :: struct { id: u64, weight: f32 }
-Skin_Cell :: struct { id: u64, outline: Polygon, lo,hi: Vec2 }
+Skin_Cell :: struct { id: u64, outline: Polygon, lo,hi: Vec2, neighbours: [dynamic]int }
 Skin_Pose :: struct { pose: Pose, rest_center: Vec2 }
 Render_Cache :: struct {
 	owner,revision: u64,
@@ -22,6 +24,51 @@ Render_Cache :: struct {
  hub: Vec2,
  hub_weights: [dynamic]Skin_Weight,
  hub_fan: bool,
+}
+Render_Caches :: map[u64]Render_Cache
+Render_Cache_State :: struct {
+	cells: Render_Caches,
+ bands: map[u64]Rubber_Band,
+	structure_revision,static_render_revision,static_render_signature: u64,
+	initialized: bool,
+}
+release_render_caches :: proc(caches: ^Render_Cache_State) {
+	for id in caches.cells { release_render_cache(&caches.cells[id]) }
+ for id in caches.bands { release_rubber_band(&caches.bands[id]) }; delete(caches.bands)
+	delete(caches.cells); caches^={}
+}
+// This is the only phase that may insert cache entries. Complete it before
+// taking any cache pointer: an insertion can move the map's value storage.
+render_cache_prepass :: proc(s: ^Scene,caches: ^Render_Cache_State) {
+ when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_cache_ms+=frame_ms(frame_start) } } }
+
+	if !caches.initialized || caches.structure_revision!=s.structure_revision {
+		when ODIN_TEST { render_signature_test_calls+=1 }
+		// Same signature rule formerly used by physics_sync_structure.
+		signature:=u64(0)
+		for p in s.pieces {
+			if len(p.subdivisions)==0 { continue }
+			sub:=s.subdivisions[s.sub_rows[p.subdivisions[0]]]
+			if sub.body!=b2.nullBodyId && b2.Body_GetType(sub.body)==.staticBody { signature+=p.id*0x9e3779b185ebca87+(p.render_revision+1)*0xc2b2ae3d27d4eb4f }
+		}
+		if signature!=caches.static_render_signature { caches.static_render_signature=signature; caches.static_render_revision+=1 }
+		dead: [dynamic]u64
+		for id in caches.cells { if !is_live_subdivision(s,id) { append(&dead,id) } }
+		for id in dead { release_render_cache(&caches.cells[id]); delete_key(&caches.cells,id) }
+		delete(dead)
+  dead_bands:[dynamic]u64
+  for id in caches.bands {
+   row,exists:=s.piece_rows[id]
+   if !exists || !s.pieces[row].live || s.materials[s.pieces[row].material].flexibility<=0 { append(&dead_bands,id) }
+  }
+  for id in dead_bands { release_rubber_band(&caches.bands[id]); delete_key(&caches.bands,id) }; delete(dead_bands)
+		caches.structure_revision=s.structure_revision; caches.initialized=true
+	}
+	for sub in s.subdivisions { if sub.live { ensure_render_cache(s,caches,sub.id) } }
+ // Cell-map insertions are complete before bands borrow any cell data.
+ for piece in s.pieces {
+  if piece.live && len(piece.subdivisions)>0 && s.materials[piece.material].flexibility>0 { ensure_rubber_band(s,caches,piece.id) }
+ }
 }
 release_render_cache :: proc(cache: ^Render_Cache) {
 	delete(cache.outline.points); delete(cache.triangles); delete(cache.draw_edge)
@@ -80,14 +127,31 @@ skin_cells :: proc(s: ^Scene,owner: u64) -> [dynamic]Skin_Cell {
   sub:=s.subdivisions[s.sub_rows[id]]
   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
   for p in sub.outline.points { lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
-  append(&cells,Skin_Cell{id,sub.outline,vsub(lo,{SKIN_RADIUS,SKIN_RADIUS}),vadd(hi,{SKIN_RADIUS,SKIN_RADIUS})})
+  append(&cells,Skin_Cell{id=id,outline=sub.outline,lo=vsub(lo,{SKIN_RADIUS,SKIN_RADIUS}),hi=vadd(hi,{SKIN_RADIUS,SKIN_RADIUS})})
+ }
+ rows:=make(map[u64]int); defer delete(rows)
+ for cell,i in cells { rows[cell.id]=i }
+ for &cell in cells {
+  for id in s.subdivisions[s.sub_rows[cell.id]].incident_links {
+   link:=s.connections[s.conn_rows[id]]; if !link.live || link.mortar { continue }
+   other:=link.a; if other==cell.id { other=link.b }
+   if row,ok:=rows[other]; ok { append(&cell.neighbours,row) }
+  }
+  slice.sort(cell.neighbours[:])
  }
  return cells
+}
+release_skin_cells :: proc(cells: [dynamic]Skin_Cell) {
+ for cell in cells { delete(cell.neighbours) }; delete(cells)
 }
 
 skin_weights :: proc(p: Vec2,cells: []Skin_Cell) -> [dynamic]Skin_Weight {
  weights:[dynamic]Skin_Weight; total:f32
- for cell in cells {
+ distances:=make([]f32,len(cells)); defer delete(distances)
+ visited:=make([]bool,len(cells)); defer delete(visited)
+ frontier,next:[dynamic]int; defer delete(frontier); defer delete(next)
+ for cell,row in cells {
+  distances[row]=1e30
   if p.x<cell.lo.x || p.x>cell.hi.x || p.y<cell.lo.y || p.y>cell.hi.y { continue }
   inside:=false; distance:=f32(1e30)
   for a,i in cell.outline.points {
@@ -99,7 +163,21 @@ skin_weights :: proc(p: Vec2,cells: []Skin_Cell) -> [dynamic]Skin_Weight {
    if (a.y>p.y)!=(b.y>p.y) && p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x { inside=!inside }
   }
   if inside { distance=0 }
-  if distance>=SKIN_RADIUS { continue }
+  distances[row]=distance
+  // All containing cells seed the same search, including shared boundaries.
+  if distance==0 { visited[row]=true; append(&frontier,row) }
+ }
+ for len(frontier)>0 {
+  for row in frontier { for neighbour in cells[row].neighbours {
+   if !visited[neighbour] && distances[neighbour]<SKIN_RADIUS {
+    visited[neighbour]=true; append(&next,neighbour)
+   }
+  } }
+  slice.sort(next[:]); frontier,next=next,frontier; clear(&next)
+ }
+ // Preserve the original ID-ordered weight arithmetic and normalization.
+ for cell,row in cells {
+  if !visited[row] { continue }; distance:=distances[row]
   w:=1-distance/SKIN_RADIUS; w*=w
   append(&weights,Skin_Weight{cell.id,w}); total+=w
  }
@@ -128,7 +206,7 @@ render_together_neighbours :: proc(s: ^Scene,sub: Subdivision) -> [dynamic]u64 {
  if s.materials[sub.material].flexibility>0 && !render_static(sub) {
   for link in sub.incident_links {
    c:=s.connections[s.conn_rows[link]]
-   if !c.live { continue }
+   if !c.live || c.mortar { continue }
    other:=c.a; if c.a==sub.id { other=c.b }
    if is_live_subdivision(s,other) { append(&candidates,other) }
   }
@@ -146,19 +224,22 @@ render_together_neighbours :: proc(s: ^Scene,sub: Subdivision) -> [dynamic]u64 {
   other:=s.subdivisions[s.sub_rows[id]]
   together:=sub.owner==other.owner && s.materials[sub.material].flexibility==0
   together=together || render_static(sub) && render_static(other)
-  if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || s.connections[s.conn_rows[c]].live }
+  if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || (s.connections[s.conn_rows[c]].live && !s.connections[s.conn_rows[c]].mortar) }
   if !together { continue }
   boundaries:=shared_segments(sub.outline,other.outline)
   if len(boundaries)>0 { append(&result,id) }; delete(boundaries)
  }
  delete(candidates); sort_ids(result[:]); return result
 }
-ensure_render_cache :: proc(s: ^Scene,id: u64) -> ^Render_Cache {
+ensure_render_cache :: proc(s: ^Scene,caches: ^Render_Cache_State,id: u64) -> ^Render_Cache {
+	when ODIN_TEST { render_ensure_test_calls+=1 }
 	sub:=&s.subdivisions[s.sub_rows[id]]
-	cache:=&sub.render
+	if caches.cells==nil { caches.cells=make(Render_Caches) }
+	if _,exists:=caches.cells[id]; !exists { caches.cells[id]=Render_Cache{} }
+	cache:=&caches.cells[id]
 	revision:=s.pieces[s.piece_rows[sub.owner]].render_revision
 	anchored:=render_static(sub^)
- if anchored { revision=s.static_render_revision }
+ if anchored { revision=caches.static_render_revision }
  if cache.owner==sub.owner && cache.revision==revision && cache.anchored==anchored { return cache }
 	release_render_cache(cache)
 	cache.owner=sub.owner; cache.revision=revision; cache.anchored=anchored
@@ -168,7 +249,7 @@ ensure_render_cache :: proc(s: ^Scene,id: u64) -> ^Render_Cache {
  flexible:=s.materials[sub.material].flexibility>0 && !anchored
  if flexible {
   outline:=skin_outline(cache.outline); delete(cache.outline.points); cache.outline=outline
-  cells:=skin_cells(s,sub.owner); defer delete(cells)
+  cells:=skin_cells(s,sub.owner); defer release_skin_cells(cells)
   cache.weights=make([][dynamic]Skin_Weight,len(cache.outline.points))
   for rest,i in cache.outline.points { cache.weights[i]=skin_weights(rest,cells[:]) }
   cache.hub=sub.rest_center
@@ -189,8 +270,8 @@ ensure_render_cache :: proc(s: ^Scene,id: u64) -> ^Render_Cache {
  }
 	return cache
 }
-render_outline :: proc(s: ^Scene,sub: Subdivision,poses: map[u64]Pose,surface: bool,frames: map[u64]Pose = nil,hub: ^Vec2 = nil) -> Polygon {
-	cache:=ensure_render_cache(s,sub.id)
+render_outline :: proc(s: ^Scene,caches: ^Render_Cache_State,sub: Subdivision,poses: map[u64]Pose,surface: bool,frames: map[u64]Pose = nil,hub: ^Vec2 = nil) -> Polygon {
+	cache:=&caches.cells[sub.id]
  outline:=make_polygon(cache.outline.points)
  if s.materials[sub.material].flexibility==0 {
   frame:=rigid_render_frame(s,sub,poses,frames)

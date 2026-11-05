@@ -1,4 +1,5 @@
 package main
+import "core:time"
 
 import "core:math"
 import "core:slice"
@@ -26,6 +27,23 @@ convex_hull :: proc(points: []Vec2) -> [dynamic]Vec2 {
 	resize(&hull,len(hull)-1)
 	return hull
 }
+// Same monotone chain and sort as convex_hull, with caller-owned storage.
+convex_hull_into :: proc(points,sorted_storage,hull:[]Vec2) -> []Vec2 {
+ sorted:=sorted_storage[:len(points)]; copy(sorted,points)
+ slice.sort_by(sorted,proc(a,b:Vec2)->bool { return a.x<b.x || a.x==b.x && a.y<b.y })
+ count:=0
+ if len(sorted)<2 { copy(hull,sorted); return hull[:len(sorted)] }
+ for p in sorted {
+  for count>=2 && vcross(vsub(hull[count-1],hull[count-2]),vsub(p,hull[count-1]))<=0 { count-=1 }
+  hull[count]=p; count+=1
+ }
+ upper:=count+1
+ for i:=len(sorted)-2; i>=0; i-=1 { p:=sorted[i]
+  for count>=upper && vcross(vsub(hull[count-1],hull[count-2]),vsub(p,hull[count-1]))<=0 { count-=1 }
+  hull[count]=p; count+=1
+ }
+ return hull[:count-1]
+}
 segment_overlap :: proc(a,b: Segment) -> (Segment,bool) {
 	d := vsub(a.b,a.a)
 	length := vlen(d)
@@ -46,10 +64,15 @@ shared_segments :: proc(a,b: Polygon) -> [dynamic]Segment {
 	}
 	return result
 }
-inherits_old_boundary :: proc(a,b,old_a,old_b: Polygon) -> bool {
-	current := shared_segments(a,b)
-	original := shared_segments(old_a,old_b)
-	defer delete(current); defer delete(original)
+inherits_old_boundary :: proc(a,b,old_a,old_b: Polygon,known: []Segment = nil,known_current: []Segment = nil) -> bool {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(14,started); if blast_profile!=nil { blast_profile.counts[4]+=1 } }
+
+ current:=known_current
+ current_owned:[dynamic]Segment; defer delete(current_owned)
+ if current==nil { current_owned=shared_segments(a,b); current=current_owned[:] }
+	original := known
+ owned:[dynamic]Segment; defer delete(owned)
+ if original==nil { owned=shared_segments(old_a,old_b); original=owned[:] }
 	for x in current { for y in original { if _,ok := segment_overlap(x,y); ok { return true } } }
 	return false
 }
@@ -83,7 +106,7 @@ insert_shared_midpoint :: proc(p: ^Polygon,segment: Segment,point: Vec2) {
 }
 // Capture each common cut once, then install the exact same displaced midpoint
 // in both outlines. Parent boundary vertices are untouched, including T junctions.
-displace_shared_boundaries :: proc(children: []Polygon,seed: u8,minimum_width: f32 = 0) {
+displace_shared_boundaries :: proc(children: []Polygon,seed: u8,minimum_width: f32 = 0,grained: bool = false) {
 	boundaries: [dynamic]Cut_Boundary
 	defer delete(boundaries)
 	for i in 0..<len(children) {
@@ -94,6 +117,7 @@ displace_shared_boundaries :: proc(children: []Polygon,seed: u8,minimum_width: f
 		}
 	}
 	for boundary,index in boundaries {
+  if grained && displace_grained_seam(children,boundary,seed,index,minimum_width) { continue }
 		edge := vsub(boundary.segment.b,boundary.segment.a)
 		length := vlen(edge)
 		normal := Vec2{-edge.y/length,edge.x/length}
@@ -139,6 +163,7 @@ convex_decomposition :: proc(outline: Polygon) -> [dynamic]Polygon {
 		merged:=false
 		for i in 0..<len(parts) {
 			for j in i+1..<len(parts) {
+				if !inheritance_bounds_overlap(parts[i],parts[j]) { continue }
 				if length,_:=shared_boundary(parts[i],parts[j]); length<=0 { continue }
 				points: [dynamic]Vec2
 				for point in parts[i].points { append(&points,point) }
@@ -178,6 +203,10 @@ segments_touch :: proc(a,b,c,d: Vec2,tolerance: f64) -> bool {
  return false
 }
 simple_polygon :: proc(p: Polygon) -> bool {
+ if active_cover!=nil && !blast_scratch_active && len(p.points)>=12 { return blast_cached_simple(p) }
+ return simple_polygon_uncached(p)
+}
+simple_polygon_uncached :: proc(p: Polygon) -> bool {
  if len(p.points)<3 { return false }
  tolerance:=f64(longest_dimension(p))*0.00000001
  for a,i in p.points {

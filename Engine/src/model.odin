@@ -1,5 +1,6 @@
 #+feature dynamic-literals
 package main
+import "core:time"
 
 import "core:math"
 import "core:slice"
@@ -11,10 +12,10 @@ Pose :: struct { position: Vec2, angle: f32, velocity: Vec2, angular_velocity: f
 // Procedural materials use this helper; the fixed palette explicitly lists every field.
 make_material :: proc(name: string = "", subdivision_strength: f32 = 0, connection_strength: f32 = 0,
                       flexibility: f32 = 0, generation_count: int = 1, aspect_ratio: f32 = 1,
-                      triangulate: bool = false, impact_scale: f32 = 1) -> Material {
- return Material{name=name,subdivision_strength=subdivision_strength,connection_strength=connection_strength,
+                      triangulate: bool = false, impact_scale: f32 = 1, shock_loss: f32 = 0, blast_resistance: f32 = 0, strip_thickness: f32 = 0, color: [3]u8 = {131,145,152}) -> Material {
+ return Material{name=name,strip_thickness=strip_thickness,color=color,subdivision_strength=subdivision_strength,connection_strength=connection_strength,
                  flexibility=flexibility,generation_count=generation_count,aspect_ratio=aspect_ratio,
-                 triangulate=triangulate,impact_scale=impact_scale}
+                 triangulate=triangulate,impact_scale=impact_scale,shock_loss=shock_loss,blast_resistance=blast_resistance}
 }
 Material :: struct {
 	name: string,
@@ -24,8 +25,13 @@ Material :: struct {
 	generation_count: int,
 	aspect_ratio: f32,
 	triangulate: bool,
+ shock_loss: f32,
+ blast_resistance: f32,
+ strip_thickness: f32, // Explicit for grained recipes; zero when unused.
+ color: [3]u8,
 }
 Subdivision :: struct {
+ frame:f32 `json:"frame,omitempty"`,
 	id, owner: u64,
 	material: int,
 	seed: u8,
@@ -33,18 +39,22 @@ Subdivision :: struct {
 	body: b2.BodyId `json:"-"`,
 	fixture_count: int `json:"-"`,
 	shapes: [dynamic]b2.ShapeId `json:"-"`,
-	render: Render_Cache `json:"-"`,
 	incident_links: [dynamic]u64 `json:"-"`,
 	width: f32 `json:"-"`,
 	rest_center: Vec2,
 	pose: Pose,
 	live: bool,
 }
+Glue_Sample :: struct { p,q:Vec2, w:f32 }
 Connection :: struct {
+ glue:[dynamic]Glue_Sample `json:"-"`,
 	id, a, b: u64,
 	rest_point, local_a, local_b: Vec2,
+ rest_segments: [dynamic]Segment `json:"-"`,
 	joint: b2.JointId `json:"-"`,
 	live: bool,
+ mortar: bool,
+ overload_ticks: u8,
 }
 Piece :: struct {
 	id: u64,
@@ -72,14 +82,19 @@ Scene :: struct {
 	sub_rows, conn_rows, piece_rows: map[u64]int,
 	connection_pairs: map[Endpoint_Pair]u64,
 	structure_revision: u64,
- static_render_revision,static_render_signature: u64 `json:"-"`,
 	pending_regions: [dynamic]u64,
 	next_id: u64,
 	revision: u64,
 	minimum_width: f32,
 }
 Blast :: struct { position: Vec2, radius: f32 }
-Failures :: struct { subdivisions, connections, discard_subdivisions: [dynamic]u64, impact: bool }
+Impact_Shock_Source :: struct { cell: u64, point: Vec2, load: f32 }
+Failures :: struct {
+ subdivisions, connections, discard_subdivisions: [dynamic]u64,
+ impact: bool,
+ no_sibling_bonds: bool,
+ impact_sources: [dynamic]Impact_Shock_Source,
+}
 
 vadd :: proc(a, b: Vec2) -> Vec2 { return {a.x+b.x, a.y+b.y} }
 vsub :: proc(a, b: Vec2) -> Vec2 { return {a.x-b.x, a.y-b.y} }
@@ -121,6 +136,8 @@ make_polygon :: proc(points: []Vec2) -> Polygon {
 }
 // Returns the common collinear edge length and its length-weighted midpoint.
 shared_boundary :: proc(a, b: Polygon) -> (f32, Vec2) {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(13,started); if blast_profile!=nil { blast_profile.counts[5]+=1 } }
+
 	total: f32
 	weighted := Vec2{}
 	for i in 0..<len(a.points) {
@@ -172,13 +189,13 @@ retain_subdivision :: proc(s: ^Scene,source: Subdivision) {
 	sub.outline=make_polygon(source.outline.points)
 	sub.rest_center=centroid(sub.outline)
 	sub.width=outline_width(sub.outline.points)
-	sub.body={}; sub.fixture_count=0; sub.shapes=nil; sub.render={}; sub.incident_links=nil
+	sub.body={}; sub.fixture_count=0; sub.shapes=nil; sub.incident_links=nil
 	s.sub_rows[sub.id]=len(s.subdivisions)
 	append(&s.subdivisions,sub)
 	append(&s.pending_regions,sub.id)
 	s.structure_revision+=1
 }
-add_connection :: proc(s: ^Scene, a, b: u64) -> u64 {
+add_connection :: proc(s: ^Scene, a, b: u64, mortar: bool = false, known_segments: []Segment=nil) -> u64 {
 	if a == b { return 0 }
 	if id,ok:=s.connection_pairs[pair_key(a,b)]; ok { if s.connections[s.conn_rows[id]].live { return id } }
 	sa, sb := s.subdivisions[s.sub_rows[a]],s.subdivisions[s.sub_rows[b]]
@@ -186,12 +203,15 @@ add_connection :: proc(s: ^Scene, a, b: u64) -> u64 {
 	if length <= 0 { return 0 }
 	id := new_id(s)
 	s.conn_rows[id] = len(s.connections)
-	append(&s.connections,Connection{id=id,a=a,b=b,rest_point=point,local_a=vsub(point,sa.rest_center),local_b=vsub(point,sb.rest_center),live=true})
+ segments:[dynamic]Segment
+ if known_segments==nil { segments=shared_segments(sa.outline,sb.outline) } else { append(&segments,..known_segments) }
+	append(&s.connections,Connection{id=id,a=a,b=b,mortar=mortar,rest_point=point,local_a=vsub(point,sa.rest_center),local_b=vsub(point,sb.rest_center),rest_segments=segments,live=true})
 	s.connection_pairs[pair_key(a,b)]=id
 	append(&s.subdivisions[s.sub_rows[a]].incident_links,id)
 	append(&s.subdivisions[s.sub_rows[b]].incident_links,id)
-	append(&s.pieces[s.piece_rows[sa.owner]].connections,id)
+	if !mortar { append(&s.pieces[s.piece_rows[sa.owner]].connections,id) }
 	s.pieces[s.piece_rows[sa.owner]].render_revision+=1
+ if mortar { s.pieces[s.piece_rows[sb.owner]].render_revision+=1 }
 	s.structure_revision+=1
 	return id
 }
@@ -200,7 +220,9 @@ connection_sample :: proc(s: ^Scene, c: Connection) -> Vec2 {
 	return vmul(vadd(vadd(a.pose.position,vrotate(c.local_a,a.pose.angle)),vadd(b.pose.position,vrotate(c.local_b,b.pose.angle))),0.5)
 }
 subdivision_sample :: proc(sub: Subdivision) -> Vec2 { return sub.pose.position }
-contains_id :: proc(ids: []u64,id: u64) -> bool { for x in ids { if x == id { return true } }; return false }
+contains_id :: proc(ids: []u64,id: u64) -> bool {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(12,started); if blast_profile!=nil { blast_profile.counts[6]+=1 } }
+ for x in ids { if x == id { return true } }; return false }
 sort_ids :: proc(ids: []u64) { slice.sort(ids) }
 sorted_ids :: proc(ids: []u64) -> [dynamic]u64 {
 	result: [dynamic]u64
@@ -227,9 +249,14 @@ piece_width :: proc(s: ^Scene, ids: []u64) -> f32 {
 	return outline_width(points[:])
 }
 outline_width :: proc(points: []Vec2) -> f32 {
-	hull:=convex_hull(points)
-	defer delete(hull)
-	if len(hull)<3 { return 0 }
+ if active_cover!=nil && !blast_scratch_active && len(points)>32 { return blast_cached_width(points) }
+ return outline_width_uncached(points)
+}
+outline_width_uncached :: proc(points: []Vec2) -> f32 {
+	sorted_inline:[32]Vec2; hull_inline:[64]Vec2
+ hull:[]Vec2; heap:[dynamic]Vec2; defer delete(heap)
+ if len(points)<=len(sorted_inline) { hull=convex_hull_into(points,sorted_inline[:],hull_inline[:]) } else { heap=convex_hull(points); hull=heap[:] }
+ if len(hull)<3 { return 0 }
 	width := f32(1e30)
 	for i in 0..<len(hull) {
 		edge:=vsub(hull[(i+1)%len(hull)],hull[i]); length:=vlen(edge)
@@ -324,6 +351,9 @@ rebuild_piece :: proc(s: ^Scene, old_id: u64) {
 // The only reclamation point. Inheritance/regrouping must finish before this:
 // parent outlines and old membership lists are still used during staging.
 commit_structure :: proc(s: ^Scene) {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(6,started) }
+
+ when ODIN_TEST { glass_commit_test_calls+=1 }
 	physics_remove_dead(s)
 	removed:=false
 	for i:=len(s.connections)-1; i>=0; i-=1 {
@@ -338,6 +368,7 @@ commit_structure :: proc(s: ^Scene) {
 			for id,j in links^ { if id==c.id { unordered_remove(links,j); break } }
 		}
 		delete_key(&s.conn_rows,c.id)
+  delete(c.rest_segments); delete(c.glue)
 		unordered_remove(&s.connections,i)
 		if i<len(s.connections) { s.conn_rows[s.connections[i].id]=i }
 	}
@@ -345,7 +376,7 @@ commit_structure :: proc(s: ^Scene) {
 		sub:=s.subdivisions[i]
 		if sub.live { continue }
 		removed=true
-		delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes); release_render_cache(&sub.render)
+		delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes)
 		delete_key(&s.sub_rows,sub.id)
 		unordered_remove(&s.subdivisions,i)
 		if i<len(s.subdivisions) { s.sub_rows[s.subdivisions[i].id]=i }
@@ -384,7 +415,8 @@ physics_body_count :: proc(s: ^Scene) -> int {
 }
 scene_destroy :: proc(s: ^Scene) {
 	physics_destroy(s)
-	for &sub in s.subdivisions { delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes); release_render_cache(&sub.render) }
+ for c in s.connections { delete(c.rest_segments); delete(c.glue) }
+	for &sub in s.subdivisions { delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes) }
 	for p in s.pieces { delete(p.subdivisions); delete(p.connections) }
 	delete(s.subdivisions); delete(s.connections); delete(s.pieces)
 	delete(s.materials)

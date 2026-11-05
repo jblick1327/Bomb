@@ -23,6 +23,8 @@ expect_packed_storage :: proc(t: ^testing.T,s: ^Scene) {
 }
 @(test)
 dead_storage_reclaims_outlines_caches_keys_and_handles :: proc(t: ^testing.T) {
+ cache_state:=Render_Cache_State{}; defer release_render_caches(&cache_state)
+ caches:=&cache_state
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
 	s:=make_wall(); defer scene_destroy(&s)
 	physics_init(&s)
@@ -34,7 +36,7 @@ dead_storage_reclaims_outlines_caches_keys_and_handles :: proc(t: ^testing.T) {
 		id:=add_subdivision(&s,owner,outline,Pose{position=centroid(outline)})
 		physics_sync_structure(&s)
 		body:=subdivision_body(&s,id)
-		_ = ensure_render_cache(&s,id)
+		render_cache_prepass(&s,caches)
 		f:=Failures{}; append(&f.discard_subdivisions,id)
 		apply_failures(&s,f); free_failures(&f)
 		testing.expect(t,!b2.Body_IsValid(body) && !is_live_subdivision(&s,id))
@@ -119,63 +121,63 @@ yard_removes_escaped_regions_for_every_material :: proc(t: ^testing.T) {
 		{{YARD_LEFT-0.01,1},false},{{YARD_RIGHT+0.01,1},false},{{0,YARD_FLOOR_BOTTOM-2.01},true},
 		{{YARD_LEFT,1},false},{{YARD_RIGHT,1},false},{{0,YARD_FLOOR_BOTTOM-2},false},
 	}
-	for material in Palette {
+	for material in Recipe {
 		for exit in cases {
-			g:=sandbox_editor_create(); g.editor.palette=material
-			testing.expect(t,editor_place(&g,{0,0},{0.3,0.3})); sandbox_toggle_editor(&g)
-			id:=g.scene.subdivisions[0].id; body:=subdivision_body(&g.scene,id)
-			before,last_id:=len(g.scene.subdivisions),g.scene.next_id
+			g:=sandbox_editor_create(); g.editor.palette=recipe_slot(material)
+			testing.expect(t,editor_place(&g,{0,0},{0.2,0.2})); sandbox_toggle_editor(&g)
+			id:=g.world.scene.subdivisions[0].id; body:=subdivision_body(&g.world.scene,id)
+			before,last_id:=len(g.world.scene.subdivisions),g.world.scene.next_id
 			position:=exit.position
-            if g.scene.materials[g.scene.subdivisions[g.scene.sub_rows[id]].material].flexibility==0 { position=vsub(position,g.scene.subdivisions[g.scene.sub_rows[id]].rest_center) }
+            if g.world.scene.materials[g.world.scene.subdivisions[g.world.scene.sub_rows[id]].material].flexibility==0 { position=vsub(position,g.world.scene.subdivisions[g.world.scene.sub_rows[id]].rest_center) }
             b2.Body_SetTransform(body,to_b2(position),b2.MakeRot(0))
-			physics_read_motion(&g.scene)
+			physics_read_motion(&g.world.scene)
 			g.selected=id
 			sandbox_remove_out_of_bounds(&g)
-			testing.expect(t,is_live_subdivision(&g.scene,id)!=exit.removed && b2.Body_IsValid(body)!=exit.removed)
+			testing.expect(t,is_live_subdivision(&g.world.scene,id)!=exit.removed && b2.Body_IsValid(body)!=exit.removed)
 			expected:=before; if exit.removed { expected-=1 }
-			testing.expect(t,len(g.scene.subdivisions)==expected)
-			for sub in g.scene.subdivisions { testing.expect(t,sub.id<=last_id,"Cleanup must discard, not generate children") }
+			testing.expect(t,len(g.world.scene.subdivisions)==expected)
+			for sub in g.world.scene.subdivisions { testing.expect(t,sub.id<=last_id,"Cleanup must discard, not generate children") }
 			if exit.removed { testing.expect(t,g.selected==0) }
-			testing.expect(t,b2.Body_IsValid(g.floor) && b2.Body_IsValid(g.player.body))
-			testing.expect(t,b2.World_GetCounters(g.scene.physics.world).bodyCount==i32(physics_body_count(&g.scene)+2))
-			expect_packed_storage(t,&g.scene); sandbox_destroy(&g)
+			testing.expect(t,b2.Body_IsValid(g.world.floor) && b2.Body_IsValid(g.world.player.body))
+			testing.expect(t,b2.World_GetCounters(g.world.scene.physics.world).bodyCount==i32(physics_body_count(&g.world.scene)+2))
+			expect_packed_storage(t,&g.world.scene); sandbox_destroy(&g)
 		}
 	}
- g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=.Stone
+ g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=recipe_slot(.Stone)
  assert(editor_place(&g,{0,0},{0.8,0.8})); sandbox_toggle_editor(&g)
- id:=g.scene.subdivisions[0].id; body:=subdivision_body(&g.scene,id)
-	b2.Body_SetTransform(body,to_b2(vsub(Vec2{0,YARD_FLOOR_BOTTOM-2.1},g.scene.subdivisions[g.scene.sub_rows[id]].rest_center)),b2.MakeRot(0))
+ id:=g.world.scene.subdivisions[0].id; body:=subdivision_body(&g.world.scene,id)
+	b2.Body_SetTransform(body,to_b2(vsub(Vec2{0,YARD_FLOOR_BOTTOM-2.1},g.world.scene.subdivisions[g.world.scene.sub_rows[id]].rest_center)),b2.MakeRot(0))
 	sandbox_tick(&g,0,false)
-	testing.expect(t,!is_live_subdivision(&g.scene,id) && !b2.Body_IsValid(body),"A normal yard tick must clean up escaped bodies")
-	expect_packed_storage(t,&g.scene)
+	testing.expect(t,!is_live_subdivision(&g.world.scene,id) && !b2.Body_IsValid(body),"A normal yard tick must clean up escaped bodies")
+	expect_packed_storage(t,&g.world.scene)
 }
 @(test)
 soak_rebuild_keeps_scene_world_stream_and_monotonic_ids :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
 	g:=soak_yard(); defer sandbox_destroy(&g)
-	sandbox_set_blast_mode(&g,.Falling_Bombs)
-	world,base,player:=g.scene.physics.world,g.floor,g.player.body
+	sandbox_fixture_mode(&g,.Falling_Bombs)
+	world,base,player:=g.world.scene.physics.world,g.world.floor,g.world.player.body
 	bomb_spawn(&g,{7,6})
-	bomb:=g.bomb_rain.bombs[0].body
-	random,delay:=g.bomb_rain.random,g.bomb_rain.until_drop
-	initial_regions,initial_links,initial_pieces:=counts_runtime(&g.scene)
+	bomb:=g.world.bombs[0].body
+	random,delay:=g.world.rain.random,g.world.rain.until_drop
+	initial_regions,initial_links,initial_pieces:=counts_runtime(&g.world.scene)
 	for _ in 0..<4 {
 		sandbox_explode(&g,{0,0.6})
 		old_ids: [dynamic]u64
-		for sub in g.scene.subdivisions { append(&old_ids,sub.id) }
-		last_id:=g.scene.next_id
+		for sub in g.world.scene.subdivisions { append(&old_ids,sub.id) }
+		last_id:=g.world.scene.next_id
 		b2.Body_SetTransform(player,{0,-2},b2.MakeRot(0)); b2.Body_SetLinearVelocity(player,{2,-2})
 		soak_rebuild_layout(&g)
-		testing.expect(t,g.scene.physics.world==world && g.floor==base && g.player.body==player)
-		testing.expect(t,g.bomb_rain.random==random && g.bomb_rain.until_drop==delay && g.bomb_rain.bombs[0].body==bomb)
-		testing.expect(t,len(g.scene.materials)==5 && len(g.editor.objects)==4 && g.scene.next_id>last_id)
-		for id in old_ids { testing.expect(t,!is_live_subdivision(&g.scene,id)) }; delete(old_ids)
-		for sub in g.scene.subdivisions { testing.expect(t,sub.id>last_id) }
-		a,b,c:=counts_runtime(&g.scene)
+		testing.expect(t,g.world.scene.physics.world==world && g.world.floor==base && g.world.player.body==player)
+		testing.expect(t,g.world.rain.random==random && g.world.rain.until_drop==delay && g.world.bombs[0].body==bomb)
+		testing.expect(t,len(g.world.scene.materials)==5 && len(g.layout.objects)==4 && g.world.scene.next_id>last_id)
+		for id in old_ids { testing.expect(t,!is_live_subdivision(&g.world.scene,id)) }; delete(old_ids)
+		for sub in g.world.scene.subdivisions { testing.expect(t,sub.id>last_id) }
+		a,b,c:=counts_runtime(&g.world.scene)
 		testing.expect(t,a==initial_regions && b==initial_links && c==initial_pieces)
 		testing.expect(t,from_b2(b2.Body_GetPosition(player))==PLAYER_SPAWN && from_b2(b2.Body_GetLinearVelocity(player))==Vec2{})
-		testing.expect(t,b2.World_GetCounters(world).bodyCount==i32(physics_body_count(&g.scene)+3))
-		expect_packed_storage(t,&g.scene)
+		testing.expect(t,b2.World_GetCounters(world).bodyCount==i32(physics_body_count(&g.world.scene)+3))
+		expect_packed_storage(t,&g.world.scene)
 	}
 }
 @(test)

@@ -1,4 +1,5 @@
 package main
+import "core:time"
 
 import b2 "vendor:box2d"
 import "core:math"
@@ -9,6 +10,7 @@ Physics :: struct {
  synced: bool,
  anchor_y: f32,
  active: bool,
+ mortar_breaking: bool,
 }
 PHYSICS_SUBSTEPS :: 4
 GLOBAL_DAMPING :: f32(0.7)
@@ -21,7 +23,7 @@ physics_init :: proc(s: ^Scene, gravity: Vec2 = {}, anchor_y: f32 = -1e30) {
  def.gravity = to_b2(gravity)
  // Hit events are evaluated every step in Box2D 3.1.1, not just on begin.
  def.hitEventThreshold = 0
- s.physics = Physics{world=b2.CreateWorld(def),anchor_y=anchor_y,active=true}
+ s.physics = Physics{world=b2.CreateWorld(def),anchor_y=anchor_y,active=true,mortar_breaking=true}
  physics_sync_structure(s)
 }
 physics_destroy :: proc(s: ^Scene) {
@@ -51,6 +53,8 @@ physics_shape_def :: proc(id: u64) -> b2.ShapeDef {
  return def
 }
 physics_create_fixture :: proc(s: ^Scene, body: b2.BodyId, sub: Subdivision, outline: Polygon) -> bool {
+
+
  points: [dynamic]b2.Vec2; defer delete(points)
  offset:=Vec2{}
  if s.materials[sub.material].flexibility>0 { offset=sub.rest_center }
@@ -58,6 +62,7 @@ physics_create_fixture :: proc(s: ^Scene, body: b2.BodyId, sub: Subdivision, out
  hull:=b2.ComputeHull(points[:])
  // Hull welding can collapse a thin ear below Box2D's collision tolerance.
  if hull.count<3 { return false }
+ when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
  shape:=b2.CreatePolygonShape(body,physics_shape_def(sub.id),b2.MakePolygon(hull,0))
  append(&s.subdivisions[s.sub_rows[sub.id]].shapes,shape)
  s.subdivisions[s.sub_rows[sub.id]].fixture_count+=1
@@ -78,7 +83,8 @@ physics_create_region_shapes :: proc(s: ^Scene,id: u64,body: b2.BodyId) {
   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
   for rest in sub.outline.points { p:=vsub(rest,offset); lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
   polygon:=b2.MakeOffsetBox(max(f32(0.0025),(hi.x-lo.x)*0.5),max(f32(0.0025),(hi.y-lo.y)*0.5),to_b2(vmul(vadd(lo,hi),0.5)),b2.MakeRot(0))
-  shape:=b2.CreatePolygonShape(body,physics_shape_def(id),polygon)
+  when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
+ shape:=b2.CreatePolygonShape(body,physics_shape_def(id),polygon)
   append(&s.subdivisions[s.sub_rows[id]].shapes,shape)
   s.subdivisions[s.sub_rows[id]].fixture_count=1
  }
@@ -159,6 +165,8 @@ physics_finish_piece_mass :: proc(s: ^Scene,p: ^Piece) {
 }
 // Bodies use the shared rest origin for rigid pieces, region centres for soft cells.
 physics_new_body :: proc(s: ^Scene,sub: Subdivision,kind: b2.BodyType,rigid: bool,frame: b2.Transform = {},has_frame: bool = false) -> b2.BodyId {
+ when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[2]+=1 } }
+
  def:=b2.DefaultBodyDef(); def.type=kind
  position:=sub.pose.position
  if rigid { position=vsub(position,vrotate(sub.rest_center,sub.pose.angle)) }
@@ -172,6 +180,8 @@ physics_new_body :: proc(s: ^Scene,sub: Subdivision,kind: b2.BodyType,rigid: boo
 }
 // This runs only between steps. Regrouping transfers one rigid body to its largest group.
 physics_sync_structure :: proc(s: ^Scene) {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(7,started) }
+
  if !s.physics.active || (s.physics.synced && s.physics.synced_revision==s.structure_revision) { return }
  s.physics.synced=true; s.physics.synced_revision=s.structure_revision
  clear(&s.pending_regions)
@@ -231,6 +241,19 @@ physics_sync_structure :: proc(s: ^Scene) {
  for id in ids {
   c:=s.connections[s.conn_rows[id]]
   a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
+  if c.mortar {
+   static_pair:=b2.Body_GetType(a.body)==.staticBody && b2.Body_GetType(b.body)==.staticBody
+   valid:=c.joint!=b2.nullJointId && b2.Joint_IsValid(c.joint)
+   if static_pair { if valid { b2.DestroyJoint(c.joint) }; s.connections[s.conn_rows[id]].joint={}; continue }
+   if valid && b2.Joint_GetBodyA(c.joint)==a.body && b2.Joint_GetBodyB(c.joint)==b.body { continue }
+   if valid { b2.DestroyJoint(c.joint) }
+   def:=b2.DefaultWeldJointDef(); def.bodyIdA=a.body; def.bodyIdB=b.body
+   def.localAnchorA=to_b2(mortar_local_anchor(s,a,c.rest_point))
+   def.localAnchorB=to_b2(mortar_local_anchor(s,b,c.rest_point))
+   def.referenceAngle=0; def.linearHertz=0; def.angularHertz=0
+   s.connections[s.conn_rows[id]].joint=b2.CreateWeldJoint(s.physics.world,def)
+   continue
+  }
   flexibility:=max(s.materials[a.material].flexibility,s.materials[b.material].flexibility)
   static_pair:=b2.Body_GetType(a.body)==.staticBody && b2.Body_GetType(b.body)==.staticBody
   if c.joint!=b2.nullJointId && (flexibility==0 || static_pair) { b2.DestroyJoint(c.joint); s.connections[s.conn_rows[id]].joint={}; continue }
@@ -242,14 +265,6 @@ physics_sync_structure :: proc(s: ^Scene) {
   def.linearDampingRatio=GLOBAL_DAMPING; def.angularDampingRatio=GLOBAL_DAMPING
   s.connections[s.conn_rows[id]].joint=b2.CreateWeldJoint(s.physics.world,def)
  }
- // Static neighbours can belong to separate logical pieces.
- signature:=u64(0)
- for p in s.pieces {
-  if len(p.subdivisions)==0 { continue }
-  sub:=s.subdivisions[s.sub_rows[p.subdivisions[0]]]
-  if sub.body!=b2.nullBodyId && b2.Body_GetType(sub.body)==.staticBody { signature+=p.id*0x9e3779b185ebca87+(p.render_revision+1)*0xc2b2ae3d27d4eb4f }
- }
- if signature!=s.static_render_signature { s.static_render_signature=signature; s.static_render_revision+=1 }
  physics_read_motion(s)
 }
 apply_blast_motion :: proc(s: ^Scene, sub: ^Subdivision, direction: Vec2, load: f32) {
@@ -282,6 +297,7 @@ calculate_physics_loads :: proc(s: ^Scene, dt: f32) -> Failures {
 	failures := Failures{impact=true}
 	loads := make(map[u64]f32)
 	defer delete(loads)
+ points:map[u64]Vec2; defer delete(points)
 	events:=b2.World_GetContactEvents(s.physics.world)
 	for hit in events.hitEvents[:events.hitCount] {
 		a,b:=b2.Shape_GetBody(hit.shapeIdA),b2.Shape_GetBody(hit.shapeIdB)
@@ -293,24 +309,35 @@ calculate_physics_loads :: proc(s: ^Scene, dt: f32) -> Failures {
 			if !exists || !s.subdivisions[row].live { continue }
 			sub:=s.subdivisions[row]
 			load:=contact_damage_load(s,body,bodies[1-i],hit.approachSpeed,s.materials[sub.material].impact_scale)
+   if s.materials[sub.material].shock_loss>0 {
+    if points==nil { points=make(map[u64]Vec2) }
+    point:=from_b2(hit.point); previous,has_point:=points[id]
+    if !has_point || load>loads[id] || load==loads[id] && (point.x<previous.x || point.x==previous.x && point.y<previous.y) { points[id]=point }
+   }
 			loads[id]=max(loads[id],load)
 		}
 	}
+ if s.physics.mortar_breaking { mortar_force_failures(s,&failures) }
+
 	for sub in s.subdivisions {
 		if sub.seed==0 && sub.width>s.minimum_width { continue }
-		if sub.live && fails(loads[sub.id],s.materials[sub.material].subdivision_strength) { append(&failures.subdivisions,sub.id) }
+		if sub.live && fails(loads[sub.id],s.materials[sub.material].subdivision_strength) {
+   append(&failures.subdivisions,sub.id)
+   if s.materials[sub.material].shock_loss>0 { append(&failures.impact_sources,Impact_Shock_Source{sub.id,points[sub.id],loads[sub.id]}) }
+  }
 	}
 	return failures
 }
 Load_Calculator :: #type proc(s: ^Scene,dt: f32) -> Failures
 physics_tick :: proc(s: ^Scene, dt: f32,calculate_loads: Load_Calculator = calculate_physics_loads) {
+ when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_physics_ms+=frame_ms(frame_start) } } }
+
 	assert(s.physics.active && dt > 0)
 	physics_sync_structure(s)
 	b2.World_Step(s.physics.world,dt,PHYSICS_SUBSTEPS)
 	physics_read_motion(s)
 	failures := calculate_loads(s,dt)
 	apply_failures(s,failures)
-	delete(failures.subdivisions); delete(failures.connections)
-	delete(failures.discard_subdivisions)
+	free_failures(&failures)
 	physics_sync_structure(s)
 }

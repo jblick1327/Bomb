@@ -90,7 +90,8 @@ pick_connection :: proc(s: ^Scene,point: Vec2,max_distance: f32) -> u64 {
 	for c in s.connections { if c.live { d:=vlen(vsub(point,connection_sample(s,c))); if d<distance || (best!=0 && d==distance && c.id<best) { distance=d; best=c.id } } }
 	return best
 }
-draw_scene :: proc(s: ^Scene,view: View,poses: map[u64]Pose,selected: u64,surface,joints: bool,ids: bool = true,material_colors: bool = false,outline_width: f32 = 2,piece_frames: map[u64]Pose = nil) {
+draw_scene :: proc(s: ^Scene,caches: ^Render_Cache_State,view: View,poses: map[u64]Pose,selected: u64,surface,joints: bool,ids: bool = true,material_colors: bool = false,outline_width: f32 = 2,piece_frames: map[u64]Pose = nil) {
+	render_cache_prepass(s,caches)
 	frames:=piece_frames
 	if frames==nil { frames=render_piece_frames(s,poses) }
 	defer { if piece_frames==nil { delete(frames) } }
@@ -101,31 +102,49 @@ draw_scene :: proc(s: ^Scene,view: View,poses: map[u64]Pose,selected: u64,surfac
  // Fill and seal every region before any outline can be painted over.
  outlines:=make([]Polygon,len(ids_order))
  defer { for outline in outlines { delete(outline.points) }; delete(outlines) }
+ hubs:=make([]Vec2,len(ids_order)); defer delete(hubs)
  for id,i in ids_order {
   sub:=s.subdivisions[s.sub_rows[id]]
-  hub:Vec2
-  outlines[i]=render_outline(s,sub,poses,surface,frames,&hub)
-  fill:=piece_color(sub.owner,210)
-  if material_colors { fill=editor_color(s.materials[sub.material].name) }
-  draw_cached_fill(view,outlines[i],fill,ensure_render_cache(s,id),hub)
+  outlines[i]=render_outline(s,caches,sub,poses,surface,frames,&hubs[i])
  }
- if material_colors { for id,i in ids_order {
+ // Paint the supporting floor before objects: its 1px boundary seal must not
+ // paint over the bottom of a darker object resting on that boundary.
+ textured:=material_colors && !ids && material_texture.id!=0
+ for pass in 0..<2 {
+  if textured { texture_begin() }
+  for id,i in ids_order {
+   sub:=s.subdivisions[s.sub_rows[id]]; if render_static(sub)!=(pass==0) { continue }
+   fill:=piece_color(sub.owner,210)
+   if textured {
+    m:=s.materials[sub.material]; vertical:=false
+    if m.aspect_ratio<1 { _,_,axis,_,_:=frame_grain(sub.outline,sub.frame); vertical=axis==1 }
+    texture_cached_fill(view,outlines[i],hubs[i],&caches.cells[id],m,vertical,sub.frame)
+   } else { draw_cached_fill(view,outlines[i],fill,&caches.cells[id],hubs[i]) }
+  }
+  if textured {
+   texture_end()
+   for id,i in ids_order { sub:=s.subdivisions[s.sub_rows[id]]; if render_static(sub)==(pass==0) { draw_cached_strokes(view,outlines[i],material_color(s.materials[sub.material]),1,&caches.cells[id],false) } }
+  }
+ }
+ if material_colors && surface { draw_rubber_bands(s,caches,view,outlines,ids_order[:],selected,outline_width) }
+ if material_colors && !surface { for id,i in ids_order {
   sub:=s.subdivisions[s.sub_rows[id]]
   if s.materials[sub.material].flexibility<=0 { continue }
   film:=FILM_COLOR; if id==selected { film={255,255,255,255} }
-  draw_cached_film(view,outlines[i],film,outline_width,ensure_render_cache(s,id))
+  draw_cached_film(view,outlines[i],film,outline_width,&caches.cells[id])
  } }
  // All inspection outlines sit above the film, including adjacent cells'.
  for id,i in ids_order {
   sub:=s.subdivisions[s.sub_rows[id]]
   if material_colors && s.materials[sub.material].flexibility>0 && !ids { continue }
   stroke:=rl.Color{202,220,231,255}; if id==selected { stroke={255,255,255,255} }
-  draw_cached_strokes(view,outlines[i],stroke,outline_width,ensure_render_cache(s,id),ids)
+  draw_cached_strokes(view,outlines[i],stroke,outline_width,&caches.cells[id],ids)
  }
+ draw_mortar(s,view,poses,frames,outline_width)
  if ids { for id in ids_order {
   sub:=render_subdivision(s,s.subdivisions[s.sub_rows[id]],poses,frames)
   center:=screen_point(view,sub.pose.position)
-  rl.DrawText(rl.TextFormat("%d",id),i32(center.x)-5,i32(center.y)-23,16,rl.Color{16,29,40,255})
+  ui_text(.Body,rl.TextFormat("%d",id),i32(center.x)-5,i32(center.y)-23,rl.Color{16,29,40,255})
  } }
 	if joints {
 		clear(&ids_order)
@@ -139,7 +158,7 @@ draw_scene :: proc(s: ^Scene,view: View,poses: map[u64]Pose,selected: u64,surfac
 			rl.DrawLineEx(screen_point(view,a.pose.position),screen_point(view,b.pose.position),2,color)
 			rl.DrawCircleV(screen_point(view,anchor),5,color)
 			p:=screen_point(view,anchor)
-			rl.DrawText(rl.TextFormat("c%d",c.id),i32(p.x)+7,i32(p.y)+7,14,color)
+			ui_text(.Small,rl.TextFormat("c%d",c.id),i32(p.x)+7,i32(p.y)+7,color)
 		}
 	}
 }

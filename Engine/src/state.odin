@@ -14,8 +14,17 @@ Wire_Material :: struct {
 	generation_count: int,
 	aspect_ratio: f32,
 	triangulate: bool,
+ blast_resistance: union { f32 } `json:"blast_resistance,omitempty"`,
+ shock_loss: union { f32 } `json:"shock_loss,omitempty"`, // Disabled/legacy stays absent.
+ strip_thickness: union { f32 } `json:"strip_thickness,omitempty"`,
+ color: union { [3]u8 } `json:"color,omitempty"`,
 }
-Wire_Connection :: struct { id,a,b: u64 }
+Wire_Connection :: struct {
+ id,a,b: u64,
+ glue:[]Glue_Sample `json:"glue,omitempty"`,
+ mortar: union { bool } `json:"mortar,omitempty"`,
+ overload_ticks: union { u8 } `json:"overload_ticks,omitempty"`,
+}
 Snapshot :: struct {
 	version: int,
 	next_id: u64,
@@ -66,7 +75,8 @@ validate_scene :: proc(s: ^Scene) -> (bool,string) {
 	for sub in s.subdivisions {
 		if !sub.live { continue }
 		if membership[sub.id] != 1 { return false,"subdivision must belong to exactly one piece" }
-		if len(sub.outline.points) < 3 || polygon_area(sub.outline) <= 0 { return false,"invalid polygon" }
+		if !finite(sub.frame) { return false,"invalid subdivision frame" }
+  if len(sub.outline.points) < 3 || polygon_area(sub.outline) <= 0 { return false,"invalid polygon" }
 		for point in sub.outline.points { if !valid_vec(point) { return false,"invalid polygon coordinate" } }
 		if !valid_vec(sub.pose.position) || !valid_vec(sub.pose.velocity) || !finite(sub.pose.angle) || !finite(sub.pose.angular_velocity) { return false,"invalid motion" }
 	}
@@ -75,6 +85,12 @@ validate_scene :: proc(s: ^Scene) -> (bool,string) {
 		a_row,a_ok := s.sub_rows[c.a]; b_row,b_ok := s.sub_rows[c.b]
 		if !a_ok || !b_ok { return false,"missing endpoint" }
 		a,b := s.subdivisions[a_row],s.subdivisions[b_row]
+  if len(c.glue)>0 { if reason:=validate_glue_samples(c,a,b);reason!="" { return false,reason } }
+  if c.mortar {
+   if !a.live || !b.live || a.owner==b.owner { return false,"invalid mortar endpoints" }
+   for p in s.pieces { if contains_id(p.connections[:],c.id) { return false,"mortar in piece connections" } }
+   continue
+  }
 		if !a.live || !b.live || a.owner != b.owner { return false,"invalid live connection endpoints" }
 		p := s.pieces[s.piece_rows[a.owner]]
 		if !contains_id(p.connections[:],c.id) { return false,"connection absent from its piece" }
@@ -87,6 +103,10 @@ read_state :: proc(s: ^Scene) -> Snapshot {
 	out := Snapshot{version=2,next_id=s.next_id,revision=s.revision,minimum_width=s.minimum_width}
 	for m in s.materials {
 		wire := Wire_Material{impact_scale=m.impact_scale,name=m.name,subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate}
+  if transmute(u32)m.blast_resistance!=0 { wire.blast_resistance=m.blast_resistance }
+  if transmute(u32)m.shock_loss!=0 { wire.shock_loss=m.shock_loss }
+  if m.aspect_ratio<1 && m.strip_thickness!=0.3 { wire.strip_thickness=m.strip_thickness }
+  if m.color!=snapshot_legacy_color(m.name) { wire.color=m.color }
 		if math.is_inf(m.subdivision_strength) { wire.subdivision_infinite=true; wire.subdivision_strength=0 }
 		if math.is_inf(m.connection_strength) { wire.connection_infinite=true; wire.connection_strength=0 }
 		append(&out.materials,wire)
@@ -99,7 +119,11 @@ read_state :: proc(s: ^Scene) -> Snapshot {
 	clear(&ids)
 	for c in s.connections { if c.live { append(&ids,c.id) } }
 	sort_ids(ids[:])
-	for id in ids { c:=s.connections[s.conn_rows[id]]; append(&out.connections,Wire_Connection{c.id,c.a,c.b}) }
+	for id in ids {
+  c:=s.connections[s.conn_rows[id]]; wire:=Wire_Connection{id=c.id,a=c.a,b=c.b,glue=c.glue[:]}
+  if c.mortar { wire.mortar=true }; if c.overload_ticks!=0 { wire.overload_ticks=c.overload_ticks }
+  append(&out.connections,wire)
+ }
 	clear(&ids)
 	for p in s.pieces { if p.live { append(&ids,p.id) } }
 	sort_ids(ids[:])
@@ -113,12 +137,16 @@ release_state_view :: proc(snapshot: ^Snapshot) {
 encode_snapshot :: proc(s: ^Scene) -> ([]byte,bool) {
 	view := read_state(s)
 	defer release_state_view(&view)
-	data,err := json.marshal(view,{pretty=true})
+	wire:=Legacy_Scene_Wire{version=view.version,next_id=view.next_id,revision=view.revision,minimum_width=view.minimum_width,materials=view.materials,connections=view.connections,pieces=view.pieces}
+ defer delete(wire.subdivisions)
+ for sub in view.subdivisions { item:=Snapshot_Cell{id=sub.id,owner=sub.owner,material=sub.material,seed=sub.seed,outline=sub.outline,rest_center=sub.rest_center,pose=sub.pose,live=sub.live};if sub.frame!=0 { item.frame=sub.frame };append(&wire.subdivisions,item) }
+ data,err := json.marshal(wire,{pretty=true})
 	return data,err == nil
 }
 destroy_decoded_snapshot :: proc(snapshot: ^Snapshot) {
 	for m in snapshot.materials { delete(m.name) }
-	for sub in snapshot.subdivisions { delete(sub.outline.points) }
+	for c in snapshot.connections { delete(c.glue) }
+ for sub in snapshot.subdivisions { delete(sub.outline.points) }
 	for p in snapshot.pieces { delete(p.subdivisions); delete(p.connections) }
 	release_state_view(snapshot)
 }
@@ -126,6 +154,9 @@ decode_snapshot :: proc(data: []byte) -> (Scene,bool) {
 	wire := Snapshot{}
 	defer destroy_decoded_snapshot(&wire)
 	if err := json.unmarshal(data,&wire); err != nil { return {},false }
+ return decode_scene_state(&wire)
+}
+decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
 	if (wire.version != 1 && wire.version != 2) || !finite(wire.minimum_width) || wire.minimum_width < 0 { return {},false }
 	s := new_scene(wire.minimum_width)
 	s.next_id = wire.next_id
@@ -139,8 +170,20 @@ decode_snapshot :: proc(data: []byte) -> (Scene,bool) {
 		impact_scale:=f32(1)
 		if value,exists:=m.impact_scale.(f32); exists { impact_scale=value }
 		if !finite(impact_scale) || impact_scale<0 { return {},false }
-		material := make_material(impact_scale=impact_scale,name=strings.clone(m.name),subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate)
-		append(&s.owned_names,material.name)
+  blast_resistance:=f32(0)
+  if value,exists:=m.blast_resistance.(f32); exists { blast_resistance=value }
+  if !finite(blast_resistance) || blast_resistance<0 { return {},false }
+  shock_loss:=f32(0)
+  if value,exists:=m.shock_loss.(f32); exists { shock_loss=value }
+  if !finite(shock_loss) || shock_loss<0 { return {},false }
+  strip:=f32(0); if m.aspect_ratio<1 { strip=0.3 }
+  if v,present:=m.strip_thickness.(f32); present {
+   if m.aspect_ratio>=1 || !finite(v) || v<=0 { return {},false }; strip=v
+  }
+  color:=snapshot_legacy_color(m.name)
+  if v,present:=m.color.([3]u8); present { color=v }
+		material := make_material(strip_thickness=strip,color=color,blast_resistance=blast_resistance,impact_scale=impact_scale,shock_loss=shock_loss,name=strings.clone(m.name),subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate)
+  append(&s.owned_names,material.name)
 		if m.subdivision_infinite { material.subdivision_strength = math.inf_f32(1) }
 		if m.connection_infinite { material.connection_strength = math.inf_f32(1) }
 		add_material(&s,material)
@@ -164,6 +207,7 @@ decode_snapshot :: proc(data: []byte) -> (Scene,bool) {
 			sub.seed=s.pieces[owner].seed
 		}
 		retain_subdivision(&s,sub)
+        s.subdivisions[s.sub_rows[sub.id]].rest_center=sub.rest_center
 		if row,exists:=s.piece_rows[sub.owner]; exists { s.pieces[row].mass+=polygon_area(sub.outline) }
 	}
 	for c in wire.connections {
@@ -173,12 +217,18 @@ decode_snapshot :: proc(data: []byte) -> (Scene,bool) {
 		if !a_ok || !b_ok || c.a == c.b { return {},false }
 		a,b := s.subdivisions[a_row],s.subdivisions[b_row]
 		length,point := shared_boundary(a.outline,b.outline)
-		if length <= 0 { return {},false }
+		if len(c.glue)>0 {
+   temp:=Connection{glue=nil};append(&temp.glue,..c.glue); length,point=seam_geometry(temp);delete(temp.glue)
+  } else if length <= 0 { return {},false }
 		if _,duplicate:=s.connection_pairs[pair_key(c.a,c.b)]; duplicate { return {},false }
 		s.connection_pairs[pair_key(c.a,c.b)]=c.id
 		append(&s.subdivisions[a_row].incident_links,c.id); append(&s.subdivisions[b_row].incident_links,c.id)
 		s.conn_rows[c.id]=len(s.connections)
-		append(&s.connections,Connection{id=c.id,a=c.a,b=c.b,rest_point=point,local_a=vsub(point,a.rest_center),local_b=vsub(point,b.rest_center),live=true})
+		mortar:=false; overload_ticks:=u8(0)
+  if value,exists:=c.mortar.(bool); exists { mortar=value }
+  if value,exists:=c.overload_ticks.(u8); exists { overload_ticks=value }
+		append(&s.connections,Connection{mortar=mortar,overload_ticks=overload_ticks,id=c.id,a=c.a,b=c.b,rest_point=point,local_a=vsub(point,a.rest_center),local_b=vsub(point,b.rest_center),rest_segments=shared_segments(a.outline,b.outline),live=true})
+  if len(c.glue)>0 { target:=&s.connections[len(s.connections)-1];delete(target.rest_segments);target.rest_segments=nil;append(&target.glue,..c.glue) }
 	}
 	if valid,_ := validate_scene(&s); !valid { return {},false }
 	ok = true
@@ -215,4 +265,27 @@ interpolate_region_pose :: proc(s: ^Scene,sub: Subdivision,old: Pose,alpha: f32)
  pose:=interpolate_pose(a,b,alpha)
  pose.position=vadd(pose.position,vrotate(sub.rest_center,pose.angle))
  return pose
+}
+
+
+@(private="file")
+snapshot_legacy_color :: proc(name:string)->[3]u8 {
+ switch name {
+ case "wood":return {180,136,82}
+ case "glass":return {86,153,174}
+ case "rubber":return {162,112,184}
+ }
+ return {131,145,152}
+}
+
+// The legacy scene writer uses fixed decimal formatting; optional scalar fields
+// use presence unions because the standard writer does not omit numeric zero.
+Snapshot_Cell :: struct {
+ frame:union { f32 } `json:"frame,omitempty"`,
+ id,owner:u64, material:int, seed:u8, outline:Polygon, rest_center:Vec2,pose:Pose,live:bool,
+}
+Legacy_Scene_Wire :: struct {
+ version:int,next_id,revision:u64,minimum_width:f32,
+ materials:[dynamic]Wire_Material,subdivisions:[dynamic]Snapshot_Cell,
+ connections:[dynamic]Wire_Connection,pieces:[dynamic]Piece,
 }

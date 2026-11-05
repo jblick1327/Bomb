@@ -103,9 +103,9 @@ rigid_off_centre_blast_has_expected_angular_impulse :: proc(t: ^testing.T) {
 
 Rigid_Bounce :: struct { rebound,rest_error: f32, mean_ms,max_ms: f64, regions: int }
 rigid_bounce :: proc(size: Vec2,split: bool) -> Rigid_Bounce {
- g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=.Stone
+ g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=recipe_slot(.Stone)
  assert(editor_place(&g,{0,0},size)); sandbox_toggle_editor(&g)
- s:=&g.scene
+ s:=&g.world.scene
  if !split {
   f:=Failures{}
   for sub in s.subdivisions { if sub.material!=0 { append(&f.discard_subdivisions,sub.id) } }
@@ -170,7 +170,7 @@ rigid_refinement_keeps_body_and_surviving_shapes :: proc(t: ^testing.T) {
 @(test)
 rigid_partial_cleanup_updates_shared_shapes_and_mass :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
- g:=Sandbox{scene=new_scene(0)}; defer sandbox_destroy(&g); s:=&g.scene
+ g:=Sandbox{world=World{scene=new_scene(0)}}; defer sandbox_destroy(&g); s:=&g.world.scene
  m:=add_material(s,editor_material(.Stone)); p:=add_piece(s,m,0)
  previous:=u64(0); first:=u64(0)
  for y in 0..<3 {

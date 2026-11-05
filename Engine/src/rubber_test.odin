@@ -9,8 +9,11 @@ import b2 "vendor:box2d"
 
 @(test)
 rubber_bend_skin_is_continuous_smooth_and_render_only :: proc(t: ^testing.T) {
+ cache_state:=Render_Cache_State{}; defer release_render_caches(&cache_state)
+ caches:=&cache_state
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  s:=rubber_bend_scene(); defer scene_destroy(&s)
+ render_cache_prepass(&s,caches)
  before,ok:=encode_snapshot(&s); defer delete(before); testing.expect(t,ok)
  poses:=make(map[u64]Pose); defer delete(poses)
  for sub in s.subdivisions { poses[sub.id]=sub.pose }
@@ -19,9 +22,9 @@ rubber_bend_skin_is_continuous_smooth_and_render_only :: proc(t: ^testing.T) {
  top:[dynamic]Top_Point; defer delete(top)
  repeats,mismatches:=0,0; deviation,max_turn:f32
  for sub in s.subdivisions {
-  cache:=ensure_render_cache(&s,sub.id)
-  outline:=render_outline(&s,sub,poses,true); defer delete(outline.points)
-  raw:=render_outline(&s,sub,poses,false); defer delete(raw.points)
+  cache:=&caches.cells[sub.id]
+  outline:=render_outline(&s,caches,sub,poses,true); defer delete(outline.points)
+  raw:=render_outline(&s,caches,sub,poses,false); defer delete(raw.points)
   for rest,i in cache.outline.points {
    point:=outline.points[i]; bits:=transmute(u64)point
    if previous,found:=seen[rest]; found { repeats+=1; if previous!=bits { mismatches+=1 } } else { seen[rest]=bits }
@@ -54,7 +57,7 @@ finished_strip_impacts_leave_revision_and_regions_unchanged :: proc(t: ^testing.
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  g:=sandbox_editor_create(); defer sandbox_destroy(&g)
  sandbox_toggle_editor(&g)
- s:=&g.scene; m:=add_material(s,editor_material(.Wood)); owner:=add_piece(s,m,0)
+ s:=&g.world.scene; m:=add_material(s,editor_material(.Wood)); owner:=add_piece(s,m,0)
  points:=[4]Vec2{{1.5,0.5},{1.9,0.5},{1.9,0.65},{1.5,0.65}}; p:=Polygon{points=points[:]}
  id:=add_subdivision(s,owner,p,Pose{position=centroid(p)})
  physics_sync_structure(s)

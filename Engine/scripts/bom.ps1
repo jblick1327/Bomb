@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('Run', 'Build', 'Test', 'Smoke', 'SmokeInput', 'Soak')]
+    [ValidateSet('Run', 'Build', 'Test', 'Smoke', 'SmokeInput', 'SmokeEditor', 'SmokeMaterials', 'Soak')]
     [string]$Task = 'Run'
 )
 
@@ -20,6 +20,8 @@ try {
         $runtimeFlags = @{
             Smoke = '--smoke'
             SmokeInput = '--smoke-input'
+            SmokeEditor = '--smoke-editor'
+            SmokeMaterials = '--smoke-materials'
             Soak = '--soak'
         }
         $odinArguments = @('run', 'src', '-out:build/BOM.exe')

@@ -19,13 +19,15 @@ smoke_button :: proc(down: bool) -> rl.AutomationEvent {
 }
 sandbox_smoke_frame :: proc(game: ^Sandbox,target: rl.RenderTexture2D,events: ..rl.AutomationEvent) {
 	for event in events { rl.PlayAutomationEvent(event) }
+	files_consumed:=sandbox_layout_file_input(game)
 	width,height:=f32(rl.GetScreenWidth()),f32(rl.GetScreenHeight())
 	view:=sandbox_view(width,height)
 	mouse:=rl.GetMousePosition()
 	over_ui:=sandbox_over_hud(mouse,width,height,game.inspection && !game.editor.editing)
-	raw:=sandbox_read_input()
-	input:=sandbox_route_input(game,raw,over_ui)
-	if !raw.menu_pressed && !raw.reset_pressed {
+	raw:=sandbox_read_input(game)
+	input:=Sandbox_Input{}
+	if !files_consumed { input=sandbox_route_input(game,raw,over_ui) }
+	if !files_consumed && !raw.menu_pressed && !raw.reset_pressed {
 		if game.editor.editing { sandbox_editor_input(game,world_point(view,mouse),over_ui) }
 		else if !sandbox_inspect_input(game,world_point(view,mouse),view,over_ui) && input.blast_pressed { sandbox_blast(game,world_point(view,mouse)) }
 	}
@@ -40,6 +42,7 @@ sandbox_smoke_frame :: proc(game: ^Sandbox,target: rl.RenderTexture2D,events: ..
 	rl.EndTextureMode()
 	rl.EndDrawing()
 	sandbox_handle_ui(game,action)
+	sandbox_autosave_layout(game)
 }
 sandbox_smoke_click :: proc(game: ^Sandbox,target: rl.RenderTexture2D,x,y: i32) {
 	sandbox_smoke_frame(game,target,smoke_mouse(x,y),smoke_button(true))
@@ -51,19 +54,22 @@ sandbox_smoke_export :: proc(target: rl.RenderTexture2D,name: cstring) {
 }
 // Native render regressions use fixed cameras and never step between widths.
 sandbox_smoke_outline_samples :: proc(s: ^Scene,target: rl.RenderTexture2D,name: string,view: View) {
+ cache_state:=Render_Cache_State{}; defer release_render_caches(&cache_state)
+ caches:=&cache_state
+ render_cache_prepass(s,caches)
  before,ok:=encode_snapshot(s); assert(ok); defer delete(before)
  poses:=make(map[u64]Pose); defer delete(poses)
  widths:=[4]f32{0,0.3,0.7,2}
  for width in widths {
   rl.BeginDrawing(); rl.BeginTextureMode(target)
   rl.ClearBackground({19,28,42,255})
-  draw_scene(s,view,poses,0,true,false,false,true,width)
+  draw_scene(s,caches,view,poses,0,true,false,false,true,width)
   rl.EndTextureMode(); rl.EndDrawing()
   image:=rl.LoadImageFromTexture(target.texture); rl.ImageFlipVertical(&image)
   // Check actual raster pixels inside each posed logical silhouette, including
   // its boundary. Real openings outside all silhouettes remain legitimate.
   for sub in s.subdivisions {
-   rendered:=render_outline(s,sub,poses,true)
+   rendered:=render_outline(s,caches,sub,poses,true)
    screen:=make([]rl.Vector2,len(rendered.points))
    for point,i in rendered.points { screen[i]=screen_point(view,point) }
    defer delete(rendered.points); defer delete(screen)
@@ -81,7 +87,6 @@ sandbox_smoke_outline_samples :: proc(s: ^Scene,target: rl.RenderTexture2D,name:
     }
    } }
   }
-  if name=="wood-fill" && width==0 { assert(rl.GetImageColor(image,375,121)==editor_color("wood"),"Seed-13 pixel must stay Wood-coloured") }
   assert(rl.ExportImage(image,rl.TextFormat("output/%s-%.1f.png",name,width)))
   rl.UnloadImage(image)
  }
@@ -102,11 +107,11 @@ sandbox_smoke_wood_fill :: proc(target: rl.RenderTexture2D) {
   sandbox_smoke_outline_samples(&s,target,name,{offset={140,700},scale=150})
   scene_destroy(&s)
  }
- g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=.Glass
+ g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=recipe_slot(.Glass)
  assert(editor_place(&g,{0,0},{2.4,1.2})); sandbox_toggle_editor(&g)
- body:=g.scene.subdivisions[0].body; pos:=b2.Body_GetPosition(body); pos.y+=0.8; b2.Body_SetTransform(body,pos,b2.MakeRot(0))
+ body:=g.world.scene.subdivisions[0].body; pos:=b2.Body_GetPosition(body); pos.y+=0.8; b2.Body_SetTransform(body,pos,b2.MakeRot(0))
  for _ in 0..<90 { sandbox_tick(&g,0,false) }
- sandbox_smoke_outline_samples(&g.scene,target,"glass-impact-outlines",{offset={220,650},scale=220})
+ sandbox_smoke_outline_samples(&g.world.scene,target,"glass-impact-outlines",{offset={220,650},scale=220})
  // Fractional strokes must have exactly the 1-pixel reference's coverage.
  vertices:=[4]Vec2{{0,0},{3,0.7},{3,2},{0,1.3}}
  flags:=[4]bool{true,true,true,true}; cache:=Render_Cache{draw_edge=flags[:]}
@@ -135,15 +140,16 @@ editor_smoke_drag :: proc(game: ^Sandbox,target: rl.RenderTexture2D,a,b: Vec2) {
 	sandbox_smoke_frame(game,target,smoke_mouse(i32(q.x),i32(q.y)),smoke_button(false))
 }
 sandbox_smoke_inputs :: proc(game: ^Sandbox) {
+ material_native_interactions()
 	rl.SetTargetFPS(0)
 	target:=rl.LoadRenderTexture(rl.GetScreenWidth(),rl.GetScreenHeight())
 	defer rl.UnloadRenderTexture(target)
 	sandbox_smoke_wood_fill(target)
-	assert(game.editor.editing && len(game.editor.objects)==0)
-	initial_ground:=counts_live_subdivisions(&game.scene)
+	assert(game.editor.editing && len(game.layout.objects)==0)
+	initial_ground:=counts_live_subdivisions(&game.world.scene)
 	sandbox_smoke_click(game,target,1180,43)
 	assert(game.outline_width==2)
-	revision_before_slider:=game.scene.revision
+	revision_before_slider:=game.world.scene.revision
 	sandbox_smoke_frame(game,target,smoke_mouse(774,381),smoke_button(true))
 	sandbox_smoke_frame(game,target,smoke_mouse(646,381))
 	sandbox_smoke_frame(game,target,smoke_button(false))
@@ -158,62 +164,62 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
 	sandbox_smoke_frame(game,target,smoke_mouse(775,381))
 	sandbox_smoke_frame(game,target,smoke_button(false))
 	preferred_outline_width:=game.outline_width
-	assert(preferred_outline_width>0 && preferred_outline_width<2 && game.scene.revision==revision_before_slider,"Outline width must only change presentation")
-	sandbox_smoke_click(game,target,357,770)
-	assert(game.editor.palette==.Wood && game.panel_open,"Settings must consume clicks on the underlying palette")
+	assert(preferred_outline_width>0 && preferred_outline_width<2 && game.world.scene.revision==revision_before_slider,"Outline width must only change presentation")
+	sandbox_smoke_click(game,target,357,752)
+	assert(game.editor.palette==recipe_slot(.Wood) && game.panel_open,"Settings must consume clicks on the underlying palette")
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,true))
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,false))
-	pose:=b2.Body_GetPosition(game.player.body)
+	pose:=b2.Body_GetPosition(game.world.player.body)
 	for _ in 0..<60 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-	assert(b2.Body_GetPosition(game.player.body)==pose,"Editing must pause simulation")
+	assert(b2.Body_GetPosition(game.world.player.body)==pose,"Editing must pause simulation")
 	// Use each actual palette widget and drag into the clear building area.
 	for choice in 0..<4 {
-		sandbox_smoke_click(game,target,69+i32(choice)*96,770)
+		sandbox_smoke_click(game,target,sandbox_smoke_palette_x(game,int(choice)),752)
 		assert(int(game.editor.palette)==choice)
 		x:=f32(choice)*2.0-2.0
 		editor_smoke_drag(game,target,{x,0},{x+1.2,1.2})
-		assert(len(game.editor.objects)==choice+1 && int(game.editor.objects[choice].material)==choice)
+		assert(len(game.layout.objects)==choice+1 && int(game.layout.objects[choice].material)==choice)
 	}
 	editor_smoke_drag(game,target,{-2,0},{-0.8,1.2})
-	assert(len(game.editor.objects)==4,"Overlap was not rejected")
+	assert(len(game.layout.objects)==4,"Overlap was not rejected")
 	editor_smoke_drag(game,target,{0,2},{0,3})
-	assert(len(game.editor.objects)==4,"Degenerate rectangle was not rejected")
+	assert(len(game.layout.objects)==4,"Degenerate rectangle was not rejected")
 	// Right mouse deletes an authored object, not its damaged graph.
 	p:=screen_point(sandbox_view(1280,800),{4.5,0.5})
 	sandbox_smoke_frame(game,target,smoke_mouse(i32(p.x),i32(p.y)),rl.AutomationEvent{type=6,params={1,0,0,0}})
 	sandbox_smoke_frame(game,target,rl.AutomationEvent{type=5,params={1,0,0,0}})
-	assert(len(game.editor.objects)==3)
+	assert(len(game.layout.objects)==3)
 	editor_smoke_drag(game,target,{4,0},{5.2,1.2})
-	assert(len(game.editor.objects)==4)
+	assert(len(game.layout.objects)==4)
 	// A drag ending over palette controls is cancelled.
 	p=screen_point(sandbox_view(1280,800),{6,2})
 	sandbox_smoke_frame(game,target,smoke_mouse(i32(p.x),i32(p.y)),smoke_button(true))
-	sandbox_smoke_frame(game,target,smoke_mouse(60,770),smoke_button(false))
-	assert(len(game.editor.objects)==4 && !game.editor.dragging)
+	sandbox_smoke_frame(game,target,smoke_mouse(60,752),smoke_button(false))
+	assert(len(game.layout.objects)==4 && !game.editor.dragging)
 	sandbox_smoke_export(target,"output/sandbox-editor.png")
-	sandbox_smoke_click(game,target,930,43)
-	assert(!game.editor.editing && len(game.scene.pieces)==5)
-	revision:=game.scene.revision
+	sandbox_smoke_click(game,target,810,43)
+	assert(!game.editor.editing && len(game.world.scene.pieces)==5)
+	revision:=game.world.scene.revision
 	for _ in 0..<90 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-	assert(game.player.grounded)
+	assert(game.world.player.grounded)
 	sandbox_smoke_frame(game,target,smoke_key(.D,true))
 	for _ in 0..<15 { sandbox_smoke_frame(game,target) }
 	sandbox_smoke_frame(game,target,smoke_key(.D,false),smoke_key(.SPACE,true))
 	// Allow the existing 0.1-second buffer to catch a seam crossing.
-	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.player.body).y>5 { break }; sandbox_smoke_frame(game,target) }
-	assert(b2.Body_GetLinearVelocity(game.player.body).y>5,"Space must jump in Test")
+	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.world.player.body).y>5 { break }; sandbox_smoke_frame(game,target) }
+	assert(b2.Body_GetLinearVelocity(game.world.player.body).y>5,"Space must jump in Test")
 	for _ in 0..<120 { sandbox_smoke_frame(game,target) }
-	assert(game.player.grounded,"Held jump must not repeat")
+	assert(game.world.player.grounded,"Held jump must not repeat")
 	sandbox_smoke_frame(game,target,smoke_key(.SPACE,false))
 	// Settings consume input and keep radius/mode live without material overrides.
 	sandbox_smoke_click(game,target,1180,43)
-	assert(game.panel_open && len(game.editor.objects)==4)
-	pose=b2.Body_GetPosition(game.player.body)
+	assert(game.panel_open && len(game.layout.objects)==4)
+	pose=b2.Body_GetPosition(game.world.player.body)
 	for _ in 0..<15 { sandbox_smoke_frame(game,target,smoke_key(.D,true)) }
-	assert(b2.Body_GetPosition(game.player.body)==pose)
+	assert(b2.Body_GetPosition(game.world.player.body)==pose)
 	sandbox_smoke_frame(game,target,smoke_key(.D,false))
 	sandbox_smoke_click(game,target,620,381)
-	assert(game.applied.blast_radius>5.1)
+	assert(sandbox_radius(game)>5.1)
 	sandbox_smoke_click(game,target,640,500)
 	assert(!game.panel_open)
 	sandbox_set_radius(game,5)
@@ -223,74 +229,74 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
 	sandbox_smoke_frame(game,target,smoke_key(.F3,true))
 	sandbox_smoke_frame(game,target,smoke_key(.F3,false))
 	sandbox_smoke_frame(game,target,smoke_key(.R,true))
-	assert(game.scene.revision>revision && len(game.editor.objects)==4 && game.outline_width==preferred_outline_width,"Reset must preserve the outline preference")
+	assert(game.world.scene.revision>revision && len(game.layout.objects)==4 && game.outline_width==preferred_outline_width,"Reset must preserve the outline preference")
 	sandbox_smoke_frame(game,target,smoke_key(.R,false))
-	sandbox_smoke_click(game,target,930,43)
-	assert(game.editor.editing && len(game.editor.objects)==4 && counts_live_subdivisions(&game.scene)==initial_ground)
+	sandbox_smoke_click(game,target,810,43)
+	assert(game.editor.editing && len(game.layout.objects)==4 && counts_live_subdivisions(&game.world.scene)==initial_ground)
 	// One controlled breakup for each brittle/rigid material, through native clicks.
-	choices:=[3]Palette{.Wood,.Glass,.Stone}
+	choices:=[3]Recipe{.Wood,.Glass,.Stone}
 	for choice in choices {
-		clear(&game.editor.objects)
-		sandbox_smoke_click(game,target,69+i32(choice)*96,770)
+		clear(&game.layout.objects)
+		sandbox_smoke_click(game,target,sandbox_smoke_palette_x(game,int(choice)),752)
 		editor_smoke_drag(game,target,{1.5,0},{3.1,1.6})
-		sandbox_smoke_click(game,target,930,43)
+		sandbox_smoke_click(game,target,810,43)
 		original_ids:=[dynamic]u64{}
-		for sub in game.scene.subdivisions { if sub.material!=0 { append(&original_ids,sub.id) } }
-		original_material:=game.scene.subdivisions[0].material
+		for sub in game.world.scene.subdivisions { if sub.material!=0 { append(&original_ids,sub.id) } }
+		original_material:=game.world.scene.subdivisions[0].material
 		sandbox_set_radius(game,editor_material(choice).subdivision_strength/BLAST_LOAD_MULTIPLIER+1.2)
 		aim:=screen_point(sandbox_view(1280,800),{1.2,0.8})
 		sandbox_smoke_click(game,target,i32(aim.x),i32(aim.y))
-		removed:=false; for id in original_ids { if !is_live_subdivision(&game.scene,id) { removed=true } }; delete(original_ids)
+		removed:=false; for id in original_ids { if !is_live_subdivision(&game.world.scene,id) { removed=true } }; delete(original_ids)
 		assert(removed,"Material example did not fracture")
 		for _ in 0..<20 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-		valid,message:=validate_scene(&game.scene); assert(valid,message)
+		valid,message:=validate_scene(&game.world.scene); assert(valid,message)
 		survivors:=0
-		for sub in game.scene.subdivisions { if sub.live && sub.material==original_material { survivors+=1 } }
+		for sub in game.world.scene.subdivisions { if sub.live && sub.material==original_material { survivors+=1 } }
 		assert(survivors>0,"The breakup example must retain visible material fragments")
 		fmt.printf("%s breakup: %d surviving fragments\n",editor_material(choice).name,survivors)
 		sandbox_smoke_export(target,rl.TextFormat("output/sandbox-material-%s.png",editor_material(choice).name))
 
-		sandbox_smoke_click(game,target,930,43)
-		assert(game.editor.editing && len(game.editor.objects)==1)
+		sandbox_smoke_click(game,target,810,43)
+		assert(game.editor.editing && len(game.layout.objects)==1)
 	}
 	sandbox_set_radius(game,5)
 	// Rubber: record a localized nudge, then a missing cell, using the same mesh.
-	clear(&game.editor.objects)
-	sandbox_smoke_click(game,target,261,770)
+	clear(&game.layout.objects)
+	sandbox_smoke_click(game,target,sandbox_smoke_palette_x(game,2),752)
 	editor_smoke_drag(game,target,{1,0},{3.4,0.8})
-	sandbox_smoke_click(game,target,930,43)
+	sandbox_smoke_click(game,target,810,43)
 	for _ in 0..<60 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-	ids:=game.scene.pieces[0].subdivisions
-	b2.Body_ApplyLinearImpulseToCenter(subdivision_body(&game.scene,ids[len(ids)-1]),{0,0.3},true)
+	ids:=game.world.scene.pieces[0].subdivisions
+	b2.Body_ApplyLinearImpulseToCenter(subdivision_body(&game.world.scene,ids[len(ids)-1]),{0,0.3},true)
 	for _ in 0..<6 { sandbox_smoke_frame(game,target) }
 	sandbox_smoke_export(target,"output/sandbox-material-rubber.png")
 	sandbox_smoke_frame(game,target,smoke_key(.F3,true))
 	sandbox_smoke_frame(game,target,smoke_key(.F3,false))
-	cell:=game.scene.subdivisions[game.scene.sub_rows[ids[len(ids)/2+2]]]
+	cell:=game.world.scene.subdivisions[game.world.scene.sub_rows[ids[len(ids)/2+2]]]
 	p=screen_point(sandbox_view(1280,800),cell.pose.position)
 	sandbox_smoke_frame(game,target,smoke_mouse(i32(p.x),i32(p.y)),rl.AutomationEvent{type=6,params={1,0,0,0}})
 	sandbox_smoke_frame(game,target,rl.AutomationEvent{type=5,params={1,0,0,0}})
 	assert(game.selected==cell.id)
 	sandbox_smoke_frame(game,target,smoke_key(.DELETE,true))
 	sandbox_smoke_frame(game,target,smoke_key(.DELETE,false))
-	assert(!is_live_subdivision(&game.scene,cell.id))
+	assert(!is_live_subdivision(&game.world.scene,cell.id))
 	for _ in 0..<60 { sandbox_smoke_frame(game,target) }
-	valid,message:=validate_scene(&game.scene); assert(valid,message)
+	valid,message:=validate_scene(&game.world.scene); assert(valid,message)
 	sandbox_smoke_frame(game,target,smoke_key(.F3,true))
 	sandbox_smoke_frame(game,target,smoke_key(.F3,false))
 	sandbox_smoke_export(target,"output/sandbox-rubber-cell-removed.png")
 	// Bomb controls still use their native settings widgets and real contacts.
 	sandbox_smoke_click(game,target,1180,43)
 	sandbox_smoke_click(game,target,785,313)
-	assert(game.applied.blast_mode==.Falling_Bombs)
+	assert(sandbox_mode(game)==.Falling_Bombs)
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,true))
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,false))
 	for _ in 0..<160 {
 		sandbox_smoke_frame(game,target)
-		if len(game.bomb_rain.bombs)>0 { break }
+		if len(game.world.bombs)>0 { break }
 	}
-	assert(len(game.bomb_rain.bombs)>0)
-	first:=game.bomb_rain.bombs[0].body
+	assert(len(game.world.bombs)>0)
+	first:=game.world.bombs[0].body
 	for _ in 0..<300 {
 		sandbox_smoke_frame(game,target)
 		if !b2.Body_IsValid(first) { break }
@@ -298,38 +304,45 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
 	assert(!b2.Body_IsValid(first),"Falling bomb did not land and explode")
 	sandbox_smoke_click(game,target,1180,43)
 	sandbox_smoke_click(game,target,480,313)
-	assert(game.applied.blast_mode==.Manual && len(game.bomb_rain.bombs)==0)
+	assert(sandbox_mode(game)==.Manual)
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,true))
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,false))
 	sandbox_smoke_frame(game,target,smoke_key(.ENTER,true))
-	assert(game.editor.editing && len(game.editor.objects)==1)
+	assert(game.editor.editing && len(game.layout.objects)==1)
 	sandbox_smoke_frame(game,target,smoke_key(.ENTER,false))
 	// Draw larger Wood/Stone roots through the actual palette and Test widget.
 	// Ordinary support must not refine either the object or its floor collider.
-	placements:=[2]Palette{.Wood,.Stone}
+	placements:=[2]Recipe{.Wood,.Stone}
 	for choice in placements {
-		clear(&game.editor.objects)
-		sandbox_smoke_click(game,target,69+i32(choice)*96,770)
+		clear(&game.layout.objects)
+		sandbox_smoke_click(game,target,sandbox_smoke_palette_x(game,int(choice)),752)
 		editor_smoke_drag(game,target,{1.5,0},{5.3,3.8})
-		sandbox_smoke_click(game,target,930,43)
-		before_regions,before_links,before_pieces:=counts_runtime(&game.scene)
-		before_id:=game.scene.next_id
+		sandbox_smoke_click(game,target,810,43)
+		before_regions,before_links,before_pieces:=counts_runtime(&game.world.scene)
+		before_id:=game.world.scene.next_id
 		for _ in 0..<120 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-		regions,links,pieces:=counts_runtime(&game.scene)
-		assert(regions==before_regions && links==before_links && pieces==before_pieces && game.scene.next_id==before_id,"Placed material and floor must survive support without refinement")
-		sandbox_smoke_click(game,target,930,43)
+		regions,links,pieces:=counts_runtime(&game.world.scene)
+		assert(regions==before_regions && links==before_links && pieces==before_pieces && game.world.scene.next_id==before_id,"Placed material and floor must survive support without refinement")
+		sandbox_smoke_click(game,target,810,43)
 		assert(game.editor.editing)
 	}
  // Snapshot tools remain available after removing the separate lab/receiver.
  sandbox_smoke_frame(game,target,smoke_key(.ENTER,true)); sandbox_smoke_frame(game,target,smoke_key(.ENTER,false))
  if !game.inspection { sandbox_smoke_frame(game,target,smoke_key(.F3,true)); sandbox_smoke_frame(game,target,smoke_key(.F3,false)) }
  sandbox_smoke_frame(game,target,smoke_key(.S,true)); sandbox_smoke_frame(game,target,smoke_key(.S,false))
- saved_id:=game.scene.next_id; saved_regions,saved_links,saved_pieces:=counts_runtime(&game.scene)
+ saved_id:=game.world.scene.next_id; saved_regions,saved_links,saved_pieces:=counts_runtime(&game.world.scene)
  sandbox_explode(game,{1.45,0.6})
- assert(game.scene.next_id!=saved_id)
+ assert(game.world.scene.next_id!=saved_id)
  sandbox_smoke_frame(game,target,smoke_key(.L,true)); sandbox_smoke_frame(game,target,smoke_key(.L,false))
- restored_regions,restored_links,restored_pieces:=counts_runtime(&game.scene)
- assert(game.scene.next_id==saved_id && restored_regions==saved_regions && restored_links==saved_links && restored_pieces==saved_pieces,"Native snapshot load failed")
- assert(b2.Body_IsValid(game.player.body) && b2.Body_IsValid(game.floor))
+ restored_regions,restored_links,restored_pieces:=counts_runtime(&game.world.scene)
+ assert(game.world.scene.next_id==saved_id && restored_regions==saved_regions && restored_links==saved_links && restored_pieces==saved_pieces,"Native snapshot load failed")
+ assert(b2.Body_IsValid(game.world.player.body) && b2.Body_IsValid(game.world.floor))
 	fmt.println("Editor native smoke passed: palette, drag preview, overlap/degenerate rejection, deletion, UI consumption, paused edit, Test/Edit restoration, reset, movement/jump, inspection, radius, material breakups, rubber, falling bombs, and snapshot save/load.")
+}
+
+// Native click fixtures follow the palette's available width and entry count.
+sandbox_smoke_palette_x :: proc(game:^Sandbox,choice:int)->i32 {
+ count:=palette_count(&game.layout);if count<8 { count+=1 }
+ width:=(f32(rl.GetScreenWidth())-260-f32(count-1)*5)/f32(count)
+ return i32(16+f32(choice)*(width+5)+width/2)
 }

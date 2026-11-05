@@ -1,0 +1,280 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <meta name="description" content="Explore the fifteen Odin files behind BOM: a living map of input, destruction, physics, and pixels.">
+
+  <title>BOM — Anatomy of a sandbox</title>
+
+  <style>
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{--bg:#f3f2eb;--paper:#fcfcf7;--ink:#242a24;--muted:#6d7369;--line:#d5d8cc;--accent:#d7f168;--green:#49654a;--mono:'IBM Plex Mono',Consolas,monospace;--sans:'DM Sans',Arial,sans-serif}
+
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}button,a{-webkit-tap-highlight-color:transparent}button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #698933;outline-offset:4px}a{color:inherit}button{border:1px solid var(--line);background:transparent}button:hover{border-color:var(--green)}.topbar{height:85px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4vw}.brand{display:flex;gap:25px;align-items:center;text-decoration:none}.brand-mark{font-weight:700;font-size:27px;letter-spacing:-2px}.brand-mark span{padding:0 2px;color:var(--green)}.brand-sub,.top-note,.eyebrow,.map-heading,.map-key,footer{font:10px var(--mono);letter-spacing:1.2px}.brand-sub{border-left:1px solid var(--line);padding-left:24px}.top-note{display:flex;align-items:center;gap:9px}.top-note i{width:6px;height:6px;border-radius:50%;background:var(--green)}main{max-width:1550px;margin:auto;padding:0 4vw}.intro{display:flex;justify-content:space-between;gap:36px;padding:60px 0 44px}.eyebrow{color:var(--green);font-weight:500;margin:0 0 18px}h1{font-size:clamp(36px,4.1vw,65px);font-weight:500;letter-spacing:-2.8px;line-height:1.06;margin:0}h1 em{font-family:Georgia,serif;font-weight:400}.lede{font-size:15px;line-height:1.7;color:var(--muted);margin:23px 0 0}.stats{display:grid;grid-template-columns:1fr 1.5fr;gap:22px;align-content:end;min-width:260px;padding-bottom:4px}.stats strong{font-size:37px;font-weight:500;letter-spacing:-1.5px;display:block}.stats span{font:10px var(--mono);color:var(--muted)}.stats p{grid-column:1/-1;font-size:12px;line-height:1.7;margin:0;border-top:1px solid var(--line);padding-top:17px}.atlas{background:var(--paper);border:1px solid var(--line)}.atlas-toolbar{display:flex;align-items:center;padding:15px 22px;border-bottom:1px solid var(--line);gap:25px}.mode-label{font:10px var(--mono);letter-spacing:1px;white-space:nowrap}.mode-label span{margin-left:20px}.modes{display:flex;gap:5px;flex-wrap:wrap}.mode{font-size:12px;padding:10px 15px;border-color:transparent;border-radius:3px}.mode.active{background:var(--ink);color:var(--paper)}.mode:not(.active):hover{background:#eef0e5}.mode span{margin-left:14px}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 350px;align-items:stretch}.map-area{padding:24px 24px 17px;min-width:0;background-image:radial-gradient(#d8dbcf .7px,transparent .7px);background-size:15px 15px}.map-heading{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:9px;margin-bottom:24px}.map-heading span:last-child{letter-spacing:0}.map{position:relative}.map svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible}.wire{fill:none;stroke:#7e965d;stroke-width:1.5;stroke-dasharray:4 4;opacity:.65}.lane{position:relative;margin-bottom:24px}.lane-label{display:flex;gap:10px;align-items:center;margin-bottom:10px;font:9px var(--mono);letter-spacing:1.2px;color:var(--muted)}.lane-label b{font-weight:400;color:#919b84}.lane-label::after{content:'';flex:1;height:1px;background:var(--line)}.nodes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.node{position:relative;text-align:left;padding:12px 10px 10px;min-height:79px;background:var(--paper);border:1px solid #d4d9c9;border-radius:3px;transition:background .18s,opacity .18s,box-shadow .18s;z-index:3;min-width:0}.node:hover{background:#f0f3e5;transform:translateY(-1px)}.node.selected{background:var(--accent);border-color:#728842;box-shadow:0 0 0 3px #d7f16840}.node.related{border-color:#7e965d;background:#edf2e3}.node.dim{opacity:.72}.node.dim:hover{opacity:1}.node-name{display:block;font:11px var(--mono);font-weight:500;letter-spacing:-.45px;overflow-wrap:anywhere}.node-role{display:block;font-size:11px;color:var(--muted);margin-top:7px}.node-meta{display:flex;align-items:center;gap:7px;margin-top:11px;font:8px var(--mono);color:#7c8475}.node-bar{height:2px;background:#cbd3bf;flex:1}.node-bar i{display:block;height:100%;background:var(--green)}.node.selected .node-role,.node.selected .node-meta{color:#47582d}.map-key{display:flex;gap:16px;align-items:center;flex-wrap:wrap;letter-spacing:0;color:var(--muted);font-size:9px;margin-top:8px}.map-key>span{display:flex;gap:5px;align-items:center}.key-dot{width:7px;height:7px;display:inline-block}.selected-dot{background:var(--accent);border:1px solid #728842}.related-dot{background:#edf2e3;border:1px solid #7e965d}.inspector{border-left:1px solid var(--line);background:#f7f8ef;padding:25px 24px;min-width:0}.file-top{display:flex;justify-content:space-between;font:9px var(--mono);color:var(--green);letter-spacing:1px}.file-number{color:var(--muted)}.inspector h2{font:500 22px var(--mono);letter-spacing:-1px;margin:21px 0 8px;overflow-wrap:anywhere}.file-tagline{font-family:Georgia,serif;font-style:italic;font-size:20px;margin:0 0 18px;line-height:1.25}.file-description{font-size:13px;line-height:1.7;color:#626b5d;margin:0 0 23px}.detail-label{font:9px var(--mono);color:var(--green);letter-spacing:1.3px;margin:21px 0 10px}.steps{list-style:none;padding:0;margin:0;counter-reset:steps}.steps li{counter-increment:steps;position:relative;padding:0 0 12px 24px;font-size:12px;line-height:1.6}.steps li::before{content:'0' counter(steps);position:absolute;left:0;top:2px;font:9px var(--mono);color:#8e9b7e}.related-links{display:flex;flex-wrap:wrap;gap:6px}.related-link{font:10px var(--mono);background:var(--paper);border-radius:2px;padding:6px 7px}.related-link:hover{background:var(--accent)}details{border-top:1px solid var(--line);margin-top:22px;padding-top:15px}summary{font:10px var(--mono);cursor:pointer;color:var(--green)}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:10px/1.7 var(--mono);background:#e9eddf;padding:13px;margin:12px 0 0;border-radius:3px}.source-location{font:9px var(--mono);color:var(--muted);margin:8px 0}.journey{position:relative;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:23px 25px 28px;border-bottom:1px solid var(--line);background:#edf2df}.journey[hidden]{display:none}.journey .eyebrow{font-size:9px;display:block;margin-bottom:7px}.journey h2{font-size:23px;font-weight:500;letter-spacing:-.7px;margin:0 0 6px}.journey p{font-size:13px;color:#626b5d;line-height:1.5;max-width:700px;margin:0}.journey-controls{display:flex;gap:5px;flex-shrink:0}.journey-controls button{padding:9px 12px;background:var(--paper);font-size:11px;border-color:#bbc7a6}.journey-controls button:disabled{opacity:.35;cursor:default}.progress{display:flex;gap:4px;position:absolute;bottom:0;left:0;right:0;height:4px}.progress button{flex:1;border:0;padding:0;background:#d5dfc2}.progress button.complete{background:#6b8350}.progress button.current{background:#344b2d}.mental-model{display:grid;grid-template-columns:260px 1fr;gap:45px;padding:65px 0 57px}.mental-model h2{font-size:30px;font-weight:500;letter-spacing:-1px;line-height:1.12;margin:0 0 17px}.mental-model>div>p:last-child{font-size:13px;line-height:1.7;color:var(--muted);max-width:220px}.representations{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}.representations h3{font-size:17px;font-weight:500;margin:10px 0}.representations p{font-size:12px;line-height:1.8;color:var(--muted);margin:0}.representations code{font:10px var(--mono);color:var(--ink)}.representations .eyebrow{font-size:9px}.shape{height:65px;width:94px;margin:0 0 25px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px}.shape span{background:#d9dfcb;border:1px solid #9aa78a}.authored{display:block;border:1px dashed #74855d;padding:5px}.authored span{display:block;width:100%;height:100%;background:#e5ebd6}.logical span{background:var(--accent)}.rendered{gap:0;transform:rotate(-5deg)}.rendered span{border:0;background:#6e8460}.rendered span:nth-child(3){transform:translate(7px,-7px) rotate(15deg)}.rendered span:nth-child(6){transform:translate(12px,4px) rotate(20deg)}footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);padding:22px 0 30px;color:var(--muted);font-size:8px;letter-spacing:.6px}footer a{text-decoration:none;white-space:nowrap}footer a:hover{text-decoration:underline}@media(min-width:1450px){.node-name{font-size:12px}}@media(max-width:1150px){.workspace{grid-template-columns:minmax(0,1fr) 305px}.map-area{padding:22px 16px}.nodes{gap:7px}.node{padding:10px 7px}.node-name{font-size:10px}.map-heading span:last-child{display:none}.inspector{padding:24px 19px}.mental-model{grid-template-columns:210px 1fr;gap:30px}.representations{gap:22px}.atlas-toolbar{gap:16px}.mode-label span{display:none}.mode{padding:9px 10px}}@media(max-width:850px){.workspace{grid-template-columns:1fr}.inspector{border-left:0;border-top:1px solid var(--line);display:block}.inspector h2{margin-top:15px}.map-area{padding:23px}.node-name{font-size:11px}.inspector{padding:25px}.mental-model{grid-template-columns:1fr;gap:30px}.mental-model>div>p:last-child{max-width:420px}.mental-model h2 br{display:none}.intro{padding-top:40px}.stats{min-width:200px;gap:17px}.stats strong{font-size:31px}h1{letter-spacing:-1.8px}.brand-sub{display:none}.journey{align-items:flex-start}.journey-controls{margin-top:15px}.top-note{font-size:9px}footer span:nth-child(2){max-width:220px;line-height:1.7}}@media(max-width:550px){.topbar{height:65px;padding:0 5vw}main{padding:0 5vw}.intro{display:block;padding:35px 0 28px}h1{font-size:37px}.lede{font-size:13px}.desktop{display:none}.stats{margin-top:25px;display:flex;align-items:center;gap:25px}.stats strong{font-size:26px}.stats span{font-size:8px}.stats p{border-top:0;border-left:1px solid var(--line);padding:0 0 0 15px;font-size:10px}.atlas-toolbar{display:block;padding:14px}.mode-label{margin-bottom:10px;font-size:9px}.modes{gap:3px}.mode{padding:8px;font-size:10px}.mode span{margin-left:3px}.map-area{padding:20px 14px}.nodes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.node-name{font-size:11px}.lane{margin-bottom:20px}.node{min-height:77px;padding:10px}.map-key{font-size:8px;gap:12px}.map-key .line-key{display:none}.journey{display:block;padding:20px}.journey h2{font-size:21px}.journey p{font-size:12px}.journey-controls{justify-content:flex-end}.representations{grid-template-columns:1fr;gap:30px}.representations article{display:grid;grid-template-columns:96px 1fr;column-gap:20px;align-items:start}.shape{grid-row:1/4;margin:7px 0 0;width:85px;height:62px}.representations .eyebrow{margin:0}.representations h3{margin:7px 0}.mental-model{padding-top:40px}.mental-model h2{font-size:28px}footer{flex-wrap:wrap;row-gap:12px}footer span:nth-child(2){order:3;max-width:100%;width:100%}}@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+
+
+</style>
+
+  
+
+</head>
+
+<body>
+
+  <header class="topbar"><a class="brand" href="#"><span class="brand-mark">B<span>✳</span>M</span><span class="brand-sub">CODE ATLAS / 01</span></a><span class="top-note"><i></i> ODIN · BOX2D · RAYLIB</span></header>
+
+  <main>
+
+    <section class="intro">
+
+      <div><p class="eyebrow">A SMALL WORLD, TAKEN APART</p><h1>Anatomy of<br>a <em>destruction sandbox.</em></h1><p class="lede">Fifteen files turn a rectangle into a world you can break.<br class="desktop"> Follow the moving parts, from the first click to the last fragment.</p></div>
+
+      <div class="stats"><div><strong>15</strong><span>source files</span></div><div><strong>2,913</strong><span>lines, excluding tests</span></div><p>One shared Odin package.<br>These are roles, not import boundaries.</p></div>
+
+    </section>
+
+    <section class="atlas" aria-label="Interactive source code atlas">
+
+      <div class="atlas-toolbar"><div class="mode-label">PICK A PATH <span>↘</span></div><div class="modes" aria-label="Guided paths"><button class="mode active" data-mode="explore" aria-pressed="true">Explore the files</button><button class="mode" data-mode="build" aria-pressed="false">Build a world</button><button class="mode" data-mode="blast" aria-pressed="false">Follow a blast <span>↗</span></button><button class="mode" data-mode="frame" aria-pressed="false">Draw a frame</button></div></div>
+
+      <div id="journey" class="journey" hidden><div><span id="journey-count" class="eyebrow"></span><h2 id="journey-title"></h2><p id="journey-copy"></p></div><div class="journey-controls"><button id="prev" aria-label="Previous step">←</button><button id="play">Play path</button><button id="next" aria-label="Next step">→</button></div><div id="progress" class="progress" aria-label="Path steps"></div></div>
+
+      <div class="workspace">
+
+        <div class="map-area"><div class="map-heading"><span>THE WORKING PARTS</span><span id="map-hint">Select a file to follow its connections</span></div><div id="map" class="map"><svg id="wires" aria-hidden="true"></svg><div id="lanes"></div></div><div class="map-key"><span><i class="key-dot selected-dot"></i>Selected file</span><span><i class="key-dot related-dot"></i>Connected role</span><span class="line-key">— conceptual connection</span></div></div>
+
+        <aside id="inspector" class="inspector" aria-label="Selected file details" aria-live="polite"></aside>
+
+      </div>
+
+    </section>
+
+    <section class="mental-model"><div><p class="eyebrow">THE IDEA THAT MAKES IT CLICK</p><h2>One object.<br> Three representations.</h2><p>The thing you draw, the thing that breaks, and the thing you see have different jobs.</p></div><div class="representations"><article><div class="shape authored"><span></span></div><span class="eyebrow">01 / AUTHORING</span><h3>A rectangle</h3><p><code>editor.odin</code> keeps the undamaged design: bounds, material, and identity. Reset rebuilds from this list.</p></article><article><div class="shape logical"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="eyebrow">02 / SIMULATION</span><h3>A connected graph</h3><p><code>model.odin</code> stores regions and bonds. Destruction changes that graph; Box2D moves the resulting pieces.</p></article><article><div class="shape rendered"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="eyebrow">03 / PRESENTATION</span><h3>A continuous surface</h3><p><code>render_cache.odin</code> prepares triangles and seams. Rendering can smooth the surface without changing physics.</p></article></div></section>
+
+    <footer><span>BOM / SOURCE FIELD GUIDE</span><span>Based on the local source · 03 NOV 2026 · tests & verification helpers excluded</span><a href="#">Back to the map ↑</a></footer>
+
+  </main>
+
+<script>
+
+// Explanations and conceptual links verified against src/, November 3, 2026.
+
+window.ATLAS = {
+
+  lanes: [
+
+    {name:'CONTROL / START THE WORLD', files:['main','sandbox_view','yard']},
+
+    {name:'AUTHORING & ACTORS / GIVE IT SOMETHING TO DO', files:['editor_view','editor','player','bombs']},
+
+    {name:'SIMULATION / DECIDE WHAT BREAKS', files:['blast_query','destruction','physics']},
+
+    {name:'FOUNDATIONS / DEFINE WHAT EXISTS', files:['model','geometry']},
+
+    {name:'PRESENTATION / TURN STATE INTO PIXELS', files:['state','render_cache','debug_view']}
+
+  ],
+
+  files: {
+
+    main:{lines:28,role:'Entry point',tag:'The front door.',description:'Creates the output directory, interprets command-line flags, and chooses which mode to run. With no flags, it opens the playable sandbox.',steps:['Prepare the output/ directory.','Dispatch smoke, soak, fixture, or help modes when requested.','Call run_sandbox() for normal play.'],functions:['main'],related:['sandbox_view'],snippet:'main'},
+
+    sandbox_view:{lines:309,role:'Window & frame loop',tag:'The conductor you can see.',description:'Owns the raylib window, frame loop, HUD, settings panel, and inspection controls. It turns device input into game actions and draws the world every frame.',steps:['Read keyboard and mouse input, then ask yard.odin to route it.','Advance the simulation and interpolate poses between fixed ticks.','Draw the world, aim indicator, and raygui interface.'],functions:['run_sandbox','sandbox_read_input','sandbox_draw_world'],related:['main','yard','editor_view','state','debug_view'],snippet:'sandbox_read_input'},
+
+    yard:{lines:202,role:'Game orchestration',tag:'Where everything meets.',description:'Defines Sandbox, the container for the scene, editor, player, bombs, settings, and previous poses. It coordinates resets, input rules, blasts, and the fixed simulation clock.',steps:['Rebuild authored objects and destructible ground on reset.','Route input around menus, editing, and blocked buttons.','At 60 fixed ticks per second: update actors, step physics, process bombs, and clean up fallen debris.'],functions:['sandbox_reset','sandbox_tick','sandbox_advance','sandbox_explode'],related:['sandbox_view','editor','player','bombs','destruction','physics','model'],snippet:'sandbox_tick'},
+
+    editor_view:{lines:51,role:'Drawing interaction',tag:'Your mouse becomes a blueprint.',description:'Converts authored rectangles into screen previews and translates mouse gestures into editor operations. It supplies the material colors used by the interface and scene rendering.',steps:['Draw the existing rectangles, drag preview, and placement guides.','Start and finish a left-button drag in world coordinates.','Send placement and right-click removal to editor.odin, respecting UI and menu input.'],functions:['sandbox_draw_editor','sandbox_editor_input','editor_color'],related:['sandbox_view','editor','debug_view'],snippet:'editor_color'},
+
+    editor:{lines:107,role:'Authored layouts',tag:'The undamaged original.',description:'Keeps a list of rectangles separate from the damaged simulation. Its material palette defines Wood, Glass, Rubber, and Stone; Test and Reset build a deterministic world from the same design.',steps:['Validate bounds, minimum size, overlaps, and the player spawn area.','Store each accepted rectangle with a stable authoring identity.','Build logical regions and bonds; pre-split rigid materials and fit Rubber to a flexible cell grid.'],functions:['editor_place','sandbox_toggle_editor','editor_build_rectangles'],related:['editor_view','yard','model','destruction'],snippet:'sandbox_toggle_editor'},
+
+    player:{lines:94,role:'Movement & support',tag:'A small actor in a breakable world.',description:'Creates the capsule-shaped Box2D player and manages movement, grounded support, jumping, and respawning. It acts in the same physics world as the debris.',steps:['Inspect contact support to decide whether the player is grounded.','Before each step, apply movement and buffered or coyote-time jumps.','After the step, refresh support and respawn if the player falls out of bounds.'],functions:['player_create','player_before_step','player_after_step'],related:['yard','physics'],snippet:'player_after_step'},
+
+    bombs:{lines:113,role:'Falling bombs',tag:'Another route to the same explosion.',description:'Manages the optional rain of physical bombs: independent drop randomness, spawning, landing contacts, fuses, and visual burst records. Bomb explosions reuse the manual blast path.',steps:['Spawn falling bodies on a randomized schedule before the solver runs.','After the solver, detect landings and count down their fuses.','Remove spent bodies, record bursts, and call sandbox_explode().'],functions:['bomb_rain_before_step','bomb_rain_after_step','bomb_has_landed'],related:['yard','physics','destruction','sandbox_view'],snippet:'bomb_rain_before_step'},
+
+    blast_query:{lines:38,role:'Spatial candidates',tag:'Find the things worth asking.',description:'Narrows blast evaluation to nearby region IDs using the Box2D spatial index. It also includes newly staged children that do not yet have physics bodies.',steps:['Query an axis-aligned box around the blast; read stable IDs from shape user data.','Include pending regions, filter for live records, and sort IDs deterministically.','Collect and deduplicate incident connections for those regions. Without active physics, consider all live regions.'],functions:['blast_regions','blast_connections'],related:['destruction','physics','model'],snippet:'blast_connections'},
+
+    destruction:{lines:439,role:'Fracture & blast rules',tag:'The heart of the breakage.',description:'Generates child polygons and decides how blasts and other failures change the structure. A blast is one structural event that can evaluate several generations before the surviving pieces move.',steps:['Refine outlines reached by the destructive core, then compare radial load with material strength.','Stage failed regions and bonds; re-evaluate children against the same blast until no further failures remain.','Regroup pieces, commit the structure, synchronize physics, and apply impulses once to final survivors.'],functions:['generate_children','stage_failures','blast_pass','apply_failures'],related:['blast_query','model','geometry','physics','yard'],snippet:'blast_load'},
+
+    physics:{lines:316,role:'Box2D bridge',tag:'Give the graph weight and motion.',description:'Maps logical pieces and regions to Box2D bodies, collision shapes, and joints. Rigid materials share a body per piece; flexible materials use region bodies joined by spring welds.',steps:['Synchronize changed topology and preserve motion when pieces split.','Step the Box2D world and copy body motion back to the logical scene.','Convert confirmed collision hit speeds into material loads, apply failures, and synchronize again.'],functions:['physics_sync_structure','physics_tick','calculate_physics_loads'],related:['model','geometry','destruction','blast_query','yard','player','bombs'],snippet:'physics_tick'},
+
+    model:{lines:395,role:'Shared scene model',tag:'The vocabulary of the whole world.',description:'Defines Scene, Material, Subdivision, Connection, Piece, and Pose. A subdivision is a polygonal region; a connection is a bond; a piece groups connected regions.',steps:['Assign monotonic IDs and map them to packed storage rows.','Own outlines, memberships, incident links, and future generation seed contexts.','Rebuild connected groups after damage and reclaim dead records during structural commits.'],functions:['add_subdivision','rebuild_piece','commit_structure'],related:['yard','editor','destruction','physics','blast_query','geometry','state','render_cache','debug_view'],snippet:'new_scene'},
+
+    geometry:{lines:192,role:'Polygon tools',tag:'The mathematics beneath the cracks.',description:'Supplies shared-boundary, hull, polygon-validity, and convex-decomposition operations. Logical fracture outlines stay distinct from the convex shapes needed by the collision engine.',steps:['Find common boundaries so child regions inherit the right surviving bonds.','Displace shared cut boundaries consistently on both sides while preserving valid outlines.','Compute convex hulls and decompose outlines into convex collision parts.'],functions:['shared_segments','displace_shared_boundaries','convex_decomposition'],related:['model','destruction','physics'],snippet:'shared_segments'},
+
+    state:{lines:218,role:'Snapshots & interpolation',tag:'Remember the world. Smooth its motion.',description:'Validates and serializes the current simulation as JSON, restores snapshots, and interpolates poses for rendering. Snapshots describe existing geometry and motion; they do not save the authored editor layout.',steps:['Validate IDs, memberships, outlines, materials, and finite values.','Encode or decode snapshot data, excluding runtime Box2D handles.','Blend previous and current poses, keeping rigid regions in a shared frame between ticks.'],functions:['validate_scene','encode_snapshot','decode_snapshot','interpolate_region_pose'],related:['model','sandbox_view','debug_view'],snippet:'interpolate_pose'},
+
+    render_cache:{lines:259,role:'Surface & seam caches',tag:'Make fragments look like a surface.',description:'Caches triangle indices, split boundaries, and seam neighbours so each frame can transform prepared geometry. Flexible surfaces can blend presentation vertices while simulation geometry stays intact.',steps:['Rebuild cached topology when the owning piece changes.','Transform rest vertices into interpolated render poses; optionally blend flexible surfaces.','Draw cached fills, fill-colored edge seals, and visible outline strokes.'],functions:['ensure_render_cache','render_outline','draw_cached_fill'],related:['model','geometry','debug_view','physics'],snippet:'stroke_style'},
+
+    debug_view:{lines:152,role:'Scene drawing & picking',tag:'The renderer behind the name.',description:'Despite its name, this file supplies shared scene rendering for normal play as well as inspection. It converts between world and screen coordinates, picks regions and bonds, and draws fills and outlines.',steps:['Convert coordinate systems and build interpolated rigid-piece frames.','Use render caches to draw fills, seam seals, and outlines in separate passes.','Support picking, IDs, connection visualization, and runtime counts for inspection.'],functions:['draw_scene','pick_subdivision','render_piece_frames'],related:['sandbox_view','editor_view','render_cache','model','state'],snippet:'screen_point'}
+
+  },
+
+  journeys:{
+
+    build:{label:'BUILD A WORLD',steps:[
+
+      {file:'main',title:'Open the front door',copy:'Normal launch calls run_sandbox(), which opens the window and creates the editor sandbox.',focus:['main','sandbox_view']},
+
+      {file:'editor_view',title:'Turn a drag into a rectangle',copy:'The view reads world-space mouse gestures. The editor validates and stores the rectangle, material, and authoring identity.',focus:['editor_view','editor']},
+
+      {file:'editor',title:'Press Test: rebuild from the blueprint',copy:'Switching out of Edit triggers a reset. Stored rectangles become material-specific regions; Rubber gets a connected grid.',focus:['editor','yard','model','destruction']},
+
+      {file:'yard',title:'Add the ground and start physics',copy:'The reset adds destructible Stone terrain, initializes the Box2D world, and creates the floor and player.',focus:['yard','physics','player','model']},
+
+      {file:'sandbox_view',title:'The world is ready to play',copy:'The frame loop routes input, advances fixed ticks through the yard, and draws the current world.',focus:['sandbox_view','yard','debug_view']}
+
+    ]},
+
+    blast:{label:'FOLLOW A BLAST',steps:[
+
+      {file:'sandbox_view',title:'01. A click enters the loop',copy:'The frame loop reads the mouse. Input routing checks menus and mode; sandbox_blast() rejects an aim point inside solid geometry.',focus:['sandbox_view','yard']},
+
+      {file:'yard',title:'02. Make one Blast value',copy:'sandbox_explode() combines the world-space position with the configured radius and passes that event to blast_pass(). Falling bombs join this same route.',focus:['yard','bombs','destruction']},
+
+      {file:'blast_query',title:'03. Find nearby regions and bonds',copy:'Spatial queries supply stable region IDs. Pending children are included even before bodies exist, so new fragments remain reachable.',focus:['blast_query','model','physics','destruction']},
+
+      {file:'destruction',title:'04. Break, then ask the children again',copy:'Refine reach, compare load with strength, and stage failures. Newly generated regions and bonds face the same blast until no further failures remain.',focus:['destruction','blast_query','geometry','model']},
+
+      {file:'model',title:'05. Rebuild the connected pieces',copy:'Surviving bonds determine ownership. Affected groups are rebuilt, undersized groups are removed, and the structural commit reclaims dead records.',focus:['model','destruction']},
+
+      {file:'physics',title:'06. Give only the survivors a push',copy:'Synchronize the final bodies and joints, then apply the blast impulse to surviving regions. Rigid pieces can translate and spin.',focus:['physics','destruction','model']},
+
+      {file:'debug_view',title:'07. Draw what remains',copy:'The frame loop interpolates poses. The renderer refreshes affected caches and draws the new geometry, seams, and outlines.',focus:['sandbox_view','state','render_cache','debug_view']}
+
+    ]},
+
+    frame:{label:'DRAW A FRAME',steps:[
+
+      {file:'sandbox_view',title:'Read input once per rendered frame',copy:'raylib supplies keyboard and mouse state. The yard routes actions around the editor, HUD, and settings panel.',focus:['sandbox_view','yard','editor_view']},
+
+      {file:'yard',title:'Catch up in fixed-size ticks',copy:'An accumulator advances the world at 1/60 second per tick. Editing and the settings panel pause simulation.',focus:['yard','player','bombs','physics']},
+
+      {file:'physics',title:'Move bodies, then resolve impact damage',copy:'Box2D steps the world, motion is read back, and contact hit speeds become failure loads. The shared destruction path updates the structure.',focus:['physics','destruction','model']},
+
+      {file:'state',title:'Blend between solved poses',copy:'The frame loop interpolates with the remaining accumulator fraction. Rigid regions use a shared frame to stay visually rigid.',focus:['state','sandbox_view','debug_view']},
+
+      {file:'render_cache',title:'Transform prepared geometry',copy:'Cached triangles and seam neighbours are reused until topology changes. Optional surface blending changes only the presentation.',focus:['render_cache','model','debug_view']},
+
+      {file:'debug_view',title:'Paint the scene, then the interface',copy:'Draw fills, edge seals, and outlines. The window loop adds player and bomb visuals, aim feedback, the HUD, and settings.',focus:['debug_view','sandbox_view','editor_view']}
+
+    ]}
+
+  }
+
+};
+
+
+
+// Exact source excerpts.
+
+for (const [id, value] of Object.entries({"main": {"source": "main :: proc() {\n\tif err:=os.make_directory_all(\"output\"); err!=nil {\n\t\tfmt.eprintln(\"Could not create output directory:\",err)\n\t\tos.exit(1)\n\t}\n\tfor arg,i in os.args[1:] {\n\t\tif arg==\"--soak\" {\n\t\t\tminutes:=20\n\t\t\tif i+2<len(os.args) { n,ok:=strconv.parse_int(os.args[i+2]); if !ok || n<1 { fmt.eprintln(\"--soak expects positive whole minutes\"); os.exit(1) }; minutes=n }\n\t\t\trun_soak(minutes); return\n\t\t}\n\t\tif arg==\"--soak-fixture\" {\n\t\t\tprefix:=string(\"output/soak-fixture\"); if i+2<len(os.args) { prefix=os.args[i+2] }; run_soak_fixtures(prefix); return\n\t\t}\n\t\tif arg==\"--smoke-msaa\" { run_sandbox(true,false,true); return }\n\t\tif arg==\"--smoke\" { run_sandbox(true); return }\n\t\tif arg==\"--smoke-input\" { run_sandbox(true,true); return }\n\t\tif arg==\"--help\" { fmt.println(\"odin run src -out:build/BOM.exe -- [--soak [minutes] | --soak-fixture [output-prefix] | --smoke-msaa | --smoke | --smoke-input | --help]\"); return }\n// ? excerpt continues in source", "sourceLine": 7}, "sandbox_view": {"source": "sandbox_read_input :: proc() -> Sandbox_Input {\n\tmove:=f32(0)\n\tif rl.IsKeyDown(.A) || rl.IsKeyDown(.LEFT) { move-=1 }\n\tif rl.IsKeyDown(.D) || rl.IsKeyDown(.RIGHT) { move+=1 }\n\treturn Sandbox_Input{move=move,jump_pressed=rl.IsKeyPressed(.SPACE),jump_down=rl.IsKeyDown(.SPACE),blast_pressed=rl.IsMouseButtonPressed(.LEFT),blast_down=rl.IsMouseButtonDown(.LEFT),menu_pressed=rl.IsKeyPressed(.TAB) || rl.IsKeyPressed(.ESCAPE),reset_pressed=rl.IsKeyPressed(.R),inspection_pressed=rl.IsKeyPressed(.F3),edit_pressed=rl.IsKeyPressed(.ENTER),wheel=rl.GetMouseWheelMove()}\n}", "sourceLine": 221}, "yard": {"source": "sandbox_tick :: proc(game: ^Sandbox,move: f32,jump: bool,dt: f32 = 1.0/60.0) {\n\tclear(&game.previous)\n\tfor sub in game.scene.subdivisions { if sub.live { game.previous[sub.id]=sub.pose } }\n\tgame.previous_player=from_b2(b2.Body_GetPosition(game.player.body))\n\tbomb_rain_before_step(game,dt)\n\tplayer_before_step(&game.player,move,jump,dt)\n\tphysics_tick(&game.scene,dt)\n\tbomb_rain_after_step(game,dt)\n\tsandbox_remove_out_of_bounds(game)\n\tif player_after_step(&game.player) {\n\t\tgame.previous_player=PLAYER_SPAWN\n\t\tsandbox_notice(game,\"Back at spawn\")\n\t}\n}\n// This is yard cleanup, not an impact or another generation of damage.", "sourceLine": 152}, "editor_view": {"source": "editor_color :: proc(name: string) -> rl.Color {\n\tswitch name {\n\tcase \"wood\": return {180,136,82,255}\n\tcase \"glass\": return {106,191,215,195}\n\tcase \"rubber\": return {162,112,184,255}\n\t}\n\treturn {131,145,152,255}\n}", "sourceLine": 5}, "editor": {"source": "sandbox_toggle_editor :: proc(game: ^Sandbox) {\n\tif game.panel_open { return }\n\tgame.editor.editing=!game.editor.editing\n\tgame.editor.dragging=false\n\tsandbox_reset(game)\n\tif game.editor.editing { sandbox_notice(game,\"Edit: undamaged layout restored\") }\n\telse { sandbox_notice(game,\"Test: R restores this layout and seed\") }\n}", "sourceLine": 61}, "player": {"source": "player_after_step :: proc(player: ^Player) -> bool {\n\tposition:=from_b2(b2.Body_GetPosition(player.body))\n\tif position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y) {\n\t\tplayer_respawn(player)\n\t\treturn true\n\t}\n\tplayer_read_support(player)\n\treturn false\n}", "sourceLine": 86}, "bombs": {"source": "bomb_rain_before_step :: proc(game: ^Sandbox,dt: f32) {\n\tif game.applied.blast_mode!=.Falling_Bombs { return }\n\train:=&game.bomb_rain\n\tfor &bomb in rain.bombs { bomb.previous=from_b2(b2.Body_GetPosition(bomb.body)) }\n\train.until_drop-=dt\n\tif rain.until_drop<=0 {\n\t\tx:=rand.float32_range(-7,8,rand.default_random_generator(&rain.random))\n\t\tbomb_spawn(game,{x,BOMB_SKY_HEIGHT})\n\t\train.until_drop+=bomb_drop_delay(rain)\n\t}\n}", "sourceLine": 77}, "blast_query": {"source": "blast_connections :: proc(s: ^Scene,regions: []u64) -> [dynamic]u64 {\n\tset:=make(map[u64]bool); defer delete(set)\n\tfor id in regions { for connection in s.subdivisions[s.sub_rows[id]].incident_links { set[connection]=true } }\n\tresult: [dynamic]u64\n\tfor id in set { if s.connections[s.conn_rows[id]].live { append(&result,id) } }\n\tsort_ids(result[:])\n\treturn result\n}", "sourceLine": 31}, "destruction": {"source": "blast_load :: proc(distance,radius: f32) -> f32 {\n\tif radius <= 0 || distance >= radius { return 0 }\n\treturn BLAST_LOAD_MULTIPLIER*max(f32(0),radius-distance)\n}", "sourceLine": 281}, "physics": {"source": "physics_tick :: proc(s: ^Scene, dt: f32,calculate_loads: Load_Calculator = calculate_physics_loads) {\n\tassert(s.physics.active && dt > 0)\n\tphysics_sync_structure(s)\n\tb2.World_Step(s.physics.world,dt,PHYSICS_SUBSTEPS)\n\tphysics_read_motion(s)\n\tfailures := calculate_loads(s,dt)\n\tapply_failures(s,failures)\n\tdelete(failures.subdivisions); delete(failures.connections)\n\tdelete(failures.discard_subdivisions)\n\tphysics_sync_structure(s)\n}", "sourceLine": 306}, "model": {"source": "new_scene :: proc(minimum_width: f32) -> Scene {\n\treturn Scene{sub_rows=make(map[u64]int),conn_rows=make(map[u64]int),piece_rows=make(map[u64]int),connection_pairs=make(map[Endpoint_Pair]u64),minimum_width=minimum_width}\n}", "sourceLine": 149}, "geometry": {"source": "shared_segments :: proc(a,b: Polygon) -> [dynamic]Segment {\n\tresult: [dynamic]Segment\n\tfor i in 0..<len(a.points) {\n\t\tfor j in 0..<len(b.points) {\n\t\t\tif segment,ok := segment_overlap(Segment{a.points[i],a.points[(i+1)%len(a.points)]},Segment{b.points[j],b.points[(j+1)%len(b.points)]}); ok { append(&result,segment) }\n\t\t}\n\t}\n\treturn result\n}", "sourceLine": 40}, "state": {"source": "interpolate_pose :: proc(previous,current: Pose,alpha: f32) -> Pose {\n\tt := clamp(alpha,f32(0),f32(1))\n\tangle := current.angle-previous.angle\n\tfor angle > math.PI { angle -= 2*math.PI }\n\tfor angle < -math.PI { angle += 2*math.PI }\n\tresult := current\n\tresult.position=vadd(previous.position,vmul(vsub(current.position,previous.position),t))\n\tresult.angle=previous.angle+angle*t\n\treturn result\n}\n\n// Interpolate the shared frame, so rendered rigid cells stay rigid between ticks too.", "sourceLine": 198}, "render_cache": {"source": "stroke_style :: proc(width: f32,color: rl.Color) -> (f32,rl.Color) {\n if width<=0 { return 0,color }\n if width<1 { tint:=color; tint.a=u8(f32(color.a)*width); return 1,tint }\n return width,color\n}", "sourceLine": 238}, "debug_view": {"source": "screen_point :: proc(view: View,point: Vec2) -> rl.Vector2 { return {view.offset.x+point.x*view.scale,view.offset.y-point.y*view.scale} }", "sourceLine": 7}})) Object.assign(window.ATLAS.files[id], value);
+
+
+
+(() => {
+
+  'use strict';
+
+  const {files,lanes,journeys}=window.ATLAS;
+
+  const $=id=>document.getElementById(id);
+
+  const ids=Object.keys(files);
+
+  let selected='yard',mode='explore',step=0,timer=null;
+
+  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  $('lanes').innerHTML=lanes.map((lane,i)=>`<section class="lane" aria-label="${escape(lane.name)}"><div class="lane-label"><b>0${i+1}</b>${escape(lane.name)}</div><div class="nodes">${lane.files.map(id=>{const f=files[id];return `<button class="node" data-file="${id}" aria-pressed="false"><span class="node-name">${id}.odin</span><span class="node-role">${f.role}</span><span class="node-meta"><span>${f.lines} L</span><span class="node-bar"><i style="width:${f.lines/439*100}%"></i></span></span></button>`}).join('')}</div></section>`).join('');
+
+  function stop(){if(timer)clearInterval(timer);timer=null;$('play').textContent='Play path'}
+
+  function select(id,{scroll=false}={}){
+
+    selected=id;
+
+    const f=files[id];
+
+    const focus=mode==='explore'?[selected,...f.related]:journeys[mode].steps[step].focus;
+
+    document.querySelectorAll('.node').forEach(n=>{const key=n.dataset.file;n.classList.toggle('selected',key===id);n.classList.toggle('related',key!==id&&focus.includes(key));n.classList.toggle('dim',!focus.includes(key));n.setAttribute('aria-pressed',String(key===id))});
+
+    $('inspector').innerHTML=`<div class="file-top"><span>FILE / ${f.role.toUpperCase()}</span><span class="file-number">${String(ids.indexOf(id)+1).padStart(2,'0')} / 15</span></div><h2>${id}.odin</h2><p class="file-tagline">${f.tag}</p><p class="file-description">${f.description}</p><p class="detail-label">HOW IT WORKS</p><ol class="steps">${f.steps.map(s=>`<li>${s}</li>`).join('')}</ol><p class="detail-label">KEY FUNCTIONS</p><div class="related-links">${f.functions.map(s=>`<code class="related-link">${s}()</code>`).join('')}</div><p class="detail-label">FITS TOGETHER WITH</p><div class="related-links">${f.related.map(key=>`<button class="related-link" data-related="${key}">${key} ↗</button>`).join('')}</div><details><summary>Look inside · ${f.lines} lines</summary><pre><code>${escape(f.source||'')}</code></pre><p class="source-location">src/${id}.odin${f.sourceLine?':'+f.sourceLine:''} · source excerpt</p></details>`;
+
+    $('inspector').querySelectorAll('[data-related]').forEach(b=>b.addEventListener('click',()=>{setMode('explore',false);select(b.dataset.related)}));
+
+    requestAnimationFrame(drawWires);
+
+    if(scroll&&matchMedia('(max-width:850px)').matches)$('inspector').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});
+
+  }
+
+  function drawWires(){
+
+    const map=$('map'),rect=map.getBoundingClientRect();
+
+    const get=id=>document.querySelector(`.node[data-file="${id}"]`).getBoundingClientRect();
+
+    const start=get(selected),sx=start.left+start.width/2-rect.left,sy=start.top+start.height/2-rect.top;
+
+    const targets=mode==='explore'?files[selected].related:journeys[mode].steps[step].focus.filter(x=>x!==selected);
+
+    $('wires').setAttribute('viewBox',`0 0 ${rect.width} ${rect.height}`);
+
+    $('wires').innerHTML=targets.map(id=>{const r=get(id),x=r.left+r.width/2-rect.left,y=r.top+r.height/2-rect.top;return `<path class="wire" d="M ${sx} ${sy} C ${sx} ${(sy+y)/2}, ${x} ${(sy+y)/2}, ${x} ${y}"/>`}).join('');
+
+  }
+
+  function renderStep(){
+
+    const journey=journeys[mode],s=journey.steps[step];
+
+    $('journey-count').textContent=`${journey.label} / ${String(step+1).padStart(2,'0')} OF ${String(journey.steps.length).padStart(2,'0')}`;
+
+    $('journey-title').textContent=s.title;$('journey-copy').textContent=s.copy;
+
+    $('prev').disabled=step===0;$('next').disabled=step===journey.steps.length-1;
+
+    $('progress').innerHTML=journey.steps.map((s,i)=>`<button class="${i<step?'complete':i===step?'current':''}" aria-label="Step ${i+1}: ${escape(s.title)}" ${i===step?'aria-current="step"':''} data-step="${i}"></button>`).join('');
+
+    $('progress').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{stop();step=Number(b.dataset.step);renderStep()}));
+
+    select(s.file);
+
+  }
+
+  function setMode(next,render=true){stop();mode=next;step=0;document.querySelectorAll('.mode').forEach(b=>{b.classList.toggle('active',b.dataset.mode===mode);b.setAttribute('aria-pressed',String(b.dataset.mode===mode))});$('journey').hidden=mode==='explore';$('map-hint').textContent=mode==='explore'?'Select a file to follow its connections':'Highlighted files take part in this step';if(render){if(mode==='explore')select(selected);else renderStep()}}
+
+  document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+
+  document.querySelectorAll('.node').forEach(b=>b.addEventListener('click',()=>{setMode('explore',false);select(b.dataset.file,{scroll:true})}));
+
+  $('prev').addEventListener('click',()=>{stop();if(step>0){step--;renderStep()}});
+
+  $('next').addEventListener('click',()=>{stop();if(step<journeys[mode].steps.length-1){step++;renderStep()}});
+
+  $('play').addEventListener('click',()=>{if(timer){stop();return}if(step===journeys[mode].steps.length-1){step=0;renderStep()}$('play').textContent='Pause';timer=setInterval(()=>{if(step<journeys[mode].steps.length-1){step++;renderStep()}else stop()},4500)});
+
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});
+
+  new ResizeObserver(()=>requestAnimationFrame(drawWires)).observe($('map'));
+
+  select(selected);
+
+})();
+
+
+
+</script>
+
+</body>
+
+</html>
+

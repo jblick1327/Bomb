@@ -130,7 +130,7 @@ triangulation_keeps_small_valid_corners_from_refined_ground :: proc(t: ^testing.
 concave_nontriangular_parents_are_cut_directly :: proc(t: ^testing.T) {
  points:=[5]Vec2{{0,0},{2,0},{2,1},{1,0.98},{0,1}}
  parent:=Polygon{points=points[:]}
- choices:=[2]Palette{.Wood,.Stone}
+ choices:=[2]Recipe{.Wood,.Stone}
  for choice in choices {
   recipe:=editor_material(choice)
   for seed in 1..=32 {
@@ -172,8 +172,8 @@ editor_roots_get_distinct_deterministic_generation_contexts :: proc(t: ^testing.
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  g:=sandbox_editor_create(); defer sandbox_destroy(&g)
  assert(editor_place(&g,{0,0},{0.8,0.8})); assert(editor_place(&g,{1,0},{1.8,0.8})); sandbox_toggle_editor(&g)
- a,b:=g.scene.subdivisions[0],g.scene.subdivisions[1]
+ a,b:=g.world.scene.subdivisions[0],g.world.scene.subdivisions[1]
  testing.expect(t,a.seed!=0 && b.seed!=0 && a.seed!=b.seed)
  sandbox_reset(&g)
- testing.expect(t,g.scene.subdivisions[0].seed==a.seed && g.scene.subdivisions[1].seed==b.seed)
+ testing.expect(t,g.world.scene.subdivisions[0].seed==a.seed && g.world.scene.subdivisions[1].seed==b.seed)
 }

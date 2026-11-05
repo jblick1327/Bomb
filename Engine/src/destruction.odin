@@ -1,7 +1,10 @@
 #+feature dynamic-literals
 package main
+import "core:time"
+import "core:fmt"
 
 import "core:math"
+import "core:mem"
 
 polygon_area :: proc(p: Polygon) -> f32 {
 	a: f32
@@ -83,7 +86,25 @@ triangulate_polygon :: proc(p: Polygon) -> [dynamic]Polygon {
 }
 // Straight cuts partition a shallow-concave outline directly. Collision convex
 // decomposition is deliberately separate from logical fragment generation.
-generate_children :: proc(parent: Polygon, recipe: Material, seed: u8, minimum_width: f32 = 0) -> [dynamic]Polygon {
+generate_children :: proc(parent: Polygon, recipe: Material, seed: u8, minimum_width: f32 = 0,creation: bool = false) -> [dynamic]Polygon {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(9,started) }
+ if active_cover==nil || seed==0 { return generate_children_impl(parent,recipe,seed,minimum_width,creation) }
+ arena:=&active_cover.generation_arena
+ if arena.block_allocator.procedure==nil { mem.dynamic_arena_init(arena,block_size=65536,out_band_size=32768,alignment=64) }
+ original_allocator:=context.allocator
+ context.allocator=mem.dynamic_arena_allocator(arena)
+ blast_scratch_active=true
+ temporary:=generate_children_impl(parent,recipe,seed,minimum_width,creation)
+ context.allocator=original_allocator
+ blast_scratch_active=false
+ result:[dynamic]Polygon
+ for polygon in temporary { append(&result,make_polygon(polygon.points)) }
+ mem.dynamic_arena_reset(arena)
+ return result
+}
+generate_children_impl :: proc(parent: Polygon, recipe: Material, seed: u8, minimum_width: f32 = 0,creation: bool = false) -> [dynamic]Polygon {
+
+ if recipe.aspect_ratio<1 { return generate_grained_children(parent,recipe,seed,minimum_width,creation) }
  result: [dynamic]Polygon
  if seed==0 { return result }
  if recipe.triangulate { result=triangulate_polygon(parent) }
@@ -94,7 +115,9 @@ generate_children :: proc(parent: Polygon, recipe: Material, seed: u8, minimum_w
   }
  }
  target:=max(recipe.generation_count,len(result))
- blocked:=make(map[int]bool); defer delete(blocked)
+ blocked_inline:[8]bool; blocked:=blocked_inline[:]
+ if target>len(blocked_inline) { blocked=make([]bool,target) }
+ defer { if target>len(blocked_inline) { delete(blocked) } }
  for len(result)<target {
   chosen:=-1; largest:f32
   for p,i in result { area:=polygon_area(p); if !blocked[i] && area>largest { largest=area; chosen=i } }
@@ -103,22 +126,12 @@ generate_children :: proc(parent: Polygon, recipe: Material, seed: u8, minimum_w
   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
   for point in p.points { lo={min(lo.x,point.x),min(lo.y,point.y)}; hi={max(hi.x,point.x),max(hi.y,point.y)} }
   axis:=0; width,height:=hi.x-lo.x,hi.y-lo.y
-  if recipe.aspect_ratio<1 {
-   if width>=height { if width/height<1/recipe.aspect_ratio { axis=1 } }
-   else if height/width>=1/recipe.aspect_ratio { axis=1 }
-  } else if width<height*recipe.aspect_ratio { axis=1 }
+  if width<height*recipe.aspect_ratio { axis=1 }
   fraction:=0.4+0.2*f32(derive_seed(seed,u64(len(result))))/255
   accepted:=false
-  attempts:=2; if recipe.aspect_ratio<1 { attempts=1 }
-  for attempt in 0..<attempts {
+  for attempt in 0..<2 {
    cut_axis:=(axis+attempt)%2
    f:=fraction
-   if recipe.aspect_ratio<1 {
-    extent:=width; if cut_axis==1 { extent=height }
-    low_fraction,high_fraction:=max(f32(0.4),minimum_width/extent),min(f32(0.6),1-minimum_width/extent)
-    if low_fraction>high_fraction { break }
-    f=clamp(f,low_fraction,high_fraction)
-   }
    cut:=lo.x+(hi.x-lo.x)*f; if cut_axis==1 { cut=lo.y+(hi.y-lo.y)*f }
    low,high:=clip_polygon(p,cut_axis,cut,true),clip_polygon(p,cut_axis,cut,false)
    valid:=valid_partition_half(low,minimum_width) && valid_partition_half(high,minimum_width)
@@ -167,17 +180,23 @@ apply_failures :: proc(s: ^Scene, failures: Failures) {
 	s.revision+=1
 	affected := make(map[u64]bool)
 	defer delete(affected)
-	stage_failures(s,failures,&affected)
+ shock:=shock_begin_impact(s,failures); defer shock_destroy(&shock)
+	stage_failures(s,failures,&affected,false,0,&shock,true)
+ _=shock_apply(s,&shock,&affected,true)
 	rebuild_affected_pieces(s,affected)
 	commit_structure(s)
 }
 // Reuse the existing one-wave graph update for physics and for each blast wave.
 // Ownership, size filtering and engine handles are committed only at the end.
-stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, refine_only: bool = false, creation_size: f32 = 0) {
+stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, refine_only: bool = false, creation_size: f32 = 0,shock: ^Shock_Transaction = nil,direct: bool = false) {
 	replacements := make(map[u64][dynamic]u64)
 	defer { for _,children in replacements { delete(children) }; delete(replacements) }
 	failed_subs := sorted_ids(failures.subdivisions[:])
-	for id in failures.discard_subdivisions { if !contains_id(failed_subs[:],id) { append(&failed_subs,id) } }
+ failed_set:=make(map[u64]bool); defer delete(failed_set)
+ discard_set:=make(map[u64]bool); defer delete(discard_set)
+ for id in failed_subs { failed_set[id]=true }
+ for id in failures.discard_subdivisions { discard_set[id]=true }
+	for id in failures.discard_subdivisions { if !failed_set[id] { append(&failed_subs,id); failed_set[id]=true } }
 	sort_ids(failed_subs[:])
 	failed_conns := sorted_ids(failures.connections[:])
 	defer delete(failed_subs); defer delete(failed_conns)
@@ -194,14 +213,27 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		row, ok := s.sub_rows[id]
 		if !ok || !s.subdivisions[row].live { continue }
 		parent := s.subdivisions[row]
+  if !refine_only && s.materials[parent.material].name=="wood" { cover_wood_failures+=1 }
+  if direct { shock_mark_direct(shock,id) }
 		seed := parent.seed
-		if parent.width<=s.minimum_width && (creation_size==0 || longest_dimension(parent.outline)<=creation_size) || contains_id(failures.discard_subdivisions[:],id) { seed=0 }
-		children := generate_children(parent.outline,s.materials[parent.material],seed,s.minimum_width)
+		grained:=s.materials[parent.material].aspect_ratio<1
+		if !grained && parent.width<=s.minimum_width && (creation_size==0 || frame_longest(parent.outline,parent.frame)<=creation_size) || discard_set[id] { seed=0 }
+  when BOM_PROFILE { if blast_profile!=nil { if direct { blast_profile.counts[0]+=1 } } }
+		children: [dynamic]Polygon
+  cacheable:=active_cover!=nil && seed==parent.seed && seed!=0 && creation_size==0
+  if cacheable && active_cover.unpartitionable[id] {
+   active_cover.partition_cache_hits+=1
+  } else {
+   children=generate_framed(parent.outline,s.materials[parent.material],seed,s.minimum_width,creation_size>0,parent.frame)
+   // During a blast, this cell's rest outline, recipe and minimum width do
+   // not change. Do not repeat a failed partition during direct staging.
+   if cacheable && len(children)==0 { active_cover.unpartitionable[id]=true }
+  }
 		// Spatial refinement is not yet a centre-sampled failure. If the recipe
 		// cannot partition this outline, retain it for the actual blast decision.
 		if len(children)==0 {
    if !refine_only { s.subdivisions[row].seed=0 }
-   discard:=contains_id(failures.discard_subdivisions[:],id)
+   discard:=discard_set[id]
    if refine_only || failures.impact && parent.width>s.minimum_width && !discard { continue }
   }
 		affected[parent.owner] = true
@@ -212,12 +244,16 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 			r := vsub(world_center,parent.pose.position)
 			pose := Pose{position=world_center,angle=parent.pose.angle,velocity=vadd(parent.pose.velocity,Vec2{-parent.pose.angular_velocity*r.y,parent.pose.angular_velocity*r.x}),angular_velocity=parent.pose.angular_velocity}
 			child := add_subdivision(s,parent.owner,outline,pose)
+   when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[7]+=1 } }
 			child_row := s.sub_rows[child]
+   s.subdivisions[child_row].frame=parent.frame
+   shock_inherit(shock,id,child)
+   if active_cover!=nil { active_cover.owners[child]=active_cover.owners[id]; if flag,ok:=active_cover.shadow[id]; ok { active_cover.shadow[child]=flag } }
 			// Parent context plus child ordinal is independent of other branches'
 			// allocations. A deletion shortcut cannot perturb their future seeds.
 			s.subdivisions[child_row].seed=derive_seed(parent.seed,u64(ordinal+1))
 			max_width=max(max_width,s.subdivisions[child_row].width)
-			max_length=max(max_length,longest_dimension(outline))
+			max_length=max(max_length,frame_longest(outline,parent.frame))
 			delete(outline.points)
 			child_ids := replacements[id]
 			append(&child_ids,child)
@@ -225,7 +261,7 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		}
 		delete(children)
 		// During creation, finish long thin cells before assigning the terminal batch.
-		if max_width<=s.minimum_width && (creation_size==0 || max_length<=creation_size) {
+		if !grained && max_width<=s.minimum_width && (creation_size==0 || max_length<=creation_size) {
 			child_ids := replacements[id]
 			for child in child_ids { s.subdivisions[s.sub_rows[child]].seed=0 }
 		}
@@ -235,11 +271,13 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		row, ok := s.conn_rows[id]
 		if ok && s.connections[row].live {
 			c := s.connections[row]
+   if c.mortar { path:=string("blast");if failures.impact { path="force" };seam_diagnostic_death(s,c,path);s.connections[row].live=false; continue }
 			affected[s.subdivisions[s.sub_rows[c.a]].owner] = true
 			affected[s.subdivisions[s.sub_rows[c.b]].owner] = true
 			s.connections[row].live = false
 		}
 	}
+ when BOM_PROFILE { inheritance_start:=time.tick_now() }
 	for old_id in old_connections {
 		i := s.conn_rows[old_id]
 		c := s.connections[i]
@@ -247,28 +285,44 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		a_dead := !s.subdivisions[s.sub_rows[c.a]].live
 		b_dead := !s.subdivisions[s.sub_rows[c.b]].live
 		if !a_dead && !b_dead { continue }
+  if c.mortar { seam_diagnostic_death(s,c,"endpoint replacement/deletion") }
 		s.connections[i].live = false
 		left_default,right_default := [1]u64{c.a},[1]u64{c.b}
 		left,right := left_default[:],right_default[:]
 		if a_dead { left = replacements[c.a][:] }
 		if b_dead { right = replacements[c.b][:] }
-		old_a,old_b := s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
-		old_length,_ := shared_boundary(old_a.outline,old_b.outline)
-		if old_length <= 0 { continue }
-		for a in left {
-			for b in right {
-				if inherits_old_boundary(s.subdivisions[s.sub_rows[a]].outline,s.subdivisions[s.sub_rows[b]].outline,old_a.outline,old_b.outline) { add_connection(s,a,b) }
-			}
-		}
+		if len(c.glue)>0 { inherit_glue(s,c,left,right);continue }
+  old_a,old_b := s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
+  // Rest outlines are immutable, and these cached boundaries remain owned
+  // by the old connection until commit. Reuse them during inheritance.
+  old_segments:=c.rest_segments[:]
+  old_owned:[dynamic]Segment
+  if old_segments==nil {
+   old_length,_:=shared_boundary(old_a.outline,old_b.outline)
+   if old_length<=0 { continue }
+   old_owned=shared_segments(old_a.outline,old_b.outline); old_segments=old_owned[:]
+  }
+  for a in left { for b in right {
+   sa,sb:=s.subdivisions[s.sub_rows[a]],s.subdivisions[s.sub_rows[b]]
+   if !inheritance_bounds_overlap(sa.outline,sb.outline) { continue }
+   current:=shared_segments(sa.outline,sb.outline)
+   if len(current)>0 && inherits_old_boundary(sa.outline,sb.outline,old_a.outline,old_b.outline,old_segments,current[:]) { add_connection(s,a,b,c.mortar,current[:]) }
+   delete(current)
+  } }
+  delete(old_owned)
 	}
+ when BOM_PROFILE { profile_add(10,inheritance_start) }
 	// Impacts inherit outside attachments, but leave new siblings disconnected.
-	if failures.impact { return }
+	if failures.impact || failures.no_sibling_bonds { return }
+ when BOM_PROFILE { sibling_start:=time.tick_now(); defer profile_add(11,sibling_start) }
 	for id in failed_subs {
 		children := replacements[id]
 		for i in 0..<len(children) { for j in i+1..<len(children) { add_connection(s,children[i],children[j]) } }
 	}
 }
 rebuild_affected_pieces :: proc(s: ^Scene, affected: map[u64]bool) {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(5,started) }
+
 	owners: [dynamic]u64
 	defer delete(owners)
 	for owner in affected { append(&owners,owner) }
@@ -282,6 +336,8 @@ blast_load :: proc(distance,radius: f32) -> f32 {
 	if radius <= 0 || distance >= radius { return 0 }
 	return BLAST_LOAD_MULTIPLIER*max(f32(0),radius-distance)
 }
+COVER_REACH_SHORTCUTS :: #config(COVER_REACH_SHORTCUTS,true)
+COVER_DELETE_SHORTCUTS :: #config(COVER_DELETE_SHORTCUTS,true)
 fails :: proc(load,strength: f32) -> bool { return load > 0 && load >= strength }
 evaluate_blast :: proc(s: ^Scene, blast: Blast, first_subdivision: int = 0, first_connection: int = 0) -> Failures {
 	f := Failures{}
@@ -296,14 +352,21 @@ evaluate_blast :: proc(s: ^Scene, blast: Blast, first_subdivision: int = 0, firs
 	}
 	for id in regions {
 		sub:=s.subdivisions[s.sub_rows[id]]
-		load:=blast_load(vlen(vsub(subdivision_sample(sub),blast.position)),blast.radius)
+		load:=blast_load(cover_failure_distance(sub,subdivision_sample(sub),blast,s.materials[sub.material].subdivision_strength),blast.radius)
 		if fails(load,s.materials[sub.material].subdivision_strength) { append(&f.subdivisions,id) }
 	}
 	for id in links {
 		c:=s.connections[s.conn_rows[id]]
 		a:=s.subdivisions[s.sub_rows[c.a]]
-		load:=blast_load(vlen(vsub(connection_sample(s,c),blast.position)),blast.radius)
-		if fails(load,s.materials[a.material].connection_strength) { append(&f.connections,id) }
+  strength:=s.materials[a.material].connection_strength
+  sample:=connection_blast_sample(s,c,blast.position)
+  if c.mortar {
+   b:=s.subdivisions[s.sub_rows[c.b]]
+   strength=min(strength,s.materials[b.material].connection_strength)
+   sample=connection_sample(s,c)
+  }
+  load:=blast_load(cover_failure_distance(a,sample,blast,strength),blast.radius)
+  if fails(load,strength) { append(&f.connections,id) }
 	}
 	return f
 }
@@ -311,6 +374,7 @@ evaluate_blast :: proc(s: ^Scene, blast: Blast, first_subdivision: int = 0, firs
 // transform during this event. Their samples lie in the posed convex hull.
 // Outward rounding and a strict load margin avoid pruning borderline failures.
 blast_erases_descendants :: proc(sub: Subdivision, blast: Blast, strength: f32) -> bool {
+ if cover_external(sub,blast.position) { return false }
 	if !finite(strength) || !finite(blast.radius) || !valid_vec(blast.position) { return false }
 	farthest: f32
 	for point in sub.outline.points {
@@ -326,7 +390,9 @@ blast_erases_descendants :: proc(sub: Subdivision, blast: Blast, strength: f32) 
 // terminal or unpartitionable cells remain for the actual failure decision.
 // Preserve birth contexts and inherited connections, and defer final bodies and
 // the survivor impulse until the enclosing blast pass finishes.
-refine_blast_reach :: proc(s: ^Scene,blast: Blast) -> bool {
+refine_blast_reach :: proc(s: ^Scene,blast: Blast,shock: ^Shock_Transaction = nil) -> bool {
+ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(0,started) }
+
  // Reach-only attempts are not failures; retain their local skip set.
  unrefinable:=make(map[u64]bool); defer delete(unrefinable)
 	affected:=make(map[u64]bool)
@@ -337,12 +403,14 @@ refine_blast_reach :: proc(s: ^Scene,blast: Blast) -> bool {
 		failures:=Failures{}
 		for id in candidates {
 			sub:=s.subdivisions[s.sub_rows[id]]
-			if !sub.live || sub.seed==0 || sub.width<=s.minimum_width || unrefinable[sub.id] { continue }
+			if !sub.live || sub.seed==0 || sub.width<=s.minimum_width && s.materials[sub.material].aspect_ratio>=1 || unrefinable[sub.id] { continue }
 			strength:=s.materials[sub.material].subdivision_strength
-			if fails(blast_load(vlen(vsub(sub.pose.position,blast.position)),blast.radius),strength) {
+			if (COVER_REACH_SHORTCUTS || !cover_foreign_any(sub)) && fails(blast_load(cover_failure_distance(sub,sub.pose.position,blast,strength),blast.radius),strength) {
 				extent:=f32(0)
 				for point in sub.outline.points { extent=max(extent,vlen(vsub(point,sub.rest_center))) }
-				if extent<=blast.radius-strength/BLAST_LOAD_MULTIPLIER || blast_erases_descendants(sub,blast,strength) { continue }
+				// Extent alone is a legacy reach heuristic, not a whole-core proof.
+    // Newly enabled cases require the farthest-point proof below.
+    if !cover_external(sub,blast.position) && !cover_foreign_any(sub) && extent<=blast.radius-strength/BLAST_LOAD_MULTIPLIER || blast_erases_descendants(sub,blast,strength) { continue }
 			}
 			distance:=f32(1e30)
 			if point_in_subdivision(sub,blast.position) { distance=0 }
@@ -352,14 +420,14 @@ refine_blast_reach :: proc(s: ^Scene,blast: Blast) -> bool {
 					edge:=vsub(b,a); squared:=vdot(edge,edge)
 					if squared<=0 { continue }
 					t:=clamp(vdot(vsub(blast.position,a),edge)/squared,f32(0),f32(1))
-					distance=min(distance,vlen(vsub(blast.position,vadd(a,vmul(edge,t)))))
+					distance=min(distance,cover_failure_distance(sub,vadd(a,vmul(edge,t)),blast,strength))
 				}
 			}
 			if fails(blast_load(distance,blast.radius),strength) { append(&failures.subdivisions,sub.id) }
 		}
 		if len(failures.subdivisions)==0 { break }
 		first_child:=len(s.subdivisions)
-		stage_failures(s,failures,&affected,true)
+		stage_failures(s,failures,&affected,true,0,shock)
 		for id in failures.subdivisions {
 			if s.subdivisions[s.sub_rows[id]].live { unrefinable[id]=true } else { changed=true }
 		}
@@ -372,12 +440,19 @@ refine_blast_reach :: proc(s: ^Scene,blast: Blast) -> bool {
 }
 
 blast_pass :: proc(s: ^Scene, blast: Blast, deletion_shortcut: bool = true) {
+ when BOM_PROFILE {
+  profile:=Profile{start=time.tick_now(),before={len(s.subdivisions),len(s.connections)}}; blast_profile=&profile
+  defer { fmt.printf("PROFILE,%d,%.6f,%v,%v,%v,%d,%d\n",profile_tick,f64(time.tick_diff(profile.start,time.tick_now()))/f64(time.Millisecond),profile.ms,profile.counts,profile.before,len(s.subdivisions),len(s.connections)); blast_profile=nil }
+ }
 	physics_read_motion(s)
+ cover:=cover_begin(s,blast.radius); active_cover=&cover; defer { when BOM_PROFILE { fmt.printf("COVER,%d,%d,%d,%d,%d,%d,%d,%d\n",profile_tick,cover.samples,cover.fast_samples,cover.cache_hits,cover.upper_bound_skips,cover.shape_hits,cover.shape_misses,cover.partition_cache_hits) }; active_cover=nil; cover_destroy(&cover) }
+ shock:=shock_begin_blast(s,blast); defer shock_destroy(&shock)
 	revision:=s.revision
-	refined:=refine_blast_reach(s,blast)
+	refined:=refine_blast_reach(s,blast,&shock)
 	physics_read_motion(s)
 	affected := make(map[u64]bool)
 	defer delete(affected)
+ when BOM_PROFILE { direct_start:=time.tick_now() }
 	f := evaluate_blast(s,blast)
 	changed := false
 	for len(f.subdivisions)>0 || len(f.connections)>0 {
@@ -385,26 +460,29 @@ blast_pass :: proc(s: ^Scene, blast: Blast, deletion_shortcut: bool = true) {
 		if deletion_shortcut {
 			for id in f.subdivisions {
 				sub := s.subdivisions[s.sub_rows[id]]
-				if sub.seed!=0 && sub.width>s.minimum_width && blast_erases_descendants(sub,blast,s.materials[sub.material].subdivision_strength) { append(&f.discard_subdivisions,id) }
+				if (COVER_DELETE_SHORTCUTS || !cover_foreign_any(sub)) && sub.seed!=0 && sub.width>s.minimum_width && blast_erases_descendants(sub,blast,s.materials[sub.material].subdivision_strength) { append(&f.discard_subdivisions,id) }
 			}
 		}
 		first_subdivision,first_connection := len(s.subdivisions),len(s.connections)
-		stage_failures(s,f,&affected)
+		stage_failures(s,f,&affected,false,0,&shock,true)
 		delete(f.subdivisions); delete(f.connections); delete(f.discard_subdivisions)
 		// Earlier survivors have unchanged samples. Only children and new links
 		// need this blast again; failed old links are already excluded from inheritance.
 		f=evaluate_blast(s,blast,first_subdivision,first_connection)
 	}
 	delete(f.subdivisions); delete(f.connections); delete(f.discard_subdivisions)
+ when BOM_PROFILE { profile_add(1,direct_start) }
+ if shock_apply(s,&shock,&affected,false) { changed=true }
 	if changed { s.revision+=1; rebuild_affected_pieces(s,affected) }
 	commit_structure(s)
 	physics_sync_structure(s)
+ when BOM_PROFILE { impulse_start:=time.tick_now(); defer profile_add(8,impulse_start) }
 	final_regions:=blast_regions(s,blast); defer delete(final_regions)
 	for id in final_regions {
 		sub := &s.subdivisions[s.sub_rows[id]]
 		offset := vsub(subdivision_sample(sub^),blast.position)
 		distance := vlen(offset)
-		load := blast_load(distance,blast.radius)
+		load := blast_load(cover_sample_distance(sub^,subdivision_sample(sub^),blast.position),blast.radius)
 		if load>0 && distance>0.00001 { apply_blast_motion(s,sub,vmul(offset,1/distance),load) }
 	}
 	physics_read_motion(s)
@@ -426,7 +504,9 @@ presplit_piece :: proc(s: ^Scene,owner: u64,size: f32 = PRESPLIT_SIZE) {
   f:=Failures{}
   for id in candidates {
    sub:=s.subdivisions[s.sub_rows[id]]
-   if sub.live && sub.seed!=0 && longest_dimension(sub.outline)>size+0.00001 { append(&f.subdivisions,id) }
+   needed:=frame_longest(sub.outline,sub.frame)>size+0.00001
+   if s.materials[sub.material].aspect_ratio<1 { local:=frame_polygon(sub.outline,sub.frame); needed,_=grain_cut_kind(local,s.minimum_width,true,s.materials[sub.material].strip_thickness);delete(local.points) }
+   if sub.live && sub.seed!=0 && needed { append(&f.subdivisions,id) }
   }
   if len(f.subdivisions)==0 { delete(f.subdivisions); break }
   first:=len(s.subdivisions)
@@ -437,3 +517,4 @@ presplit_piece :: proc(s: ^Scene,owner: u64,size: f32 = PRESPLIT_SIZE) {
  rebuild_affected_pieces(s,affected)
  commit_structure(s)
 }
+
