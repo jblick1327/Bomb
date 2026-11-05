@@ -23,7 +23,8 @@ Wire_Connection :: struct {
  id,a,b: u64,
  glue:[]Glue_Sample `json:"glue,omitempty"`,
  mortar: union { bool } `json:"mortar,omitempty"`,
- overload_ticks: union { u8 } `json:"overload_ticks,omitempty"`,
+ damage: union { f32 } `json:"damage,omitempty"`,
+ overload_ticks: union { u8 } `json:"overload_ticks,omitempty"`, // legacy: accepted on load, ignored, never written
 }
 Snapshot :: struct {
 	version: int,
@@ -121,7 +122,7 @@ read_state :: proc(s: ^Scene) -> Snapshot {
 	sort_ids(ids[:])
 	for id in ids {
   c:=s.connections[s.conn_rows[id]]; wire:=Wire_Connection{id=c.id,a=c.a,b=c.b,glue=c.glue[:]}
-  if c.mortar { wire.mortar=true }; if c.overload_ticks!=0 { wire.overload_ticks=c.overload_ticks }
+  if c.mortar { wire.mortar=true }; if c.damage!=0 { wire.damage=c.damage }
   append(&out.connections,wire)
  }
 	clear(&ids)
@@ -224,10 +225,10 @@ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
 		s.connection_pairs[pair_key(c.a,c.b)]=c.id
 		append(&s.subdivisions[a_row].incident_links,c.id); append(&s.subdivisions[b_row].incident_links,c.id)
 		s.conn_rows[c.id]=len(s.connections)
-		mortar:=false; overload_ticks:=u8(0)
+		mortar:=false; damage:=f32(0)
   if value,exists:=c.mortar.(bool); exists { mortar=value }
-  if value,exists:=c.overload_ticks.(u8); exists { overload_ticks=value }
-		append(&s.connections,Connection{mortar=mortar,overload_ticks=overload_ticks,id=c.id,a=c.a,b=c.b,rest_point=point,local_a=vsub(point,a.rest_center),local_b=vsub(point,b.rest_center),rest_segments=shared_segments(a.outline,b.outline),live=true})
+  if value,exists:=c.damage.(f32); exists { if !finite(value) || value<0 { return {},false }; damage=value }
+		append(&s.connections,Connection{mortar=mortar,damage=damage,id=c.id,a=c.a,b=c.b,rest_point=point,local_a=vsub(point,a.rest_center),local_b=vsub(point,b.rest_center),rest_segments=shared_segments(a.outline,b.outline),live=true})
   if len(c.glue)>0 { target:=&s.connections[len(s.connections)-1];delete(target.rest_segments);target.rest_segments=nil;append(&target.glue,..c.glue) }
 	}
 	if valid,_ := validate_scene(&s); !valid { return {},false }

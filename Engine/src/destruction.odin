@@ -189,6 +189,7 @@ apply_failures :: proc(s: ^Scene, failures: Failures) {
 // Reuse the existing one-wave graph update for physics and for each blast wave.
 // Ownership, size filtering and engine handles are committed only at the end.
 stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, refine_only: bool = false, creation_size: f32 = 0,shock: ^Shock_Transaction = nil,direct: bool = false) {
+ if creation_size==0 { scene_finish_references(s) }
 	replacements := make(map[u64][dynamic]u64)
 	defer { for _,children in replacements { delete(children) }; delete(replacements) }
 	failed_subs := sorted_ids(failures.subdivisions[:])

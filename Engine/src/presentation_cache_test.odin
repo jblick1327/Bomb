@@ -82,7 +82,7 @@ presentation_cache_prunes_live_keys_and_releases_after_scene :: proc(t: ^testing
 		for sub in g.world.scene.subdivisions {
 			if !sub.live { continue }; live+=1
 			cache,found:=caches.cells[sub.id]
-			testing.expect(t,found && cache.owner==sub.owner && cache.anchored==render_static(sub))
+			testing.expect(t,found && cache.owner==sub.owner && cache.anchored==render_static(&g.world.scene,&caches.statics,sub))
 			revision:=g.world.scene.pieces[g.world.scene.piece_rows[sub.owner]].render_revision
 			if cache.anchored { revision=caches.static_render_revision }
 			testing.expect(t,cache.revision==revision)

@@ -121,7 +121,7 @@ player_and_bomb_contacts_do_not_damage_palette_objects :: proc(t: ^testing.T) {
 		testing.expect(t,editor_place(&g,{-3.5,0},{-1.1,2.4})); sandbox_toggle_editor(&g)
 		before:=g.world.scene.next_id
 		// Full speed before contact; then keep running into the rectangle.
-		b2.Body_SetLinearVelocity(g.world.player.body,{PLAYER_TUNING.speed,0})
+		b2.Body_SetLinearVelocity(g.world.players[0].body,{PLAYER_TUNING.speed,0})
 		for _ in 0..<120 { sandbox_tick(&g,1,false) }
 		testing.expectf(t,g.world.scene.next_id==before,"Player must not damage %v",choice)
 		// Drop onto both the object and the exposed floor from normal bomb height.

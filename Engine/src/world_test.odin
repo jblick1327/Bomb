@@ -15,9 +15,9 @@ world_frame_commands_wait_for_tick :: proc(t: ^testing.T) {
  radius:=g.world.settings.blast_radius
  sandbox_set_radius(&g,4)
  if g.world.settings.blast_radius!=radius { failures+=1 }
- g.world.player.coyote=0.037; g.world.player.buffered_jump=0.021
+ g.world.players[0].coyote=0.037; g.world.players[0].buffered_jump=0.021
  sandbox_set_panel(&g,true)
- if g.world.player.coyote!=0.037 || g.world.player.buffered_jump!=0.021 { failures+=1 }
+ if g.world.players[0].coyote!=0.037 || g.world.players[0].buffered_jump!=0.021 { failures+=1 }
  fmt.printf("A frame mutation violations: %d\n",failures)
  testing.expect(t,failures==0)
 }

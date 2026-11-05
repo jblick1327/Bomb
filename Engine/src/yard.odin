@@ -18,24 +18,31 @@ YARD_RIGHT :: f32(9)
 World :: struct {
 	scene: Scene,
 	floor: b2.BodyId,
-	player: Player,
+	players: [MAX_PLAYERS]Player,
 	bombs: [dynamic]Bomb,
+	next_bomb_id: u64,
 	rain: Bomb_Rain,
 	settings: Sandbox_Settings,
 	tick: u64,
 }
-Tick_Commands :: struct {
+// Per-player input. Applied only to active players; a player's blasts use that player's blast_radius.
+Player_Commands :: struct {
  move: f32,
  jump: bool,
  blasts: [dynamic]Vec2,
  radius: union { f32 },
+}
+Tick_Commands :: struct {
+ players: [MAX_PLAYERS]Player_Commands,
  mode: union { Blast_Mode },
+ bomb_radius: union { f32 }, // Sets settings.blast_radius, the falling-bomb radius.
  remove_region,break_connection: u64,
 }
 Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int }
 Tick_Events :: struct {
  explosions: [dynamic]Explosion_Event,
- player_respawned,blast_rejected,structure_changed: bool,
+ player_respawned,blast_rejected: [MAX_PLAYERS]bool,
+ structure_changed: bool,
 }
 Sandbox :: struct {
 	world: World,
@@ -52,9 +59,9 @@ Sandbox :: struct {
 	blast_timing: ^Soak_Timing,
 	queued: Tick_Commands,
 	bursts: [dynamic]Bomb_Burst,
-	previous_bombs: map[b2.BodyId]Vec2,
+	previous_bombs: map[u64]Vec2,
 	previous: map[u64]Pose,
-	previous_player: Vec2,
+	previous_players: [MAX_PLAYERS]Vec2,
 	panel_open,inspection,surface,joints: bool,
 	outline_width: f32,
 	block_jump,block_blast,jump_queued: bool,
@@ -66,7 +73,7 @@ Sandbox :: struct {
 sandbox_destroy :: proc(game: ^Sandbox) {
 	scene_destroy(&game.world.scene)
 	release_render_caches(&game.render_caches)
-	delete(game.world.bombs); delete(game.bursts); delete(game.queued.blasts)
+	delete(game.world.bombs); delete(game.bursts); for &commands in game.queued.players { delete(commands.blasts) }
 	delete(game.previous); delete(game.previous_bombs); destroy_layout(&game.layout)
 	delete(game.status); sandbox_release_layout_files(game)
 	game^={}
@@ -79,21 +86,24 @@ sandbox_clear_input :: proc(game: ^Sandbox) {
 	game.jump_queued=false
 	game.block_jump=true
 	game.block_blast=true
-	clear(&game.queued.blasts)
+	for &commands in game.queued.players { clear(&commands.blasts) }
 	game.queued.remove_region=0; game.queued.break_connection=0
 	clear(&game.previous)
-	game.previous_player=from_b2(b2.Body_GetPosition(game.world.player.body))
+	for player,i in game.world.players { if player.active { game.previous_players[i]=player.pose.position } }
 }
 sandbox_reset :: proc(game: ^Sandbox) {
 	release_render_caches(&game.render_caches)
-	if radius,ok:=game.queued.radius.(f32); ok { game.world.settings.blast_radius=radius }
+	if radius,ok:=game.queued.bomb_radius.(f32); ok { game.world.settings.blast_radius=radius }
 	if mode,ok:=game.queued.mode.(Blast_Mode); ok { game.world.settings.blast_mode=mode }
-	game.queued.radius=nil; game.queued.mode=nil
+	if radius,ok:=game.queued.players[0].radius.(f32); ok && game.world.players[0].active { game.world.players[0].blast_radius=radius }
+	game.queued.players[0].radius=nil; game.queued.bomb_radius=nil; game.queued.mode=nil
 	revision:=game.world.scene.revision+1
+	epoch:=game.world.scene.epoch+1
 	scene_destroy(&game.world.scene)
 	s:=&game.world.scene
 	s^=new_scene(WOOD_MINIMUM_WIDTH)
 	s.revision=revision
+	s.epoch=epoch
 	material:=add_material(s,editor_material(.Stone))
 	seed:=game.world.settings.seed
 	objects: [dynamic]Built_Object; defer delete(objects)
@@ -126,10 +136,12 @@ sandbox_set_panel :: proc(game: ^Sandbox,open: bool) {
 	sandbox_clear_input(game)
 }
 sandbox_set_radius :: proc(game: ^Sandbox,radius: f32) {
-	game.queued.radius=clamp(radius,f32(0.5),f32(6))
+	// The local Sandbox sends the same value as player 0's blast radius and the falling-bomb radius.
+	game.queued.players[0].radius=clamp(radius,f32(0.5),f32(6))
+	game.queued.bomb_radius=game.queued.players[0].radius
 }
 sandbox_radius :: proc(game: ^Sandbox) -> f32 {
- if radius,ok:=game.queued.radius.(f32); ok { return radius }; return game.world.settings.blast_radius
+ if radius,ok:=game.queued.players[0].radius.(f32); ok { return radius }; return game.world.players[0].blast_radius
 }
 sandbox_mode :: proc(game: ^Sandbox) -> Blast_Mode {
  if mode,ok:=game.queued.mode.(Blast_Mode); ok { return mode }; return game.world.settings.blast_mode
@@ -152,7 +164,7 @@ sandbox_valid_aim :: proc(s: ^Scene,point: Vec2) -> bool {
 }
 sandbox_blast :: proc(game: ^Sandbox,point: Vec2) -> bool {
 	if game.editor.editing || game.panel_open || game.world.settings.blast_mode!=.Manual { return false }
-	append(&game.queued.blasts,point)
+	append(&game.queued.players[0].blasts,point)
 	return true
 }
 // Fixtures may exercise internals without advancing physics.
@@ -162,16 +174,16 @@ sandbox_fixture_blast :: proc(game: ^Sandbox,point: Vec2) -> bool {
  sandbox_explode(game,point); return true
 }
 sandbox_explode :: proc(game: ^Sandbox,point: Vec2) {
- if radius,ok:=game.queued.radius.(f32); ok { game.world.settings.blast_radius=radius; game.queued.radius=nil }
+ if radius,ok:=game.queued.bomb_radius.(f32); ok { game.world.settings.blast_radius=radius; game.world.players[0].blast_radius=radius; game.queued.bomb_radius=nil; game.queued.players[0].radius=nil }
  events:=Tick_Events{}
- world_explode(&game.world,point,&events)
+ world_explode(&game.world,point,game.world.settings.blast_radius,&events)
  sandbox_present_events(game,&events)
 }
-world_explode :: proc(w: ^World,point: Vec2,events: ^Tick_Events) {
+world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
  start:=time.tick_now()
  regions:=len(w.scene.subdivisions)
- blast_pass(&w.scene,Blast{position=point,radius=w.settings.blast_radius})
- append(&events.explosions,Explosion_Event{position=point,radius=w.settings.blast_radius,elapsed_ms=f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond),regions=regions})
+ blast_pass(&w.scene,Blast{position=point,radius=radius})
+ append(&events.explosions,Explosion_Event{position=point,radius=radius,elapsed_ms=f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond),regions=regions})
  events.structure_changed=true
 }
 
@@ -218,16 +230,17 @@ sandbox_tick :: proc(game: ^Sandbox,move: f32,jump: bool,dt: f32 = 1.0/60.0) {
  resize(&game.bursts,count)
 	clear(&game.previous)
 	for sub in game.world.scene.subdivisions { if sub.live { game.previous[sub.id]=sub.pose } }
-	game.previous_player=from_b2(b2.Body_GetPosition(game.world.player.body))
+	for player,i in game.world.players { if player.active { game.previous_players[i]=player.pose.position } }
  clear(&game.previous_bombs)
- for bomb in game.world.bombs { game.previous_bombs[bomb.body]=from_b2(b2.Body_GetPosition(bomb.body)) }
- commands:=game.queued; commands.move=move; commands.jump=jump
+ for bomb in game.world.bombs { game.previous_bombs[bomb.id]=bomb.pose.position }
+ commands:=game.queued; commands.players[0].move=move; commands.players[0].jump=jump
  events:=world_tick(&game.world,commands,dt)
  for bomb in game.world.bombs {
-  if _,ok:=game.previous_bombs[bomb.body]; !ok { p:=from_b2(b2.Body_GetPosition(bomb.body)); game.previous_bombs[bomb.body]={p.x,BOMB_SKY_HEIGHT} }
+  if _,ok:=game.previous_bombs[bomb.id]; !ok { p:=bomb.pose.position; game.previous_bombs[bomb.id]={p.x,BOMB_SKY_HEIGHT} }
  }
  if mode,ok:=commands.mode.(Blast_Mode); ok { clear(&game.bursts) }
- clear(&game.queued.blasts); game.queued.radius=nil; game.queued.mode=nil
+ for &player_commands in game.queued.players { clear(&player_commands.blasts); player_commands.radius=nil }
+ game.queued.bomb_radius=nil; game.queued.mode=nil
  game.queued.remove_region=0; game.queued.break_connection=0
  sandbox_present_events(game,&events)
 }
@@ -237,17 +250,18 @@ sandbox_present_events :: proc(game: ^Sandbox,events: ^Tick_Events) {
   if game.blast_timing!=nil { t:=game.blast_timing; t.total_ms+=event.elapsed_ms; t.max_ms=max(t.max_ms,event.elapsed_ms); t.count+=1 }
  }
  if events.structure_changed { clear(&game.previous) }
- if events.blast_rejected { sandbox_notice(game,"Aim outside the solid shape") }
+ if events.blast_rejected[0] { sandbox_notice(game,"Aim outside the solid shape") }
  if !is_live_subdivision(&game.world.scene,game.selected) { game.selected=0 }
- if events.player_respawned {
-		game.previous_player=PLAYER_SPAWN
-		sandbox_notice(game,"Back at spawn")
-	}
+ for respawned,i in events.player_respawned { if respawned { game.previous_players[i]=PLAYER_SPAWN } }
+ if events.player_respawned[0] { sandbox_notice(game,"Back at spawn") }
  delete(events.explosions)
 }
 world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  events:=Tick_Events{}
- if radius,ok:=commands.radius.(f32); ok { w.settings.blast_radius=clamp(radius,f32(0.5),f32(6)) }
+ if radius,ok:=commands.bomb_radius.(f32); ok { w.settings.blast_radius=clamp(radius,f32(0.5),f32(6)) }
+ for player_commands,i in commands.players {
+  if radius,ok:=player_commands.radius.(f32); ok && w.players[i].active { w.players[i].blast_radius=clamp(radius,f32(0.5),f32(6)) }
+ }
  if mode,ok:=commands.mode.(Blast_Mode); ok && mode!=w.settings.blast_mode {
   w.settings.blast_mode=mode
   bomb_rain_clear(w)
@@ -260,18 +274,33 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
   apply_failures(&w.scene,failures); physics_sync_structure(&w.scene); events.structure_changed=true
  }
  free_failures(&failures)
- for point in commands.blasts {
-  if sandbox_valid_aim(&w.scene,point) { world_explode(w,point,&events) }
-  else { events.blast_rejected=true }
+ // Blasts apply in player-index order, each player's blasts in order.
+ for player_commands,i in commands.players {
+  if !w.players[i].active { continue }
+  for point in player_commands.blasts {
+   if sandbox_valid_aim(&w.scene,point) { world_explode(w,point,w.players[i].blast_radius,&events) }
+   else { events.blast_rejected[i]=true }
+  }
  }
  bomb_rain_before_step(w,dt)
- player_before_step(&w.player,commands.move,commands.jump,dt)
+ for &player,i in w.players {
+  if player.active { player_before_step(&player,commands.players[i].move,commands.players[i].jump,dt) }
+ }
  physics_tick(&w.scene,dt)
+ world_refresh_poses(w)
  bomb_rain_after_step(w,dt,&events)
  if world_remove_out_of_bounds(w) { events.structure_changed=true }
- events.player_respawned=player_after_step(&w.player)
+ for &player,i in w.players {
+  if player.active { events.player_respawned[i]=player_after_step(&player) }
+ }
+ world_refresh_poses(w)
  w.tick+=1
  return events
+}
+// Presentation mirrors: refreshed from the bodies after every physics step and snapshot load.
+world_refresh_poses :: proc(w: ^World) {
+ for &player in w.players { player_refresh_pose(&player) }
+ for &bomb in w.bombs { bomb.pose=read_body_state(bomb.body).pose }
 }
 // This is yard cleanup, not an impact or another generation of damage.
 world_remove_out_of_bounds :: proc(game: ^World) -> bool {
@@ -299,7 +328,7 @@ sandbox_advance :: proc(game: ^Sandbox,dt: f32,input: Sandbox_Input) {
 }
 
 // Test and measurement fixtures may build/mutate worlds directly.
-sandbox_fixture_radius :: proc(g: ^Sandbox,r: f32) { g.world.settings.blast_radius=clamp(r,f32(0.5),f32(6)) }
+sandbox_fixture_radius :: proc(g: ^Sandbox,r: f32) { g.world.settings.blast_radius=clamp(r,f32(0.5),f32(6)); for &player in g.world.players { if player.active { player.blast_radius=g.world.settings.blast_radius } } }
 sandbox_fixture_mode :: proc(g: ^Sandbox,mode: Blast_Mode) {
  if mode==g.world.settings.blast_mode { return }
  g.world.settings.blast_mode=mode; bomb_rain_clear(&g.world); clear(&g.bursts)
@@ -323,8 +352,27 @@ world_start_physics :: proc(game: ^World) {
 	shape:=b2.DefaultShapeDef(); shape.material.friction=0.65
 	// Extend beyond the playable edges so excavation never opens the screen bottom.
 	_ = b2.CreatePolygonShape(game.floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*0.5))
-	game.player=player_create(s.physics.world)
+	// A rebuild keeps the active player set (and their radii); a fresh world starts with player 0.
+	was:=game.players
+	game.players={}
+	any_active:=false
+	for player in was { if player.active { any_active=true } }
+	if !any_active { world_add_player(game,0) }
+	else { for i in 0..<MAX_PLAYERS { if was[i].active { world_add_player(game,i); game.players[i].blast_radius=was[i].blast_radius } } }
 	bomb_rain_reset(&game.rain,game.settings.seed)
 	clear(&game.bombs)
 	game.tick=0
+}
+
+// Players share PLAYER_SPAWN. A new player starts at the current manual blast radius.
+world_add_player :: proc(w: ^World,index: int) -> bool {
+ if index<0 || index>=MAX_PLAYERS || w.players[index].active || !w.scene.physics.active { return false }
+ w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius)
+ return true
+}
+world_remove_player :: proc(w: ^World,index: int) -> bool {
+ if index<0 || index>=MAX_PLAYERS || !w.players[index].active { return false }
+ if b2.Body_IsValid(w.players[index].body) { b2.DestroyBody(w.players[index].body) }
+ w.players[index]={}
+ return true
 }

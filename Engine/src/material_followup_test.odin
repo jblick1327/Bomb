@@ -32,8 +32,14 @@ material_legacy_v3_bytes_and_explicit_defaults :: proc(t:^testing.T) {
   for recipe in Recipe { builtin:=editor_material(recipe); if m.name==builtin.name { testing.expect(t,m.color==builtin.color) } }
  }
  encoded,eok:=encode_world_snapshot(&world); defer delete(encoded)
- testing.expect(t,eok && string(encoded)==string(data))
- fmt.printf("Legacy v3 continuity-manual-S.json: %d bytes, exact roundtrip=%v\n",len(data),string(encoded)==string(data))
+ // v3 loads into player 0; the world is then written as v4 with an identical Scene section.
+ testing.expect(t,eok && world_capture_compatible(data,encoded))
+ again,aok:=decode_world_snapshot(encoded); testing.expect(t,aok)
+ defer { scene_destroy(&again.scene); delete(again.bombs) }
+ second,sok:=encode_world_snapshot(&again); defer delete(second)
+ testing.expect(t,sok && string(second)==string(encoded),"v4 must round-trip exactly")
+ testing.expect(t,world.players[0].active && world.players[0].blast_radius==world.settings.blast_radius)
+ fmt.printf("Legacy v3 continuity-manual-S.json: %d bytes, v4 compatible=%v, v4 exact roundtrip=%v\n",len(data),world_capture_compatible(data,encoded),string(second)==string(encoded))
 }
 
 @(test)

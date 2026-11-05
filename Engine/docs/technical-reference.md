@@ -94,7 +94,7 @@ The fixture uses the same yard and three fixed blasts without physics ticks, plu
 
 
 
-The application starts paused in **Edit**, restoring `layouts/autosave.json` when valid. Choose Wood, Glass, Rubber or Stone (keys 1–4), then drag rectangles snapped to a 0.1-unit grid. The preview shows dimensions and any placement problem. Click **Test** or press Enter to simulate. **Layouts** opens the four embedded presets and saved layouts; Ctrl+S saves the next free `layouts/layout-NNN.json`. Drop a layout JSON file in either mode to load it. Authored changes autosave. F3 S/L independently saves and loads v3 World snapshots in `output/`. Settings include falling bombs, blast radius and outlines.
+The application starts paused in **Edit**, restoring `layouts/autosave.json` when valid. Choose Wood, Glass, Rubber or Stone (keys 1–4), then drag rectangles snapped to a 0.1-unit grid. The preview shows dimensions and any placement problem. Click **Test** or press Enter to simulate. **Layouts** opens the four embedded presets and saved layouts; Ctrl+S saves the next free `layouts/layout-NNN.json`. Drop a layout JSON file in either mode to load it. Authored changes autosave. F3 S/L independently saves and loads v4 World snapshots (v3 still loads) in `output/`. Settings include falling bombs, blast radius and outlines.
 
 
 
@@ -240,7 +240,7 @@ Regions, links and pieces remain plain records with monotonic, never-reused IDs.
 
 
 
-Regrouping uses affected-piece memberships. Blast and terrain candidates come from Box2D's padded AABB query, supplemented by pending children until final bodies exist. Rendering caches outline topology, triangle indices and flexible skin weights per piece change; frames transform those cached vertices. Flexible neighbours come from live incident links; rigid and static neighbours retain their spatial query. Physics structure sync runs only after the internal structure revision changes. New shapes/bodies/joints use ascending IDs; rendering uses ascending IDs within static and moving fill passes, independent of packed storage order. Shape user data carries the region ID for hit events and blast queries. V3 wraps the compatible scene format with complete player, bomb, rain, settings and tick state, writing all f32 values exactly. For the scene, decoding reconstructs piece mass and rigid bodies from member outlines and region poses, including angular motion. Box2D free-slot/solver ordering can cause small numerical differences in ticked replays.
+Regrouping uses affected-piece memberships. Blast and terrain candidates come from Box2D's padded AABB query, supplemented by pending children until final bodies exist. Rendering caches outline topology, triangle indices and flexible skin weights per piece change; frames transform those cached vertices. Neighbours are structural, with no Box2D query: the cell's own piece, live non-mortar links, and for an anchored cell the anchored cells of other pieces whose rest bounds overlap its own expanded by 0.05. Anchoring is `piece_anchored`, shared with physics. Physics structure sync runs only after the internal structure revision changes. New shapes/bodies/joints use ascending IDs; rendering uses ascending IDs within static and moving fill passes, independent of packed storage order. Shape user data carries the region ID for hit events and blast queries. V4 wraps the compatible scene format with every active player (index, body, timers, blast radius), bomb, rain, settings and tick state, writing all f32 values exactly. V3 (one player) loads into player 0 with the settings blast radius. For the scene, decoding reconstructs piece mass and rigid bodies from member outlines and region poses, including angular motion. Box2D free-slot/solver ordering can cause small numerical differences in ticked replays.
 
 
 
@@ -306,6 +306,18 @@ Grained recipes (`aspect_ratio < 1`, including Wood) clamp their seeded cut with
 
 
 
+### Mortar and glue force failure
+
+A mortar or glue seam is every live connection between one body pair. Each tick its weld reactions are summed into one force F and torque T about the seam midpoint, and the seam's ratio is `r = |F| / (280 * L) + |T| / (0.5 * 280 * L^2)`, where L is the total seam length and 280 is `MORTAR_STRENGTH`.
+
+Failure is an impulse rule, not a tick count. Each seam carries `damage`, in seconds of excess capacity. Every tick, with dt the fixed physics step (1/60 s): if `r >= 1` then `damage += (r - 1) * dt`, otherwise `damage = 0` (a tick within capacity heals the seam completely). The seam breaks, all members at once, when `damage >= SEAM_TOUGHNESS`, which is **0.4 s**. A violent impact (one tick at r = 77 absorbs about 1.3 s) breaks a seam at once, while a brief moderate transient (a blast's velocity change resolved across a rigid weld chain in one solver step) does not. There is neither an immediate `r >= 2` path nor a tick count, and the rule does not depend on the tick rate. Damage is shared by every member connection of the seam and saved on each; merged groups keep the largest member damage.
+
+`SEAM_TOUGHNESS` was chosen by sweeping 0.025 to 1.6 s over five checks (original demo blast, 3x tip block, mortar calibration, 600-tick glued cantilever, 1x1 Stone block dropped from 3 m); 0.2, 0.4 and 0.8 s pass all five and 0.4 is the geometric-mean midpoint. `scripts/seam-toughness-sweep.py` repeats the sweep through `-define:SEAM_TOUGHNESS=<seconds>`; the table is `evidence/seam-toughness/sweep.md`.
+
+Snapshots store the optional connection field `damage` (f32, omitted when 0). The former `overload_ticks` is still accepted on load and ignored (treated as 0); it is never written. A negative or non-finite `damage` is rejected.
+
+The blast rule is unchanged: a mortar/glue connection takes the minimum connection strength at the seam midpoint. Strengths, joint and contact settings are unchanged. Reproduce with `--diagnose-demo` (per-tick `FORCE` lines with r and damage before/after, `LIVE` lines at ticks 20 and 120), `--calibrate-mortar` and `--mortar-seeds`; the tests `demo_original_blast_remote_seams`, `force_rule_tip_block_breaks`, `force_rule_drop_block` and `mortar_seam_*` exercise the rule.
+
 ### Blast cover
 
 
@@ -340,3 +352,13 @@ Layout JSON version 2 adds `materials`, with `name`, `base`, `toughness`, `blast
 
 Material follow-up: `Recipe` names the four families; authored palette references are `Slot` values. Each in-memory `Material` carries RGB explicitly and has a positive strip target only when `aspect_ratio < 1`; other materials use zero for the unused strip. Only snapshot encoding/decoding has the legacy name-colour mapping and missing grained-strip default 0.3. A strip field on a non-grained snapshot material is invalid. Custom Wood targets must be in [STRIP_MIN, 0.6], where STRIP_MIN = 2 * WOOD_MINIMUM_WIDTH = 0.2. Layout decoding rejects smaller targets without clamping. Generation rules are unchanged.
 
+
+## Players and structure replication (multiplayer step 2a)
+
+Everything here is offline: no sockets and no UI changes. Local play behaves as before.
+
+**Players.** `World.players` holds up to `MAX_PLAYERS` (4) players, each with `active`, `blast_radius` and a runtime pose mirror. `world_add_player` and `world_remove_player` manage them; every player spawns at `PLAYER_SPAWN`. Players share a negative collision group, so they pass through each other and collide with everything else. `Tick_Commands.players[i]` carries move, jump, blasts and an optional radius for each active player; `bomb_radius` and `mode` are world-level. Blasts apply in player-index order, each player's blasts in order, using that player's radius. The local Sandbox sends the same radius to `players[0].radius` and `bomb_radius`. Poses of players and bombs are mirrored from their bodies after every physics step and after snapshot load; drawing reads the mirrors.
+
+**Presentation reads only replicable state.** The draw paths (render cache, debug view, sandbox view, rubber band, glue view, mortar drawing, textures, editor view) make no Box2D calls. `Scene.anchor_y` is structural and `piece_anchored(scene, piece, anchor_y)` is the one anchoring rule used by physics and rendering.
+
+**Replication.** Canonical structure is epoch, structure revision, anchor_y, full materials, cells (id, owner, material, frame, outline, rest_center), connections (id, a, b, mortar, glue samples) and pieces (id, material, cell ids in host order), sorted by id and encoded with the netcode codec (`canonical_encode`). The server (`Repl_Server`) keeps one structure index and, on any tick where `structure_revision` changed, emits one Delta against it; a rebuild (reset, layout load, snapshot load) bumps `Scene.epoch` and emits a Baseline. Messages over 200 KB are split into numbered parts that a replica applies atomically. A `Replica` is a physics-free Scene built only by `replica_apply_message`; it keeps its own per-piece render revisions and callers drop their render caches when `rebuilt` is set. Run the full checks with `scripts/bom.ps1 ReplicationSoak` (`--replication-soak [minutes]`); a two-minute variant runs in `scripts/bom.ps1 Test`.

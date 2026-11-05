@@ -6,6 +6,11 @@ import rl "vendor:raylib"
 
 Built_Object :: struct { identity: u64, mortar: bool, vertices:[4]Vec2,count:int, lo,hi: Vec2, first_id,end_id: u64 }
 MORTAR_STRENGTH :: f32(280)
+// Impulse toughness, in seconds of excess capacity. Each tick a seam with r >= 1 accumulates
+// (r-1)*dt of damage and any tick below capacity heals it fully; it breaks at damage >= SEAM_TOUGHNESS.
+// 0.4 s: geometric mean of the feasible sweep range 0.2..0.8 s (evidence/seam-toughness/sweep.md); the
+// define exists only so scripts/seam-toughness-sweep.py can repeat that sweep.
+SEAM_TOUGHNESS :: f32(#config(SEAM_TOUGHNESS,0.4))
 MORTAR_COLOR :: rl.Color{236,226,198,255}
 mortar_length :: proc(c: Connection) -> f32 {
  length,_:=seam_geometry(c);return length
@@ -75,7 +80,7 @@ Mortar_Seam :: struct {
  length: f32,
  center, force: Vec2,
  torque: f32,
- overload_ticks: u8,
+ damage: f32,
 }
 mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
  seams:[dynamic]Mortar_Seam
@@ -95,7 +100,7 @@ mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
   seam.center=vadd(seam.center,vmul(connection_sample(s,c),length))
   // New members / merged groups can have different histories: retain the
   // largest surviving history, then write the group value to every member.
-  seam.overload_ticks=max(seam.overload_ticks,c.overload_ticks)
+  seam.damage=max(seam.damage,c.damage)
  }
  for &seam in seams {
   seam.center=vmul(seam.center,1/seam.length)
@@ -121,20 +126,21 @@ mortar_free_seams :: proc(seams: [dynamic]Mortar_Seam) {
 mortar_seam_need :: proc(seam: Mortar_Seam) -> f32 {
  return vlen(seam.force)/seam.length+2*math.abs(seam.torque)/(seam.length*seam.length)
 }
-mortar_force_failures :: proc(s: ^Scene,failures: ^Failures) {
+mortar_force_failures :: proc(s: ^Scene,failures: ^Failures,dt: f32) {
  seams:=mortar_seams(s); defer mortar_free_seams(seams)
  for seam in seams {
-  mortar_apply_seam(s,seam,failures)
+  mortar_apply_seam(s,seam,failures,dt)
  }
 }
 
-mortar_apply_seam :: proc(s: ^Scene,seam: Mortar_Seam,failures: ^Failures) {
+mortar_apply_seam :: proc(s: ^Scene,seam: Mortar_Seam,failures: ^Failures,dt: f32) {
   r:=vlen(seam.force)/(MORTAR_STRENGTH*seam.length)+math.abs(seam.torque)/(0.5*MORTAR_STRENGTH*seam.length*seam.length)
-  broken:=r>=2 || r>=1 && u16(seam.overload_ticks)+1>=3
-  seam_diagnostic_force(s,seam,r,broken)
-  counter:=u8(0); if !broken && r>=1 { counter=seam.overload_ticks+1 }
+  damage:=f32(0); if r>=1 { damage=seam.damage+(r-1)*dt }
+  broken:=damage>=SEAM_TOUGHNESS
+  seam_diagnostic_force(s,seam,r,broken,damage)
+  if broken { damage=0 }
   for id in seam.members {
-   s.connections[s.conn_rows[id]].overload_ticks=counter
+   s.connections[s.conn_rows[id]].damage=damage
    if broken {
     append(&failures.connections,id)
     when BOM_MORTAR_MEASURE { mortar_measured_force_breaks+=1 }

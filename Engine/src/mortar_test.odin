@@ -93,7 +93,7 @@ mortar_reattach_snapshot_layout :: proc(t: ^testing.T) {
  fmt.printf("Mortar A3 re-created support welds surviving60=%d/%d\n",held_count,len(held_links))
  mortar_check_joints(t,s); expect_valid(t,s)
  testing.expect(t,max_drop<=0.1); fmt.printf("Mortar A3 held_max_drop=%.9f\n",max_drop)
- for &c in s.connections { if c.mortar { c.overload_ticks=2; break } }
+ for &c in s.connections { if c.mortar { c.damage=0.0125; break } }
  bytes,ok:=encode_world_snapshot(&g.world); defer delete(bytes); testing.expect(t,ok)
  restored,loaded:=decode_world_snapshot(bytes); testing.expect(t,loaded)
  if loaded {

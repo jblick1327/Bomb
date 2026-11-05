@@ -40,7 +40,7 @@ The helper runs from the project root and creates `build/` and `output/`. Direct
 
 
 
-The application starts paused in **Edit**, restoring `layouts/autosave.json` when valid. Choose Wood, Glass, Rubber or Stone (keys 1–4), then drag rectangles snapped to a 0.1-unit grid. The preview shows dimensions and any placement problem. Click **Test** or press Enter to simulate. **Layouts** opens the five embedded presets and saved layouts; Ctrl+S saves the next free `layouts/layout-NNN.json`. Drop a layout JSON file in either mode to load it. Authored changes autosave. F3 S/L independently saves and loads v3 World snapshots in `output/`. Settings include falling bombs, blast radius and outlines.
+The application starts paused in **Edit**, restoring `layouts/autosave.json` when valid. Choose Wood, Glass, Rubber or Stone (keys 1–4), then drag rectangles snapped to a 0.1-unit grid. The preview shows dimensions and any placement problem. Click **Test** or press Enter to simulate. **Layouts** opens the five embedded presets and saved layouts; Ctrl+S saves the next free `layouts/layout-NNN.json`. Drop a layout JSON file in either mode to load it. Authored changes autosave. F3 S/L independently saves and loads v4 World snapshots (v3 still loads) in `output/`. Settings include falling bombs, blast radius and outlines.
 
 
 
@@ -130,7 +130,7 @@ Move any snapshots or captures you want to retain into `evidence/` before cleani
 
 
 
-Mortar force breaking aggregates weld reactions across each body-pair seam. The seam shares one overload counter, saved on all member connections; it snaps after three overloaded ticks or immediately at double capacity. Reproduce calibration with `--calibrate-mortar` and the seed study with `--mortar-seeds`.
+Mortar force breaking aggregates weld reactions across each body-pair seam. The seam keeps one `damage` value (seconds of excess capacity), saved on all member connections: each tick with ratio r >= 1 adds (r - 1) / 60, any tick below capacity resets it to 0, and the seam snaps when damage reaches `SEAM_TOUGHNESS = 0.4` s. Violent impacts therefore break a seam immediately while a one-tick constraint transient (for example a blast velocity resolved across a weld chain) does not; there is no tick count and no `r >= 2` shortcut. Snapshots store optional `damage`; a legacy `overload_ticks` is ignored on load. The blast rule (minimum connection strength at the seam midpoint) is unchanged. Reproduce calibration with `--calibrate-mortar` and the seed study with `--mortar-seeds`.
 
 
 
@@ -148,4 +148,4 @@ Build verification with `odin build src -o:speed -define:BOM_FRAME_BENCH=true -o
 
 Rotation, wedges and glue: in Edit, Q/E adjusts the next placement by 15 degrees, T switches Rect/Wedge, and G selects the glue tool. Click one object, then another or the floor; repeat a pair to unlink it. Escape or right-click cancels glue selection. Angled shapes and wedges within 0.3 m of a surface snap into contact when that placement is clear. Glue requires touching surfaces (within 0.001 m), and may fill a crevice up to 0.2 m. Delete an object to remove its links. `--check-shapes` runs the native editor, textured MSAA checks and demo captures under `evidence/rotation-glue/`.
 
-Glue follow-up diagnostics: `--diagnose-demo` logs the original demo per tick (0-30), including seam body pairs, force ratios, overload counters, failure paths and brace displacement. `SEAM_DIAG_FIXTURE=true` selects the documented support-preserving capture fixture. Optional SEAM_DIAG_NO_CONTACTS / SEAM_DIAG_ZERO_VELOCITY are diagnostic controls only. `--check-glue-followup` checks 4x MSAA, cream coverage and continuous ridge rendering, and writes the 600-tick / 20-tick / ridge PNGs. Simulation, strengths and joint/contact settings remain unchanged.
+Glue follow-up diagnostics: `--diagnose-demo` logs the original demo per tick (0-30), including seam body pairs, force ratios, per-seam damage, failure paths and brace displacement. It also prints `LIVE` lines at ticks 20 and 120. Optional SEAM_DIAG_NO_CONTACTS / SEAM_DIAG_ZERO_VELOCITY are diagnostic controls only. `--check-glue-followup` checks 4x MSAA, cream coverage and continuous ridge rendering, and writes the 600-tick / 20-tick (original blast (-3.8,0.5), radius 4) / ridge PNGs to `evidence/seam-toughness/`. Simulation, strengths and joint/contact settings remain unchanged.

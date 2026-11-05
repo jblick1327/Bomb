@@ -17,9 +17,14 @@ seam_diagnostic_death :: proc(s:^Scene,c:Connection,path:string) {
  a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
  fmt.printf("DEATH run=%s tick=%d phase=%s path=%s id=%d objects=%d/%d glue=%v endpoints_live=%v/%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam_diagnostic_phase,path,c.id,seam_object(a),seam_object(b),len(c.glue)>0,a.live,b.live)
 }
-seam_diagnostic_force :: proc(s:^Scene,seam:Mortar_Seam,r:f32,broken:bool) {
+// Peak damage per connection id, recorded for one scene while seam_damage_scene is set (a break tick's
+// value includes the excess that broke it).
+seam_damage_scene:^Scene
+seam_damage_peak:map[u64]f32
+seam_diagnostic_force :: proc(s:^Scene,seam:Mortar_Seam,r:f32,broken:bool,damage:f32) {
+ if s==seam_damage_scene && s!=nil { for id in seam.members { seam_damage_peak[id]=max(seam_damage_peak[id],damage) } }
  if s!=seam_diagnostic_scene { return }
- fmt.printf("FORCE run=%s tick=%d bodies=%v/%v r=%.9f counter_before=%d broken=%v ids=%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam.bodies[0],seam.bodies[1],r,seam.overload_ticks,broken,seam.members[:])
+ fmt.printf("FORCE run=%s tick=%d bodies=%v/%v r=%.9f damage_before=%.9f damage_after=%.9f broken=%v ids=%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam.bodies[0],seam.bodies[1],r,seam.damage,damage,broken,seam.members[:])
 }
 demo_trace :: proc(blast:bool) {
  g:=sandbox_editor_create();defer sandbox_destroy(&g)
@@ -28,16 +33,22 @@ demo_trace :: proc(blast:bool) {
  defer { seam_diagnostic_scene=nil;seam_diagnostic_layout=nil }
  seam_diagnostic_run="quiet";if blast { seam_diagnostic_run="blast" };seam_diagnostic_tick=0;seam_diagnostic_phase="initial"
  demo_trace_state(&g);demo_trace_bodies(&g)
- if blast { seam_diagnostic_phase="blast";radius:=f32(4);point:=Vec2{-3.8,0.5};when #config(SEAM_DIAG_FIXTURE,false) { radius=3;point={-4.4,1.5} };sandbox_fixture_radius(&g,radius);sandbox_explode(&g,point);demo_trace_state(&g);demo_trace_bodies(&g) }
+ if blast { seam_diagnostic_phase="blast";radius:=f32(4);point:=Vec2{-3.8,0.5};sandbox_fixture_radius(&g,radius);sandbox_explode(&g,point);demo_trace_state(&g);demo_trace_bodies(&g) }
  when #config(SEAM_DIAG_NO_CONTACTS,false) { for sub in s.subdivisions { for shape in sub.shapes { filter:=b2.Shape_GetFilter(shape);filter.maskBits=0;b2.Shape_SetFilter(shape,filter) } } }
  when #config(SEAM_DIAG_ZERO_VELOCITY,false) { for p in s.pieces { b2.Body_SetLinearVelocity(p.body,{});b2.Body_SetAngularVelocity(p.body,0) } }
- for tick in 1..=30 { seam_diagnostic_tick=tick;seam_diagnostic_phase="physics";sandbox_tick(&g,0,false);demo_trace_state(&g);if tick==1 || tick==8 { demo_trace_bodies(&g) } }
+ for tick in 1..=30 { seam_diagnostic_tick=tick;seam_diagnostic_phase="physics";sandbox_tick(&g,0,false);demo_trace_state(&g);if tick==20 { demo_trace_live(&g,tick) };if tick==1 || tick==8 { demo_trace_bodies(&g) } }
  seam_diagnostic_scene=nil
- for _ in 30..<600 { sandbox_tick(&g,0,false) }
+ for tick in 31..=600 { sandbox_tick(&g,0,false);if tick==120 { demo_trace_live(&g,tick) } }
  max_move:=f32(0);count:=0
  for sub in s.subdivisions { if sub.rest_center.y<0 { continue };max_move=max(max_move,vlen(vsub(sub.pose.position,sub.rest_center))) }
  for c in s.connections { if c.mortar { count+=1 } }
  fmt.printf("SUMMARY run=%s tick600 live_seam_connections=%d max_object_movement=%.9f\n",seam_diagnostic_run,count,max_move)
+}
+// Which mortar/glue connections are live, and the largest movement of the right post (authored object 2).
+demo_trace_live :: proc(g:^Sandbox,tick:int) {
+ s:=&g.world.scene;live:[dynamic]u64;defer delete(live);dead:[dynamic]u64;defer delete(dead)
+ for c in s.connections { if c.mortar { if c.live { append(&live,c.id) } else { append(&dead,c.id) } } }
+ fmt.printf("LIVE run=%s tick=%d live=%d dead=%d dead_ids=%v right_post_max_movement=%.9f\n",seam_diagnostic_run,tick,len(live),len(dead),dead[:],seam_right_post_movement(g))
 }
 demo_trace_state :: proc(g:^Sandbox) {
  s:=&g.world.scene;seams:=mortar_seams(s);defer mortar_free_seams(seams)
@@ -45,7 +56,7 @@ demo_trace_state :: proc(g:^Sandbox) {
   mortar,glue:=0,0;for id in seam.members { c:=s.connections[s.conn_rows[id]];if len(c.glue)>0 { glue+=1 } else { mortar+=1 } }
   c:=s.connections[s.conn_rows[seam.members[0]]];a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
   r:=vlen(seam.force)/(MORTAR_STRENGTH*seam.length)+math.abs(seam.torque)/(0.5*MORTAR_STRENGTH*seam.length*seam.length)
-  fmt.printf("SEAM run=%s tick=%d phase=%s objects=%d/%d bodies=%v/%v mortar=%d glue=%d L=%.9f r=%.9f counter=%d collide=%v ids=%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam_diagnostic_phase,seam_object(a),seam_object(b),seam.bodies[0],seam.bodies[1],mortar,glue,seam.length,r,seam.overload_ticks,b2.Joint_GetCollideConnected(c.joint),seam.members[:])
+  fmt.printf("SEAM run=%s tick=%d phase=%s objects=%d/%d bodies=%v/%v mortar=%d glue=%d L=%.9f r=%.9f damage=%.9f collide=%v ids=%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam_diagnostic_phase,seam_object(a),seam_object(b),seam.bodies[0],seam.bodies[1],mortar,glue,seam.length,r,seam.damage,b2.Joint_GetCollideConnected(c.joint),seam.members[:])
   if glue>0 {
    rest_gap,posed_gap:=f32(0),f32(0)
    for id in seam.members { link:=s.connections[s.conn_rows[id]];sa,sb:=s.subdivisions[s.sub_rows[link.a]],s.subdivisions[s.sub_rows[link.b]]

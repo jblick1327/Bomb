@@ -247,16 +247,18 @@ borders_follow_rigid_groups_flexible_bonds_and_static_neighbours :: proc(t: ^tes
  s:=msaa_border_scene(); defer scene_destroy(&s)
  render_cache_prepass(&s,caches)
  static_hidden:=0
- for sub in s.subdivisions { if !render_static(sub) { continue }; others:=render_together_neighbours(&s,sub)
+ for sub in s.subdivisions { if !render_static(&s,nil,sub) { continue }; others:=render_together_neighbours(&s,sub)
   for id in others { other:=s.subdivisions[s.sub_rows[id]]; if other.owner!=sub.owner { static_hidden+=1 } }; delete(others)
  }
  testing.expect(t,static_hidden>0,"Separate anchored pieces share bare fill boundaries")
  // Free one anchored piece without changing rest geometry: its split gets borders.
  old_revision:=caches.static_render_revision
- body:=s.pieces[0].body; b2.Body_SetType(body,.dynamicBody)
- for sub in s.subdivisions { if sub.body!=body { continue }; others:=render_together_neighbours(&s,sub)
+ // Anchoring is structural now: moving anchor_y frees every piece without moving any rest geometry.
+ real_anchor:=s.anchor_y; s.anchor_y=100; s.structure_revision+=1
+ for sub in s.subdivisions { if sub.owner!=s.pieces[0].id { continue }; others:=render_together_neighbours(&s,sub)
   for id in others { testing.expect(t,s.subdivisions[s.sub_rows[id]].owner==sub.owner) }; delete(others)
  }
+ s.anchor_y=real_anchor; s.structure_revision+=1
  testing.expect(t,old_revision>0)
  // Existing rigid-cycle test covers a broken bond inside the same body.
  // The same missing bond in flexible material must be exposed.

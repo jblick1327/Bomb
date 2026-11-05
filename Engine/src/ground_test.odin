@@ -28,7 +28,7 @@ excavated_ground_keeps_player_bombs_and_rubble_above_screen_bottom :: proc(t: ^t
 	game.world.bombs[0].fuse=100
 	bomb:=game.world.bombs[0].body
 	for _ in 0..<240 { sandbox_tick(&game,0,false) }
-	testing.expect(t,game.world.player.grounded && close(b2.Body_GetPosition(game.world.player.body).y,YARD_FLOOR_BOTTOM+PLAYER_HALF_HEIGHT))
+	testing.expect(t,game.world.players[0].grounded && close(b2.Body_GetPosition(game.world.players[0].body).y,YARD_FLOOR_BOTTOM+PLAYER_HALF_HEIGHT))
 	testing.expect(t,game.world.bombs[0].landed && math.abs(b2.Body_GetPosition(bomb).y-(YARD_FLOOR_BOTTOM+BOMB_RADIUS))<0.025)
 	testing.expect(t,b2.Body_IsValid(body) && math.abs(game.world.scene.subdivisions[game.world.scene.sub_rows[retained]].pose.position.y-(YARD_FLOOR_BOTTOM+0.425))<0.025)
 	testing.expect(t,b2.Body_IsValid(game.world.floor) && b2.Body_GetType(game.world.floor)==.staticBody)

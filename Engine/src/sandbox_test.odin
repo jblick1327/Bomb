@@ -13,21 +13,21 @@ yard_rests_under_gravity_and_player_moves_and_jumps :: proc(t: ^testing.T) {
 	for _ in 0..<360 { sandbox_tick(&game,0,false) }
 	a,b,c:=counts(&game.world.scene)
 	testing.expect(t,a==initial_regions && b==initial_links && c==initial_pieces,"The objects and pre-split floor must remain intact under ordinary gravity")
-	testing.expect(t,game.world.player.grounded)
-	testing.expectf(t,math.abs(b2.Body_GetPosition(game.world.player.body).y-PLAYER_HALF_HEIGHT)<0.025,"Player support height %v",b2.Body_GetPosition(game.world.player.body))
+	testing.expect(t,game.world.players[0].grounded)
+	testing.expectf(t,math.abs(b2.Body_GetPosition(game.world.players[0].body).y-PLAYER_HALF_HEIGHT)<0.025,"Player support height %v",b2.Body_GetPosition(game.world.players[0].body))
 	for sub in game.world.scene.subdivisions { testing.expect(t,vlen(vsub(sub.pose.position,sub.rest_center))<0.04) }
 	for _ in 0..<50 { sandbox_tick(&game,1,false) }
-	testing.expect(t,b2.Body_GetPosition(game.world.player.body).x > PLAYER_SPAWN.x+2)
+	testing.expect(t,b2.Body_GetPosition(game.world.players[0].body).x > PLAYER_SPAWN.x+2)
 	sandbox_tick(&game,0,true)
-	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.world.player.body).y>5 { break }; sandbox_tick(&game,0,false) }
-	testing.expectf(t,b2.Body_GetLinearVelocity(game.world.player.body).y>5 && !game.world.player.grounded,"Jump pose %v velocity %v grounded %v",b2.Body_GetPosition(game.world.player.body),b2.Body_GetLinearVelocity(game.world.player.body),game.world.player.grounded)
+	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.world.players[0].body).y>5 { break }; sandbox_tick(&game,0,false) }
+	testing.expectf(t,b2.Body_GetLinearVelocity(game.world.players[0].body).y>5 && !game.world.players[0].grounded,"Jump pose %v velocity %v grounded %v",b2.Body_GetPosition(game.world.players[0].body),b2.Body_GetLinearVelocity(game.world.players[0].body),game.world.players[0].grounded)
 	max_height:=f32(0)
 	for _ in 0..<150 {
 		sandbox_tick(&game,0,false)
-		max_height=max(max_height,b2.Body_GetPosition(game.world.player.body).y)
+		max_height=max(max_height,b2.Body_GetPosition(game.world.players[0].body).y)
 	}
-	testing.expect(t,max_height>2 && game.world.player.grounded,"One jump must reach its apex and land without another airborne jump")
-	testing.expect(t,close(b2.Body_GetRotation(game.world.player.body).s,0))
+	testing.expect(t,max_height>2 && game.world.players[0].grounded,"One jump must reach its apex and land without another airborne jump")
+	testing.expect(t,close(b2.Body_GetRotation(game.world.players[0].body).s,0))
 	expect_valid(t,&game.world.scene)
 }
 
@@ -47,14 +47,14 @@ player_stands_on_and_pushes_a_real_fragment :: proc(t: ^testing.T) {
 	body:=subdivision_body(&game.world.scene,id)
 	position:=to_b2(game.world.scene.subdivisions[game.world.scene.sub_rows[id]].pose.position)
 	// Begin on the surface, rather than dropping the player onto finite debris.
-	b2.Body_SetTransform(game.world.player.body,{position.x,0.85+PLAYER_HALF_HEIGHT+0.005},b2.MakeRot(0))
+	b2.Body_SetTransform(game.world.players[0].body,{position.x,0.85+PLAYER_HALF_HEIGHT+0.005},b2.MakeRot(0))
 	for _ in 0..<120 { sandbox_tick(&game,0,false) }
-	testing.expect(t,game.world.player.grounded && b2.Body_GetPosition(game.world.player.body).y>1.35,"Support must come from fragment contacts")
+	testing.expect(t,game.world.players[0].grounded && b2.Body_GetPosition(game.world.players[0].body).y>1.35,"Support must come from fragment contacts")
 	// Move alongside the detached block and push it using the same collision world.
 	b2.Body_SetTransform(body,to_b2(vsub(Vec2{-1,0.43},game.world.scene.subdivisions[game.world.scene.sub_rows[id]].rest_center)),b2.MakeRot(0))
 	b2.Body_SetLinearVelocity(body,{})
-	b2.Body_SetTransform(game.world.player.body,{-2,0.6},b2.MakeRot(0))
-	b2.Body_SetLinearVelocity(game.world.player.body,{})
+	b2.Body_SetTransform(game.world.players[0].body,{-2,0.6},b2.MakeRot(0))
+	b2.Body_SetLinearVelocity(game.world.players[0].body,{})
 	for _ in 0..<30 { sandbox_tick(&game,0,false) }
 	start:=b2.Body_GetPosition(body).x
 	// Test a slow physical push below impact speed. A running collision can
@@ -69,25 +69,25 @@ player_jump_buffer_and_coyote_window :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
 	game:=editor_test_yard(); defer sandbox_destroy(&game)
 	// Queue a jump shortly before landing.
-	b2.Body_SetTransform(game.world.player.body,{-4.5,0.64},b2.MakeRot(0))
-	b2.Body_SetLinearVelocity(game.world.player.body,{0,-1})
+	b2.Body_SetTransform(game.world.players[0].body,{-4.5,0.64},b2.MakeRot(0))
+	b2.Body_SetLinearVelocity(game.world.players[0].body,{0,-1})
 	jumped:=false
 	for i in 0..<10 {
 		sandbox_tick(&game,0,i==0)
-		if b2.Body_GetLinearVelocity(game.world.player.body).y>5 { jumped=true }
+		if b2.Body_GetLinearVelocity(game.world.players[0].body).y>5 { jumped=true }
 	}
 	testing.expect(t,jumped,"A buffered press just before landing should jump")
 	// The support was lost recently, but the player is still inside the coyote window.
-	b2.Body_SetTransform(game.world.player.body,{-4.5,2},b2.MakeRot(0))
-	b2.Body_SetLinearVelocity(game.world.player.body,{0,-0.1})
-	game.world.player.coyote=0.08
+	b2.Body_SetTransform(game.world.players[0].body,{-4.5,2},b2.MakeRot(0))
+	b2.Body_SetLinearVelocity(game.world.players[0].body,{0,-0.1})
+	game.world.players[0].coyote=0.08
 	sandbox_tick(&game,0,true)
-	testing.expect(t,b2.Body_GetLinearVelocity(game.world.player.body).y>5)
-	game.world.player.coyote=0
-	game.world.player.buffered_jump=0
-	b2.Body_SetLinearVelocity(game.world.player.body,{0,-0.1})
+	testing.expect(t,b2.Body_GetLinearVelocity(game.world.players[0].body).y>5)
+	game.world.players[0].coyote=0
+	game.world.players[0].buffered_jump=0
+	b2.Body_SetLinearVelocity(game.world.players[0].body,{0,-0.1})
 	sandbox_tick(&game,0,true)
-	testing.expect(t,b2.Body_GetLinearVelocity(game.world.player.body).y<0,"Jump assistance must not permit an airborne second jump")
+	testing.expect(t,b2.Body_GetLinearVelocity(game.world.players[0].body).y<0,"Jump assistance must not permit an airborne second jump")
 }
 
 @(test)
@@ -98,11 +98,11 @@ yard_reset_restores_same_setup_after_blast_and_respawn :: proc(t: ^testing.T) {
 	for _ in 0..<3 {
 		testing.expect(t,sandbox_fixture_blast(&game,{1,1.3}))
 		for _ in 0..<30 { sandbox_tick(&game,1,false) }
-		b2.Body_SetTransform(game.world.player.body,{0,-4},b2.MakeRot(0))
-		game.world.player.coyote=0.1; game.world.player.buffered_jump=0.1
-		testing.expect(t,player_after_step(&game.world.player))
-		testing.expect(t,close_vec(from_b2(b2.Body_GetPosition(game.world.player.body)),PLAYER_SPAWN))
-		testing.expect(t,!game.world.player.grounded && game.world.player.coyote==0 && game.world.player.buffered_jump==0)
+		b2.Body_SetTransform(game.world.players[0].body,{0,-4},b2.MakeRot(0))
+		game.world.players[0].coyote=0.1; game.world.players[0].buffered_jump=0.1
+		testing.expect(t,player_after_step(&game.world.players[0]))
+		testing.expect(t,close_vec(from_b2(b2.Body_GetPosition(game.world.players[0].body)),PLAYER_SPAWN))
+		testing.expect(t,!game.world.players[0].grounded && game.world.players[0].coyote==0 && game.world.players[0].buffered_jump==0)
 		sandbox_reset(&game)
 		a,b,c:=counts(&game.world.scene)
 		testing.expect(t,a==initial_regions && b==initial_links && c==initial_pieces)
@@ -124,11 +124,11 @@ sandbox_menu_and_ui_consume_input_without_catchup :: proc(t: ^testing.T) {
 	game.jump_queued=true
 	game.accumulator=0.01
 	before:=game.world.scene.subdivisions[0].pose
-	pose:=b2.Body_GetPosition(game.world.player.body)
+	pose:=b2.Body_GetPosition(game.world.players[0].body)
 	input:=sandbox_route_input(&game,{menu_pressed=true,jump_pressed=true,jump_down=true,blast_pressed=true,blast_down=true,move=1,wheel=1},false)
 	sandbox_advance(&game,5,input)
 	testing.expect(t,game.panel_open && !input.jump_pressed && !input.blast_pressed && input.move==0)
-	testing.expect(t,game.accumulator==0 && !game.jump_queued && b2.Body_GetPosition(game.world.player.body)==pose && game.world.scene.subdivisions[0].pose==before)
+	testing.expect(t,game.accumulator==0 && !game.jump_queued && b2.Body_GetPosition(game.world.players[0].body)==pose && game.world.scene.subdivisions[0].pose==before)
 	testing.expect(t,!sandbox_fixture_blast(&game,{0,1}))
 	input=sandbox_route_input(&game,{menu_pressed=true,jump_pressed=true,jump_down=true,blast_pressed=true,blast_down=true},false)
 	testing.expect(t,!game.panel_open && !input.jump_pressed && !input.blast_pressed)
@@ -145,7 +145,7 @@ sandbox_menu_and_ui_consume_input_without_catchup :: proc(t: ^testing.T) {
 	input=sandbox_route_input(&game,{jump_pressed=true,jump_down=true,blast_pressed=true,blast_down=true},false)
 	testing.expect(t,input.jump_pressed && input.blast_pressed,"A fresh press immediately after closing settings must work")
 	sandbox_advance(&game,1.0/60.0,{})
-	testing.expect(t,game.accumulator<0.001 && b2.Body_GetPosition(game.world.player.body).y>pose.y-0.01,"Resume must advance only the current frame")
+	testing.expect(t,game.accumulator<0.001 && b2.Body_GetPosition(game.world.players[0].body).y>pose.y-0.01,"Resume must advance only the current frame")
 }
 
 @(test)
@@ -163,7 +163,7 @@ sandbox_aim_uses_posed_outlines_and_suppresses_invalid_blast :: proc(t: ^testing
 	testing.expect(t,point_in_subdivision(moved,{-2,3}) && !point_in_subdivision(moved,sub.pose.position))
 	testing.expect(t,sandbox_valid_aim(&game.world.scene,{-1,2}))
 	testing.expect(t,sandbox_fixture_blast(&game,{1,1.3}) && game.world.scene.revision>revision)
-	testing.expect(t,b2.Body_IsValid(game.world.player.body),"Blasts must not replace or remove the player")
+	testing.expect(t,b2.Body_IsValid(game.world.players[0].body),"Blasts must not replace or remove the player")
 }
 
 @(test)

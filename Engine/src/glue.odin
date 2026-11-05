@@ -77,7 +77,7 @@ glue_add :: proc(s:^Scene,a,b:u64,samples:[]Glue_Sample,inherit:bool=false)->u64
  if len(samples)==0 || a==0 || b==0 { return 0 }
  if id,ok:=s.connection_pairs[pair_key(a,b)];ok && s.connections[s.conn_rows[id]].live {
   c:=&s.connections[s.conn_rows[id]]
-  if inherit && len(c.glue)>0 { append(&c.glue,..samples);_,point:=seam_geometry(c^);c.rest_point=point;c.local_a=vsub(point,s.subdivisions[s.sub_rows[a]].rest_center);c.local_b=vsub(point,s.subdivisions[s.sub_rows[b]].rest_center) };return id
+  if inherit && len(c.glue)>0 { append(&c.glue,..samples);_,point:=seam_geometry(c^);c.rest_point=point;c.local_a=vsub(point,s.subdivisions[s.sub_rows[a]].rest_center);c.local_b=vsub(point,s.subdivisions[s.sub_rows[b]].rest_center);s.structure_revision+=1 };return id
  }
  c:=Connection{id=new_id(s),a=a,b=b,mortar=true,live=true};append(&c.glue,..samples)
  _,point:=seam_geometry(c);c.rest_point=point

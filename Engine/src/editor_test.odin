@@ -25,9 +25,9 @@ editor_layout_placement_materials_and_repeatable_test_transitions :: proc(t: ^te
 	testing.expect(t,editor_place(&game,{-1,1},{-2,0}),"Dragging in reverse must normalize the rectangle")
 	identity:=game.layout.objects[3].identity
 	testing.expect(t,identity==5,"Deleting an object must not recycle another object's generation context")
-	pose:=b2.Body_GetPosition(game.world.player.body)
+	pose:=b2.Body_GetPosition(game.world.players[0].body)
 	sandbox_advance(&game,10,{move=1,jump_pressed=true})
-	testing.expect(t,b2.Body_GetPosition(game.world.player.body)==pose && game.accumulator==0)
+	testing.expect(t,b2.Body_GetPosition(game.world.players[0].body)==pose && game.accumulator==0)
 	sandbox_toggle_editor(&game)
 	sandbox_reset(&game)
 	testing.expect(t,len(game.world.scene.materials)==5 && game.world.scene.materials[0].subdivision_strength==35 && !game.world.scene.materials[0].triangulate)

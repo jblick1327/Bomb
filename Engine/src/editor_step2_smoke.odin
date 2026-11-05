@@ -17,7 +17,7 @@ editor_smoke_radius :: proc(target: rl.RenderTexture2D) {
 	images: [2]rl.Image
 	defer { for image in images { rl.UnloadImage(image) } }
 	for i in 0..<2 {
-		if i==1 { g.world.settings.blast_radius=2; g.queued.radius=nil }
+		if i==1 { g.world.settings.blast_radius=2; g.world.players[0].blast_radius=2; g.queued.players[0].radius=nil; g.queued.bomb_radius=nil }
 		rl.BeginDrawing(); rl.BeginTextureMode(target)
 		rl.ClearBackground({19,28,42,255})
 		sandbox_draw_aim(&g,view,{640,300})

@@ -13,7 +13,7 @@ material_golden :: proc(t:^testing.T,name:string,data:[]byte) {
  when #config(MATERIAL_BASELINE,false) { testing.expect(t,os.write_entire_file(path,data)==nil) }
  else {
   old,err:=os.read_entire_file(path,context.allocator); defer delete(old)
-  testing.expect(t,err==nil && string(old)==string(data),name)
+  testing.expect(t,err==nil && world_capture_compatible(old,data),name)
  }
 }
 @(test)

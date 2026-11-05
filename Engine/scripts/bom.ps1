@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('Run', 'Build', 'Test', 'Smoke', 'SmokeInput', 'SmokeEditor', 'SmokeMaterials', 'Soak')]
+    [ValidateSet('Run', 'Build', 'Test', 'Smoke', 'SmokeInput', 'SmokeEditor', 'SmokeMaterials', 'Soak', 'NetTest', 'ReplicationSoak')]
     [string]$Task = 'Run'
 )
 
@@ -16,6 +16,8 @@ try {
         $odinArguments = @('build', 'src', '-o:speed', '-out:build/BOM.exe')
     } elseif ($Task -eq 'Test') {
         $odinArguments = @('test', 'src', '-out:build/BOM-tests.exe')
+    } elseif ($Task -eq 'NetTest') {
+        $odinArguments = @('test', 'src/netcode', '-out:build/BOM-nettest.exe', '-define:ODIN_TEST_TRACK_MEMORY=true', '-define:ODIN_TEST_FAIL_ON_BAD_MEMORY=true', '-define:ODIN_TEST_ALWAYS_REPORT_MEMORY=true', '-define:ODIN_TEST_FANCY=false')
     } else {
         $runtimeFlags = @{
             Smoke = '--smoke'
@@ -23,9 +25,10 @@ try {
             SmokeEditor = '--smoke-editor'
             SmokeMaterials = '--smoke-materials'
             Soak = '--soak'
+            ReplicationSoak = '--replication-soak'
         }
         $odinArguments = @('run', 'src', '-out:build/BOM.exe')
-        if ($Task -eq 'Soak') { $odinArguments += '-o:speed' }
+        if ($Task -eq 'Soak' -or $Task -eq 'ReplicationSoak') { $odinArguments += '-o:speed' }
         if ($runtimeFlags.ContainsKey($Task)) {
             $odinArguments += @('--', $runtimeFlags[$Task])
         }

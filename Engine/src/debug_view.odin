@@ -113,7 +113,7 @@ draw_scene :: proc(s: ^Scene,caches: ^Render_Cache_State,view: View,poses: map[u
  for pass in 0..<2 {
   if textured { texture_begin() }
   for id,i in ids_order {
-   sub:=s.subdivisions[s.sub_rows[id]]; if render_static(sub)!=(pass==0) { continue }
+   sub:=s.subdivisions[s.sub_rows[id]]; if render_static(s,&caches.statics,sub)!=(pass==0) { continue }
    fill:=piece_color(sub.owner,210)
    if textured {
     m:=s.materials[sub.material]; vertical:=false
@@ -123,7 +123,7 @@ draw_scene :: proc(s: ^Scene,caches: ^Render_Cache_State,view: View,poses: map[u
   }
   if textured {
    texture_end()
-   for id,i in ids_order { sub:=s.subdivisions[s.sub_rows[id]]; if render_static(sub)==(pass==0) { draw_cached_strokes(view,outlines[i],material_color(s.materials[sub.material]),1,&caches.cells[id],false) } }
+   for id,i in ids_order { sub:=s.subdivisions[s.sub_rows[id]]; if render_static(s,&caches.statics,sub)==(pass==0) { draw_cached_strokes(view,outlines[i],material_color(s.materials[sub.material]),1,&caches.cells[id],false) } }
   }
  }
  if material_colors && surface { draw_rubber_bands(s,caches,view,outlines,ids_order[:],selected,outline_width) }

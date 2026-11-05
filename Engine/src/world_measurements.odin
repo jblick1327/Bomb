@@ -16,7 +16,7 @@ world_motion_difference :: proc(a,b: ^World) -> (bool,f32,int) {
   maximum=max(maximum,vlen(vsub(sub.pose.position,other.pose.position)))
  }
  for sub in b.scene.subdivisions { if _,ok:=a.scene.sub_rows[sub.id]; !ok { missing+=1; equal=false } }
- p,q:=read_body_state(a.player.body).pose,read_body_state(b.player.body).pose
+ p,q:=read_body_state(a.players[0].body).pose,read_body_state(b.players[0].body).pose
  if !pose_bits_equal(p,q) { equal=false }
  maximum=max(maximum,vlen(vsub(p.position,q.position)))
  if len(a.bombs)!=len(b.bombs) { equal=false; missing+=abs(len(a.bombs)-len(b.bombs)) }

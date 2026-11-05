@@ -1,7 +1,6 @@
 package main
 
 import rl "vendor:raylib"
-import b2 "vendor:box2d"
 
 YARD_INK :: rl.Color{229,239,241,255}
 YARD_MUTED :: rl.Color{144,165,178,255}
@@ -68,29 +67,33 @@ sandbox_draw_panel :: proc(game: ^Sandbox,width,height: f32) -> Sandbox_UI_Actio
  if game.status_time>0 { ui_label(.Small,rl.TextFormat("%s",game.status),{x,y+43,504,22},YARD_ACCENT,true) }
 	return .None
 }
+draw_burst :: proc(view: View,burst: Bomb_Burst) {
+	progress:=burst.age/BOMB_BURST_TIME
+	color:=rl.Color{255,200,112,u8(220*(1-progress))}
+	rl.DrawCircleLinesV(screen_point(view,burst.position),burst.radius*view.scale*(0.2+0.8*progress),color)
+}
+draw_bomb_at :: proc(view: View,position: Vec2,landed: bool,fuse: f32) {
+	center:=screen_point(view,position)
+	radius:=BOMB_RADIUS*view.scale
+	color:=rl.Color{245,206,133,255}
+	if landed { color={255,132,112,255} }
+	rl.DrawCircleV(center,radius,{39,42,50,255})
+	rl.DrawCircleLinesV(center,radius,color)
+	tip:=rl.Vector2{center.x+radius*0.5,center.y-radius*1.4}
+	rl.DrawLineEx({center.x,center.y-radius*0.7},tip,2,color)
+	rl.DrawCircleV(tip,2,color)
+	if landed { rl.DrawRing(center,radius+3,radius+5,-90,-90+360*fuse/BOMB_FUSE,24,color) }
+}
 sandbox_draw_bombs :: proc(game: ^Sandbox,view: View) {
-	for burst in game.bursts {
-		progress:=burst.age/BOMB_BURST_TIME
-		color:=rl.Color{255,200,112,u8(220*(1-progress))}
-		rl.DrawCircleLinesV(screen_point(view,burst.position),burst.radius*view.scale*(0.2+0.8*progress),color)
-	}
+	for burst in game.bursts { draw_burst(view,burst) }
 	for bomb in game.world.bombs {
-		position:=from_b2(b2.Body_GetPosition(bomb.body))
-		if !game.panel_open && !game.editor.editing { position=vadd(game.previous_bombs[bomb.body],vmul(vsub(position,game.previous_bombs[bomb.body]),game.accumulator*60)) }
-		center:=screen_point(view,position)
-		radius:=BOMB_RADIUS*view.scale
-		color:=rl.Color{245,206,133,255}
-		if bomb.landed { color={255,132,112,255} }
-		rl.DrawCircleV(center,radius,{39,42,50,255})
-		rl.DrawCircleLinesV(center,radius,color)
-		tip:=rl.Vector2{center.x+radius*0.5,center.y-radius*1.4}
-		rl.DrawLineEx({center.x,center.y-radius*0.7},tip,2,color)
-		rl.DrawCircleV(tip,2,color)
-		if bomb.landed { rl.DrawRing(center,radius+3,radius+5,-90,-90+360*bomb.fuse/BOMB_FUSE,24,color) }
+		position:=bomb.pose.position
+		if !game.panel_open && !game.editor.editing { position=vadd(game.previous_bombs[bomb.id],vmul(vsub(position,game.previous_bombs[bomb.id]),game.accumulator*60)) }
+		draw_bomb_at(view,position,bomb.landed,bomb.fuse)
 	}
 }
-sandbox_draw_world :: proc(game: ^Sandbox,view: View,poses: map[u64]Pose,frames: map[u64]Pose = nil) {
-	s:=&game.world.scene
+// The yard's floor slab and hatching, behind the structure.
+yard_draw_backdrop :: proc(view: View) {
 	left,top:=screen_point(view,{-9.5,YARD_FLOOR_BOTTOM}),screen_point(view,{10.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH})
 	rl.DrawRectangleRec({left.x,left.y,top.x-left.x,top.y-left.y},{42,58,68,255})
 	rl.DrawLineEx(left,screen_point(view,{10.5,YARD_FLOOR_BOTTOM}),3,{116,151,151,255})
@@ -98,21 +101,37 @@ sandbox_draw_world :: proc(game: ^Sandbox,view: View,poses: map[u64]Pose,frames:
 		x:=f32(i)*0.5
 		rl.DrawLineEx(screen_point(view,{x,YARD_FLOOR_BOTTOM-0.04}),screen_point(view,{x+0.12,YARD_FLOOR_BOTTOM-0.20}),2,{66,86,91,255})
 	}
-	draw_scene(s,&game.render_caches,view,poses,game.selected,game.surface,game.inspection && game.joints,game.inspection,true,game.outline_width,frames)
-	sandbox_draw_editor(game,view)
+}
+yard_draw_spawn :: proc(view: View) {
 	spawn:=screen_point(view,{PLAYER_SPAWN.x,0})
 	rl.DrawLineEx({spawn.x-16,spawn.y+12},{spawn.x+16,spawn.y+12},3,YARD_ACCENT)
 	ui_text(.Small,"SPAWN",i32(spawn.x)-24,i32(spawn.y)+27,YARD_MUTED)
-	sandbox_draw_bombs(game,view)
-	position:=from_b2(b2.Body_GetPosition(game.world.player.body))
-	if !game.panel_open && !game.editor.editing { position=vadd(game.previous_player,vmul(vsub(position,game.previous_player),game.accumulator*60)) }
+}
+draw_player_at :: proc(view: View,position: Vec2,index: int) {
 	center:=screen_point(view,position)
 	radius:=PLAYER_RADIUS*view.scale
 	segment:=PLAYER_SEGMENT*view.scale
-	rl.DrawRectangleRec({center.x-radius,center.y-segment,2*radius,2*segment},YARD_ACCENT)
-	rl.DrawCircleV({center.x,center.y-segment},radius,YARD_ACCENT)
-	rl.DrawCircleV({center.x,center.y+segment},radius,YARD_ACCENT)
+	body_color:=YARD_ACCENT
+	// Players after the first (multiplayer) are tinted so they can be told apart.
+	if index>0 { tints:=[MAX_PLAYERS]rl.Color{YARD_ACCENT,{244,182,92,255},{150,170,240,255},{226,132,190,255}}; body_color=tints[index] }
+	rl.DrawRectangleRec({center.x-radius,center.y-segment,2*radius,2*segment},body_color)
+	rl.DrawCircleV({center.x,center.y-segment},radius,body_color)
+	rl.DrawCircleV({center.x,center.y+segment},radius,body_color)
 	rl.DrawLineEx({center.x-radius*0.45,center.y-segment},{center.x+radius*0.45,center.y-segment},3,{21,51,53,255})
+}
+sandbox_draw_world :: proc(game: ^Sandbox,view: View,poses: map[u64]Pose,frames: map[u64]Pose = nil) {
+	s:=&game.world.scene
+	yard_draw_backdrop(view)
+	draw_scene(s,&game.render_caches,view,poses,game.selected,game.surface,game.inspection && game.joints,game.inspection,true,game.outline_width,frames)
+	sandbox_draw_editor(game,view)
+	yard_draw_spawn(view)
+	sandbox_draw_bombs(game,view)
+	for player,index in game.world.players {
+		if !player.active { continue }
+		position:=player.pose.position
+		if !game.panel_open && !game.editor.editing { position=vadd(game.previous_players[index],vmul(vsub(position,game.previous_players[index]),game.accumulator*60)) }
+		draw_player_at(view,position,index)
+	}
 }
 sandbox_aim_segments :: proc(radius_px: f32) -> i32 { return clamp(i32(radius_px/3),48,256) }
 sandbox_aim_ring :: proc(center: rl.Vector2,radius_px: f32,color: rl.Color) {
@@ -217,9 +236,10 @@ sandbox_inspect_input :: proc(game: ^Sandbox,point: Vec2,view: View,over_ui: boo
  if rl.IsKeyPressed(.L) {
   loaded,ok:=load_world_snapshot("output/snapshot.json")
   if ok {
+   loaded.scene.epoch=game.world.scene.epoch+1
    scene_destroy(&game.world.scene); delete(game.world.bombs); release_render_caches(&game.render_caches); game.world=loaded
    clear(&game.bursts); clear(&game.previous_bombs)
-   game.queued.radius=nil; game.queued.mode=nil
+   game.queued.players[0].radius=nil; game.queued.bomb_radius=nil; game.queued.mode=nil
    game.selected=0; sandbox_clear_input(game)
    sandbox_notice(game,"Loaded output/snapshot.json")
   } else { sandbox_notice(game,"Snapshot missing or invalid") }

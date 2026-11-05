@@ -42,6 +42,8 @@ build_shaped_object :: proc(s:^Scene,r:Authored_Shape,owner:u64) {
  }
  if s.materials[s.pieces[s.piece_rows[owner]].material].flexibility==0 { presplit_piece(s,owner) }
  if frame!=0 {
+  // The authored rotation is part of construction, before these ids are published.
+  for &p in s.pieces { if p.id>=owner && p.has_ref_rest { p.ref_rest=vadd(center,vrotate(vsub(p.ref_rest,center),frame)) } }
   for &sub in s.subdivisions { if sub.id<first { continue }
    for &v in sub.outline.points { p,ok:=transformed[v];if !ok { p=vadd(center,vrotate(vsub(v,center),frame));transformed[v]=p };v=p }
    sub.rest_center=vadd(center,vrotate(vsub(sub.rest_center,center),frame));sub.pose.position=sub.rest_center;sub.frame=frame

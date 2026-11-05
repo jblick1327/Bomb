@@ -63,16 +63,18 @@ shape_glue_lengths :: proc(t:^testing.T) {
  fmt.printf("Glue flush=%.6f rotated=%.6f gap0.0005=%.6f\n",flush,rotated,near)
 }
 
-glue_cantilever :: proc(glued:bool)->Sandbox {
+// block_lo/block_hi optionally add a free, unbonded Stone block (identity 3), e.g. one resting on the tip.
+glue_cantilever :: proc(glued:bool,block_lo:Vec2={},block_hi:Vec2={})->Sandbox {
  g:=sandbox_editor_create()
  append(&g.layout.objects,Authored_Shape{identity=1,material=recipe_slot(.Stone),lo={0,0},hi={0.5,3},mortar=true})
  append(&g.layout.objects,Authored_Shape{identity=2,material=recipe_slot(.Stone),lo={0.5,2.1},hi={2.5,2.4}})
  g.layout.next_identity=3
+ if block_hi.x>block_lo.x { append(&g.layout.objects,Authored_Shape{identity=3,material=recipe_slot(.Stone),lo=block_lo,hi=block_hi});g.layout.next_identity=4 }
  if glued { append(&g.layout.glue,Glue_Link{1,2}) }
  sandbox_toggle_editor(&g)
  // Isolate glue from the automatic wall-to-beam mortar created by the wall flag.
  s:=&g.world.scene;f:=Failures{};left,right:[dynamic]u64
- for sub in s.subdivisions { if sub.rest_center.y<=0 { continue };if sub.rest_center.x<0.5 { append(&left,sub.id) } else { append(&right,sub.id) } }
+ for sub in s.subdivisions { if sub.rest_center.y<=0 || sub.rest_center.x>=0.5 && sub.rest_center.y>2.4 { continue };if sub.rest_center.x<0.5 { append(&left,sub.id) } else { append(&right,sub.id) } }
  for c in s.connections { if c.mortar && (contains_id(left[:],c.a) && contains_id(right[:],c.b) || contains_id(right[:],c.a) && contains_id(left[:],c.b)) { append(&f.connections,c.id) } }
  apply_failures(s,f);free_failures(&f)
  if glued { a,b:=shape_polygon(g.layout.objects[0]),shape_polygon(g.layout.objects[1]);samples:=glue_samples(a,b);assign_glue(s,samples[:],left[:],right[:]);delete(samples);delete(a.points);delete(b.points) }

@@ -18,7 +18,7 @@ seam_followup_captures :: proc() {
  poses:=make(map[u64]Pose);defer delete(poses)
  for shot in 0..<3 {
   g:=seam_demo_game();ticks:=600
-  if shot==1 { ticks=20;sandbox_fixture_radius(&g,3);sandbox_explode(&g,{-4.4,1.5}) }
+  if shot==1 { ticks=20;sandbox_fixture_radius(&g,4);sandbox_explode(&g,{-3.8,0.5}) }
   for _ in 0..<ticks { sandbox_tick(&g,0,false) };g.status_time=0
   view:=sandbox_view(1280,800);if shot==2 { view={offset={40,1580},scale=400} }
   before,ok:=encode_world_snapshot(&g.world);assert(ok)
@@ -29,7 +29,7 @@ seam_followup_captures :: proc() {
    rl.DrawRectangle(0,0,1280,88,{19,28,42,255});ui_text(.Title,"Roof ridge / continuous glue",24,20,YARD_INK);ui_text(.Small,"Test / 600 ticks",24,58,YARD_MUTED)
   } else { sandbox_draw_world(&g,view,poses);sandbox_draw_hud(&g,1280,800) }
   rl.EndTextureMode();rl.EndDrawing()
-  path:=cstring("evidence/glue-followup/demo-test-600.png");if shot==1 { path="evidence/glue-followup/demo-test-blast-20.png" };if shot==2 { path="evidence/glue-followup/ridge-closeup.png" }
+  path:=cstring("evidence/seam-toughness/demo-test-600.png");if shot==1 { path="evidence/seam-toughness/demo-test-blast-20.png" };if shot==2 { path="evidence/seam-toughness/ridge-closeup.png" }
   sandbox_smoke_export(target,path)
   image:=rl.LoadImageFromTexture(target.texture);rl.ImageFlipVertical(&image)
   if shot<2 {
@@ -52,7 +52,7 @@ seam_followup_captures :: proc() {
  }
 }
 run_seam_followup_checks :: proc() {
- assert(os.make_directory_all("evidence/glue-followup")==nil)
+ assert(os.make_directory_all("evidence/seam-toughness")==nil)
  track:mem.Tracking_Allocator;mem.tracking_allocator_init(&track,context.allocator);defer mem.tracking_allocator_destroy(&track);context.allocator=mem.tracking_allocator(&track)
  rl.SetTraceLogLevel(.WARNING);rl.SetConfigFlags({.MSAA_4X_HINT,.WINDOW_HIDDEN,.WINDOW_HIGHDPI});rl.InitWindow(1280,800,"Glue follow-up verification");defer rl.CloseWindow()
  rl.SetExitKey(.KEY_NULL);sandbox_gui_style();rl.SetShapesTexture(rl.Texture2D{},rl.Rectangle{});rl.SetTargetFPS(0)

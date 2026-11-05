@@ -169,9 +169,9 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
 	assert(game.editor.palette==recipe_slot(.Wood) && game.panel_open,"Settings must consume clicks on the underlying palette")
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,true))
 	sandbox_smoke_frame(game,target,smoke_key(.ESCAPE,false))
-	pose:=b2.Body_GetPosition(game.world.player.body)
+	pose:=b2.Body_GetPosition(game.world.players[0].body)
 	for _ in 0..<60 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-	assert(b2.Body_GetPosition(game.world.player.body)==pose,"Editing must pause simulation")
+	assert(b2.Body_GetPosition(game.world.players[0].body)==pose,"Editing must pause simulation")
 	// Use each actual palette widget and drag into the clear building area.
 	for choice in 0..<4 {
 		sandbox_smoke_click(game,target,sandbox_smoke_palette_x(game,int(choice)),752)
@@ -201,22 +201,22 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
 	assert(!game.editor.editing && len(game.world.scene.pieces)==5)
 	revision:=game.world.scene.revision
 	for _ in 0..<90 { sandbox_smoke_frame(game,target,smoke_mouse(30,40)) }
-	assert(game.world.player.grounded)
+	assert(game.world.players[0].grounded)
 	sandbox_smoke_frame(game,target,smoke_key(.D,true))
 	for _ in 0..<15 { sandbox_smoke_frame(game,target) }
 	sandbox_smoke_frame(game,target,smoke_key(.D,false),smoke_key(.SPACE,true))
 	// Allow the existing 0.1-second buffer to catch a seam crossing.
-	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.world.player.body).y>5 { break }; sandbox_smoke_frame(game,target) }
-	assert(b2.Body_GetLinearVelocity(game.world.player.body).y>5,"Space must jump in Test")
+	for _ in 0..<5 { if b2.Body_GetLinearVelocity(game.world.players[0].body).y>5 { break }; sandbox_smoke_frame(game,target) }
+	assert(b2.Body_GetLinearVelocity(game.world.players[0].body).y>5,"Space must jump in Test")
 	for _ in 0..<120 { sandbox_smoke_frame(game,target) }
-	assert(game.world.player.grounded,"Held jump must not repeat")
+	assert(game.world.players[0].grounded,"Held jump must not repeat")
 	sandbox_smoke_frame(game,target,smoke_key(.SPACE,false))
 	// Settings consume input and keep radius/mode live without material overrides.
 	sandbox_smoke_click(game,target,1180,43)
 	assert(game.panel_open && len(game.layout.objects)==4)
-	pose=b2.Body_GetPosition(game.world.player.body)
+	pose=b2.Body_GetPosition(game.world.players[0].body)
 	for _ in 0..<15 { sandbox_smoke_frame(game,target,smoke_key(.D,true)) }
-	assert(b2.Body_GetPosition(game.world.player.body)==pose)
+	assert(b2.Body_GetPosition(game.world.players[0].body)==pose)
 	sandbox_smoke_frame(game,target,smoke_key(.D,false))
 	sandbox_smoke_click(game,target,620,381)
 	assert(sandbox_radius(game)>5.1)
@@ -336,7 +336,7 @@ sandbox_smoke_inputs :: proc(game: ^Sandbox) {
  sandbox_smoke_frame(game,target,smoke_key(.L,true)); sandbox_smoke_frame(game,target,smoke_key(.L,false))
  restored_regions,restored_links,restored_pieces:=counts_runtime(&game.world.scene)
  assert(game.world.scene.next_id==saved_id && restored_regions==saved_regions && restored_links==saved_links && restored_pieces==saved_pieces,"Native snapshot load failed")
- assert(b2.Body_IsValid(game.world.player.body) && b2.Body_IsValid(game.world.floor))
+ assert(b2.Body_IsValid(game.world.players[0].body) && b2.Body_IsValid(game.world.floor))
 	fmt.println("Editor native smoke passed: palette, drag preview, overlap/degenerate rejection, deletion, UI consumption, paused edit, Test/Edit restoration, reset, movement/jump, inspection, radius, material breakups, rubber, falling bombs, and snapshot save/load.")
 }
 

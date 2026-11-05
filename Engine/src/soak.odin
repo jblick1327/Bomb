@@ -39,7 +39,7 @@ soak_rebuild_layout :: proc(g: ^Sandbox) {
  build_mortar(s,objects[:],ground)
 	if s.revision==revision { s.revision+=1 }
 	physics_sync_structure(s)
-	player_respawn(&g.world.player)
+	for &player in g.world.players { if player.active { player_respawn(&player) } }
 	g.selected=0
 	sandbox_clear_input(g)
 }

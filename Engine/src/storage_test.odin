@@ -138,7 +138,7 @@ yard_removes_escaped_regions_for_every_material :: proc(t: ^testing.T) {
 			testing.expect(t,len(g.world.scene.subdivisions)==expected)
 			for sub in g.world.scene.subdivisions { testing.expect(t,sub.id<=last_id,"Cleanup must discard, not generate children") }
 			if exit.removed { testing.expect(t,g.selected==0) }
-			testing.expect(t,b2.Body_IsValid(g.world.floor) && b2.Body_IsValid(g.world.player.body))
+			testing.expect(t,b2.Body_IsValid(g.world.floor) && b2.Body_IsValid(g.world.players[0].body))
 			testing.expect(t,b2.World_GetCounters(g.world.scene.physics.world).bodyCount==i32(physics_body_count(&g.world.scene)+2))
 			expect_packed_storage(t,&g.world.scene); sandbox_destroy(&g)
 		}
@@ -156,7 +156,7 @@ soak_rebuild_keeps_scene_world_stream_and_monotonic_ids :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
 	g:=soak_yard(); defer sandbox_destroy(&g)
 	sandbox_fixture_mode(&g,.Falling_Bombs)
-	world,base,player:=g.world.scene.physics.world,g.world.floor,g.world.player.body
+	world,base,player:=g.world.scene.physics.world,g.world.floor,g.world.players[0].body
 	bomb_spawn(&g,{7,6})
 	bomb:=g.world.bombs[0].body
 	random,delay:=g.world.rain.random,g.world.rain.until_drop
@@ -168,7 +168,7 @@ soak_rebuild_keeps_scene_world_stream_and_monotonic_ids :: proc(t: ^testing.T) {
 		last_id:=g.world.scene.next_id
 		b2.Body_SetTransform(player,{0,-2},b2.MakeRot(0)); b2.Body_SetLinearVelocity(player,{2,-2})
 		soak_rebuild_layout(&g)
-		testing.expect(t,g.world.scene.physics.world==world && g.world.floor==base && g.world.player.body==player)
+		testing.expect(t,g.world.scene.physics.world==world && g.world.floor==base && g.world.players[0].body==player)
 		testing.expect(t,g.world.rain.random==random && g.world.rain.until_drop==delay && g.world.bombs[0].body==bomb)
 		testing.expect(t,len(g.world.scene.materials)==5 && len(g.layout.objects)==4 && g.world.scene.next_id>last_id)
 		for id in old_ids { testing.expect(t,!is_live_subdivision(&g.world.scene,id)) }; delete(old_ids)

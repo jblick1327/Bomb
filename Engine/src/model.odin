@@ -54,10 +54,12 @@ Connection :: struct {
 	joint: b2.JointId `json:"-"`,
 	live: bool,
  mortar: bool,
- overload_ticks: u8,
+ damage: f32, // seconds of excess capacity absorbed by this mortar/glue seam (shared by its members)
 }
 Piece :: struct {
 	id: u64,
+	ref_rest: Vec2 `json:"-"`, // Immutable after construction; network structure, not the solo snapshot format.
+	has_ref_rest: bool `json:"-"`,
 	material: int,
 	seed: u8,
 	subdivisions, connections: [dynamic]u64,
@@ -82,6 +84,8 @@ Scene :: struct {
 	sub_rows, conn_rows, piece_rows: map[u64]int,
 	connection_pairs: map[Endpoint_Pair]u64,
 	structure_revision: u64,
+	anchor_y: f32, // Structural: pieces with a live cell edge on this height are static. Replicated.
+	epoch: u32, // Replication epoch; bumped whenever the world is rebuilt.
 	pending_regions: [dynamic]u64,
 	next_id: u64,
 	revision: u64,
@@ -164,9 +168,9 @@ shared_boundary :: proc(a, b: Polygon) -> (f32, Vec2) {
 }
 new_id :: proc(s: ^Scene) -> u64 { s.next_id += 1; return s.next_id }
 new_scene :: proc(minimum_width: f32) -> Scene {
-	return Scene{sub_rows=make(map[u64]int),conn_rows=make(map[u64]int),piece_rows=make(map[u64]int),connection_pairs=make(map[Endpoint_Pair]u64),minimum_width=minimum_width}
+	return Scene{sub_rows=make(map[u64]int),conn_rows=make(map[u64]int),piece_rows=make(map[u64]int),connection_pairs=make(map[Endpoint_Pair]u64),minimum_width=minimum_width,anchor_y=-1e30}
 }
-add_material :: proc(s: ^Scene, m: Material) -> int { append(&s.materials,m); return len(s.materials)-1 }
+add_material :: proc(s: ^Scene, m: Material) -> int { append(&s.materials,m); s.structure_revision+=1; return len(s.materials)-1 }
 add_piece :: proc(s: ^Scene, material: int, seed: u8) -> u64 {
 	id := new_id(s)
 	s.piece_rows[id] = len(s.pieces)
@@ -182,6 +186,36 @@ add_subdivision :: proc(s: ^Scene, owner: u64, outline: Polygon, pose: Pose) -> 
 	s.pieces[s.piece_rows[owner]].mass+=polygon_area(outline)
 	s.pieces[s.piece_rows[owner]].render_revision+=1
 	return id
+}
+// add_piece reserves an id before its cells exist. Seal that construction once,
+// before physics, publication or damage can observe/change the membership.
+piece_finish_reference :: proc(s: ^Scene,p: ^Piece) {
+ if p.has_ref_rest || !p.live || len(p.subdivisions)==0 { return }
+ area,x,y: f64
+ for id in p.subdivisions {
+  sub:=s.subdivisions[s.sub_rows[id]]
+  if !sub.live { continue }
+  // Fan around a nearby vertex avoids cancellation in far-from-origin debris.
+  pts:=sub.outline.points
+  if len(pts)<3 { continue }
+  a:=pts[0]; signed,cx,cy:f64
+  for i in 1..<len(pts)-1 {
+   b,c:=pts[i],pts[i+1]
+   cross:=(f64(b.x)-f64(a.x))*(f64(c.y)-f64(a.y))-(f64(b.y)-f64(a.y))*(f64(c.x)-f64(a.x))
+   signed+=cross; cx+=(f64(a.x)+f64(b.x)+f64(c.x))*cross; cy+=(f64(a.y)+f64(b.y)+f64(c.y))*cross
+  }
+  if signed==0 { continue }
+  weight:=math.abs(signed)
+  area+=weight; x+=cx/signed/3*weight; y+=cy/signed/3*weight
+ }
+ if area>0 { p.ref_rest={f32(x/area),f32(y/area)}; p.has_ref_rest=true }
+}
+scene_finish_references :: proc(s: ^Scene) { for &p in s.pieces { piece_finish_reference(s,&p) } }
+frame_to_reference :: proc(frame: Pose,ref_rest: Vec2) -> Pose {
+ out:=frame; out.position=vadd(frame.position,vrotate(ref_rest,frame.angle)); return out
+}
+reference_to_frame :: proc(reference: Pose,ref_rest: Vec2) -> Pose {
+ out:=reference; out.position=vsub(reference.position,vrotate(ref_rest,reference.angle)); return out
 }
 // Each record owns its undeformed outline; staging may read dead parents until commit.
 retain_subdivision :: proc(s: ^Scene,source: Subdivision) {
@@ -320,6 +354,7 @@ rebuild_piece :: proc(s: ^Scene, old_id: u64) {
 			s.pieces[s.piece_rows[owner]].mass+=polygon_area(s.subdivisions[s.sub_rows[id]].outline)
 		}
 		s.pieces[s.piece_rows[owner]].subdivisions=group
+		piece_finish_reference(s,&s.pieces[s.piece_rows[owner]])
 	}
 	// Owner lookup is a set test for each endpoint, rather than linear group searches.
 	for id in old.connections {

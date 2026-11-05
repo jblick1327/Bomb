@@ -32,3 +32,17 @@ probe_demo_blasts :: proc() {
   delete(far);sandbox_destroy(&g)
  } } }
 }
+seam_live_count :: proc(s:^Scene,ids:[]u64)->int {
+ n:=0;for id in ids { if row,ok:=s.conn_rows[id];ok && s.connections[row].live { n+=1 } };return n
+}
+// Largest centre-to-rest displacement of any live cell of the right post,
+// authored object 2: the Stone column spanning x 3..3.5, y 0..2.5.
+seam_right_post_movement :: proc(g:^Sandbox)->f32 {
+ maximum:=f32(0)
+ for sub in g.world.scene.subdivisions {
+  c:=sub.rest_center
+  if sub.live && c.x>3 && c.x<3.5 && c.y>0 && c.y<2.5 { maximum=max(maximum,vlen(vsub(sub.pose.position,c))) }
+ }
+ return maximum
+}
+

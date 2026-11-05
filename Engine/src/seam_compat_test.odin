@@ -21,11 +21,11 @@ seam_followup_legacy_world_bytes :: proc(t:^testing.T) {
    data,ok:=encode_world_snapshot(&g.world);testing.expect(t,ok)
    name:=fmt.aprintf("fixture-%d-phase-%d.json",fixture,phase)
    when #config(SEAM_BASELINE_WRITE,false) {
-    path:=fmt.aprintf("%s/%s",#config(SEAM_CAPTURE_DIRECTORY,"evidence/glue-followup/before"),name)
+    path:=fmt.aprintf("%s/%s",#config(SEAM_CAPTURE_DIRECTORY,"evidence/seam-toughness/legacy"),name)
     testing.expect(t,os.write_entire_file(path,data)==nil);delete(path)
    } else {
-    path:=fmt.aprintf("evidence/glue-followup/before/%s",name)
-    before,err:=os.read_entire_file(path,context.allocator);testing.expect(t,err==nil && string(before)==string(data),name);delete(before);delete(path)
+    path:=fmt.aprintf("evidence/seam-toughness/legacy/%s",name)
+    before,err:=os.read_entire_file(path,context.allocator);testing.expect(t,err==nil && world_capture_compatible(before,data),name);delete(before);delete(path)
     when #config(SEAM_CAPTURE_DIRECTORY,"")!="" {
      after:=fmt.aprintf("%s/%s",#config(SEAM_CAPTURE_DIRECTORY,""),name);testing.expect(t,os.write_entire_file(after,data)==nil);delete(after)
     }

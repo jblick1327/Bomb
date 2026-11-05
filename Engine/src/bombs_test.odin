@@ -79,7 +79,7 @@ bomb_blasts_use_current_radius_and_remove_all_expired_bodies :: proc(t: ^testing
 	testing.expect(t,len(game.world.bombs)==0 && !b2.Body_IsValid(first) && !b2.Body_IsValid(second))
 	testing.expect(t,len(game.bursts)==2 && game.bursts[0].radius==5.2)
 	testing.expect(t,game.world.scene.revision>revision && !is_live_subdivision(&game.world.scene,target),"Landed bombs must invoke real destruction using the live radius")
-	testing.expect(t,b2.Body_IsValid(game.world.player.body) && b2.Body_IsValid(game.world.floor))
+	testing.expect(t,b2.Body_IsValid(game.world.players[0].body) && b2.Body_IsValid(game.world.floor))
 	expect_valid(t,&game.world.scene)
 }
 
@@ -95,7 +95,7 @@ bomb_rain_random_drops_pause_switch_and_reset :: proc(t: ^testing.T) {
 		if len(game.world.bombs)>0 { break }
 	}
 	first_body:=game.world.bombs[0].body
-	first_position:=game.previous_bombs[game.world.bombs[0].body]
+	first_position:=game.previous_bombs[game.world.bombs[0].id]
 	second_delay:=game.world.rain.until_drop
 	testing.expect(t,first_position.y==BOMB_SKY_HEIGHT && first_position.x>=-7 && first_position.x<=8)
 	testing.expect(t,second_delay>=BOMB_DROP_MIN-1.0/60.0 && second_delay<=BOMB_DROP_MAX && second_delay!=first_delay)
@@ -130,10 +130,10 @@ bomb_rain_random_drops_pause_switch_and_reset :: proc(t: ^testing.T) {
 		sandbox_tick(&game,0,false)
 		if len(game.world.bombs)>0 { break }
 	}
-	testing.expect(t,close_vec(game.previous_bombs[game.world.bombs[0].body],first_position))
+	testing.expect(t,close_vec(game.previous_bombs[game.world.bombs[0].id],first_position))
 	game.world.rain.until_drop=0
 	sandbox_tick(&game,0,false)
-	testing.expect(t,len(game.world.bombs)==2 && game.previous_bombs[game.world.bombs[1].body].x!=first_position.x,"Successive drops should use different random sky positions")
+	testing.expect(t,len(game.world.bombs)==2 && game.previous_bombs[game.world.bombs[1].id].x!=first_position.x,"Successive drops should use different random sky positions")
 	b2.Body_SetTransform(game.world.bombs[0].body,{-2,-4},b2.MakeRot(0))
 	sandbox_tick(&game,0,false)
 	testing.expect(t,len(game.world.bombs)==1 && len(game.bursts)==0,"Bombs lost outside the yard must be cleaned up")

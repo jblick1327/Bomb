@@ -12,9 +12,11 @@ BOMB_SKY_HEIGHT :: f32(7.3)
 BOMB_BURST_TIME :: f32(0.3)
 
 Bomb :: struct {
+	id: u64 `json:"-"`, // Runtime identity, assigned by the world in spawn order.
 	body: b2.BodyId,
 	landed: bool,
 	fuse: f32,
+	pose: Pose `json:"-"`, // Mirrored from the body after each physics step and load.
 }
 Bomb_Burst :: struct { position: Vec2, radius, age: f32 }
 Bomb_Rain :: struct {
@@ -51,7 +53,10 @@ world_bomb_spawn :: proc(game: ^World,position: Vec2) {
 	shape.material.friction=0.7
 	shape.material.restitution=0.05
 	_ = b2.CreateCircleShape(body,shape,b2.Circle{radius=BOMB_RADIUS})
-	append(&game.bombs,Bomb{body=body,fuse=BOMB_FUSE})
+	game.next_bomb_id+=1
+	bomb:=Bomb{id=game.next_bomb_id,body=body,fuse=BOMB_FUSE}
+	bomb.pose=read_body_state(body).pose
+	append(&game.bombs,bomb)
 }
 bomb_has_landed :: proc(bomb: Bomb) -> bool {
 	position:=b2.Body_GetPosition(bomb.body)
@@ -96,8 +101,8 @@ bomb_rain_after_step :: proc(game: ^World,dt: f32,events: ^Tick_Events) {
 		} else { game.bombs[bomb_count]=bomb; bomb_count+=1 }
 	}
 	resize(&game.bombs,bomb_count)
-	for position in positions { world_explode(game,position,events) }
+	for position in positions { world_explode(game,position,game.settings.blast_radius,events) }
 }
 
 // Direct fixture helper; production spawning belongs to world_tick.
-bomb_spawn :: proc(game: ^Sandbox,position: Vec2) { world_bomb_spawn(&game.world,position); game.previous_bombs[game.world.bombs[len(game.world.bombs)-1].body]=position }
+bomb_spawn :: proc(game: ^Sandbox,position: Vec2) { world_bomb_spawn(&game.world,position); game.previous_bombs[game.world.bombs[len(game.world.bombs)-1].id]=position }

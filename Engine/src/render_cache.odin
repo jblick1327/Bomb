@@ -2,7 +2,6 @@ package main
 import "core:time"
 
 import rl "vendor:raylib"
-import b2 "vendor:box2d"
 import "core:math"
 import "core:slice"
 
@@ -26,8 +25,43 @@ Render_Cache :: struct {
  hub_fan: bool,
 }
 Render_Caches :: map[u64]Render_Cache
+// Structural index of anchored pieces for presentation: no physics involved.
+// Rebuilt whenever Scene.structure_revision changes.
+STATIC_GRID :: f32(1)
+Static_Index :: struct {
+ valid: bool,
+ revision: u64,
+ anchored: map[u64]bool,
+ grid: map[[2]i32][dynamic]u64,
+ bounds: map[u64][4]f32,
+}
+static_index_release :: proc(idx: ^Static_Index) {
+ delete(idx.anchored); delete(idx.bounds)
+ for _,ids in idx.grid { delete(ids) }; delete(idx.grid)
+ idx^={}
+}
+static_index_refresh :: proc(s: ^Scene,idx: ^Static_Index) {
+ if idx.valid && idx.revision==s.structure_revision { return }
+ static_index_release(idx)
+ idx.anchored=make(map[u64]bool); idx.bounds=make(map[u64][4]f32); idx.grid=make(map[[2]i32][dynamic]u64)
+ idx.valid=true; idx.revision=s.structure_revision
+ for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { idx.anchored[p.id]=true } }
+ if len(idx.anchored)==0 { return }
+ for sub in s.subdivisions {
+  if !sub.live || !idx.anchored[sub.owner] { continue }
+  lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
+  for p in sub.outline.points { lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
+  idx.bounds[sub.id]={lo.x,lo.y,hi.x,hi.y}
+  for gx in i32(math.floor(lo.x/STATIC_GRID))..=i32(math.floor(hi.x/STATIC_GRID)) {
+   for gy in i32(math.floor(lo.y/STATIC_GRID))..=i32(math.floor(hi.y/STATIC_GRID)) {
+    key:=[2]i32{gx,gy}; list:=idx.grid[key]; append(&list,sub.id); idx.grid[key]=list
+   }
+  }
+ }
+}
 Render_Cache_State :: struct {
 	cells: Render_Caches,
+ statics: Static_Index,
  bands: map[u64]Rubber_Band,
 	structure_revision,static_render_revision,static_render_signature: u64,
 	initialized: bool,
@@ -35,7 +69,7 @@ Render_Cache_State :: struct {
 release_render_caches :: proc(caches: ^Render_Cache_State) {
 	for id in caches.cells { release_render_cache(&caches.cells[id]) }
  for id in caches.bands { release_rubber_band(&caches.bands[id]) }; delete(caches.bands)
-	delete(caches.cells); caches^={}
+	delete(caches.cells); static_index_release(&caches.statics); caches^={}
 }
 // This is the only phase that may insert cache entries. Complete it before
 // taking any cache pointer: an insertion can move the map's value storage.
@@ -46,10 +80,10 @@ render_cache_prepass :: proc(s: ^Scene,caches: ^Render_Cache_State) {
 		when ODIN_TEST { render_signature_test_calls+=1 }
 		// Same signature rule formerly used by physics_sync_structure.
 		signature:=u64(0)
+		static_index_refresh(s,&caches.statics)
 		for p in s.pieces {
 			if len(p.subdivisions)==0 { continue }
-			sub:=s.subdivisions[s.sub_rows[p.subdivisions[0]]]
-			if sub.body!=b2.nullBodyId && b2.Body_GetType(sub.body)==.staticBody { signature+=p.id*0x9e3779b185ebca87+(p.render_revision+1)*0xc2b2ae3d27d4eb4f }
+			if caches.statics.anchored[p.id] { signature+=p.id*0x9e3779b185ebca87+(p.render_revision+1)*0xc2b2ae3d27d4eb4f }
 		}
 		if signature!=caches.static_render_signature { caches.static_render_signature=signature; caches.static_render_revision+=1 }
 		dead: [dynamic]u64
@@ -200,30 +234,58 @@ triangle_indices :: proc(outline: Polygon,fan: bool = false) -> [dynamic]int {
 	delete(triangles)
 	return result
 }
-render_static :: proc(sub: Subdivision) -> bool { return sub.body!=b2.nullBodyId && b2.Body_GetType(sub.body)==.staticBody }
-render_together_neighbours :: proc(s: ^Scene,sub: Subdivision) -> [dynamic]u64 {
+render_static :: proc(s: ^Scene,statics: ^Static_Index,sub: Subdivision) -> bool {
+ if statics!=nil { static_index_refresh(s,statics); return statics.anchored[sub.owner] }
+ return piece_anchored(s,sub.owner,s.anchor_y)
+}
+// Structural candidates only: the cell's piece, live non-mortar links and, for an
+// anchored cell, cells of other anchored pieces near its rest bounds.
+render_together_neighbours :: proc(s: ^Scene,sub: Subdivision,statics_in: ^Static_Index = nil) -> [dynamic]u64 {
+ local:Static_Index
+ statics:=statics_in
+ if statics==nil { statics=&local }
+ defer static_index_release(&local)
+ static_index_refresh(s,statics)
+ anchored:=statics.anchored[sub.owner]
  candidates: [dynamic]u64
- if s.materials[sub.material].flexibility>0 && !render_static(sub) {
-  for link in sub.incident_links {
-   c:=s.connections[s.conn_rows[link]]
-   if !c.live || c.mortar { continue }
-   other:=c.a; if c.a==sub.id { other=c.b }
-   if is_live_subdivision(s,other) { append(&candidates,other) }
-  }
- } else if s.physics.active {
+ seen:=make(map[u64]bool); defer delete(seen)
+ add_candidate :: proc(candidates: ^[dynamic]u64,seen: ^map[u64]bool,s: ^Scene,id: u64) {
+  if seen[id] { return }
+  seen[id]=true
+  if is_live_subdivision(s,id) { append(candidates,id) }
+ }
+ for link in sub.incident_links {
+  c:=s.connections[s.conn_rows[link]]
+  if !c.live || c.mortar { continue }
+  other:=c.a; if c.a==sub.id { other=c.b }
+  add_candidate(&candidates,&seen,s,other)
+ }
+ if s.materials[sub.material].flexibility<=0 || anchored {
+  for id in s.pieces[s.piece_rows[sub.owner]].subdivisions { add_candidate(&candidates,&seen,s,id) }
+ }
+ if anchored {
   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
-  for rest in sub.outline.points { p:=posed_point(sub,rest); lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
-  query:=Blast_Query{ids=make(map[u64]bool)}; defer delete(query.ids)
-  box:=b2.AABB{lowerBound={lo.x-0.05,lo.y-0.05},upperBound={hi.x+0.05,hi.y+0.05}}
-  _=b2.World_OverlapAABB(s.physics.world,box,b2.DefaultQueryFilter(),blast_query_shape,&query)
-  for id in query.ids { if is_live_subdivision(s,id) { append(&candidates,id) } }
- } else { for id in s.pieces[s.piece_rows[sub.owner]].subdivisions { append(&candidates,id) } }
+  for p in sub.outline.points { lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
+  lo=vsub(lo,{0.05,0.05}); hi=vadd(hi,{0.05,0.05})
+  for gx in i32(math.floor(lo.x/STATIC_GRID))..=i32(math.floor(hi.x/STATIC_GRID)) {
+   for gy in i32(math.floor(lo.y/STATIC_GRID))..=i32(math.floor(hi.y/STATIC_GRID)) {
+    list,found:=statics.grid[[2]i32{gx,gy}]
+    if !found { continue }
+    for id in list {
+     if seen[id] { continue }
+     box:=statics.bounds[id]
+     if box[2]<lo.x || box[0]>hi.x || box[3]<lo.y || box[1]>hi.y { continue }
+     add_candidate(&candidates,&seen,s,id)
+    }
+   }
+  }
+ }
  result:[dynamic]u64
  for id in candidates {
   if id==sub.id { continue }
   other:=s.subdivisions[s.sub_rows[id]]
   together:=sub.owner==other.owner && s.materials[sub.material].flexibility==0
-  together=together || render_static(sub) && render_static(other)
+  together=together || anchored && statics.anchored[other.owner]
   if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || (s.connections[s.conn_rows[c]].live && !s.connections[s.conn_rows[c]].mortar) }
   if !together { continue }
   boundaries:=shared_segments(sub.outline,other.outline)
@@ -238,13 +300,14 @@ ensure_render_cache :: proc(s: ^Scene,caches: ^Render_Cache_State,id: u64) -> ^R
 	if _,exists:=caches.cells[id]; !exists { caches.cells[id]=Render_Cache{} }
 	cache:=&caches.cells[id]
 	revision:=s.pieces[s.piece_rows[sub.owner]].render_revision
-	anchored:=render_static(sub^)
+	static_index_refresh(s,&caches.statics)
+	anchored:=render_static(s,&caches.statics,sub^)
  if anchored { revision=caches.static_render_revision }
  if cache.owner==sub.owner && cache.revision==revision && cache.anchored==anchored { return cache }
 	release_render_cache(cache)
 	cache.owner=sub.owner; cache.revision=revision; cache.anchored=anchored
 	cache.outline=make_polygon(sub.outline.points)
- neighbours:=render_together_neighbours(s,sub^); defer delete(neighbours)
+ neighbours:=render_together_neighbours(s,sub^,&caches.statics); defer delete(neighbours)
  for other in neighbours { for rest in s.subdivisions[s.sub_rows[other]].outline.points { insert_boundary_endpoint(&cache.outline,rest) } }
  flexible:=s.materials[sub.material].flexibility>0 && !anchored
  if flexible {

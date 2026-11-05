@@ -8,7 +8,6 @@ Physics :: struct {
  world: b2.WorldId,
  synced_revision: u64,
  synced: bool,
- anchor_y: f32,
  active: bool,
  mortar_breaking: bool,
 }
@@ -17,13 +16,30 @@ GLOBAL_DAMPING :: f32(0.7)
 
 to_b2 :: proc(v: Vec2) -> b2.Vec2 { return {v.x,v.y} }
 from_b2 :: proc(v: b2.Vec2) -> Vec2 { return {v.x,v.y} }
+// The single anchoring rule shared by physics and presentation: a piece is
+// static when some live cell has a non-degenerate edge lying on anchor_y.
+piece_anchored :: proc(s: ^Scene,piece_id: u64,anchor_y: f32) -> bool {
+ if !(anchor_y>-1e30) { return false }
+ row,ok:=s.piece_rows[piece_id]; if !ok { return false }
+ for id in s.pieces[row].subdivisions {
+  srow,found:=s.sub_rows[id]; if !found { continue }
+  sub:=s.subdivisions[srow]
+  if !sub.live { continue }
+  for a,i in sub.outline.points {
+   b:=sub.outline.points[(i+1)%len(sub.outline.points)]
+   if math.abs(a.y-anchor_y)<0.00001 && math.abs(b.y-anchor_y)<0.00001 && math.abs(a.x-b.x)>0.00001 { return true }
+  }
+ }
+ return false
+}
 physics_init :: proc(s: ^Scene, gravity: Vec2 = {}, anchor_y: f32 = -1e30) {
  assert(!s.physics.active)
  def := b2.DefaultWorldDef()
  def.gravity = to_b2(gravity)
  // Hit events are evaluated every step in Box2D 3.1.1, not just on begin.
  def.hitEventThreshold = 0
- s.physics = Physics{world=b2.CreateWorld(def),anchor_y=anchor_y,active=true,mortar_breaking=true}
+ s.anchor_y = anchor_y
+ s.physics = Physics{world=b2.CreateWorld(def),active=true,mortar_breaking=true}
  physics_sync_structure(s)
 }
 physics_destroy :: proc(s: ^Scene) {
@@ -183,17 +199,12 @@ physics_sync_structure :: proc(s: ^Scene) {
  when BOM_PROFILE { started:=time.tick_now(); defer profile_add(7,started) }
 
  if !s.physics.active || (s.physics.synced && s.physics.synced_revision==s.structure_revision) { return }
+ scene_finish_references(s)
  s.physics.synced=true; s.physics.synced_revision=s.structure_revision
  clear(&s.pending_regions)
  anchored:=make(map[u64]bool); defer delete(anchored)
- if s.physics.anchor_y>-1e30 {
-  for sub in s.subdivisions {
-   if !sub.live || anchored[sub.owner] { continue }
-   for a,i in sub.outline.points {
-    b:=sub.outline.points[(i+1)%len(sub.outline.points)]
-    if math.abs(a.y-s.physics.anchor_y)<0.00001 && math.abs(b.y-s.physics.anchor_y)<0.00001 && math.abs(a.x-b.x)>0.00001 { anchored[sub.owner]=true; break }
-   }
-  }
+ if s.anchor_y>-1e30 {
+  for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { anchored[p.id]=true } }
  }
  ids: [dynamic]u64; defer delete(ids)
  for p in s.pieces { if p.live { append(&ids,p.id) } }; sort_ids(ids[:])
@@ -317,7 +328,7 @@ calculate_physics_loads :: proc(s: ^Scene, dt: f32) -> Failures {
 			loads[id]=max(loads[id],load)
 		}
 	}
- if s.physics.mortar_breaking { mortar_force_failures(s,&failures) }
+ if s.physics.mortar_breaking { mortar_force_failures(s,&failures,dt) }
 
 	for sub in s.subdivisions {
 		if sub.seed==0 && sub.width>s.minimum_width { continue }

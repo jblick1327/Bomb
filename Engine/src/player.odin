@@ -13,14 +13,24 @@ PLAYER_HALF_HEIGHT :: PLAYER_RADIUS+PLAYER_SEGMENT
 // Start supported rather than introducing an artificial landing on every Test.
 PLAYER_SPAWN :: Vec2{-4.5,PLAYER_HALF_HEIGHT+0.005}
 
+MAX_PLAYERS :: 4
 // The player is an ordinary body in the shared world, outside the destruction graph.
 Player :: struct {
+	active: bool,
 	body: b2.BodyId,
 	grounded: bool,
 	coyote, buffered_jump: f32,
 	support_velocity: Vec2,
+	blast_radius: f32,
+	// Runtime-only mirror of the body pose, refreshed after every physics step
+	// and snapshot load. Drawing reads this, never the body.
+	pose: Pose `json:"-"`,
 }
-player_create :: proc(world: b2.WorldId) -> Player {
+player_refresh_pose :: proc(player: ^Player) {
+	if !player.active { return }
+	player.pose=read_body_state(player.body).pose
+}
+player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
 	def:=b2.DefaultBodyDef()
 	def.type=.dynamicBody
 	def.position=to_b2(PLAYER_SPAWN)
@@ -30,15 +40,20 @@ player_create :: proc(world: b2.WorldId) -> Player {
 	shape:=b2.DefaultShapeDef()
 	shape.density=0.65
 	shape.material.friction=0.15
+	// Players pass through each other (negative shared group) and collide with everything else.
+	shape.filter.groupIndex=-1
 	_ = b2.CreateCapsuleShape(body,shape,b2.Capsule{center1={0,-PLAYER_SEGMENT},center2={0,PLAYER_SEGMENT},radius=PLAYER_RADIUS})
-	return Player{body=body}
+	player:=Player{active=true,body=body,blast_radius=blast_radius}
+	player_refresh_pose(&player)
+	return player
 }
 player_respawn :: proc(player: ^Player) {
 	body:=player.body
 	b2.Body_SetTransform(body,to_b2(PLAYER_SPAWN),b2.MakeRot(0))
 	b2.Body_SetLinearVelocity(body,{})
 	b2.Body_SetAngularVelocity(body,0)
-	player^=Player{body=body}
+	player^=Player{active=true,body=body,blast_radius=player.blast_radius}
+	player_refresh_pose(player)
 }
 player_clear_input :: proc(player: ^Player) {
 	player.buffered_jump=0
@@ -90,5 +105,6 @@ player_after_step :: proc(player: ^Player) -> bool {
 		return true
 	}
 	player_read_support(player)
+	player_refresh_pose(player)
 	return false
 }

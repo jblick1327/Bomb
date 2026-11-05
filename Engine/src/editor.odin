@@ -38,7 +38,7 @@ PALETTE_MATERIALS :: [Recipe]Material{
 }
 editor_material :: proc(choice: Recipe) -> Material { table:=PALETTE_MATERIALS; return table[choice] }
 sandbox_editor_create :: proc() -> Sandbox {
-	game:=Sandbox{world=World{settings=DEFAULT_SANDBOX_SETTINGS},previous_bombs=make(map[b2.BodyId]Vec2),previous=make(map[u64]Pose),surface=true,joints=true,outline_width=2}
+	game:=Sandbox{world=World{settings=DEFAULT_SANDBOX_SETTINGS},previous_bombs=make(map[u64]Vec2),previous=make(map[u64]Pose),surface=true,joints=true,outline_width=2}
 	game.editor.editing=true
 	game.layout.next_identity=1
 	sandbox_reset(&game)

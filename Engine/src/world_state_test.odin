@@ -48,7 +48,7 @@ world_snapshot_floats_and_bombs_are_exact :: proc(t: ^testing.T) {
  fmt.printf("B tick240 airborne=%d landed=%d\n",airborne,landed)
  testing.expect(t,airborne>0 && landed>0)
  // Exercise small and signed-zero values that fixed decimal printing destroys.
- g.world.player.coyote=0.0000000012345678; g.world.player.buffered_jump=transmute(f32)u32(0x80000000)
+ g.world.players[0].coyote=0.0000000012345678; g.world.players[0].buffered_jump=transmute(f32)u32(0x80000000)
  data,ok:=encode_world_snapshot(&g.world); defer delete(data); testing.expect(t,ok)
  restored,decoded:=decode_world_snapshot(data)
  defer { scene_destroy(&restored.scene); delete(restored.bombs) }
@@ -67,7 +67,7 @@ world_snapshot_loads_real_v2_fixture :: proc(t: ^testing.T) {
  data:=#load("../evidence/world-v3/before-v2-ticked.json")
  w,ok:=decode_world_snapshot(transmute([]byte)data); defer { scene_destroy(&w.scene); delete(w.bombs) }
  testing.expect(t,ok)
- if ok { valid,_:=validate_scene(&w.scene); testing.expect(t,valid && len(w.bombs)==0 && from_b2(b2.Body_GetPosition(w.player.body))==PLAYER_SPAWN && w.tick==0) }
+ if ok { valid,_:=validate_scene(&w.scene); testing.expect(t,valid && len(w.bombs)==0 && from_b2(b2.Body_GetPosition(w.players[0].body))==PLAYER_SPAWN && w.tick==0) }
 }
 
 
