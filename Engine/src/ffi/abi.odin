@@ -176,6 +176,63 @@ BomActorShapeInfo :: struct {
  reserved: u32,
 }
 
+BomOwnerState :: struct {
+ struct_size: u32,
+ version: u32,
+ flags: u32,
+ support_kind: u32,
+ connection_incarnation: u64,
+ input_generation: u64,
+ state_tick: u64,
+ topology_revision: u64,
+ finalized_through_tick: u64,
+ last_applied_sequence: u64,
+ last_jump_edge: u64,
+ teleport_serial: u64,
+ support_cell: u64,
+ epoch: u32,
+ missing_held_ticks: u32,
+ position_x: f32,
+ position_y: f32,
+ velocity_x: f32,
+ velocity_y: f32,
+ support_velocity_x: f32,
+ support_velocity_y: f32,
+ coyote: f32,
+ buffered_jump: f32,
+ held_move: f32,
+ reserved: u32,
+}
+
+BomPredictionStats :: struct {
+ struct_size: u32,
+ version: u32,
+ status: u32,
+ reason: u32,
+ input_generation: u64,
+ owner_tick: u64,
+ predicted_tick: u64,
+ finalized_through_tick: u64,
+ last_applied_sequence: u64,
+ rtt_seconds: f64,
+ positive_jitter_p95_seconds: f64,
+ clock_error_ticks: f64,
+ lead_ticks: u32,
+ pending_commands: u32,
+ correction_count: u64,
+ snap_count: u64,
+ conservative_transitions: u64,
+ recoveries: u64,
+ reset_count: u64,
+ correction_p95: f32,
+ correction_p99: f32,
+ correction_max: f32,
+ visual_offset_x: f32,
+ visual_offset_y: f32,
+ reserved: f32,
+ conservative_seconds: f64,
+}
+
 @(export)
 bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
  switch type_id {
@@ -379,6 +436,67 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 5: return u32(offset_of(BomActorShapeInfo,player_segment))
   case 6: return u32(offset_of(BomActorShapeInfo,bomb_radius))
   case 7: return u32(offset_of(BomActorShapeInfo,reserved))
+  }
+ case 13:
+  switch field_id {
+  case 0: return u32(size_of(BomOwnerState))
+  case 1: return u32(align_of(BomOwnerState))
+  case 2: return u32(offset_of(BomOwnerState,struct_size))
+  case 3: return u32(offset_of(BomOwnerState,version))
+  case 4: return u32(offset_of(BomOwnerState,flags))
+  case 5: return u32(offset_of(BomOwnerState,support_kind))
+  case 6: return u32(offset_of(BomOwnerState,connection_incarnation))
+  case 7: return u32(offset_of(BomOwnerState,input_generation))
+  case 8: return u32(offset_of(BomOwnerState,state_tick))
+  case 9: return u32(offset_of(BomOwnerState,topology_revision))
+  case 10: return u32(offset_of(BomOwnerState,finalized_through_tick))
+  case 11: return u32(offset_of(BomOwnerState,last_applied_sequence))
+  case 12: return u32(offset_of(BomOwnerState,last_jump_edge))
+  case 13: return u32(offset_of(BomOwnerState,teleport_serial))
+  case 14: return u32(offset_of(BomOwnerState,support_cell))
+  case 15: return u32(offset_of(BomOwnerState,epoch))
+  case 16: return u32(offset_of(BomOwnerState,missing_held_ticks))
+  case 17: return u32(offset_of(BomOwnerState,position_x))
+  case 18: return u32(offset_of(BomOwnerState,position_y))
+  case 19: return u32(offset_of(BomOwnerState,velocity_x))
+  case 20: return u32(offset_of(BomOwnerState,velocity_y))
+  case 21: return u32(offset_of(BomOwnerState,support_velocity_x))
+  case 22: return u32(offset_of(BomOwnerState,support_velocity_y))
+  case 23: return u32(offset_of(BomOwnerState,coyote))
+  case 24: return u32(offset_of(BomOwnerState,buffered_jump))
+  case 25: return u32(offset_of(BomOwnerState,held_move))
+  case 26: return u32(offset_of(BomOwnerState,reserved))
+  }
+ case 14:
+  switch field_id {
+  case 0: return u32(size_of(BomPredictionStats))
+  case 1: return u32(align_of(BomPredictionStats))
+  case 2: return u32(offset_of(BomPredictionStats,struct_size))
+  case 3: return u32(offset_of(BomPredictionStats,version))
+  case 4: return u32(offset_of(BomPredictionStats,status))
+  case 5: return u32(offset_of(BomPredictionStats,reason))
+  case 6: return u32(offset_of(BomPredictionStats,input_generation))
+  case 7: return u32(offset_of(BomPredictionStats,owner_tick))
+  case 8: return u32(offset_of(BomPredictionStats,predicted_tick))
+  case 9: return u32(offset_of(BomPredictionStats,finalized_through_tick))
+  case 10: return u32(offset_of(BomPredictionStats,last_applied_sequence))
+  case 11: return u32(offset_of(BomPredictionStats,rtt_seconds))
+  case 12: return u32(offset_of(BomPredictionStats,positive_jitter_p95_seconds))
+  case 13: return u32(offset_of(BomPredictionStats,clock_error_ticks))
+  case 14: return u32(offset_of(BomPredictionStats,lead_ticks))
+  case 15: return u32(offset_of(BomPredictionStats,pending_commands))
+  case 16: return u32(offset_of(BomPredictionStats,correction_count))
+  case 17: return u32(offset_of(BomPredictionStats,snap_count))
+  case 18: return u32(offset_of(BomPredictionStats,conservative_transitions))
+  case 19: return u32(offset_of(BomPredictionStats,recoveries))
+  case 20: return u32(offset_of(BomPredictionStats,reset_count))
+  case 21: return u32(offset_of(BomPredictionStats,correction_p95))
+  case 22: return u32(offset_of(BomPredictionStats,correction_p99))
+  case 23: return u32(offset_of(BomPredictionStats,correction_max))
+  case 24: return u32(offset_of(BomPredictionStats,visual_offset_x))
+  case 25: return u32(offset_of(BomPredictionStats,visual_offset_y))
+  case 26: return u32(offset_of(BomPredictionStats,reserved))
+  case 27: return u32(offset_of(BomPredictionStats,conservative_seconds))
   }
  }
  return 0xffffffff

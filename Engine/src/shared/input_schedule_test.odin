@@ -2,6 +2,16 @@ package shared
 import t "core:testing"
 
 @(test)
+late_missing_jump_is_terminal_even_if_reused_at_a_future_slot :: proc(test:^t.T) {
+ s:Input_Schedule;id:=Input_Identity{1,1,1};_=input_schedule_reset(&s,1,1,0,{id,2,1})
+ _=input_schedule_consume(&s,1);_=input_schedule_consume(&s,2)
+ edge:=u64(9007199254740993)
+ t.expect_value(test,input_schedule_insert(&s,id,2,{1,2,0,edge}),Command_Result.Too_Late)
+ t.expect_value(test,input_schedule_insert(&s,id,2,{2,3,0,edge}),Command_Result.Accepted)
+ step:=input_schedule_consume(&s,3);t.expect(test,step.applied && step.command.jump_edge==0)
+}
+
+@(test)
 schedule_identity_slots_and_duplicate_conflict :: proc(test: ^t.T) {
  s:Input_Schedule
  id:=Input_Identity{incarnation=9007199254741001,epoch=3,generation=4294967319}

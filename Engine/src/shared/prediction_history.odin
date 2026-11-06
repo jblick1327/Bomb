@@ -99,12 +99,14 @@ collision_history_pose :: proc(h:^Collision_History,tick,key:u64) -> (pose:Net_D
  if upper!=nil {
   b,exists:=upper.poses[key];if !exists { return }
   if upper.tick==lower.tick { return net_drawn_single(a),false,true }
+  if upper.tick-lower.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
   return net_drawn_from(a,b,f32(tick-lower.tick)/f32(upper.tick-lower.tick)),false,true
  }
  if tick-lower.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
  previous:^Collision_Frame
  for &frame in h.frames { if frame.valid && frame.epoch==h.epoch && frame.tick<lower.tick && (previous==nil || frame.tick>previous.tick) { previous=&frame } }
  if previous==nil { return }
+ if lower.tick-previous.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
  b,exists:=previous.poses[key];if !exists { return }
  current:=net_drawn_single(a);old:=net_drawn_single(b)
  delta:=f32(lower.tick-previous.tick);ahead:=f32(tick-lower.tick)

@@ -20,6 +20,7 @@ Input_Schedule :: struct {
  identity: Input_Identity,
  synchronized: bool,
  first_tick,first_sequence,finalized_through,last_applied_sequence,last_jump_edge: u64,
+ terminal_jump_edge:u64,
  slots: [32]Schedule_Slot,
  held: i8,
  missing: u32,
@@ -43,7 +44,7 @@ input_schedule_insert :: proc(s: ^Input_Schedule,identity: Input_Identity,now_ti
  if !s.synchronized { return .Not_Synchronized }
  if identity!=s.identity { s.wrong_identity+=1;return .Wrong_Identity }
  if c.move==min(i8) { return .Invalid_Move }
- if c.target_tick<=s.finalized_through || c.target_tick<=now_tick { s.too_late+=1;return .Too_Late }
+ if c.target_tick<=s.finalized_through || c.target_tick<=now_tick { s.too_late+=1;s.terminal_jump_edge=max(s.terminal_jump_edge,c.jump_edge);return .Too_Late }
  if c.target_tick-now_tick>INPUT_FUTURE_WINDOW { return .Too_Far }
  if c.target_tick<s.first_tick { return .Wrong_Slot }
  offset:=c.target_tick-s.first_tick
@@ -66,7 +67,7 @@ input_schedule_consume :: proc(s: ^Input_Schedule,tick: u64) -> (step: Scheduled
   step.command=slot.command;step.applied=true;slot^={}
   s.held=step.command.move;s.missing=0;s.last_applied_sequence=step.command.sequence
   if step.command.jump_edge!=0 {
-   if step.command.jump_edge<=s.last_jump_edge { step.command.jump_edge=0;s.duplicate_jumps+=1 }
+   if step.command.jump_edge<=max(s.last_jump_edge,s.terminal_jump_edge) { step.command.jump_edge=0;s.duplicate_jumps+=1 }
    else { s.last_jump_edge=step.command.jump_edge }
   }
  } else {

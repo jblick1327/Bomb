@@ -16,7 +16,7 @@ owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revis
  return {
   identity=schedule.identity,state_tick=tick,topology_revision=revision,
   finalized_through=schedule.finalized_through,last_applied_sequence=schedule.last_applied_sequence,
-  last_jump_edge=schedule.last_jump_edge,
+  last_jump_edge=max(schedule.last_jump_edge,schedule.terminal_jump_edge),
   teleport_serial=player.teleport_serial,
   position=from_b2(b2.Body_GetPosition(player.body)),velocity=from_b2(b2.Body_GetLinearVelocity(player.body)),
   support_velocity=player.support_velocity,coyote=player.coyote,buffered_jump=player.buffered_jump,

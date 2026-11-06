@@ -9,7 +9,8 @@ static class Program {
  static double Now => (double)Stopwatch.GetTimestamp()/Stopwatch.Frequency;
  static ulong Create() {
   var info=new BomCreateInfo{struct_size=(uint)Marshal.SizeOf<BomCreateInfo>(),version=1};ulong handle=0;
-  Ok(BomNative.bom_client_create(ref info,ref handle),"create");return handle;
+  Ok(BomNative.bom_client_create(ref info,ref handle),"create");
+  if(Environment.GetEnvironmentVariable("BOM_TEST_PREDICTION")=="0")Ok(BomNative.bom_client_set_prediction(handle,0),"prediction off");return handle;
  }
  static void Connect(ulong handle,uint port,string token="") {
   IntPtr memory=IntPtr.Zero;
@@ -21,7 +22,7 @@ static class Program {
  }
  static T Read<T>(IntPtr pointer,uint index) where T:struct => Marshal.PtrToStructure<T>(IntPtr.Add(pointer,checked((int)index*Marshal.SizeOf<T>())));
  static void Layouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats)};
   for(uint i=0;i<types.Length;i++) {
    Type type=types[i];Check((uint)Marshal.SizeOf(type)==BomNative.bom_debug_layout(i,0),type.Name+" sizeof");
    FieldInfo[] fields=type.GetFields(BindingFlags.Public|BindingFlags.Instance);
@@ -87,6 +88,7 @@ static class Program {
   Layouts();Lifetimes();Console.WriteLine("PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles");
   if(args.Length==0)return;
   uint port=uint.Parse(args[0]);double seconds=args.Length>1?double.Parse(args[1]):20;double resetAfter=args.Length>2?double.Parse(args[2]):5;
+  if(Environment.GetEnvironmentVariable("BOM_TEST_PROFILE")=="1"){PredictionProfile.Run(port,seconds);return;}
   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}
   ulong[] handles={Create(),Create()};ulong[] epochs={0,0},revisions={ulong.MaxValue,ulong.MaxValue};bool[] ready={false,false};
   ulong[] maxGeneration={0,0};int snapshots=0,events=0;var seen=new HashSet<(int,ulong,uint,ulong)>();
@@ -181,6 +183,10 @@ static class Program {
    if(seconds>10)Check(maxGeneration[1]>=2,"guest reconnected with a new generation");
    if(seconds>10)Check(traveled>0.25 && jumpRise>0.03,"scheduled movement and jump produce real authoritative motion");
    Console.WriteLine($"MOTION traveled={traveled:F6} jumpRise={jumpRise:F6}");
+   for(int i=0;i<2;i++) {
+    var prediction=new BomPredictionStats{struct_size=(uint)Marshal.SizeOf<BomPredictionStats>(),version=1};Ok(BomNative.bom_client_get_prediction_stats(handles[i],ref prediction),"prediction diagnostics");
+    Console.WriteLine("PREDICTION_STATS client="+i+" "+System.Text.Json.JsonSerializer.Serialize(prediction,new System.Text.Json.JsonSerializerOptions{IncludeFields=true}));
+   }
    Console.WriteLine($"PASS real native clients seconds={seconds} snapshots={snapshots} events={events} reset={reset} reconnect={reconnected}");
   } finally { foreach(ulong handle in handles)Ok(BomNative.bom_client_destroy(handle),"dispose native session"); }
  }

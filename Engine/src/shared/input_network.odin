@@ -92,6 +92,15 @@ net_scheduled_client_update :: proc(c:^Net_Client,now:f64) {
   c.input_probe_at=now+.25
  }
  if link.clock.valid { _,_=input_clock_now(&link.clock,now) }
+ if link.active && link.clock.valid {
+  stamp:=link.clock.estimate
+  actual:f64
+  if link.history.next_tick>=stamp.tick { actual=f64(min(u64(1000),link.history.next_tick-stamp.tick))-stamp.phase }
+  else { actual=-f64(min(u64(1000),stamp.tick-link.history.next_tick))-stamp.phase }
+  if actual<2-1e-6 || actual>16+1e-6 || actual-f64(link.clock.lead)>3+1e-6 || f64(link.clock.lead)-actual>3+1e-6 {
+   input_link_clear_intent(link);c.human_move=0;c.human_jump_pending=false;clear(&c.blasts)
+  }
+ }
  if link.clock.resync && link.active { input_link_clear_intent(link);c.human_move=0;c.human_jump_pending=false;clear(&c.blasts) }
  control,ready:=input_link_prepare_reset(link,now)
  if ready {

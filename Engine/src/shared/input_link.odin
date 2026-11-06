@@ -31,6 +31,7 @@ input_link_prepare_reset :: proc(c:^Input_Link,now:f64) -> (request:Schedule_Con
  tick=max(tick,c.offer.first_tick)
  c.pending={identity=c.offer.identity,first_tick=tick,first_sequence=c.offer.first_sequence}
  c.pending.identity.generation=c.next_generation;c.next_generation+=1
+ if c.jump_edge_counter==max(u64) { c.jump_edge_counter=0 }
  c.awaiting=true;command_history_begin(&c.history,c.pending)
  return {kind=.Request,proposal=c.pending},true
 }

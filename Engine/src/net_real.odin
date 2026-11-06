@@ -23,7 +23,7 @@ import "core:time"
 
 // A real second-process bot reuses the step 2b player, including jump counter,
 // numbered blasts, replica, interpolation, acks and adaptive clock.
-net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false) -> bool {
+net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false) -> bool {
  upload_data: []u8
  defer { if upload_data!=nil { delete(upload_data) } }
  if upload_path!="" {
@@ -60,6 +60,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
   net_client_destroy(&client)
  }
  client.real_gate=true
+ client.prediction_enabled=!prediction_off
  client.real_host_token=host_token
  client.real_protocol=protocol_version
  client.verify=true
@@ -138,6 +139,7 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
  protocol_version:=GAME_PROTOCOL_VERSION
  upload_path:=""
  request_reset:=false
+ prediction_off:=false
  i:=1
  for i<len(args) {
   switch args[i] {
@@ -149,6 +151,7 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
    host_token=args[i+1];i+=2
   case "--bad-version":
    protocol_version=GAME_PROTOCOL_VERSION+1;i+=1
+  case "--prediction-off": prediction_off=true;i+=1
   case "--upload-layout":
    if i+1>=len(args) { return false };upload_path=args[i+1];i+=2
   case "--host-reset":
@@ -156,5 +159,5 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
   case: fmt.eprintln("Unknown bot option:",args[i]);return false
   }
  }
- return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset)
+ return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off)
 }

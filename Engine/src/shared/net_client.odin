@@ -66,6 +66,7 @@ Net_Client_Stats :: struct {
  frames_lost: int,
  input_bytes,input_count,input_max: int,
  input_payload_hash: u64, // Diagnostic digest of the complete fixed-command byte stream.
+ request_payload_hash:u64,
 }
 
 Net_Client :: struct {
@@ -74,6 +75,9 @@ Net_Client :: struct {
  request_counter,host_request_id: u64,
  request_pending: [1024]Pending_Request,
  last_request_result: Request_Result,
+ collision_history: Collision_History,
+ prediction:^Prediction_Controller,
+ prediction_enabled:bool,
  nc_client: nc.Client,
  real_gate: bool,real_hello_sent: bool,real_hello_ok: bool,
  real_is_host: bool,real_host_left: bool,
@@ -112,6 +116,7 @@ Net_Client :: struct {
 
 net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64) {
  c^={}
+ c.prediction_enabled=true
  nc.client_init(&c.nc_client)
  nc.client_connect(&c.nc_client,salt,now)
  c.real_protocol=GAME_PROTOCOL_VERSION
@@ -144,6 +149,8 @@ net_client_clear_state :: proc(c: ^Net_Client) {
 }
 
 net_client_destroy :: proc(c: ^Net_Client) {
+ prediction_controller_destroy(c.prediction);c.prediction=nil
+ collision_history_destroy(&c.collision_history)
  net_client_clear_state(c)
  nc.client_destroy(&c.nc_client)
  delete(c.real_reason)
@@ -175,6 +182,7 @@ net_client_note_late :: proc(c: ^Net_Client,tick: u64,event: bool) {
 }
 
 net_client_reset :: proc(c: ^Net_Client) {
+ prediction_controller_reset(c)
  c.stats.resets+=1
  net_client_clear_state(c)
  input_link_clear_intent(&c.input_link)
@@ -189,6 +197,7 @@ net_client_on_structure :: proc(c: ^Net_Client,message: []u8) {
   if c.real_reason=="" { c.real_reason=strings.clone(err) }
   return
  }
+ if c.real_gate { _=collision_history_record_topology(&c.collision_history,&c.received.scene,c.received.tick) }
  if kind==.Baseline && (!c.has_epoch || epoch!=u64(c.epoch)) {
   net_client_reset(c)
   if err:=replica_apply_message(&c.rep,message); err!="" { c.stats.structure_errors+=1 }
@@ -228,6 +237,7 @@ net_client_complete_frame :: proc(c: ^Net_Client,a: ^Frame_Asm,now: f64) {
  slot:=a.tick%NET_CLIENT_RING
  if c.ring[slot].valid { delete(c.ring[slot].table) }
  c.ring[slot]=Complete_Frame{valid=true,tick=a.tick,table=table}
+ if c.real_gate { _=collision_history_record_frame(&c.collision_history,c.epoch,a.tick,&table) }
  c.stats.frames_complete+=1
  append(&c.arrivals,Arrival{now,a.tick})
  if c.has_complete {
@@ -362,7 +372,10 @@ net_in_structure :: proc(c: ^Net_Client,key: u64) -> bool {
  return false
 }
 
-net_client_compute_drawn :: proc(c: ^Net_Client) {
+net_client_compute_drawn :: proc(c:^Net_Client) {
+ net_client_compute_interpolated(c);net_prediction_apply(c)
+}
+net_client_compute_interpolated :: proc(c: ^Net_Client) {
  clear(&c.drawn)
  if !c.has_clock || !c.has_complete || !c.has_epoch { return }
  floor_tick:=u64(max(math.floor(c.clock),0))
@@ -454,6 +467,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
    if c.real_gate { net_scheduled_client_update(c,now) }
    if input_source!=nil { input_source(c,source_data) }
    net_client_make_input(c)
+   net_prediction_update(c,now);net_prediction_apply(c)
   }
  }
  nc.client_update(&c.nc_client,now)

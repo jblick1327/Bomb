@@ -86,6 +86,8 @@ net_request_client_send :: proc(c:^Net_Client,kind:u8,payload:[]u8,created:u64=0
  nc.write_u8(&w,SCHEDULED_MSG_REQUEST);nc.write_u64(&w,c.input_link.offer.identity.incarnation);nc.write_u32(&w,c.epoch)
  nc.write_u64(&w,id);nc.write_u64(&w,created);nc.write_u64(&w,deadline);nc.write_u8(&w,kind);nc.write_raw(&w,payload)
  if !nc.client_send_reliable(&c.nc_client,w.data[:]) { return false }
+ if c.request_counter==0 { c.stats.request_payload_hash=14695981039346656037 }
+ for byte in w.data { c.stats.request_payload_hash=(c.stats.request_payload_hash~u64(byte))*1099511628211 }
  c.request_counter=id;slot^={true,id,kind}
  if kind!=REQUEST_BLAST { c.host_request_id=id }
  return true
