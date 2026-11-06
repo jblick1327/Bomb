@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum BombType { Impact, Timed }
@@ -15,9 +16,18 @@ public sealed class FallingBomb : MonoBehaviour
     private float fuseDuration;
     private float fuseRemaining;
     private float lifetimeRemaining;
-    private Renderer bombRenderer;
+    private readonly List<FlashSurface> flashSurfaces = new List<FlashSurface>();
     private MaterialPropertyBlock colorProperties;
-    private Color timedColor;
+
+    private struct FlashSurface
+    {
+        public Renderer Renderer;
+        public int MaterialIndex;
+        public string ColorProperty;
+        public Color BaseColor;
+    }
+    private AudioSource countdownAudio;
+    private bool countdownPaused;
 
     public BombType Type { get; private set; }
 
@@ -33,16 +43,28 @@ public sealed class FallingBomb : MonoBehaviour
         fuseRemaining = fuseDuration;
         if (Type == BombType.Timed)
         {
-            bombRenderer = GetComponentInChildren<Renderer>();
-            colorProperties = new MaterialPropertyBlock();
-            timedColor = new Color(1f, 0.45f, 0.05f);
-            SetTimedColor(timedColor);
+            countdownAudio = GetComponent<AudioSource>();
+            CacheFlashSurfaces();
         }
     }
 
     private void Update()
     {
-        if (exploded || owner == null || !owner.CanRun) return;
+        if (exploded || owner == null) return;
+        if (!owner.CanRun)
+        {
+            if (countdownAudio != null && countdownAudio.isPlaying)
+            {
+                countdownAudio.Pause();
+                countdownPaused = true;
+            }
+            return;
+        }
+        if (countdownPaused && countdownAudio != null)
+        {
+            countdownAudio.UnPause();
+            countdownPaused = false;
+        }
 
         if (fuseStarted)
         {
@@ -58,7 +80,7 @@ public sealed class FallingBomb : MonoBehaviour
             float elapsed = fuseDuration - fuseRemaining;
             float flashSpeed = Mathf.Lerp(4f, 12f, 1f - fuseRemaining / fuseDuration);
             float flash = Mathf.PingPong(elapsed * flashSpeed, 1f);
-            SetTimedColor(Color.Lerp(timedColor, Color.white, flash));
+            SetCountdownFlash(flash);
         }
         else
         {
@@ -82,7 +104,11 @@ public sealed class FallingBomb : MonoBehaviour
         {
             // Further collisions never restart the countdown. Keep physics active
             // so the bomb can fall again if the ground underneath is destroyed.
-            fuseStarted = true;
+            if (!fuseStarted)
+            {
+                fuseStarted = true;
+                if (countdownAudio != null) countdownAudio.Play();
+            }
             return;
         }
 
@@ -95,18 +121,55 @@ public sealed class FallingBomb : MonoBehaviour
     {
         if (exploded || owner == null || !owner.CanRun) return;
         exploded = true;
-        owner.Explode(point);
+        if (countdownAudio != null) countdownAudio.Stop();
+        owner.Explode(point, Type);
         Destroy(gameObject);
     }
 
-    private void SetTimedColor(Color color)
+    private void OnDisable()
     {
-        if (bombRenderer == null) return;
-        bombRenderer.GetPropertyBlock(colorProperties);
-        // Support both URP/Lit and the built-in Standard shader without
-        // modifying the material shared by impact bombs.
-        colorProperties.SetColor("_BaseColor", color);
-        colorProperties.SetColor("_Color", color);
-        bombRenderer.SetPropertyBlock(colorProperties);
+        // Round cleanup disables bombs before destroying them.
+        if (countdownAudio != null) countdownAudio.Stop();
+        countdownPaused = false;
+    }
+
+    private void CacheFlashSurfaces()
+    {
+        colorProperties = new MaterialPropertyBlock();
+        flashSurfaces.Clear();
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>(true))
+        {
+            if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
+            Material[] materials = renderer.sharedMaterials;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                Material material = materials[i];
+                if (material == null) continue;
+                string property = material.HasProperty("_BaseColor") ? "_BaseColor"
+                    : material.HasProperty("_Color") ? "_Color" : null;
+                if (property == null) continue;
+                flashSurfaces.Add(new FlashSurface
+                {
+                    Renderer = renderer,
+                    MaterialIndex = i,
+                    ColorProperty = property,
+                    BaseColor = material.GetColor(property)
+                });
+            }
+        }
+    }
+
+    private void SetCountdownFlash(float amount)
+    {
+        foreach (FlashSurface surface in flashSurfaces)
+        {
+            if (surface.Renderer == null) continue;
+            colorProperties.Clear();
+            surface.Renderer.GetPropertyBlock(colorProperties, surface.MaterialIndex);
+            Color color = Color.Lerp(surface.BaseColor, Color.white, amount * 0.7f);
+            color.a = surface.BaseColor.a;
+            colorProperties.SetColor(surface.ColorProperty, color);
+            surface.Renderer.SetPropertyBlock(colorProperties, surface.MaterialIndex);
+        }
     }
 }
