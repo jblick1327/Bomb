@@ -56,17 +56,18 @@ static class Program {
  }
  static void RunSingleHost(uint port,double seconds,double resetAfter) {
   ulong handle=Create();bool ready=false,reset=false,firstBlast=false,secondBlast=false;double start=Now;
+  string signal=Environment.GetEnvironmentVariable("BOM_HOST_SIGNAL_FILE");double controlStart=string.IsNullOrEmpty(signal)?start:double.NaN;
   try {
    Connect(handle,port,Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"");
-   while(Now-start<seconds) {
-    double now=Now,elapsed=now-start;Ok(BomNative.bom_client_update(handle,now),"single host update");
+   while(double.IsNaN(controlStart)?Now-start<150:Now-controlStart<seconds) {
+    double now=Now,elapsed=now-start;if(double.IsNaN(controlStart)&&File.Exists(signal))controlStart=now;double controlElapsed=now-controlStart;Ok(BomNative.bom_client_update(handle,now),"single host update");
     var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Ok(BomNative.bom_client_acquire_sample(handle,ref sample),"single host acquire");
     try {if(sample.error_length>0)throw new Exception(Marshal.PtrToStringUTF8(sample.error_text,(int)sample.error_length));if((sample.flags&3)==3)ready=true;}
     finally {Ok(BomNative.bom_client_release_sample(handle,sample.sample_sequence),"single host release");}
     Ok(BomNative.bom_client_ack_sample(handle,sample.sample_sequence),"single host ack");
     if(ready&&elapsed>3&&!firstBlast){Ok(BomNative.bom_client_enqueue_action(handle,now,-6.4f,2.3f),"host first blast");firstBlast=true;}
-    if(ready&&elapsed>10&&!secondBlast){Ok(BomNative.bom_client_enqueue_action(handle,now,0,0.5f),"host second blast");secondBlast=true;}
-    if(ready&&elapsed>resetAfter&&!reset){Ok(BomNative.bom_client_host_command(handle,1,0,0),"single host reset");reset=true;}
+    if(ready&&controlElapsed>10&&!secondBlast){Ok(BomNative.bom_client_enqueue_action(handle,now,0,0.5f),"host second blast");secondBlast=true;}
+    if(ready&&controlElapsed>resetAfter&&!reset){Ok(BomNative.bom_client_host_command(handle,1,0,0),"single host reset");reset=true;}
     Thread.Sleep(5);
    }
    Check(ready,"single host received baseline");Console.WriteLine("PASS single real native host");
