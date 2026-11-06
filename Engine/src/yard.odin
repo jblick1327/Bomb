@@ -52,6 +52,8 @@ Sandbox :: struct {
 	layout_directory: string,
 	layout_files: [dynamic]Saved_Layout,
 	layouts_open,last_session,materials_open: bool,
+ menu_page: Menu_Page,
+ palette_open: bool,
  material_selected: int,
  material_name_buffer: [81]u8,
  material_name_edit: bool,
@@ -131,6 +133,8 @@ sandbox_add_ground :: proc(s: ^Scene,material: int,seed: u8) -> Built_Object {
 sandbox_set_panel :: proc(game: ^Sandbox,open: bool) {
 	if game.materials_open { materials_commit_name(game) }
  game.panel_open=open
+ game.palette_open=false
+ if open { game.menu_page=.Main }
 	game.layouts_open=false; game.materials_open=false; game.material_name_edit=false
 	game.editor.dragging=false
 	sandbox_clear_input(game)
@@ -195,6 +199,9 @@ Sandbox_Input :: struct {
 	wheel: f32,
 }
 sandbox_route_input :: proc(game: ^Sandbox,raw: Sandbox_Input,over_ui: bool) -> Sandbox_Input {
+	if raw.menu_pressed && game.palette_open {
+  game.palette_open=false; sandbox_clear_input(game); return {}
+ }
 	if raw.inspection_pressed && !game.editor.editing { game.inspection=!game.inspection }
 	if raw.edit_pressed && !game.panel_open {
 		sandbox_toggle_editor(game)

@@ -21,20 +21,20 @@ material_native_interactions :: proc() {
  directory:=fmt.aprintf("output/material-ui-%d",time.to_unix_nanoseconds(time.now()));defer delete(directory);assert(os.make_directory_all(directory)==nil);g.layout_directory=directory
  target:=rl.LoadRenderTexture(1280,800);defer rl.UnloadRenderTexture(target)
  sandbox_smoke_frame(&g,target,smoke_mouse(20,40),smoke_button(false))
- // + New is the fifth slot before any custom exists.
- sandbox_smoke_click(&g,target,sandbox_smoke_palette_x(&g,4),752);assert(g.materials_open)
- sandbox_smoke_click(&g,target,500,614);assert(len(g.layout.materials)==1 && g.material_selected==4)
+ // Custom material management lives inside the picker.
+ sandbox_smoke_manage_materials(&g,target);assert(g.materials_open)
+ sandbox_smoke_click(&g,target,600,415);assert(len(g.layout.materials)==1 && g.material_selected==4)
  // Loaded in-range values must remain exact until a UI edit occurs.
  g.layout.materials[0].toughness=1.234;g.layout.materials[0].strip_thickness=0.333;sandbox_layout_changed(&g)
  sandbox_smoke_frame(&g,target);assert(g.layout.materials[0].toughness==1.234 && g.layout.materials[0].strip_thickness==0.333)
  // The real slider snaps only this mouse edit; the duplicate must retain it.
- sandbox_smoke_click(&g,target,800,254);assert(g.layout.materials[0].toughness>1)
+ sandbox_smoke_click(&g,target,800,297);assert(g.layout.materials[0].toughness>1)
  sandbox_smoke_click(&g,target,678,557)
  original:=g.layout.materials[0]
  sandbox_smoke_click(&g,target,500,614);assert(len(g.layout.materials)==2 && g.layout.materials[1].toughness==original.toughness && g.layout.materials[1].color==original.color)
  sandbox_smoke_click(&g,target,624,614);assert(len(g.layout.materials)==1)
  // Edit the name through raygui's native character queue.
- sandbox_smoke_click(&g,target,700,135);assert(g.material_name_edit)
+ sandbox_smoke_click(&g,target,700,200);assert(g.material_name_edit)
  sandbox_smoke_frame(&g,target,smoke_key(.END,true));sandbox_smoke_frame(&g,target,smoke_key(.END,false))
  for _ in 0..<6 { sandbox_smoke_frame(&g,target,smoke_key(.BACKSPACE,true));sandbox_smoke_frame(&g,target,smoke_key(.BACKSPACE,false)) }
  library:=win.LoadLibraryW("user32.dll");defer win.FreeLibrary(library)
@@ -42,20 +42,28 @@ material_native_interactions :: proc() {
  for r in "Coral wood" { post(rl.GetWindowHandle(),0x0102,uintptr(r),1);sandbox_smoke_frame(&g,target);sandbox_smoke_frame(&g,target) }
  sandbox_smoke_frame(&g,target,smoke_key(.ENTER,true));sandbox_smoke_frame(&g,target,smoke_key(.ENTER,false));assert(g.layout.materials[0].name=="Coral wood")
  // Range endpoints; the value returns to the built-in target.
- sandbox_smoke_frame(&g,target,smoke_mouse(1090,450),smoke_button(true));sandbox_smoke_frame(&g,target,smoke_mouse(1150,450));sandbox_smoke_frame(&g,target,smoke_button(false));assert(g.layout.materials[0].strip_thickness==0.6)
- sandbox_smoke_frame(&g,target,smoke_mouse(440,450),smoke_button(true));sandbox_smoke_frame(&g,target,smoke_mouse(400,450));sandbox_smoke_frame(&g,target,smoke_button(false));assert(g.layout.materials[0].strip_thickness==STRIP_MIN)
+ sandbox_smoke_frame(&g,target,smoke_mouse(1005,461),smoke_button(true));sandbox_smoke_frame(&g,target,smoke_mouse(1080,461));sandbox_smoke_frame(&g,target,smoke_button(false));assert(g.layout.materials[0].strip_thickness==0.6)
+ sandbox_smoke_frame(&g,target,smoke_mouse(480,461),smoke_button(true));sandbox_smoke_frame(&g,target,smoke_mouse(440,461));sandbox_smoke_frame(&g,target,smoke_button(false));assert(g.layout.materials[0].strip_thickness==STRIP_MIN)
  sandbox_smoke_frame(&g,target,smoke_key(.TAB,true));sandbox_smoke_frame(&g,target,smoke_key(.TAB,false));assert(!g.panel_open)
- // Keycap chips are decorative and the full underlying button remains clickable.
+ // The complete Menu button remains clickable.
  sandbox_smoke_click(&g,target,1240,44);assert(g.panel_open);sandbox_smoke_frame(&g,target,smoke_key(.ESCAPE,true));sandbox_smoke_frame(&g,target,smoke_key(.ESCAPE,false))
- previous:=g.editor.mortar;sandbox_smoke_click(&g,target,1245,752);assert(g.editor.mortar!=previous);sandbox_smoke_click(&g,target,1245,752);assert(g.editor.mortar==previous)
+ previous:=g.editor.mortar;sandbox_smoke_click(&g,target,740,752);assert(g.editor.mortar!=previous);sandbox_smoke_click(&g,target,740,752);assert(g.editor.mortar==previous)
  sandbox_smoke_frame(&g,target,smoke_key(.FIVE,true));sandbox_smoke_frame(&g,target,smoke_key(.FIVE,false));assert(g.editor.palette==Slot(4))
  editor_smoke_drag(&g,target,{0,0},{1.4,1.5});assert(len(g.layout.objects)==1)
- sandbox_smoke_click(&g,target,943,44);sandbox_smoke_click(&g,target,624,614);assert(len(g.layout.materials)==1 && material_usage(&g.layout,0)==1 && g.status!="In use by 1 objects")
+ sandbox_smoke_manage_materials(&g,target);sandbox_smoke_click(&g,target,624,614);assert(len(g.layout.materials)==1 && material_usage(&g.layout,0)==1 && g.status!="In use by 1 objects")
  sandbox_smoke_frame(&g,target,smoke_key(.ESCAPE,true));sandbox_smoke_frame(&g,target,smoke_key(.ESCAPE,false))
- sandbox_smoke_click(&g,target,860,44);assert(!g.editor.editing)
- sandbox_smoke_click(&g,target,860,44);assert(g.editor.editing)
+ sandbox_smoke_click(&g,target,930,44);assert(!g.editor.editing)
+ sandbox_smoke_click(&g,target,930,44);assert(g.editor.editing)
  sandbox_smoke_frame(&g,target,smoke_key(.LEFT_CONTROL,true),smoke_key(.S,true));sandbox_smoke_frame(&g,target,smoke_key(.LEFT_CONTROL,false),smoke_key(.S,false));assert(len(g.layout_files)==1)
  sandbox_smoke_click(&g,target,1060,44);sandbox_smoke_click(&g,target,640,353);assert(!g.panel_open && len(g.layout.materials)==1)
- assert(editor_remove(&g,{0.7,0.7}));sandbox_smoke_click(&g,target,943,44);g.material_selected=4;materials_sync_name(&g);sandbox_smoke_click(&g,target,624,614);assert(len(g.layout.materials)==0)
- fmt.println("Materials smoke passed: + New, duplicate built-in/custom with knobs, disabled Delete, name, snapping/endpoints, swatch, keycaps pass clicks, Test/Edit, save/load/autosave")
+ assert(editor_remove(&g,{0.7,0.7}));sandbox_smoke_manage_materials(&g,target);g.material_selected=4;materials_sync_name(&g);sandbox_smoke_click(&g,target,624,614);assert(len(g.layout.materials)==0)
+ fmt.println("Materials smoke passed: picker management, custom copies and knobs, disabled Delete, name, snapping/endpoints, swatch, toolbar, Test/Edit, save/load/autosave")
+}
+
+sandbox_smoke_manage_materials :: proc(game:^Sandbox,target:rl.RenderTexture2D) {
+ sandbox_smoke_click(game,target,120,rl.GetScreenHeight()-48)
+ assert(game.palette_open)
+ popup:=palette_popup(game,f32(rl.GetScreenHeight()))
+ sandbox_smoke_click(game,target,140,i32(popup.y+25+f32(palette_count(&game.layout))*40))
+ assert(game.materials_open && !game.palette_open)
 }

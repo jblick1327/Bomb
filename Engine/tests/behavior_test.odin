@@ -24,7 +24,7 @@ failure_for :: proc(ids: ..u64) -> Failures {
 	for id in ids { append(&f.subdivisions,id) }
 	return f
 }
-free_failures :: proc(f: ^Failures) { delete(f.subdivisions); delete(f.connections); delete(f.discard_subdivisions); delete(f.impact_sources); f^={} }
+
 
 @(test)
 bridge_and_incident_removal :: proc(t: ^testing.T) {

@@ -43,6 +43,11 @@ Net_Client_Stats :: struct {
 }
 Net_Client :: struct {
  nc_client: nc.Client,
+ real_gate: bool,real_hello_sent: bool,real_hello_ok: bool,
+ real_is_host: bool,real_host_left: bool,
+ real_has_settings: bool,real_settings: Sandbox_Settings,
+ real_protocol: u32,real_build: string,real_host_token: string,
+ real_reason: string,
  rep: Replica,
  epoch: u32, has_epoch: bool,
  queue: [dynamic]Net_Queued,
@@ -56,6 +61,7 @@ Net_Client :: struct {
  loss_times: [dynamic]f64,
  // inputs
  bot: Bot, bot_enabled,idle: bool,
+ human_move: f32, human_jump_pending: bool,
  input_seq,jump_counter,blast_seq: u16,
  radius_q: u8,
  blasts: [dynamic]Net_Blast,
@@ -74,10 +80,13 @@ net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64,bot_seed: u64 = 0,bot_
  c^={}
  nc.client_init(&c.nc_client)
  nc.client_connect(&c.nc_client,salt,now)
+ c.real_protocol=GAME_PROTOCOL_VERSION
+ c.real_build=GAME_BUILD_ID
  replica_init(&c.rep)
  c.delay=NET_DELAY_MIN
  c.drawn=make(map[u64]Net_Drawn); c.anchored=make(map[u64]bool)
  c.radius_q=radius_quantize(DEFAULT_SANDBOX_SETTINGS.blast_radius)
+ c.real_settings=DEFAULT_SANDBOX_SETTINGS
  c.bot_enabled=bot_enabled
  if bot_enabled { bot_init(&c.bot,bot_seed,true) }
 }
@@ -96,6 +105,7 @@ net_client_clear_state :: proc(c: ^Net_Client) {
 net_client_destroy :: proc(c: ^Net_Client) {
  net_client_clear_state(c)
  nc.client_destroy(&c.nc_client)
+ delete(c.real_reason)
  replica_destroy(&c.rep)
  release_render_caches(&c.caches)
  delete(c.queue); delete(c.pending); delete(c.arrivals); delete(c.missing); delete(c.loss_times)
@@ -361,10 +371,10 @@ net_client_draw_inputs :: proc(c: ^Net_Client) -> (poses: map[u64]Pose,frames: m
  return
 }
 // Draws the replica through the existing draw path.
-net_client_draw :: proc(c: ^Net_Client,view: View) {
+net_client_draw :: proc(c: ^Net_Client,view: View,outline_width:f32=2) {
  poses,frames:=net_client_draw_inputs(c); defer { delete(poses); delete(frames) }
  yard_draw_backdrop(view)
- draw_scene(&c.rep.scene,&c.caches,view,poses,0,true,false,false,true,2,frames)
+ draw_scene(&c.rep.scene,&c.caches,view,poses,0,true,false,false,true,outline_width,frames)
  yard_draw_spawn(view)
  for burst in c.bursts { draw_burst(view,burst) }
  keys:[dynamic]u64; defer delete(keys)
@@ -395,6 +405,13 @@ net_client_make_input :: proc(c: ^Net_Client) {
    }
    delete(commands.blasts)
   }
+ } else if !c.bot_enabled {
+  move=c.human_move
+  if c.human_jump_pending {
+   c.jump_counter+=1
+   c.stats.jumps_pressed+=1
+   c.human_jump_pending=false
+  }
  }
  c.input_seq+=1
  in_:=Net_Input{seq=c.input_seq,move=move_quantize(move),radius_q=c.radius_q,jump_counter=c.jump_counter}
@@ -413,9 +430,12 @@ net_client_make_input :: proc(c: ^Net_Client) {
 // Process everything delivered since the last step, then produce this tick's input.
 net_client_step :: proc(c: ^Net_Client,now: f64) {
  if c.nc_client.state==.Connected {
+  net_app_client_send_hello(c)
   msgs:=nc.client_take_messages(&c.nc_client); defer nc.messages_free(&msgs)
   for m in msgs {
-   if m.channel==nc.CHANNEL_RELIABLE { net_client_on_reliable(c,m.data) }
+   if m.channel==nc.CHANNEL_RELIABLE {
+    if !net_app_client_control(c,m.data) { net_client_on_reliable(c,m.data) }
+   }
    else if len(m.data)>0 && m.data[0]==NET_MSG_FRAME { net_client_on_frame(c,m.data,now) }
   }
   net_client_update_delay(c,now)
@@ -427,7 +447,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64) {
   resize(&c.bursts,count)
   net_client_compute_drawn(c)
   append(&c.stats.delay_history,u8(c.delay))
-  net_client_make_input(c)
+  if !c.real_gate || c.real_hello_ok { net_client_make_input(c) }
  }
  nc.client_update(&c.nc_client,now)
 }

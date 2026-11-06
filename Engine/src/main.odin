@@ -5,11 +5,22 @@ import "core:os"
 import "core:strconv"
 
 main :: proc() {
+ // Real UDP headless entry points; intentionally checked before GUI setup.
+ if len(os.args)>1 && os.args[1]=="--server" {
+  if !net_real_cli_server(os.args[2:]) { os.exit(1) }; return
+ }
+ if len(os.args)>1 && os.args[1]=="--hidden-client" {
+  if !net_real_cli_bot(os.args[2:],true) { os.exit(1) }; return
+ }
+ if len(os.args)>1 && os.args[1]=="--bot-client" {
+  if !net_real_cli_bot(os.args[2:]) { os.exit(1) }; return
+ }
 	if err:=os.make_directory_all("output"); err!=nil {
 		fmt.eprintln("Could not create output directory:",err)
 		os.exit(1)
 	}
 	for arg,i in os.args[1:] {
+  if arg=="--smoke-menus" { run_menu_smoke();return }
   if arg=="--check-glue-followup" { run_seam_followup_checks();return }
   if arg=="--probe-demo-blasts" { probe_demo_blasts();return }
   if arg=="--diagnose-demo" { run_seam_diagnostics();return }
@@ -69,7 +80,7 @@ main :: proc() {
   if arg=="--smoke-aim" { run_sandbox(true,false,false,true); return }
 		if arg=="--smoke" { run_sandbox(true); return }
 		if arg=="--smoke-input" { run_sandbox(true,true); return }
-		if arg=="--help" { fmt.println("odin run src -out:build/BOM.exe -- [--smoke-materials | --mortar-seeds | --calibrate-mortar | --measure-mortar (BOM_MORTAR_MEASURE=true) | --capture-mortar [directory] | --soak [minutes] | --soak-fixture [output-prefix] | --replication-soak [minutes] | --pose-resolution [minutes] | --net-soak [minutes] | --capture-frames [directory] | --bench-presentation | --measure-world | --glass-study [directory] | --capture-glass [directory] | --wood-study [directory] | --capture-wood [directory] | --capture-rubber-band [directory] | --smoke-msaa | --smoke-aim | --smoke-editor | --smoke | --smoke-input | --help]"); return }
+		if arg=="--help" { fmt.println("build/BOM.exe [--smoke-menus | --smoke-materials | --mortar-seeds | --calibrate-mortar | --measure-mortar (BOM_MORTAR_MEASURE=true) | --capture-mortar [directory] | --soak [minutes] | --soak-fixture [output-prefix] | --replication-soak [minutes] | --pose-resolution [minutes] | --net-soak [minutes] | --capture-frames [directory] | --bench-presentation | --measure-world | --glass-study [directory] | --capture-glass [directory] | --wood-study [directory] | --capture-wood [directory] | --capture-rubber-band [directory] | --smoke-msaa | --smoke-aim | --smoke-editor | --smoke | --smoke-input | --help]"); return }
 	}
 	if err:=os.make_directory_all("layouts"); err!=nil { fmt.eprintln("Could not create layouts directory:",err); os.exit(1) }
 	run_sandbox()

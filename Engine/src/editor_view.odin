@@ -42,6 +42,7 @@ sandbox_draw_editor :: proc(game: ^Sandbox,view: View) {
 }
 sandbox_editor_input :: proc(game: ^Sandbox,point: Vec2,over_ui: bool) {
 	if game.panel_open { game.editor.dragging=false; return }
+ if game.palette_open { game.editor.dragging=false; return }
  if rl.IsKeyPressed(.Q) { game.editor.angle=angle_wrap(game.editor.angle-15) }
  if rl.IsKeyPressed(.E) { game.editor.angle=angle_wrap(game.editor.angle+15) }
  if rl.IsKeyPressed(.T) { if game.editor.shape==.Rect { game.editor.shape=.Wedge } else { game.editor.shape=.Rect } }

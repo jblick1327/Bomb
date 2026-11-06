@@ -2,7 +2,7 @@
 
 Package `netcode` in `src/netcode/`. Odin core packages only (`core:net` in `socket.odin` alone). It imports and changes no game code. The only edit outside this folder is one `NetTest` entry in `scripts/bom.ps1`. Nothing is committed.
 
-Run it with `scripts/bom.ps1 NetTest`. That runs `odin test src/netcode` with the tracking allocator and `-define:ODIN_TEST_FAIL_ON_BAD_MEMORY=true`, so a leak or a bad free fails the run. The full output is in `test-output.txt`.
+Run it with `scripts/bom.ps1 NetTest`. The helper stages the networking package and its tests with the tracking allocator and `-define:ODIN_TEST_FAIL_ON_BAD_MEMORY=true`, so a leak or a bad free fails the run. The historical output is in `test-output.txt`.
 
 **Result: 27 tests, all pass, 0 leaks and 0 bad frees on every test.** Run time was about 4.6 s, of which about 4.3 s is the real-socket test.
 

@@ -114,7 +114,7 @@ yard_reset_restores_same_setup_after_blast_and_respawn :: proc(t: ^testing.T) {
 	}
 }
 
-counts_live_subdivisions :: proc(s: ^Scene) -> int { result:=0; for sub in s.subdivisions { if sub.live { result+=1 } }; return result }
+
 
 @(test)
 sandbox_menu_and_ui_consume_input_without_catchup :: proc(t: ^testing.T) {

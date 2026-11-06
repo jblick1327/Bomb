@@ -2,7 +2,7 @@
 
 
 
-Run from the project root. Use separate test and playable executables:
+Run from the project root. Use `scripts/bom.ps1` to assemble the directory-scoped Odin package from `src/` and `diagnostics/`; Test and NetTest also include `tests/`. Temporary packages are created under `build/` and removed after the command. Direct `odin build src` and `odin test src` commands no longer assemble the full package. Use separate test and playable executables:
 
 
 
@@ -78,3 +78,6 @@ Wood splinters: `wood_splinter_test.odin` checks the editor-built plank's dimens
 
 Glass shock: `--glass-study [directory]` measures the settled 5×2.5 pane at radii 3/4 immediately after the blast, the 2×1 flat drop at its first damaging impact batch, and a control with no Glass objects or unused Glass material entries. It records physical-piece and logical-cell median areas by distance band. `--capture-glass [directory]` captures the two panes 30 ticks after damage and Glass house 60 ticks after the specified blast, at width 2 through actual 4× MSAA. Tests cover the recorded regressions, exact Dijkstra costs, disconnected bonds, inherited loads, one generation without sibling glue or extra impulse, optional field compatibility and one structural commit per blast/impact batch. The radius-3 prototype range is a reported prediction, not a reason to tune the prescribed loss. See [the current report](../report.md); the Wood report is preserved at [evidence/wood-splinters/report.md](../evidence/wood-splinters/report.md).
 
+
+
+Menu simplification: `scripts/bom.ps1 SmokeMenus` (or `build/BOM.exe --smoke-menus`) drives the native material picker and menus, verifies all pages at 1280x800 and 900x700, asserts zero text overflow and unchanged World bytes during captures, then hosts a real local session, returns to Edit, places a shape, uploads it through Test, changes radius and leaves. Captures and the report live under `evidence/menu-simplification/`. The updated SmokeMaterials and SmokeInput fixtures use the new picker and menu pages. Neither verification mode changes interactive layouts.

@@ -36,7 +36,6 @@ sandbox_draw_layouts_panel :: proc(game: ^Sandbox,width,height: f32) -> Sandbox_
 		if ui_button({x,y,704,30},saved_layout_label(name,file.modified)) { sandbox_load_layout_file(game,file.path); return .None }
 		y+=34
 	}
-	ui_text(.Body,"Drop a layout .json onto the window to load it",i32(x),i32((height+640)*0.5-32),YARD_MUTED)
  if game.status_time>0 { ui_label(.Small,rl.TextFormat("%s",game.status),{x,(height+640)*0.5-60,704,22},YARD_ACCENT,true) }
 	return .None
 }
