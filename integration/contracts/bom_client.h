@@ -1,0 +1,187 @@
+/* Generated: Windows x64, natural alignment. */
+#ifndef BOM_CLIENT_ABI_H
+#define BOM_CLIENT_ABI_H
+typedef struct BomCreateInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int flags;
+ unsigned int reserved;
+} BomCreateInfo;
+typedef struct BomConnectInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int ipv4;
+ unsigned int port;
+ unsigned char* token;
+ unsigned int token_length;
+ unsigned int reserved;
+} BomConnectInfo;
+typedef struct BomVertex {
+ float x;
+ float y;
+} BomVertex;
+typedef struct BomCell {
+ unsigned long long id;
+ unsigned long long piece_id;
+ unsigned int material;
+ unsigned int pose_kind;
+ float rest_x;
+ float rest_y;
+ float pivot_x;
+ float pivot_y;
+ unsigned int vertex_start;
+ unsigned int vertex_count;
+ unsigned int color_rgba;
+ unsigned int reserved;
+} BomCell;
+typedef struct BomPose {
+ unsigned long long id;
+ unsigned int kind;
+ unsigned int flags;
+ float x;
+ float y;
+ float angle;
+ float fuse;
+} BomPose;
+typedef struct BomEvent {
+ unsigned long long id;
+ unsigned long long tick;
+ unsigned int kind;
+ unsigned int reserved;
+ float x;
+ float y;
+ float radius;
+ unsigned int padding;
+} BomEvent;
+typedef struct BomSample {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned long long connection_generation;
+ unsigned int epoch;
+ unsigned int connection_state;
+ unsigned long long revision;
+ unsigned long long sample_sequence;
+ double presentation_tick;
+ unsigned long long canonical_hash;
+ unsigned long long input_count;
+ unsigned long long stall_count;
+ unsigned int local_player_id;
+ unsigned int flags;
+ unsigned int cell_count;
+ unsigned int vertex_count;
+ unsigned int pose_count;
+ unsigned int event_count;
+ BomCell* cells;
+ BomVertex* vertices;
+ BomPose* poses;
+ BomEvent* events;
+ unsigned char* error_text;
+ unsigned int error_length;
+ unsigned int reserved;
+ unsigned int received_epoch;
+ unsigned int received_flags;
+ unsigned long long received_revision;
+ unsigned long long transaction_id;
+ unsigned long long effective_tick;
+ unsigned long long from_revision;
+ unsigned long long to_revision;
+ unsigned int transaction_flags;
+ unsigned int catalog_revision;
+ unsigned long long catalog_hash;
+ unsigned int owner_prediction_status;
+ unsigned int round_state;
+} BomSample;
+typedef struct BomBuildInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int abi_major;
+ unsigned int abi_minor;
+ unsigned int game_protocol;
+ unsigned int canonical_version;
+ unsigned long long source_build_tag;
+ unsigned char* game_build;
+ unsigned int game_build_length;
+ unsigned int reserved0;
+ unsigned char* compiler_version;
+ unsigned int compiler_version_length;
+ unsigned int reserved1;
+ unsigned char* compiler_hash;
+ unsigned int compiler_hash_length;
+ unsigned int reserved2;
+} BomBuildInfo;
+typedef struct BomStats {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned long long connection_generation;
+ unsigned long long input_count;
+ unsigned long long stall_count;
+ double presentation_tick;
+ double fixed_tick;
+ unsigned int held_queued;
+ unsigned int jumps_queued;
+ unsigned int actions_queued;
+ unsigned int events_queued;
+ unsigned int reliable_queued;
+ unsigned int structure_errors;
+ unsigned int frames_complete;
+ unsigned int flags;
+ unsigned long long owned_bytes;
+ unsigned long long peak_owned_bytes;
+ unsigned long long live_allocations;
+} BomStats;
+typedef struct BomError {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned char* message;
+ unsigned int message_length;
+ unsigned int reserved;
+} BomError;
+typedef struct BomHostCommand {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int op;
+ unsigned int mode;
+ float radius;
+ unsigned int reserved;
+ unsigned char* layout;
+ unsigned int layout_length;
+ unsigned int reserved1;
+} BomHostCommand;
+typedef struct BomCommandResult {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned long long command_id;
+ unsigned int status;
+ unsigned int reason_length;
+ unsigned char* reason;
+} BomCommandResult;
+typedef struct BomActorShapeInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ float player_radius;
+ float player_segment;
+ float bomb_radius;
+ unsigned int reserved;
+} BomActorShapeInfo;
+__declspec(dllimport) unsigned int __cdecl bom_abi_version(void);
+__declspec(dllimport) unsigned long long __cdecl bom_build_tag(void);
+__declspec(dllimport) unsigned int __cdecl bom_client_create(BomCreateInfo* info, unsigned long long* handle);
+__declspec(dllimport) unsigned int __cdecl bom_client_destroy(unsigned long long handle);
+__declspec(dllimport) unsigned int __cdecl bom_client_connect(unsigned long long handle, BomConnectInfo* info);
+__declspec(dllimport) unsigned int __cdecl bom_client_disconnect(unsigned long long handle);
+__declspec(dllimport) unsigned int __cdecl bom_client_set_held_input(unsigned long long handle, double timestamp, float move);
+__declspec(dllimport) unsigned int __cdecl bom_client_enqueue_jump(unsigned long long handle, double timestamp);
+__declspec(dllimport) unsigned int __cdecl bom_client_enqueue_action(unsigned long long handle, double timestamp, float x, float y);
+__declspec(dllimport) unsigned int __cdecl bom_client_update(unsigned long long handle, double now);
+__declspec(dllimport) unsigned int __cdecl bom_client_acquire_sample(unsigned long long handle, BomSample* sample);
+__declspec(dllimport) unsigned int __cdecl bom_client_release_sample(unsigned long long handle, unsigned long long sequence);
+__declspec(dllimport) unsigned int __cdecl bom_client_ack_sample(unsigned long long handle, unsigned long long sequence);
+__declspec(dllimport) unsigned int __cdecl bom_client_host_command(unsigned long long handle, unsigned int op, unsigned int mode, float radius);
+__declspec(dllimport) unsigned int __cdecl bom_debug_layout(unsigned int type_id, unsigned int field_id);
+__declspec(dllimport) unsigned int __cdecl bom_build_info(BomBuildInfo* info);
+__declspec(dllimport) unsigned int __cdecl bom_client_get_stats(unsigned long long handle, BomStats* stats);
+__declspec(dllimport) unsigned int __cdecl bom_client_last_error(unsigned long long handle, BomError* error);
+__declspec(dllimport) unsigned int __cdecl bom_client_request_host_command(unsigned long long handle, BomHostCommand* command, unsigned long long* command_id);
+__declspec(dllimport) unsigned int __cdecl bom_client_get_command_result(unsigned long long handle, BomCommandResult* result);
+__declspec(dllimport) unsigned int __cdecl bom_actor_shape_info(BomActorShapeInfo* info);
+#endif

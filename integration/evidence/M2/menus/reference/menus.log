@@ -1,0 +1,36 @@
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+MENU capture=edit size=1280x800 overflow=0 world_unchanged=true
+MENU capture=palette size=1280x800 overflow=0 world_unchanged=true
+MENU capture=material-builtin size=1280x800 overflow=0 world_unchanged=true
+MENU capture=material-custom size=1280x800 overflow=0 world_unchanged=true
+MENU capture=menu size=1280x800 overflow=0 world_unchanged=true
+MENU capture=gameplay size=1280x800 overflow=0 world_unchanged=true
+MENU capture=appearance size=1280x800 overflow=0 world_unchanged=true
+MENU capture=help size=1280x800 overflow=0 world_unchanged=true
+MENU capture=test size=1280x800 overflow=0 world_unchanged=true
+MENU capture=small-menu-0 size=900x700 overflow=0 world_unchanged=true
+MENU capture=small-menu-1 size=900x700 overflow=0 world_unchanged=true
+MENU capture=small-menu-2 size=900x700 overflow=0 world_unchanged=true
+MENU capture=small-menu-3 size=900x700 overflow=0 world_unchanged=true
+MENU capture=small-material-builtin size=900x700 overflow=0 world_unchanged=true
+MENU capture=small-material-custom size=900x700 overflow=0 world_unchanged=true
+MENU capture=multiplayer size=1280x800 overflow=0 world_unchanged=true
+BOM staging server listening on 127.0.0.1:47380 only; tick=60Hz
+CONNECT client=0
+HELLO OK client=0 role=HOST
+LAYOUT OK client=0 epoch=4 objects=2
+APP RESULT kind=199 status=OK reason=
+COMMAND OK client=0 op=3 epoch=4
+APP RESULT kind=198 status=OK reason=
+MENU capture=multiplayer-gameplay size=1280x800 overflow=0 world_unchanged=true
+MENU gameplay page=Gameplay open=true host=true radius=2.441
+MENU capture=multiplayer-test size=1280x800 overflow=0 world_unchanged=true
+MENU capture=multiplayer-connected size=1280x800 overflow=0 world_unchanged=true
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+SERVER host-left shutdown
+SERVER final hashes=2 mismatches=0 unrecorded=0
+MENU PASS: picker, custom editor, all menu pages, minimum size, real Host, Edit placement, layout upload, radius synchronization and Leave
+MENU teardown Odin=0 Box2D=0

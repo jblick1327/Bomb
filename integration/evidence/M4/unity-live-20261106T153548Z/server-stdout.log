@@ -1,0 +1,38 @@
+BOM staging server listening on 127.0.0.1:62914 only; tick=60Hz
+CONNECT client=0
+CONNECT client=1
+HELLO OK client=0 role=HOST
+HELLO OK client=1 role=player
+CONNECT client=2
+HELLO OK client=2 role=player
+CONNECT client=3
+HELLO OK client=3 role=player
+COMMAND OK client=0 op=1 epoch=4
+COMMAND REJECT client=3 reason=host only
+DISCONNECT client=1 reason=Client_Disconnect
+CONNECT client=1
+HELLO OK client=1 role=player
+SERVER time=10s tick=600 active=4 overruns=0 hashes=17 mismatches=0 unrecorded=0
+  client=0 addr=139637976856003 RTT=31ms tx=64 kbit/s
+  client=1 addr=139637976847703 RTT=30ms tx=20 kbit/s
+  client=2 addr=139637976856006 RTT=39ms tx=61 kbit/s
+  client=3 addr=139637976842251 RTT=16ms tx=57 kbit/s
+DISCONNECT client=3 reason=Client_Disconnect
+CONNECT client=3
+HELLO OK client=3 role=player
+SERVER time=20s tick=1200 active=4 overruns=0 hashes=34 mismatches=0 unrecorded=0
+  client=0 addr=139637976856003 RTT=31ms tx=82 kbit/s
+  client=1 addr=139637976847703 RTT=31ms tx=82 kbit/s
+  client=2 addr=139637976856006 RTT=41ms tx=84 kbit/s
+  client=3 addr=139637976847704 RTT=16ms tx=34 kbit/s
+DISCONNECT client=3 reason=Client_Disconnect
+SERVER time=30s tick=1800 active=3 overruns=0 hashes=34 mismatches=0 unrecorded=0
+  client=0 addr=139637976856003 RTT=27ms tx=31 kbit/s
+  client=1 addr=139637976847703 RTT=27ms tx=31 kbit/s
+  client=2 addr=139637976856006 RTT=38ms tx=116 kbit/s
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+DISCONNECT client=1 reason=Client_Disconnect
+DISCONNECT client=2 reason=Timeout
+SERVER host-left shutdown
+SERVER final hashes=34 mismatches=0 unrecorded=0

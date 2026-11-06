@@ -1,0 +1,28 @@
+BOM staging server listening on 127.0.0.1:63275 only; tick=60Hz
+CONNECT client=0
+HELLO OK client=0 role=player
+CONNECT client=1
+CONNECT client=2
+HELLO OK client=1 role=HOST
+HELLO OK client=2 role=player
+COMMAND REJECT client=2 reason=host only
+COMMAND OK client=1 op=3 epoch=3
+COMMAND OK client=1 op=1 epoch=4
+CONNECT client=3
+HELLO OK client=3 role=player
+DISCONNECT client=2 reason=Client_Disconnect
+CONNECT client=2
+HELLO OK client=2 role=player
+SERVER time=10s tick=600 active=4 overruns=0 hashes=8 mismatches=0 unrecorded=0
+  client=0 addr=139637976856364 RTT=28ms tx=58 kbit/s
+  client=1 addr=139637976856366 RTT=22ms tx=57 kbit/s
+  client=2 addr=139637976851770 RTT=25ms tx=18 kbit/s
+  client=3 addr=139637976851769 RTT=18ms tx=21 kbit/s
+DISCONNECT client=3 reason=Client_Disconnect
+DISCONNECT client=0 reason=Timeout
+DISCONNECT client=1 reason=Client_Disconnect
+HOST left; server will exit in 5s
+DISCONNECT client=2 reason=Client_Disconnect
+SERVER time=20s tick=1201 active=0 overruns=0 hashes=8 mismatches=0 unrecorded=0
+SERVER host-left shutdown
+SERVER final hashes=8 mismatches=0 unrecorded=0

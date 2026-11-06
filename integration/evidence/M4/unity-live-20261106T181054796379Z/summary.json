@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "seconds_after_readiness": 6,
+  "capture_only": true,
+  "two_unity": false,
+  "time_scale": 1,
+  "failure": "",
+  "exit_codes": {
+    "unity": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "hash_checks": 11,
+  "hash_mismatches": 0,
+  "hash_coverage": "hash-coverage.json",
+  "unity_native_tag": "773740224102240750",
+  "unity_plugin_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "51192",
+      "--seconds",
+      "186",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-unity\\Interop.dll",
+      "51192",
+      "16",
+      "5",
+      "single"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "51192",
+      "--bom-smoke-seconds",
+      "0",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T181054796379Z\\start.signal",
+      "--bom-time-scale",
+      "1",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T181054796379Z\\unity.log",
+      "--bom-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T181054796379Z\\scene.png"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:51192",
+      "--seconds",
+      "6"
+    ]
+  }
+}

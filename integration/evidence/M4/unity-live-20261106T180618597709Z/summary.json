@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "seconds_after_readiness": 24,
+  "capture_only": false,
+  "two_unity": true,
+  "time_scale": 0.0,
+  "failure": "",
+  "exit_codes": {
+    "unity": 0,
+    "unity-late": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "hash_checks": 27,
+  "hash_mismatches": 0,
+  "hash_coverage": "hash-coverage.json",
+  "unity_native_tag": "773740224102240750",
+  "unity_plugin_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "60240",
+      "--seconds",
+      "204",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-unity\\Interop.dll",
+      "60240",
+      "34",
+      "15",
+      "single"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "60240",
+      "--bom-smoke-seconds",
+      "24",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T180618597709Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T180618597709Z\\unity.log"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:60240",
+      "--seconds",
+      "24"
+    ],
+    "unity-late": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "60240",
+      "--bom-smoke-seconds",
+      "24",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T180618597709Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T180618597709Z\\unity-late.log"
+    ]
+  }
+}

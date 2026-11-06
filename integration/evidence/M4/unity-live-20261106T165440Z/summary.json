@@ -1,0 +1,81 @@
+{
+  "status": "failed",
+  "seconds": 24,
+  "capture_only": false,
+  "two_unity": true,
+  "exit_codes": {
+    "unity": 3,
+    "unity-late": 3,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "hash_checks": 79,
+  "hash_mismatches": 0,
+  "unity_native_tag": "834183206547387052",
+  "unity_plugin_sha256": "bb94cae856a2aba354ad8e68c65f93e4fd6bc116d7500939b80f4a6c6fc8b590",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "54250",
+      "--seconds",
+      "41",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-unity\\Interop.dll",
+      "54250",
+      "34",
+      "15",
+      "single"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "54250",
+      "--bom-smoke-seconds",
+      "24",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T165440Z\\unity.log"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:54250",
+      "--seconds",
+      "29"
+    ],
+    "unity-late": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "54250",
+      "--bom-smoke-seconds",
+      "24",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T165440Z\\unity-late.log"
+    ]
+  }
+}

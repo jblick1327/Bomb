@@ -1,0 +1,267 @@
+BOM staging server listening on 127.0.0.1:51999 only; tick=60Hz
+CONNECT client=0
+HELLO OK client=0 role=player
+CONNECT client=1
+CONNECT client=2
+HELLO OK client=1 role=HOST
+HELLO OK client=2 role=player
+COMMAND REJECT client=2 reason=host only
+COMMAND OK client=1 op=3 epoch=3
+COMMAND OK client=1 op=1 epoch=4
+DISCONNECT client=2 reason=Client_Disconnect
+CONNECT client=2
+HELLO OK client=2 role=player
+SERVER time=10s tick=600 active=3 overruns=0 hashes=7 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=24ms tx=63 kbit/s
+  client=1 addr=139637976845089 RTT=16ms tx=61 kbit/s
+  client=2 addr=139637976852133 RTT=17ms tx=20 kbit/s
+SERVER time=20s tick=1200 active=3 overruns=0 hashes=7 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=40ms tx=19 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=19 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=19 kbit/s
+SERVER time=30s tick=1800 active=3 overruns=0 hashes=7 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=25ms tx=20 kbit/s
+  client=1 addr=139637976845089 RTT=21ms tx=20 kbit/s
+  client=2 addr=139637976852133 RTT=19ms tx=20 kbit/s
+SERVER time=40s tick=2400 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=41ms tx=30 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=30 kbit/s
+  client=2 addr=139637976852133 RTT=30ms tx=30 kbit/s
+SERVER time=50s tick=3000 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=24ms tx=19 kbit/s
+  client=1 addr=139637976845089 RTT=20ms tx=19 kbit/s
+  client=2 addr=139637976852133 RTT=19ms tx=19 kbit/s
+SERVER time=60s tick=3600 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=26 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=25 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=25 kbit/s
+SERVER time=70s tick=4200 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=27ms tx=24 kbit/s
+  client=1 addr=139637976845089 RTT=19ms tx=24 kbit/s
+  client=2 addr=139637976852133 RTT=19ms tx=23 kbit/s
+SERVER time=80s tick=4800 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=23 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=23 kbit/s
+  client=2 addr=139637976852133 RTT=30ms tx=23 kbit/s
+SERVER time=90s tick=5400 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=26ms tx=22 kbit/s
+  client=1 addr=139637976845089 RTT=19ms tx=22 kbit/s
+  client=2 addr=139637976852133 RTT=21ms tx=22 kbit/s
+SERVER time=100s tick=6000 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=40ms tx=24 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=24 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=23 kbit/s
+SERVER time=110s tick=6600 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=23ms tx=22 kbit/s
+  client=1 addr=139637976845089 RTT=17ms tx=22 kbit/s
+  client=2 addr=139637976852133 RTT=18ms tx=22 kbit/s
+SERVER time=120s tick=7200 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=33ms tx=22 kbit/s
+  client=1 addr=139637976845089 RTT=18ms tx=22 kbit/s
+  client=2 addr=139637976852133 RTT=20ms tx=22 kbit/s
+SERVER time=130s tick=7800 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=23ms tx=22 kbit/s
+  client=1 addr=139637976845089 RTT=16ms tx=22 kbit/s
+  client=2 addr=139637976852133 RTT=17ms tx=22 kbit/s
+SERVER time=140s tick=8400 active=3 overruns=0 hashes=37 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=32ms tx=23 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=23 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=22 kbit/s
+SERVER time=150s tick=9000 active=3 overruns=0 hashes=40 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=26ms tx=29 kbit/s
+  client=1 addr=139637976845089 RTT=16ms tx=29 kbit/s
+  client=2 addr=139637976852133 RTT=18ms tx=28 kbit/s
+SERVER time=160s tick=9600 active=3 overruns=0 hashes=43 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=37ms tx=53 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=52 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=51 kbit/s
+SERVER time=170s tick=10200 active=3 overruns=0 hashes=49 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=24ms tx=64 kbit/s
+  client=1 addr=139637976845089 RTT=16ms tx=62 kbit/s
+  client=2 addr=139637976852133 RTT=17ms tx=62 kbit/s
+SERVER time=180s tick=10800 active=3 overruns=0 hashes=49 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=28ms tx=46 kbit/s
+  client=1 addr=139637976845089 RTT=18ms tx=45 kbit/s
+  client=2 addr=139637976852133 RTT=20ms tx=45 kbit/s
+SERVER time=190s tick=11400 active=3 overruns=0 hashes=49 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=40ms tx=59 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=58 kbit/s
+  client=2 addr=139637976852133 RTT=32ms tx=57 kbit/s
+SERVER time=200s tick=12000 active=3 overruns=0 hashes=49 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=24ms tx=63 kbit/s
+  client=1 addr=139637976845089 RTT=15ms tx=62 kbit/s
+  client=2 addr=139637976852133 RTT=16ms tx=61 kbit/s
+SERVER time=210s tick=12600 active=3 overruns=0 hashes=49 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=37ms tx=57 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=55 kbit/s
+  client=2 addr=139637976852133 RTT=30ms tx=55 kbit/s
+SERVER time=220s tick=13200 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=66 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=64 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=64 kbit/s
+SERVER time=230s tick=13800 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=32ms tx=45 kbit/s
+  client=1 addr=139637976845089 RTT=26ms tx=44 kbit/s
+  client=2 addr=139637976852133 RTT=26ms tx=44 kbit/s
+SERVER time=240s tick=14400 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=52 kbit/s
+  client=1 addr=139637976845089 RTT=30ms tx=50 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=50 kbit/s
+SERVER time=250s tick=15000 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=33ms tx=38 kbit/s
+  client=1 addr=139637976845089 RTT=25ms tx=37 kbit/s
+  client=2 addr=139637976852133 RTT=27ms tx=38 kbit/s
+SERVER time=260s tick=15600 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=35ms tx=31 kbit/s
+  client=1 addr=139637976845089 RTT=28ms tx=31 kbit/s
+  client=2 addr=139637976852133 RTT=30ms tx=31 kbit/s
+SERVER time=270s tick=16200 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=40ms tx=33 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=32 kbit/s
+  client=2 addr=139637976852133 RTT=30ms tx=32 kbit/s
+SERVER time=280s tick=16800 active=3 overruns=0 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=41ms tx=32 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=31 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=31 kbit/s
+server tick overrun at 280.39s: dropping 22.9ms of accumulated time
+SERVER time=290s tick=17399 active=3 overruns=1 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=34ms tx=35 kbit/s
+  client=1 addr=139637976845089 RTT=27ms tx=34 kbit/s
+  client=2 addr=139637976852133 RTT=27ms tx=34 kbit/s
+SERVER time=300s tick=17999 active=3 overruns=1 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=34 kbit/s
+  client=1 addr=139637976845089 RTT=32ms tx=33 kbit/s
+  client=2 addr=139637976852133 RTT=32ms tx=33 kbit/s
+SERVER time=310s tick=18599 active=3 overruns=1 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=27ms tx=38 kbit/s
+  client=1 addr=139637976845089 RTT=22ms tx=37 kbit/s
+  client=2 addr=139637976852133 RTT=25ms tx=37 kbit/s
+server tick overrun at 318.35s: dropping 23.3ms of accumulated time
+server tick overrun at 319.19s: dropping 60.4ms of accumulated time
+server tick overrun at 319.52s: dropping 166.7ms of accumulated time
+server tick overrun at 319.71s: dropping 30.9ms of accumulated time
+SERVER time=320s tick=19177 active=3 overruns=5 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=32ms tx=38 kbit/s
+  client=1 addr=139637976845089 RTT=24ms tx=37 kbit/s
+  client=2 addr=139637976852133 RTT=24ms tx=37 kbit/s
+server tick overrun at 320.58s: dropping 69.3ms of accumulated time
+server tick overrun at 321.04s: dropping 38.4ms of accumulated time
+server tick overrun at 322.89s: dropping 34.8ms of accumulated time
+SERVER time=330s tick=19769 active=3 overruns=8 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=35ms tx=43 kbit/s
+  client=1 addr=139637976845089 RTT=28ms tx=43 kbit/s
+  client=2 addr=139637976852133 RTT=28ms tx=43 kbit/s
+SERVER time=340s tick=20368 active=3 overruns=8 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=51 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=49 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=49 kbit/s
+SERVER time=350s tick=20969 active=3 overruns=8 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=34ms tx=41 kbit/s
+  client=1 addr=139637976845089 RTT=27ms tx=40 kbit/s
+  client=2 addr=139637976852133 RTT=27ms tx=40 kbit/s
+SERVER time=360s tick=21569 active=3 overruns=8 hashes=52 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=41ms tx=57 kbit/s
+  client=1 addr=139637976845089 RTT=27ms tx=55 kbit/s
+  client=2 addr=139637976852133 RTT=27ms tx=55 kbit/s
+SERVER time=370s tick=22168 active=3 overruns=8 hashes=55 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=21ms tx=42 kbit/s
+  client=1 addr=139637976845089 RTT=18ms tx=40 kbit/s
+  client=2 addr=139637976852133 RTT=18ms tx=40 kbit/s
+SERVER time=380s tick=22770 active=3 overruns=8 hashes=55 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=38ms tx=34 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=33 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=33 kbit/s
+SERVER time=390s tick=23369 active=3 overruns=8 hashes=55 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=38ms tx=49 kbit/s
+  client=1 addr=139637976845089 RTT=34ms tx=47 kbit/s
+  client=2 addr=139637976852133 RTT=34ms tx=47 kbit/s
+SERVER time=400s tick=23968 active=3 overruns=8 hashes=55 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=27ms tx=44 kbit/s
+  client=1 addr=139637976845089 RTT=21ms tx=42 kbit/s
+  client=2 addr=139637976852133 RTT=23ms tx=42 kbit/s
+SERVER time=410s tick=24569 active=3 overruns=8 hashes=58 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=26ms tx=35 kbit/s
+  client=1 addr=139637976845089 RTT=22ms tx=34 kbit/s
+  client=2 addr=139637976852133 RTT=22ms tx=34 kbit/s
+SERVER time=420s tick=25168 active=3 overruns=8 hashes=61 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=32ms tx=33 kbit/s
+  client=1 addr=139637976845089 RTT=22ms tx=31 kbit/s
+  client=2 addr=139637976852133 RTT=22ms tx=32 kbit/s
+SERVER time=430s tick=25769 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=37ms tx=53 kbit/s
+  client=1 addr=139637976845089 RTT=27ms tx=51 kbit/s
+  client=2 addr=139637976852133 RTT=28ms tx=51 kbit/s
+SERVER time=440s tick=26370 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=56ms tx=71 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=68 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=69 kbit/s
+SERVER time=450s tick=26968 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=25ms tx=81 kbit/s
+  client=1 addr=139637976845089 RTT=21ms tx=78 kbit/s
+  client=2 addr=139637976852133 RTT=21ms tx=78 kbit/s
+SERVER time=460s tick=27568 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=43ms tx=81 kbit/s
+  client=1 addr=139637976845089 RTT=35ms tx=78 kbit/s
+  client=2 addr=139637976852133 RTT=35ms tx=78 kbit/s
+SERVER time=470s tick=28168 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=39ms tx=65 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=63 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=63 kbit/s
+SERVER time=480s tick=28769 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=34ms tx=76 kbit/s
+  client=1 addr=139637976845089 RTT=38ms tx=73 kbit/s
+  client=2 addr=139637976852133 RTT=39ms tx=73 kbit/s
+SERVER time=490s tick=29369 active=3 overruns=8 hashes=85 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=30ms tx=50 kbit/s
+  client=1 addr=139637976845089 RTT=28ms tx=48 kbit/s
+  client=2 addr=139637976852133 RTT=28ms tx=48 kbit/s
+SERVER time=500s tick=29969 active=3 overruns=8 hashes=88 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=29ms tx=74 kbit/s
+  client=1 addr=139637976845089 RTT=29ms tx=72 kbit/s
+  client=2 addr=139637976852133 RTT=29ms tx=72 kbit/s
+SERVER time=510s tick=30570 active=3 overruns=8 hashes=94 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=38ms tx=67 kbit/s
+  client=1 addr=139637976845089 RTT=28ms tx=65 kbit/s
+  client=2 addr=139637976852133 RTT=25ms tx=65 kbit/s
+SERVER time=520s tick=31168 active=3 overruns=8 hashes=97 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=36ms tx=51 kbit/s
+  client=1 addr=139637976845089 RTT=32ms tx=49 kbit/s
+  client=2 addr=139637976852133 RTT=32ms tx=50 kbit/s
+SERVER time=530s tick=31768 active=3 overruns=8 hashes=97 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=27ms tx=35 kbit/s
+  client=1 addr=139637976845089 RTT=23ms tx=35 kbit/s
+  client=2 addr=139637976852133 RTT=22ms tx=35 kbit/s
+SERVER time=540s tick=32369 active=3 overruns=8 hashes=97 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=27ms tx=47 kbit/s
+  client=1 addr=139637976845089 RTT=24ms tx=45 kbit/s
+  client=2 addr=139637976852133 RTT=24ms tx=45 kbit/s
+SERVER time=550s tick=32968 active=3 overruns=8 hashes=100 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=24ms tx=39 kbit/s
+  client=1 addr=139637976845089 RTT=19ms tx=38 kbit/s
+  client=2 addr=139637976852133 RTT=19ms tx=38 kbit/s
+SERVER time=560s tick=33569 active=3 overruns=8 hashes=103 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=20ms tx=39 kbit/s
+  client=1 addr=139637976845089 RTT=23ms tx=38 kbit/s
+  client=2 addr=139637976852133 RTT=24ms tx=38 kbit/s
+SERVER time=570s tick=34169 active=3 overruns=8 hashes=103 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=34ms tx=31 kbit/s
+  client=1 addr=139637976845089 RTT=31ms tx=30 kbit/s
+  client=2 addr=139637976852133 RTT=31ms tx=31 kbit/s
+SERVER time=580s tick=34768 active=3 overruns=8 hashes=103 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=25ms tx=35 kbit/s
+  client=1 addr=139637976845089 RTT=33ms tx=34 kbit/s
+  client=2 addr=139637976852133 RTT=33ms tx=34 kbit/s
+SERVER time=590s tick=35369 active=3 overruns=8 hashes=103 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=34ms tx=35 kbit/s
+  client=1 addr=139637976845089 RTT=24ms tx=34 kbit/s
+  client=2 addr=139637976852133 RTT=24ms tx=34 kbit/s
+SERVER time=600s tick=35969 active=3 overruns=8 hashes=103 mismatches=0 unrecorded=0
+  client=0 addr=139637976845088 RTT=22ms tx=68 kbit/s
+  client=1 addr=139637976845089 RTT=23ms tx=40 kbit/s
+  client=2 addr=139637976852133 RTT=23ms tx=40 kbit/s
+DISCONNECT client=1 reason=Client_Disconnect
+HOST left; server will exit in 5s
+DISCONNECT client=2 reason=Client_Disconnect
+DISCONNECT client=0 reason=Timeout
+SERVER host-left shutdown
+SERVER final hashes=103 mismatches=0 unrecorded=0

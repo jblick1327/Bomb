@@ -1,0 +1,40 @@
+BOM staging server listening on 127.0.0.1:60041 only; tick=60Hz
+CONNECT client=0
+HELLO OK client=0 role=player
+CONNECT client=1
+CONNECT client=2
+HELLO OK client=1 role=HOST
+HELLO OK client=2 role=player
+server tick overrun at 4.73s: dropping 32.5ms of accumulated time
+COMMAND OK client=1 op=1 epoch=4
+server tick overrun at 6.86s: dropping 110.2ms of accumulated time
+DISCONNECT client=2 reason=Client_Disconnect
+CONNECT client=2
+HELLO OK client=2 role=player
+SERVER time=10s tick=591 active=3 overruns=2 hashes=13 mismatches=0 unrecorded=0
+  client=0 addr=139637976852846 RTT=37ms tx=74 kbit/s
+  client=1 addr=139637976852847 RTT=24ms tx=59 kbit/s
+  client=2 addr=139637976852849 RTT=28ms tx=19 kbit/s
+server tick overrun at 12.93s: dropping 103.0ms of accumulated time
+server tick overrun at 13.05s: dropping 39.9ms of accumulated time
+server tick overrun at 13.24s: dropping 22.5ms of accumulated time
+server tick overrun at 13.43s: dropping 22.7ms of accumulated time
+server tick overrun at 13.70s: dropping 20.0ms of accumulated time
+server tick overrun at 13.99s: dropping 35.7ms of accumulated time
+server tick overrun at 14.37s: dropping 67.6ms of accumulated time
+server tick overrun at 14.56s: dropping 21.2ms of accumulated time
+server tick overrun at 14.91s: dropping 22.7ms of accumulated time
+server tick overrun at 15.13s: dropping 44.3ms of accumulated time
+server tick overrun at 15.32s: dropping 25.0ms of accumulated time
+server tick overrun at 15.43s: dropping 26.6ms of accumulated time
+server tick overrun at 19.58s: dropping 17.4ms of accumulated time
+SERVER time=20s tick=1167 active=3 overruns=15 hashes=43 mismatches=0 unrecorded=0
+  client=0 addr=139637976852846 RTT=68ms tx=106 kbit/s
+  client=1 addr=139637976852847 RTT=104ms tx=78 kbit/s
+  client=2 addr=139637976852849 RTT=105ms tx=79 kbit/s
+server tick overrun at 20.51s: dropping 19.7ms of accumulated time
+DISCONNECT client=1 reason=Client_Disconnect
+HOST left; server will exit in 5s
+DISCONNECT client=2 reason=Client_Disconnect
+DISCONNECT client=0 reason=Timeout
+SERVER final hashes=43 mismatches=0 unrecorded=0

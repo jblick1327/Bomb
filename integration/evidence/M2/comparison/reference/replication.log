@@ -1,0 +1,50 @@
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+== (a)(b)(c)(d1) lockstep soak: 4 bots blasting, falling bombs, two-minute refills, late join at minute 10, 10 render samples
+RENDER tick=3037 cells=348 identical=true
+RENDER tick=3090 cells=337 identical=true
+RENDER tick=3516 cells=311 identical=true
+RENDER tick=3573 cells=301 identical=true
+RENDER tick=3744 cells=274 identical=true
+RENDER tick=3847 cells=282 identical=true
+RENDER tick=6218 cells=167 identical=true
+RENDER tick=6579 cells=136 identical=true
+RENDER tick=6915 cells=112 identical=true
+RENDER tick=7151 cells=95 identical=true
+LOCKSTEP ticks=7200 deltas=254 baselines=2 first_mismatch=0 (0 = none) wall=38.3s
+DELTA size count=254 p50=188 p99=4943 max=6022 bytes
+BASELINE start=21081 bytes end=8442 bytes; largest message=25692 bytes, largest part=21085 bytes, most parts=1
+LATE JOIN join_tick=3600 ticks_verified=3600 mismatch=0 (0 = none)
+RENDER samples=10 identical=10
+DELTA generation count=254 p50=0.4335 p99=1.0582 max=1.2202 ms
+BLASTS queued by bots=79
+POSE (1) soak, 4 bots blasting + bombs ticks=7200 awake_at_start=27 changed_at_start=27
+POSE (1) soak, 4 bots blasting + bombs awake p50=221 p95=310 p99=317 max=324
+POSE (1) soak, 4 bots blasting + bombs changed p50=157 p95=263 p99=285 max=308
+POSE context (1) soak, 4 bots blasting + bombs max_awake ticks_since_explosion=1 ticks_since_refill=1721
+POSE (1) soak, 4 bots blasting + bombs max_awake tick=1721 (28.7s) awake=324 [rigid 302, rubber 17, bombs 1, players 4] changed=296 [rigid 274, rubber 17, bombs 1, players 4] explosions_this_tick=0 refill=false
+POSE context (1) soak, 4 bots blasting + bombs max_changed ticks_since_explosion=0 ticks_since_refill=1400
+POSE (1) soak, 4 bots blasting + bombs max_changed tick=1400 (23.3s) awake=317 [rigid 295, rubber 17, bombs 1, players 4] changed=308 [rigid 286, rubber 17, bombs 1, players 4] explosions_this_tick=1 refill=false
+== (d2) rubble field: Materials preset, 6 spread radius-5 blasts, settled; 4 bots walking 5 minutes, no blasts or bombs
+PROGRESS rubble tick=3600/18000 deltas=0 mismatch=0
+PROGRESS rubble tick=7200/18000 deltas=0 mismatch=0
+PROGRESS rubble tick=10800/18000 deltas=0 mismatch=0
+PROGRESS rubble tick=14400/18000 deltas=0 mismatch=0
+PROGRESS rubble tick=18000/18000 deltas=0 mismatch=0
+POSE (2) rubble field, 4 bots walking ticks=18000 awake_at_start=232 changed_at_start=233
+POSE (2) rubble field, 4 bots walking awake p50=246 p95=269 p99=270 max=270
+POSE (2) rubble field, 4 bots walking changed p50=103 p95=176 p99=199 max=236
+POSE context (2) rubble field, 4 bots walking max_awake ticks_since_explosion=17745 ticks_since_refill=17745
+POSE (2) rubble field, 4 bots walking max_awake tick=17745 (295.8s) awake=270 [rigid 246, rubber 20, bombs 0, players 4] changed=169 [rigid 145, rubber 20, bombs 0, players 4] explosions_this_tick=0 refill=false
+POSE context (2) rubble field, 4 bots walking max_changed ticks_since_explosion=14842 ticks_since_refill=14842
+POSE (2) rubble field, 4 bots walking max_changed tick=14842 (247.4s) awake=261 [rigid 237, rubber 20, bombs 0, players 4] changed=236 [rigid 212, rubber 20, bombs 0, players 4] explosions_this_tick=0 refill=false
+== (d3) scenario (1) with 1 bot
+POSE (3) soak, 1 bot blasting + bombs ticks=7200 awake_at_start=24 changed_at_start=24
+POSE (3) soak, 1 bot blasting + bombs awake p50=214 p95=287 p99=314 max=320
+POSE (3) soak, 1 bot blasting + bombs changed p50=132 p95=230 p99=262 max=290
+POSE context (3) soak, 1 bot blasting + bombs max_awake ticks_since_explosion=8 ticks_since_refill=1597
+POSE (3) soak, 1 bot blasting + bombs max_awake tick=1597 (26.6s) awake=320 [rigid 301, rubber 16, bombs 2, players 1] changed=253 [rigid 234, rubber 16, bombs 2, players 1] explosions_this_tick=0 refill=false
+POSE context (3) soak, 1 bot blasting + bombs max_changed ticks_since_explosion=1 ticks_since_refill=1617
+POSE (3) soak, 1 bot blasting + bombs max_changed tick=1617 (26.9s) awake=305 [rigid 287, rubber 16, bombs 1, players 1] changed=290 [rigid 272, rubber 16, bombs 1, players 1] explosions_this_tick=0 refill=false
+Replication teardown Odin=0 Box2D=0 texture=0 shader=0 fonts=false

@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "seconds": 100,
+  "capture_only": false,
+  "exit_codes": {
+    "unity": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "hash_checks": 40,
+  "hash_mismatches": 0,
+  "unity_native_tag": "535826797783971106",
+  "unity_plugin_sha256": "d356ec0f09a5d1159f65db231be436c3c4b9831acca265c5c3ee4e7346f6c276",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "53834",
+      "--seconds",
+      "117",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "53834",
+      "110"
+    ],
+    "unity": [
+      "C:\\Program Files\\Unity\\Hub\\Editor\\6000.2.14f1\\Editor\\Unity.exe",
+      "-batchmode",
+      "-projectPath",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-baseline",
+      "-executeMethod",
+      "BomEditorLifecycle.Run",
+      "--bom-port",
+      "53834",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T155834Z\\unity.log"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:53834",
+      "--seconds",
+      "105"
+    ]
+  }
+}

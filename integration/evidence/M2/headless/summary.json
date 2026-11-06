@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "51991",
+      "--seconds",
+      "28",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "old-client": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\reference\\BOM-reference.exe",
+      "--bot-client",
+      "127.0.0.1:51991",
+      "--seconds",
+      "22"
+    ],
+    "shared-host": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:51991",
+      "--seconds",
+      "20",
+      "--host-token",
+      "[REDACTED]",
+      "--host-reset"
+    ],
+    "late-client": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:51991",
+      "--seconds",
+      "10"
+    ]
+  },
+  "exit_codes": {
+    "late-client": 0,
+    "shared-host": 0,
+    "old-client": 0,
+    "server": 0
+  },
+  "hash_comparisons": 38,
+  "mismatches": 0,
+  "unrecorded": 0,
+  "reset_command_observed": true,
+  "description": "Real dedicated headless server, pre-extraction reference bot, shared-core bot/host, authorized reset, late-joining shared-core bot."
+}

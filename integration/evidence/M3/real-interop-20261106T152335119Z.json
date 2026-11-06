@@ -1,0 +1,94 @@
+{
+  "scope": "Real DLL ABI/lifecycle and optional UDP run; remaining M3 gates are tracked separately",
+  "status": "passed",
+  "exit_code": 0,
+  "commands": [
+    {
+      "log": "live-dll-build-20261106T152335119Z.log",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\scripts\\build-client.ps1",
+        "-ConfigPath",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\local.config.json"
+      ],
+      "exit_code": 0,
+      "program": "pwsh"
+    },
+    {
+      "log": "generate-c-caller-20261106T152335119Z.log",
+      "arguments": [
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\scripts\\generate-interop-caller.py"
+      ],
+      "exit_code": 0,
+      "program": "python"
+    },
+    {
+      "log": "c-build-20261106T152335119Z.log",
+      "arguments": [
+        "/nologo",
+        "/W4",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\tests\\interop\\layout_test.c",
+        "/FoC:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\layout-test.obj",
+        "/FeC:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\layout-test.exe",
+        "/link",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\bomcore.lib",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "program": "cl.exe"
+    },
+    {
+      "log": "c-abi-lifetime-overflow-20261106T152335119Z.log",
+      "arguments": [],
+      "exit_code": 0,
+      "program": "layout-test.exe"
+    },
+    {
+      "log": "managed-build-20261106T152335119Z.log",
+      "arguments": [
+        "build",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\tests\\interop\\Interop.csproj",
+        "--source",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\empty-nuget",
+        "--nologo",
+        "-o",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop"
+      ],
+      "exit_code": 0,
+      "program": "dotnet"
+    },
+    {
+      "log": "managed-abi-lifetime-20261106T152335119Z.log",
+      "arguments": [
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll"
+      ],
+      "exit_code": 0,
+      "program": "dotnet"
+    },
+    {
+      "log": "real-udp-20261106T152335119Z.log",
+      "arguments": [
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\tools\\Run-LiveInterop.py",
+        "--config",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\local.config.json",
+        "--seconds",
+        "25"
+      ],
+      "exit_code": 0,
+      "program": "python"
+    }
+  ],
+  "errors": [],
+  "native_identity": {
+    "abi_major": 1,
+    "source_sha256": "67a8fb5e771a8002b281fbc17dcfcc42560a0b673f6c3083e951044ba870eff8",
+    "build_tag": 466843522821105664,
+    "dll_sha256": "35871bab78305f48076076c9cf1e768da19c72c9a17cf47c8088cc8d5baf0e2b",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 3,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "remaining_gate": "M3 validation in progress"
+  }
+}

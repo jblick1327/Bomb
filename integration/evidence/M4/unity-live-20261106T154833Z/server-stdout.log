@@ -1,0 +1,37 @@
+BOM staging server listening on 127.0.0.1:50660 only; tick=60Hz
+CONNECT client=0
+CONNECT client=1
+HELLO OK client=0 role=HOST
+HELLO OK client=1 role=player
+CONNECT client=2
+HELLO OK client=2 role=player
+COMMAND REJECT client=1 reason=host only
+COMMAND OK client=0 op=3 epoch=3
+COMMAND OK client=0 op=1 epoch=4
+DISCONNECT client=1 reason=Client_Disconnect
+CONNECT client=1
+HELLO OK client=1 role=player
+SERVER time=10s tick=600 active=3 overruns=0 hashes=7 mismatches=0 unrecorded=0
+  client=0 addr=139637976843749 RTT=26ms tx=62 kbit/s
+  client=1 addr=139637976843754 RTT=26ms tx=21 kbit/s
+  client=2 addr=139637976843751 RTT=38ms tx=60 kbit/s
+SERVER time=20s tick=1200 active=3 overruns=0 hashes=7 mismatches=0 unrecorded=0
+  client=0 addr=139637976843749 RTT=30ms tx=19 kbit/s
+  client=1 addr=139637976843754 RTT=29ms tx=19 kbit/s
+  client=2 addr=139637976843751 RTT=35ms tx=19 kbit/s
+CONNECT client=3
+HELLO OK client=3 role=player
+SERVER time=30s tick=1800 active=4 overruns=0 hashes=41 mismatches=0 unrecorded=0
+  client=0 addr=139637976843749 RTT=30ms tx=22 kbit/s
+  client=1 addr=139637976843754 RTT=31ms tx=22 kbit/s
+  client=2 addr=139637976843751 RTT=40ms tx=68 kbit/s
+  client=3 addr=139637976856524 RTT=15ms tx=33 kbit/s
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+DISCONNECT client=1 reason=Client_Disconnect
+DISCONNECT client=2 reason=Timeout
+DISCONNECT client=3 reason=Client_Disconnect
+CONNECT client=0
+HELLO OK client=0 role=player
+SERVER host-left shutdown
+SERVER final hashes=42 mismatches=0 unrecorded=0

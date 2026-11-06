@@ -1,6 +1,6 @@
 {
   "milestone": "M0",
-  "status": "in_progress",
+  "status": "passed",
   "commands": [
     {
       "command": "scripts/bom.ps1 Build -CompilerArguments -ignore-vs-search",
@@ -25,15 +25,13 @@
       "log": "unity-import.log"
     }
   ],
-  "pending": [
-    "Rendered Odin/Unity yard/HUD captures",
-    "Unity standalone build/runtime validation",
-    "Installed IL2CPP Windows module confirmation",
-    "Full object classification/missing-reference audit"
-  ],
+  "pending": [],
   "notes": [
     "Short soak summaries are in separate JSON files. Their minutes are simulated time, not real-process soak duration.",
     "Restricted NetTest failed real socket traffic; unrestricted rerun passed.",
-    "Duplicate Unity retry exited 1 while first isolated import still held the project; first import later completed successfully."
-  ]
+    "Duplicate Unity retry exited 1 while first isolated import still held the project; first import later completed successfully.",
+    "Original yard and HUD captures reviewed; no missing scripts; four original rock-mesh references and original non-readable terrain collision errors recorded separately.",
+    "Unity standalone Mono and IL2CPP support verified without upgrading the Editor or pinned packages."
+  ],
+  "unity_baseline": "unity-baseline/summary.json"
 }

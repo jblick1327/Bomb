@@ -1,0 +1,118 @@
+BOM staging server listening on 127.0.0.1:56899 only; tick=60Hz
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=1076 tick=18 queued=yes
+HELLO OK client=0 role=HOST
+HASH REPORT client=0 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=22 result=match
+CONNECT client=1
+HASH EXPECT client=1 connection=1 epoch=3 revision=1076 tick=42 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=47 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=1144 tick=199 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=1144 tick=199 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=1144 hash=10367298580589260676 tick=202 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=1144 hash=10367298580589260676 tick=219 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=1145 tick=299 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=1145 tick=299 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=1145 hash=1351181034753560791 tick=302 result=match
+COMMAND OK client=0 op=1 epoch=4
+HASH EXPECT client=0 connection=1 epoch=4 revision=1076 tick=319 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1076 tick=319 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=1145 hash=1351181034753560791 tick=322 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=322 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=324 result=match
+SERVER time=10s tick=600 active=2 overruns=0 hashes=8 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=17ms tx=62 kbit/s
+  client=1 addr=139637976849989 RTT=25ms tx=60 kbit/s
+HASH EXPECT client=0 connection=1 epoch=4 revision=1122 tick=737 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1122 tick=737 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1122 hash=8965289146301242433 tick=740 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1122 hash=8965289146301242433 tick=761 result=match
+CONNECT client=2
+HASH EXPECT client=2 connection=1 epoch=4 revision=1122 tick=923 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=2 connection=1 epoch=4 revision=1122 hash=8965289146301242433 tick=926 result=match
+SERVER time=20s tick=1200 active=3 overruns=0 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=31ms tx=27 kbit/s
+  client=1 addr=139637976849989 RTT=39ms tx=28 kbit/s
+  client=2 addr=139637976851035 RTT=16ms tx=24 kbit/s
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=1248
+CONNECT client=2
+HASH EXPECT client=2 connection=2 epoch=4 revision=1122 tick=1367 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=2 connection=2 epoch=4 revision=1122 hash=8965289146301242433 tick=1370 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=1162 tick=1622 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1162 tick=1622 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=1162 tick=1622 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1162 hash=8366680295660954409 tick=1625 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=1162 hash=8366680295660954409 tick=1625 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1162 hash=8366680295660954409 tick=1652 result=match
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=2 tick=1727
+SERVER time=30s tick=1800 active=2 overruns=0 hashes=15 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=23ms tx=20 kbit/s
+  client=1 addr=139637976849989 RTT=32ms tx=20 kbit/s
+CONNECT client=2
+HASH EXPECT client=2 connection=3 epoch=4 revision=1162 tick=1845 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=2 connection=3 epoch=4 revision=1162 hash=8366680295660954409 tick=1848 result=match
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=3 tick=2204
+HASH EXPECT client=0 connection=1 epoch=4 revision=1371 tick=2308 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1371 tick=2308 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1371 hash=2151230506347454436 tick=2311 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1371 hash=2151230506347454436 tick=2317 result=match
+SERVER time=40s tick=2400 active=2 overruns=0 hashes=18 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=28ms tx=30 kbit/s
+  client=1 addr=139637976849989 RTT=34ms tx=30 kbit/s
+SERVER time=50s tick=3000 active=2 overruns=0 hashes=18 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=16ms tx=21 kbit/s
+  client=1 addr=139637976849989 RTT=24ms tx=21 kbit/s
+HASH EXPECT client=0 connection=1 epoch=4 revision=1376 tick=3248 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1376 tick=3248 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1376 hash=16414870643710217712 tick=3250 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1376 hash=16414870643710217712 tick=3266 result=match
+SERVER time=60s tick=3600 active=2 overruns=0 hashes=20 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=29ms tx=53 kbit/s
+  client=1 addr=139637976849989 RTT=35ms tx=54 kbit/s
+SERVER time=70s tick=4200 active=2 overruns=0 hashes=20 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=14ms tx=28 kbit/s
+  client=1 addr=139637976849989 RTT=19ms tx=29 kbit/s
+HASH EXPECT client=0 connection=1 epoch=4 revision=1483 tick=4519 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1483 tick=4519 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1483 hash=3127678705225190726 tick=4522 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1483 hash=3127678705225190726 tick=4539 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=1490 tick=4545 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1490 tick=4545 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1490 hash=4716912385707861121 tick=4548 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1490 hash=4716912385707861121 tick=4562 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=1497 tick=4583 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1497 tick=4583 queued=yes
+HASH EXPECT client=0 connection=1 epoch=4 revision=1502 tick=4586 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1502 tick=4586 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1497 hash=14342315703022691536 tick=4586 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=1502 hash=2141849838664345431 tick=4589 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1497 hash=14342315703022691536 tick=4604 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1502 hash=2141849838664345431 tick=4604 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=1507 tick=4742 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1507 tick=4742 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1507 hash=2621703248213674432 tick=4745 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1507 hash=2621703248213674432 tick=4773 result=match
+SERVER time=80s tick=4800 active=2 overruns=0 hashes=30 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=30ms tx=48 kbit/s
+  client=1 addr=139637976849989 RTT=39ms tx=49 kbit/s
+SERVER time=90s tick=5400 active=2 overruns=0 hashes=30 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=16ms tx=41 kbit/s
+  client=1 addr=139637976849989 RTT=23ms tx=42 kbit/s
+SERVER time=100s tick=6000 active=2 overruns=0 hashes=30 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=29ms tx=27 kbit/s
+  client=1 addr=139637976849989 RTT=39ms tx=28 kbit/s
+DISCONNECT client=1 reason=Timeout
+HASH CLOSED client=1 connection=1 tick=6340
+SERVER time=110s tick=6600 active=1 overruns=0 hashes=30 mismatches=0 unrecorded=0
+  client=0 addr=139637976849988 RTT=13ms tx=25 kbit/s
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=6617
+SERVER host-left shutdown
+SERVER final hashes=30 mismatches=0 unrecorded=0

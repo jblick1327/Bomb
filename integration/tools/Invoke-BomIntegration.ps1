@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [ValidateSet('VerifyEnvironment','Build','Test')][string]$Task='VerifyEnvironment',
-    [ValidateSet('Fast','Content','NativeInterop')][string]$Suite='Content',
+    [ValidateSet('Fast','Content','NativeInterop','NativeProof')][string]$Suite='Content',
+    [ValidateRange(0,3600)][int]$Seconds=0,
     [string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json')
 )
 $ErrorActionPreference='Stop'
@@ -16,6 +17,9 @@ try {
     if (!(Test-Path -LiteralPath $ConfigPath)) { throw 'Copy local.config.example.json to local.config.json and supply the source/tool paths.' }
     $config=Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
     if ($Task -eq 'Test' -and $Suite -eq 'NativeInterop') {
+        & (Join-Path $PSScriptRoot 'Test-RealNativeInterop.ps1') -ConfigPath $ConfigPath -Seconds $Seconds
+        if ($LASTEXITCODE -ne 0) { throw 'Real native interop failed.' }
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'NativeProof') {
         & (Join-Path $PSScriptRoot 'Test-NativeProof.ps1') -ConfigPath $ConfigPath
         if ($LASTEXITCODE -ne 0) { throw 'Native ABI proof failed.' }
     } elseif ($Task -eq 'Test' -and $Suite -eq 'Content') {
@@ -62,11 +66,15 @@ try {
             if ($config.PSObject.Properties.Name -contains 'LibraryDirectories') { $env:LIB=(@($config.LibraryDirectories) -join ';') }
             $arguments=@()
             if ($config.PSObject.Properties.Name -contains 'CompilerArguments') { $arguments=@($config.CompilerArguments) }
-            $tasks=if($Task -eq 'Build'){@('Build')}else{@('Test','NetTest')}
+            $tasks=if($Task -eq 'Build'){@('Build','Server')}else{@('Test','NetTest')}
             foreach($nativeTask in $tasks) {
                 $log=Join-Path $evidence "$nativeTask-$stamp.log"
                 & (Join-Path $config.OdinRoot 'scripts/bom.ps1') -Task $nativeTask -CompilerArguments $arguments 2>&1 | Tee-Object -FilePath $log
                 $result.checks += @{command="scripts/bom.ps1 $nativeTask";exit_code=0;log=(Split-Path -Leaf $log)}
+            }
+            if ($Task -eq 'Build') {
+                & (Join-Path $config.OdinRoot 'scripts/build-client.ps1') -ConfigPath $ConfigPath
+                if ($LASTEXITCODE -ne 0) { throw 'Real native client build failed.' }
             }
         } finally { $env:PATH=$priorPath; $env:LIB=$priorLib }
     }

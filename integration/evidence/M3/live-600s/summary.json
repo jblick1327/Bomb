@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "duration_seconds": 600,
+  "exit_codes": {
+    "native-clients": 0,
+    "observer": 0,
+    "server": 0
+  },
+  "hash_checks": 429,
+  "hash_mismatches": 0,
+  "unrecorded_hashes": 0,
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "51878",
+      "--seconds",
+      "606",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\reference\\BOM-reference.exe",
+      "--bot-client",
+      "127.0.0.1:51878",
+      "--seconds",
+      "597"
+    ],
+    "native-clients": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\interop-managed\\Interop.dll",
+      "51878",
+      "600"
+    ]
+  },
+  "loaded_native_identity": {
+    "abi_major": 1,
+    "source_sha256": "1062de5701fdebaf763bd10f5221f5433826a6917d89bcc29c5cbda3838399c1",
+    "build_tag": 73796907350089402,
+    "dll_sha256": "377c543dbc127538fd5b0e502efb41373fd0c59f7e1af554f340380519f2e82d",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 3,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "remaining_gate": "M3 validation in progress"
+  },
+  "scope": "Actual shared Odin client DLL called by two .NET handles, real dedicated server and reference observer; reset and guest reconnect. This does not establish Mono/IL2CPP or remaining M3 timing/error gates."
+}

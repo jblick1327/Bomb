@@ -1,0 +1,36 @@
+{
+  "milestone": "M4",
+  "status": "passed",
+  "identity": {
+    "abi_major": 1,
+    "abi_minor": 1,
+    "source_commit": "24ad69d3be3e3b751f08d43e207c005fa7180176",
+    "source_sha256": "abce0a2660b91ee6797c6945305a984876694fbde7889d7265eadbbdc3696725",
+    "build_tag": 773740224102240750,
+    "dll_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 3,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "mono_run": "unity-live-20261106T180618597709Z/summary.json",
+  "il2cpp_run": "unity-live-20261106T181447199186Z/summary.json",
+  "capture": "unity-live-20261106T181054796379Z/scene-Native_view.png",
+  "capture_reviewed": true,
+  "expected_matching_hashes": {
+    "mono": 27,
+    "il2cpp": 44,
+    "capture": 11
+  },
+  "missing_or_mismatching_hashes": 0,
+  "geometry": "Concave CW/CCW extrusion, closed volume/manifold, hard normals, UVs/tangents/bounds, separate cap/interior submeshes; exact native capsule and bomb dimensions.",
+  "coordinates": "Rigid reference pivots, rubber cell centers, radians and visual depth validated.",
+  "authority": "No legacy gameplay behaviours or Rigidbody/CharacterController authority in loaded/spawned native scene.",
+  "scenario": "Real native server and host, two Unity clients, Odin observer; move/jump, destruction/events, epoch reset, reconnect, already-fractured late join. Both Unity players at timeScale=0.",
+  "original_content": "605 protected files pass after final new-namespace import; actual evidence/M0/Test-Content-20261106T181516538Z.json.",
+  "prediction": "Disabled as required for M4. M5 remains incomplete.",
+  "lifecycle": "Three live play/stop cycles including disabled domain reload passed in earlier M4 run unity-live-20261106T174725322030Z; current ABI1.1 lifecycle rerun recorded separately.",
+  "current_editor_lifecycle": "unity-live-20261106T181545999026Z/summary.json",
+  "current_editor_hash_reports": 63
+}

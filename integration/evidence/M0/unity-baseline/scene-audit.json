@@ -1,0 +1,1472 @@
+{
+    "scene": "Assets/Game/Scenes/YardLevel.unity",
+    "objects": [
+        {
+            "path": "Arena",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "ArenaLayout"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Level Bounds",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.BoxCollider"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Bottom Boundary",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.BoxCollider",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Level Background",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Left Wall",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.BoxCollider"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Right Wall",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.BoxCollider"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena/Back Wall",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.BoxCollider"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.CharacterController",
+                "ArenaPlayerController"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Animator"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/BézierCurve",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.SkinnedMeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.CharacterController",
+                "ArenaPlayerController"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Animator"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/BézierCurve",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.SkinnedMeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Main Camera Solo",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Camera",
+                "UnityEngine.AudioListener",
+                "ArenaCamera",
+                "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Main Camera Multiplayer",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Camera",
+                "UnityEngine.AudioListener",
+                "ArenaCamera",
+                "UnityEngine.Rendering.Universal.UniversalAdditionalCameraData"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Directional Light",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Light",
+                "UnityEngine.Rendering.Universal.UniversalAdditionalLightData"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Bomb System",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "BombDropper",
+                "ArenaSession"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "YardLevel",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "DestructibleMultiMesh"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "YardLevel/Grass_Mesh",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "YardLevel/Ground_Mesh",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "YardLevel/Light",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Light",
+                "UnityEngine.Rendering.Universal.UniversalAdditionalLightData"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Arena UI",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.UIElements.UIDocument",
+                "ArenaHudDocument"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Rock (1)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider",
+                "DestructibleObject"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Rock (4)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider",
+                "DestructibleObject"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Rock (2)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider",
+                "DestructibleObject"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Rock (3)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider",
+                "DestructibleObject"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Terrain",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.Terrain",
+                "UnityEngine.TerrainCollider"
+            ],
+            "colliders": 1,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (3)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (4)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (1)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (5)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (2)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (6)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (7)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (8)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (9)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (10)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (11)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Fruit_Tree_01_stump",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (1)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.LODGroup"
+            ],
+            "colliders": 0,
+            "meshes": 0,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (2)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (3)",
+            "classification": "decorative/unmarked",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer"
+            ],
+            "colliders": 0,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (6)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (7)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (2)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (8)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (1)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (5)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (11)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (10)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (9)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (4)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (3)",
+            "classification": "candidate gameplay terrain: explicit network proxy required",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "DestructibleObject",
+                "UnityEngine.MeshCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        },
+        {
+            "path": "Cube (12)",
+            "classification": "candidate collider: review fixed/player/trigger intent",
+            "components": [
+                "UnityEngine.Transform",
+                "UnityEngine.MeshFilter",
+                "UnityEngine.MeshRenderer",
+                "UnityEngine.BoxCollider"
+            ],
+            "colliders": 1,
+            "meshes": 1,
+            "missingScripts": 0
+        }
+    ],
+    "missingReferences": [
+        "Rock (1):m_Mesh",
+        "Rock (4):m_Mesh",
+        "Rock (2):m_Mesh",
+        "Rock (3):m_Mesh"
+    ],
+    "buildResult": "Succeeded",
+    "errors": 0,
+    "warnings": 7
+}

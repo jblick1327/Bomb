@@ -1,0 +1,55 @@
+BOM staging server listening on 127.0.0.1:59902 only; tick=60Hz
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=1076 tick=30 queued=yes
+HELLO OK client=0 role=player
+HASH REPORT client=0 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=36 result=match
+CONNECT client=1
+CONNECT client=2
+HASH EXPECT client=1 connection=1 epoch=3 revision=1076 tick=54 queued=yes
+HELLO OK client=1 role=HOST
+HASH EXPECT client=2 connection=1 epoch=3 revision=1076 tick=54 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=1 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=58 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=58 result=match
+COMMAND REJECT client=2 reason=host only
+COMMAND OK client=1 op=3 epoch=3
+LAYOUT REJECT client=2 reason=host only
+COMMAND OK client=1 op=1 epoch=4
+HASH EXPECT client=0 connection=1 epoch=4 revision=1076 tick=355 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1076 tick=355 queued=yes
+HASH EXPECT client=2 connection=1 epoch=4 revision=1076 tick=355 queued=yes
+HASH REPORT client=1 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=359 result=match
+HASH REPORT client=2 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=359 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=362 result=match
+LAYOUT REJECT client=1 reason=Invalid layout JSON
+LAYOUT OK client=1 epoch=5 objects=4
+HASH EXPECT client=0 connection=1 epoch=5 revision=1076 tick=475 queued=yes
+HASH EXPECT client=1 connection=1 epoch=5 revision=1076 tick=475 queued=yes
+HASH EXPECT client=2 connection=1 epoch=5 revision=1076 tick=475 queued=yes
+HASH REPORT client=1 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=478 result=match
+HASH REPORT client=2 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=478 result=match
+HASH REPORT client=0 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=481 result=match
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=533
+CONNECT client=2
+HASH EXPECT client=2 connection=2 epoch=5 revision=1076 tick=535 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=2 connection=2 epoch=5 revision=1076 hash=9039584614717797454 tick=538 result=match
+SERVER time=10s tick=600 active=3 overruns=0 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976846379 RTT=38ms tx=86 kbit/s
+  client=1 addr=139637976846380 RTT=26ms tx=83 kbit/s
+  client=2 addr=139637976857091 RTT=30ms tx=21 kbit/s
+SERVER time=20s tick=1200 active=3 overruns=0 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976846379 RTT=33ms tx=19 kbit/s
+  client=1 addr=139637976846380 RTT=25ms tx=19 kbit/s
+  client=2 addr=139637976857091 RTT=26ms tx=19 kbit/s
+DISCONNECT client=1 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=1 connection=1 tick=1554
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=2 tick=1554
+DISCONNECT client=0 reason=Timeout
+HASH CLOSED client=0 connection=1 tick=1648
+SERVER time=30s tick=1800 active=0 overruns=0 hashes=10 mismatches=0 unrecorded=0
+SERVER host-left shutdown
+SERVER final hashes=10 mismatches=0 unrecorded=0

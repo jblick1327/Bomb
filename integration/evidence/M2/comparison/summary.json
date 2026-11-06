@@ -1,0 +1,121 @@
+{
+  "status": "passed",
+  "exit_codes": {
+    "reference": {
+      "replication": 0,
+      "network": 0
+    },
+    "shared": {
+      "replication": 0,
+      "network": 0
+    }
+  },
+  "csv_comparisons": [
+    {
+      "file": "pose-soak-4.csv",
+      "rows": 7200,
+      "equal_excluding_generation_timing": true
+    },
+    {
+      "file": "pose-soak-1.csv",
+      "rows": 7200,
+      "equal_excluding_generation_timing": true
+    },
+    {
+      "file": "pose-rubble-4.csv",
+      "rows": 18000,
+      "equal_excluding_generation_timing": true
+    },
+    {
+      "file": "deltas-full.csv",
+      "rows": 254,
+      "equal_excluding_generation_timing": true
+    }
+  ],
+  "render_images": [
+    {
+      "file": "render-03037-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03037-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03090-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03090-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03516-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03516-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03573-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03573-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03744-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03744-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03847-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-03847-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06218-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06218-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06579-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06579-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06915-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-06915-replica.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-07151-host.png",
+      "byte_identical": true
+    },
+    {
+      "file": "render-07151-replica.png",
+      "byte_identical": true
+    }
+  ],
+  "network_reports_present": true,
+  "normalization": "Only generation_ms is excluded from deterministic CSV comparison; all pose counts, explosion/refill ticks, and delta sizes remain exact. Raw logs/reports retained.",
+  "reference_binary_sha256": "430e2148152da83a2720f574d748223eefd2ccef63333bec8649d52ac076308f",
+  "shared_binary_sha256": "85ab9e6478d911ddf3c79dea309cad27806e77e2343ae611287ea7d7476ffd79"
+}

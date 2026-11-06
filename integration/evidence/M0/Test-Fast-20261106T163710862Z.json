@@ -1,0 +1,20 @@
+{
+  "task": "Test",
+  "suite": "Fast",
+  "started_utc": "20261106T163710862Z",
+  "exit_code": 0,
+  "status": "passed",
+  "checks": [
+    {
+      "command": "scripts/bom.ps1 Test",
+      "log": "Test-20261106T163710862Z.log",
+      "exit_code": 0
+    },
+    {
+      "command": "scripts/bom.ps1 NetTest",
+      "log": "NetTest-20261106T163710862Z.log",
+      "exit_code": 0
+    }
+  ],
+  "errors": []
+}

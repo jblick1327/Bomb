@@ -1,0 +1,79 @@
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+WARNING: FONT: Character [0x0000007c] size is bigger than expected font size
+== net soak: 2 minutes, falling bombs, 4 bots, client 0 local, clients 1-3 remote (40+-10 ms, 2% loss, 1% dup, 2% reorder); refills every 2 min, sandbox reset at tick 3600
+PROGRESS tick=3600/7320 wall=14s
+PROGRESS tick=7200/7320 wall=25s
+NETSOAK ticks=7320 (flush 120) table_agreement checked=25669 mismatches=0 skipped=7; epoch changes=1
+== client 0 (local)
+STRUCTURE applied=347 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=0 (awake bodies among them=0)
+RENDER ERROR all     samples=1740111 position p50=0.00160 p99=0.00260 max=0.05576 m; angle p50=0.00040 p99=0.00080 max=0.00584 rad
+RENDER ERROR players samples=29253 position p50=0.00160 p99=0.00260 max=0.05576 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=9198 position p50=0.00150 p99=0.00260 max=0.00274 m; angle p50=0.00010 p99=0.00080 max=0.00077 rad
+DELAY final=2 changes=0 histogram(ticks:count) 2:7319
+CLOCK snaps=2 adjusted_ticks=7313 saturated_at_5pct=0 mean_adjust=0.00027 max_abs_adjust=0.0396
+LATE structure/events arriving after the clock passed their tick: structure=0 events=0 max_lateness=0.00 ticks; explosions played=143 rejected events=0 resets=2
+FRAMES complete=7313 parts=7367 duplicate_parts=0 wrong_epoch=6 undecodable=0 malformed=0 lost(declared)=0
+ENTRIES sent=769582 (players/bombs 33088) gone ids sent=1834 parts=7373; mean 5.29 bytes per entry incl. headers; input messages mean 11.0 max 18 bytes
+FRAME BYTES per tick p50=559 p99=1102 max=1364; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=293.3 kbit/s peak 1s=571.3 kbit/s; frame payload only avg=266.9 peak=473.1 kbit/s
+BUDGET saturated_ticks=0/7319 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1648 p99=0.4483 max=1.5543
+INPUTS jumps pressed=46 applied=46; blasts issued=20 applied=20 rejected=0 (outside=0 rate=0 solid=0) duplicates=0 dropped_by_client=0 inputs=7318 stale=0
+LINK s2c sent=7610 dropped=0 duplicated=0 reordered=0; c2s sent=7320 dropped=0
+== client 1 (remote)
+STRUCTURE applied=347 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=13 (awake bodies among them=13)
+RENDER ERROR all     samples=1737449 position p50=0.00150 p99=0.00260 max=0.12812 m; angle p50=0.00040 p99=0.00080 max=0.51486 rad
+RENDER ERROR players samples=29196 position p50=0.00150 p99=0.00260 max=0.12812 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=9203 position p50=0.00140 p99=0.00240 max=0.07274 m; angle p50=0.00010 p99=0.00080 max=0.11829 rad
+DELAY final=4 changes=29 histogram(ticks:count) 2:594 3:4 4:6611 5:105
+CLOCK snaps=2 adjusted_ticks=7297 saturated_at_5pct=14 mean_adjust=-0.00023 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=28 events=6 max_lateness=9.22 ticks; explosions played=143 rejected events=0 resets=2
+FRAMES complete=7141 parts=7664 duplicate_parts=0 wrong_epoch=15 undecodable=0 malformed=0 lost(declared)=157
+ENTRIES sent=988226 (players/bombs 35498) gone ids sent=10068 parts=7842; mean 5.48 bytes per entry incl. headers; input messages mean 11.1 max 19 bytes
+FRAME BYTES per tick p50=765 p99=1377 max=1539; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=383.3 kbit/s peak 1s=721.7 kbit/s; frame payload only avg=355.4 peak=605.7 kbit/s
+BUDGET saturated_ticks=0/7317 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1837 p99=0.4957 max=1.1185
+INPUTS jumps pressed=50 applied=50; blasts issued=19 applied=19 rejected=0 (outside=0 rate=0 solid=0) duplicates=0 dropped_by_client=0 inputs=7166 stale=191
+LINK s2c sent=8034 dropped=165 duplicated=70 reordered=140; c2s sent=7315 dropped=145
+== client 2 (remote)
+STRUCTURE applied=347 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=14 (awake bodies among them=14)
+RENDER ERROR all     samples=1737810 position p50=0.00150 p99=0.00260 max=0.13138 m; angle p50=0.00040 p99=0.00080 max=0.30590 rad
+RENDER ERROR players samples=29204 position p50=0.00150 p99=0.00260 max=0.13138 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=9201 position p50=0.00140 p99=0.00250 max=0.07612 m; angle p50=0.00010 p99=0.00080 max=0.05404 rad
+DELAY final=4 changes=58 histogram(ticks:count) 2:614 4:6481 5:141 6:78
+CLOCK snaps=2 adjusted_ticks=7299 saturated_at_5pct=20 mean_adjust=-0.00025 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=15 events=9 max_lateness=8.45 ticks; explosions played=143 rejected events=1 resets=2
+FRAMES complete=7149 parts=7663 duplicate_parts=0 wrong_epoch=15 undecodable=0 malformed=0 lost(declared)=150
+ENTRIES sent=988743 (players/bombs 35469) gone ids sent=10043 parts=7833; mean 5.48 bytes per entry incl. headers; input messages mean 11.1 max 19 bytes
+FRAME BYTES per tick p50=765 p99=1375 max=1539; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=383.0 kbit/s peak 1s=718.3 kbit/s; frame payload only avg=355.5 peak=603.4 kbit/s
+BUDGET saturated_ticks=0/7317 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1800 p99=0.5031 max=1.2933
+INPUTS jumps pressed=47 applied=47; blasts issued=20 applied=19 rejected=1 (outside=0 rate=0 solid=1) duplicates=0 dropped_by_client=0 inputs=7164 stale=191
+LINK s2c sent=8036 dropped=154 duplicated=64 reordered=158; c2s sent=7315 dropped=147
+== client 3 (remote)
+STRUCTURE applied=347 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=14 (awake bodies among them=14)
+RENDER ERROR all     samples=1736965 position p50=0.00150 p99=0.00260 max=0.09493 m; angle p50=0.00040 p99=0.00080 max=0.32961 rad
+RENDER ERROR players samples=29196 position p50=0.00150 p99=0.00260 max=0.06213 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=9196 position p50=0.00140 p99=0.00250 max=0.06019 m; angle p50=0.00010 p99=0.00080 max=0.07966 rad
+DELAY final=4 changes=25 histogram(ticks:count) 2:314 4:6965 5:35
+CLOCK snaps=2 adjusted_ticks=7297 saturated_at_5pct=15 mean_adjust=-0.00050 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=13 events=4 max_lateness=8.87 ticks; explosions played=143 rejected events=1 resets=2
+FRAMES complete=7125 parts=7645 duplicate_parts=0 wrong_epoch=17 undecodable=0 malformed=0 lost(declared)=172
+ENTRIES sent=988718 (players/bombs 35485) gone ids sent=10061 parts=7838; mean 5.48 bytes per entry incl. headers; input messages mean 11.1 max 18 bytes
+FRAME BYTES per tick p50=765 p99=1379 max=1567; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=383.0 kbit/s peak 1s=719.3 kbit/s; frame payload only avg=355.5 peak=603.8 kbit/s
+BUDGET saturated_ticks=0/7317 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1790 p99=0.4870 max=1.3283
+INPUTS jumps pressed=50 applied=50; blasts issued=20 applied=19 rejected=1 (outside=0 rate=0 solid=1) duplicates=0 dropped_by_client=0 inputs=7176 stale=175
+LINK s2c sent=8029 dropped=177 duplicated=81 reordered=148; c2s sent=7315 dropped=136
+WORLD TICK ms (world_tick alone) p50=1.1551 p99=3.2869 max=15.5526
+SERVER TICK ms (receive, inputs, world_tick, structure, 4 frame builds, packets) p50=2.0350 p99=5.9279 max=18.7389; reliable structure bytes sent=981728; explosions emitted=143
+NETSOAK RESULT PASS
+Net soak teardown Odin=0 Box2D=0 texture=0 shader=0 fonts=false

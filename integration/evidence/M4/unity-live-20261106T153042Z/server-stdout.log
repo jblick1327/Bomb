@@ -1,0 +1,11 @@
+BOM staging server listening on 127.0.0.1:54397 only; tick=60Hz
+CONNECT client=0
+HELLO OK client=0 role=player
+SERVER time=10s tick=600 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976847486 RTT=26ms tx=35 kbit/s
+CONNECT client=1
+DISCONNECT client=1 reason=Client_Disconnect
+SERVER time=20s tick=1200 active=1 overruns=0 hashes=20 mismatches=0 unrecorded=0
+  client=0 addr=139637976847486 RTT=36ms tx=81 kbit/s
+DISCONNECT client=0 reason=Timeout
+SERVER final hashes=20 mismatches=0 unrecorded=0

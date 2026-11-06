@@ -1,0 +1,60 @@
+{
+  "status": "failed",
+  "seconds": 6,
+  "capture_only": true,
+  "exit_codes": {
+    "unity": 0,
+    "observer": 1,
+    "server": 0
+  },
+  "hash_checks": 4,
+  "hash_mismatches": 0,
+  "native_identity": {
+    "abi_major": 1,
+    "source_sha256": "c772c249d82e0aff0b1230e68fa3d86928986ef7558247070bbd1b9ba49c22f8",
+    "build_tag": 898235186456748207,
+    "dll_sha256": "c73a621ab549cbf1e06741f31b3fd584db0270ce0dbadad14555d0e1a2dcd410",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 3,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "remaining_gate": "M3 validation in progress"
+  },
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "62848",
+      "--seconds",
+      "13",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-slice-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "62848",
+      "--bom-smoke-seconds",
+      "6",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T153431Z\\unity.log",
+      "--bom-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-live-20261106T153431Z\\scene.png"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:62848",
+      "--seconds",
+      "6"
+    ]
+  }
+}

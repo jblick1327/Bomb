@@ -1,13 +1,19 @@
 {
   "milestone": "M2",
-  "gate_status": "in_progress",
-  "scope": "Mechanical shared-settings and drawing-function file separation only",
-  "build_exit_code": 0,
-  "regression_tests": 215,
-  "regression_exit_code": 0,
-  "real_udp_smoke": "udp-smoke.json",
-  "headless_package": "not implemented",
-  "semantic_body_changes": false,
-  "initial_error": "Removed core:slice import still needed for non-render code; restored import and rebuilt/retested.",
-  "source_patch": "patches/M2-initial.patch"
+  "status": "passed",
+  "native_only_progress_allowed_by": "PLAN M0 gate: native M1/M2 may proceed after confirmed native baseline and preservation manifest",
+  "game_tests": 215,
+  "headless_server": "src/server/main.odin -> shared package; no raylib import in full dependency graph",
+  "mixed_process": "headless/summary.json",
+  "deterministic_baseline": "comparison/summary.json",
+  "menus": "menus/summary.json",
+  "evidence_notes": [
+    "331 simulation/server declarations and 207 client/domain declarations moved to one importable package, with namespace migration aliases in the reference frontend.",
+    "Graphics caches, visual burst aging and bots are frontend-owned.",
+    "Headless world/layout construction is shared with legacy scene construction; no gameplay constants changed.",
+    "Shared test instrumentation preserves pre-existing assertions. Optional profiling, mortar measurement and frame benchmark configurations type-check.",
+    "All deterministic CSV rows (32,400 pose rows and 254 delta-size rows) match the preserved executable; 20 rendered images are byte-identical.",
+    "Native and shared menu smoke tests both pass with 19 captures each.",
+    "Original reference/shared bots and late join/reset compare 38 canonical hashes on a real dedicated headless server, with zero mismatches or unrecorded hashes."
+  ]
 }

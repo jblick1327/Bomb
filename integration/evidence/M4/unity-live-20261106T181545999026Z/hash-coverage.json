@@ -1,0 +1,38 @@
+{
+  "status": "passed",
+  "expected_unique": 63,
+  "matching_unique": 63,
+  "missing_steady": 0,
+  "missing_tail": 0,
+  "missing_reports": [],
+  "bad_reports": [],
+  "unexpected_reports": [],
+  "per_client_connection": {
+    "0:1": {
+      "matched": 29,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "1:1": {
+      "matched": 29,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:1": {
+      "matched": 1,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:2": {
+      "matched": 3,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:3": {
+      "matched": 1,
+      "missing_steady": 0,
+      "missing_tail": 0
+    }
+  },
+  "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+}
