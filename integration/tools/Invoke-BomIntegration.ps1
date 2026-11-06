@@ -72,6 +72,12 @@ try {
                 & (Join-Path $config.OdinRoot 'scripts/bom.ps1') -Task $nativeTask -CompilerArguments $arguments 2>&1 | Tee-Object -FilePath $log
                 $result.checks += @{command="scripts/bom.ps1 $nativeTask";exit_code=0;log=(Split-Path -Leaf $log)}
             }
+            if($Task -eq 'Test' -and $Suite -eq 'Fast') {
+                $clientLog=Join-Path $evidence "ClientCore-$stamp.log"
+                & (Join-Path $config.OdinRoot 'scripts/test-client-core.ps1') -ConfigPath $ConfigPath 2>&1 | Tee-Object -FilePath $clientLog
+                if($LASTEXITCODE -ne 0){throw 'Shared client/ABI focused tests failed.'}
+                $result.checks += @{command='scripts/test-client-core.ps1';exit_code=0;log=(Split-Path -Leaf $clientLog)}
+            }
             if ($Task -eq 'Build') {
                 & (Join-Path $config.OdinRoot 'scripts/build-client.ps1') -ConfigPath $ConfigPath
                 if ($LASTEXITCODE -ne 0) { throw 'Real native client build failed.' }

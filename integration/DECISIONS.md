@@ -18,3 +18,7 @@
 
 - M4: additive ABI 1.1 exposes authoritative actor dimensions through a read-only query. It corrects fallback capsule/bomb meshes without changing shared simulation, client timing, protocol 3 or canonical format 2. Generated layouts, native focused tests and both Unity scripting backends passed.
 - M5: pin timestamp estimation, acknowledged schedule resets, integer command slots, terminal requests and owner replay before changing the wire; see contracts/scheduled-input-v4.md. That note is a contract, not evidence that prediction is implemented.
+
+- M5: bump game protocol to 4/build BOM-scheduled-input-2026-11-06 for scheduled commands, exact owner state, reliable request envelopes/results and u64 event IDs. Keep canonical 2 and transport BOM1 unchanged. Legacy latest-value input remains only in non-application diagnostic fixtures; real authorized sessions use the scheduled path.
+- M5: both native and ABI physics fixtures run serially because Box2D world creation and ABI ownership are process-scoped. The fast suite now includes these tests.
+- M5: preserve fixed elapsed time in the reference frontend instead of dropping fractional time, and send a disconnect before destroying its client. Full world-report coverage caught both issues; no missing reports are accepted as matching.

@@ -1,0 +1,54 @@
+{
+  "milestone": "M5",
+  "status": "in_progress",
+  "source_commit": "9b9da61b42a56f3e29603dc5cca89cee0818be58",
+  "protocol": 4,
+  "canonical": 2,
+  "runtime_identity": {
+    "abi_major": 1,
+    "abi_minor": 1,
+    "source_commit": "d7338b8f4ae69d84154da67de5141290163e745f",
+    "source_dirty": true,
+    "source_sha256": "05e3a2aa85ab5a1e94c08324fb5945e54d082a0a66d9f6b263b75482262caa0b",
+    "build_tag": 26522602698356129,
+    "dll_sha256": "1e7ae361f3d16bbca34b34f43b07f5187900e82c40cea590057bafe9ad8022ce",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "passing": {
+    "real_native_udp_seconds": 30,
+    "matching_native_hashes": 10,
+    "two_unity_mono_seconds": 24,
+    "matching_unity_hashes": 52,
+    "missing_hashes": 0,
+    "static_replay_comparisons": 231,
+    "static_replay_max_error": 0.0,
+    "focused_shared_tests": 25,
+    "focused_ffi_tests": 10,
+    "game_tests": 217,
+    "transport_tests": 27
+  },
+  "evidence": [
+    "live-20261106T210609Z/summary.json",
+    "unity-live-20261106T211116829550Z/summary.json",
+    "M5-schedule-tests.log",
+    "M5-v4-complete-regression.log"
+  ],
+  "fixed_failures": [
+    "Short reliable host requests were rejected by an incorrect blast-sized minimum header. A dedicated short-request regression now passes.",
+    "Reference bot discarded fractional elapsed time and churned input generations. It now uses bounded fixed-step accumulation.",
+    "Reference bot did not send disconnect at shutdown, leaving missing expected reports. Clean disconnect restored complete two-Unity coverage.",
+    "Native ABI and Box2D world fixtures require one test thread, matching runtime ownership. The reproducible test script enforces it."
+  ],
+  "remaining": [
+    "Connect genuine local prediction and its off switch to both live frontends.",
+    "Integrate tick-indexed topology/pose history and moving/rubber/bomb kinematic collision proxies, with explicit conservative fallback and recovery.",
+    "Expose owner/clock/prediction diagnostics and clear-intent operations through the additive C ABI.",
+    "Run both required ten-minute prediction link profiles, latency/correction quantiles, render-rate slot equality, and moving/fracture recovery checks.",
+    "Revalidate current final Mono/IL2CPP artifacts and continue M6\u2013M9."
+  ],
+  "scope_note": "The static replay and bounded history tests are real native physics/unit fixtures. They do not substitute for the required live prediction/link-profile gates."
+}

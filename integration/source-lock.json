@@ -8,9 +8,9 @@
   "odin_archive_head": "482fa59a62ee641816023cec869f019cdcc218a2",
   "odin_working_tree": "Archive contains significant uncommitted source/test reorganization and networking changes; preserve working bytes, not HEAD alone.",
   "odin_compiler_required": "dev-2026-05 ea5175d (verified pinned compiler)",
-  "game_protocol": 3,
-  "game_build": "BOM-menus-2026-11-05",
-  "native_dll_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
+  "game_protocol": 4,
+  "game_build": "BOM-scheduled-input-2026-11-06",
+  "native_dll_sha256": "1e7ae361f3d16bbca34b34f43b07f5187900e82c40cea590057bafe9ad8022ce",
   "original_unity_changes": [
     "Deleted URP/PT_Nature_Free_URP_12.unitypackage.meta",
     "Deleted URP/PT_Nature_Free_URP_14.unitypackage.meta",
@@ -26,8 +26,30 @@
   "msvc": "14.51.36231 x64",
   "m2_first_step_binary_sha256": "886c9bc3a4f24529548bd0358d5701106795b1c7d9aa2e6c53f09a1db3ae84bf",
   "odin_import_commit": "f3ca3aa3d18a4fdc33c9b716f2f39e030a9eae89",
-  "odin_integration_commit": "24ad69d3be3e3b751f08d43e207c005fa7180176",
+  "odin_integration_commit": "9b9da61b42a56f3e29603dc5cca89cee0818be58",
   "native_client": {
+    "abi_major": 1,
+    "abi_minor": 1,
+    "source_commit": "d7338b8f4ae69d84154da67de5141290163e745f",
+    "source_dirty": true,
+    "source_sha256": "05e3a2aa85ab5a1e94c08324fb5945e54d082a0a66d9f6b263b75482262caa0b",
+    "build_tag": 26522602698356129,
+    "dll_sha256": "1e7ae361f3d16bbca34b34f43b07f5187900e82c40cea590057bafe9ad8022ce",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "unity_connector": {
+    "client": "Unity Hub resources/unity.exe official CLI",
+    "project_package": "0.7.0-exp.1 unchanged",
+    "verified": "Discovery and reachable Pipeline service on isolated validation Editor; closed after build."
+  },
+  "windows_sdk_installed": "Windows SDK 10.0.26100.0 via existing Visual Studio installer; installation exit 0",
+  "unity_il2cpp_module": "Installed for pinned 6000.2.14f1; standalone validation tracked in M4",
+  "m3_core_gate_commit": "7c04fdefc33e33c8b418bbae434babc025c44736",
+  "m4_native_client": {
     "abi_major": 1,
     "abi_minor": 1,
     "source_commit": "24ad69d3be3e3b751f08d43e207c005fa7180176",
@@ -40,12 +62,20 @@
     "client": "shared native client, no managed codec",
     "validation": "See integration/tasks.json and integration/evidence for executed gates."
   },
-  "unity_connector": {
-    "client": "Unity Hub resources/unity.exe official CLI",
-    "project_package": "0.7.0-exp.1 unchanged",
-    "verified": "Discovery and reachable Pipeline service on isolated validation Editor; closed after build."
+  "unity_checkpoint_commit": "c88f62ee3151dc03fdaef3fdeb4867d96eac004d",
+  "development_native_client": {
+    "abi_major": 1,
+    "abi_minor": 1,
+    "source_commit": "d7338b8f4ae69d84154da67de5141290163e745f",
+    "source_dirty": true,
+    "source_sha256": "e67f67937da06502fbd57db27a947d458b6a8ef1b76d9104a685e25d37a31212",
+    "build_tag": 1038069239620699728,
+    "dll_sha256": "d85e13c2affb00f38b54b979a8ed3f75a1c85a73bd2d5d2347e5ee2005b162ab",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
   },
-  "windows_sdk_installed": "Windows SDK 10.0.26100.0 via existing Visual Studio installer; installation exit 0",
-  "unity_il2cpp_module": "Installed for pinned 6000.2.14f1; standalone validation tracked in M4",
-  "m3_core_gate_commit": "7c04fdefc33e33c8b418bbae434babc025c44736"
+  "native_artifact_note": "Unity currently uses the real-UDP/Mono-tested protocol-4 artifact identified here. Its source fingerprint is authoritative; the newer development commit also includes tested, not-yet-connected prediction/history helpers."
 }

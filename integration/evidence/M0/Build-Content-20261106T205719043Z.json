@@ -1,0 +1,22 @@
+{
+  "task": "Build",
+  "suite": "Content",
+  "started_utc": "20261106T205719043Z",
+  "exit_code": 1,
+  "status": "failed",
+  "checks": [
+    {
+      "exit_code": 0,
+      "log": "Build-20261106T205719043Z.log",
+      "command": "scripts/bom.ps1 Build"
+    },
+    {
+      "exit_code": 0,
+      "log": "Server-20261106T205719043Z.log",
+      "command": "scripts/bom.ps1 Server"
+    }
+  ],
+  "errors": [
+    "Real native client build failed."
+  ]
+}

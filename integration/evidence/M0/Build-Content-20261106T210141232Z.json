@@ -1,0 +1,20 @@
+{
+  "task": "Build",
+  "suite": "Content",
+  "started_utc": "20261106T210141232Z",
+  "exit_code": 0,
+  "status": "passed",
+  "checks": [
+    {
+      "log": "Build-20261106T210141232Z.log",
+      "command": "scripts/bom.ps1 Build",
+      "exit_code": 0
+    },
+    {
+      "log": "Server-20261106T210141232Z.log",
+      "command": "scripts/bom.ps1 Server",
+      "exit_code": 0
+    }
+  ],
+  "errors": []
+}
