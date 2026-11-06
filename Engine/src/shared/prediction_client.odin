@@ -50,6 +50,9 @@ prediction_bomb_uncertain :: proc(c:^Net_Client,owner:Owner_State,target:u64) ->
  for key,pose in frame.poses {
   if key_kind(key)!=.Bomb { continue }
   if math.abs(pose_dq_pos(pose.x)-owner.position.x)<margin_x && math.abs(pose_dq_pos(pose.y)-owner.position.y)<margin_y { return true }
+  future,_,valid:=collision_history_pose(h,target,key)
+  if !valid { return true }
+  if math.abs(future.x-owner.position.x)<margin_x && math.abs(future.y-owner.position.y)<margin_y { return true }
  }
  return false
 }
@@ -70,7 +73,7 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  }
  topology:=collision_history_topology(&c.collision_history,owner.state_tick,owner.topology_revision)
  if topology==nil { prediction_set_mode(p,.Conservative,.Wrong_Revision);return }
- if prediction_bomb_uncertain(c,owner,target) { prediction_set_mode(p,.Conservative,.Dynamic_History_Required);return }
+ if prediction_bomb_uncertain(c,owner,target) { prediction_set_mode(p,.Conservative,.Bomb_Contact_Uncertain);return }
  if !p.world.active || p.world.revision!=owner.topology_revision || p.world.epoch!=owner.identity.epoch {
   if !prediction_static_build(&p.world,&topology.scene,true) { prediction_set_mode(p,.Conservative,p.world.reason);return }
  }

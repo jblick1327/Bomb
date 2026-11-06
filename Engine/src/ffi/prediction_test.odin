@@ -5,6 +5,36 @@ import nc "../netcode"
 import math "core:math"
 
 @(test)
+terminal_request_stream_preserves_u64_identity_status_and_effect_tick :: proc(test:^t.T) {
+ info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
+ t.expect(test,bom_client_create(&info,&handle)==OK)
+ s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
+ base:=u64(9007199254740993)
+ for id in base+1..=base+2 { s.client.completed_requests[id%1024]={core.REQUEST_BLAST,core.Request_Result{request_id=id,effect_tick=base+100,event_id=base+200,status=.Accepted}} }
+ s.client.highest_completed_request=base+2
+ result:=BomRequestResult{struct_size=u32(size_of(BomRequestResult)),version=1}
+ t.expect(test,bom_client_next_request_result(handle,base,&result)==OK && result.flags==1 && result.request_id==base+1 && result.effect_tick==base+100 && result.event_id==base+200 && result.status==u32(core.Request_Status.Accepted))
+ t.expect(test,bom_client_next_request_result(handle,result.request_id,&result)==OK && result.request_id==base+2)
+ t.expect(test,bom_client_next_request_result(handle,result.request_id,&result)==OK && result.flags==0)
+ t.expect(test,bom_client_next_request_result(handle,0,&result)==OK && result.flags==3 && result.request_id==base+1)
+}
+
+@(test)
+identical_held_snapshots_coalesce_without_losing_transition_time_or_order :: proc(test:^t.T) {
+ info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
+ t.expect(test,bom_client_create(&info,&handle)==OK)
+ s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
+ for i in 0..<100000 { t.expect(test,bom_client_set_held_input(handle,f64(i)/100000,1)==OK) }
+ t.expect(test,len(s.held)==1 && s.held[0].timestamp==0 && s.held[0].move==1)
+ t.expect(test,bom_client_set_held_input(handle,.5,-1)==BAD_ARGUMENT)
+ for i in 1..<256 { value:=i%2==0?f32(1):f32(-1);t.expect(test,bom_client_set_held_input(handle,f64(i+1),value)==OK) }
+ t.expect(test,len(s.held)==256 && bom_client_set_held_input(handle,257,1)==OVERFLOW)
+ t.expect(test,bom_client_set_held_input(handle,258,-1)==OK && len(s.held)==256)
+}
+
+@(test)
 prediction_api_versions_busy_clear_and_full_width_owner :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)

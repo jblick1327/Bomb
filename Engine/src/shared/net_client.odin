@@ -75,6 +75,8 @@ Net_Client :: struct {
  request_counter,host_request_id: u64,
  request_pending: [1024]Pending_Request,
  last_request_result: Request_Result,
+ completed_requests:[1024]Completed_Request,
+ highest_completed_request:u64,
  collision_history: Collision_History,
  prediction:^Prediction_Controller,
  prediction_enabled:bool,

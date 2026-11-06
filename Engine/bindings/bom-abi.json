@@ -778,6 +778,44 @@
         "conservative_seconds",
         "f64"
       ]
+    ],
+    "BomRequestResult": [
+      [
+        "struct_size",
+        "u32"
+      ],
+      [
+        "version",
+        "u32"
+      ],
+      [
+        "flags",
+        "u32"
+      ],
+      [
+        "kind",
+        "u32"
+      ],
+      [
+        "request_id",
+        "u64"
+      ],
+      [
+        "effect_tick",
+        "u64"
+      ],
+      [
+        "event_id",
+        "u64"
+      ],
+      [
+        "status",
+        "u32"
+      ],
+      [
+        "reason",
+        "u32"
+      ]
     ]
   },
   "functions": {
@@ -1098,6 +1136,23 @@
         [
           "handle",
           "u64"
+        ]
+      ]
+    ],
+    "bom_client_next_request_result": [
+      "u32",
+      [
+        [
+          "handle",
+          "u64"
+        ],
+        [
+          "after_request_id",
+          "u64"
+        ],
+        [
+          "result",
+          "*BomRequestResult"
         ]
       ]
     ]

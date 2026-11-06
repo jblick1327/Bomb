@@ -233,6 +233,18 @@ BomPredictionStats :: struct {
  conservative_seconds: f64,
 }
 
+BomRequestResult :: struct {
+ struct_size: u32,
+ version: u32,
+ flags: u32,
+ kind: u32,
+ request_id: u64,
+ effect_tick: u64,
+ event_id: u64,
+ status: u32,
+ reason: u32,
+}
+
 @(export)
 bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
  switch type_id {
@@ -497,6 +509,20 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 25: return u32(offset_of(BomPredictionStats,visual_offset_y))
   case 26: return u32(offset_of(BomPredictionStats,reserved))
   case 27: return u32(offset_of(BomPredictionStats,conservative_seconds))
+  }
+ case 15:
+  switch field_id {
+  case 0: return u32(size_of(BomRequestResult))
+  case 1: return u32(align_of(BomRequestResult))
+  case 2: return u32(offset_of(BomRequestResult,struct_size))
+  case 3: return u32(offset_of(BomRequestResult,version))
+  case 4: return u32(offset_of(BomRequestResult,flags))
+  case 5: return u32(offset_of(BomRequestResult,kind))
+  case 6: return u32(offset_of(BomRequestResult,request_id))
+  case 7: return u32(offset_of(BomRequestResult,effect_tick))
+  case 8: return u32(offset_of(BomRequestResult,event_id))
+  case 9: return u32(offset_of(BomRequestResult,status))
+  case 10: return u32(offset_of(BomRequestResult,reason))
   }
  }
  return 0xffffffff

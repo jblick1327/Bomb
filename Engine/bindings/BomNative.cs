@@ -219,6 +219,17 @@ namespace Bom.Native {
  public float reserved;
  public double conservative_seconds;
 }
+[StructLayout(LayoutKind.Sequential)] public struct BomRequestResult {
+ public uint struct_size;
+ public uint version;
+ public uint flags;
+ public uint kind;
+ public ulong request_id;
+ public ulong effect_tick;
+ public ulong event_id;
+ public uint status;
+ public uint reason;
+}
 public static class BomNative {
  public const uint AbiVersion = 1;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
@@ -247,5 +258,6 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_prediction(ulong handle, uint enabled);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_clear_intent(ulong handle);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_reset_prediction_metrics(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_next_request_result(ulong handle, ulong after_request_id, ref BomRequestResult result);
 }
 }

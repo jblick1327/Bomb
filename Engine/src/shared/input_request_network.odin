@@ -5,6 +5,7 @@ import strings "core:strings"
 
 REQUEST_BLAST :: u8(1)
 Pending_Request :: struct { active:bool, id:u64, kind:u8 }
+Completed_Request :: struct { kind:u8, result:Request_Result }
 Request_Envelope :: struct { incarnation:u64, epoch:u32, id,created,deadline:u64, kind:u8, payload:[]u8 }
 
 request_envelope_decode :: proc(data:[]u8) -> (q:Request_Envelope,ok:bool) {
@@ -100,6 +101,7 @@ net_request_client_result :: proc(c:^Net_Client,data:[]u8) {
  pending:=&c.request_pending[result.request_id%u64(len(c.request_pending))]
  if !pending.active || pending.id!=result.request_id || pending.kind!=kind { return }
  result.status=Request_Status(status);pending^={};c.last_request_result=result
+ c.completed_requests[result.request_id%1024]={kind,result};c.highest_completed_request=max(c.highest_completed_request,result.request_id)
  if kind!=REQUEST_BLAST && result.request_id==c.host_request_id {
   c.control_serial+=1;c.control_kind=kind;c.control_ok=result.status==.Accepted
   delete(c.control_reason);c.control_reason=strings.clone(request_reason_text(result))

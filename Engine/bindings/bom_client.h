@@ -218,6 +218,17 @@ typedef struct BomPredictionStats {
  float reserved;
  double conservative_seconds;
 } BomPredictionStats;
+typedef struct BomRequestResult {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int flags;
+ unsigned int kind;
+ unsigned long long request_id;
+ unsigned long long effect_tick;
+ unsigned long long event_id;
+ unsigned int status;
+ unsigned int reason;
+} BomRequestResult;
 __declspec(dllimport) unsigned int __cdecl bom_abi_version(void);
 __declspec(dllimport) unsigned long long __cdecl bom_build_tag(void);
 __declspec(dllimport) unsigned int __cdecl bom_client_create(BomCreateInfo* info, unsigned long long* handle);
@@ -244,4 +255,5 @@ __declspec(dllimport) unsigned int __cdecl bom_client_get_prediction_stats(unsig
 __declspec(dllimport) unsigned int __cdecl bom_client_set_prediction(unsigned long long handle, unsigned int enabled);
 __declspec(dllimport) unsigned int __cdecl bom_client_clear_intent(unsigned long long handle);
 __declspec(dllimport) unsigned int __cdecl bom_client_reset_prediction_metrics(unsigned long long handle);
+__declspec(dllimport) unsigned int __cdecl bom_client_next_request_result(unsigned long long handle, unsigned long long after_request_id, BomRequestResult* result);
 #endif

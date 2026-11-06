@@ -2,6 +2,26 @@ package ffi
 import core "../shared"
 
 @(export)
+bom_client_next_request_result :: proc "c" (handle,after_request_id:u64,result:^BomRequestResult) -> u32 {
+ s,status:=get_slot(handle);if status!=OK { return status }
+ if result==nil || result.struct_size<u32(size_of(BomRequestResult)) || result.version!=1 { return BAD_ARGUMENT }
+ result^={struct_size=u32(size_of(BomRequestResult)),version=1}
+ if !s.live || after_request_id>=s.client.highest_completed_request { return OK }
+ best:^core.Completed_Request
+ for &entry in s.client.completed_requests {
+  if entry.result.request_id<=after_request_id { continue }
+  if best==nil || entry.result.request_id<best.result.request_id { best=&entry }
+ }
+ if best!=nil {
+  result.flags=1
+  if best.result.request_id!=after_request_id+1 { result.flags|=2 }
+  result.kind=u32(best.kind);result.request_id=best.result.request_id;result.effect_tick=best.result.effect_tick;result.event_id=best.result.event_id
+  result.status=u32(best.result.status);result.reason=u32(best.result.reason)
+ }
+ return OK
+}
+
+@(export)
 bom_client_reset_prediction_metrics :: proc "c" (handle:u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
  if s.acquired { return BUSY }

@@ -35,6 +35,8 @@ Client_Slot :: struct {
  connection_generation,sample_sequence,event_sequence,ack_event_id: u64,
  input_generation: u64,
  prediction_disabled: bool,
+ has_held_timestamp:bool,
+ last_held_timestamp:f64,
  cached_epoch,input_epoch,journal_epoch: u32, cached_revision,canonical_hash,stall_count: u64,
  presented_tick: f64,
  input_error: u32,
@@ -78,6 +80,7 @@ close_client :: proc(s:^Client_Slot) {
  clear(&s.cells);clear(&s.vertices);clear(&s.poses)
  s.held_move=0;s.accumulator=0;s.transport_now=0;s.canonical_hash=0;s.presented_tick=0;s.journal_epoch=0;s.input_epoch=0
  s.fixed_transport_now=0;s.input_generation=0
+ s.has_held_timestamp=false;s.last_held_timestamp=0
  s.command_pending=false;s.command_id=0;s.command_ok=false;s.command_serial=0
  s.topology_accepted=0;s.topology_from=0;s.accepted_revision=0;s.accepted_epoch=0
 }
@@ -162,9 +165,12 @@ bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(move) { return BAD_ARGUMENT }
+ if s.has_held_timestamp && timestamp<s.last_held_timestamp { return BAD_ARGUMENT }
+ value:=clamp(move,f32(-1),f32(1))
+ previous:=s.held_move;if len(s.held)>0 { previous=s.held[len(s.held)-1].move }
+ if value==previous { s.last_held_timestamp=timestamp;s.has_held_timestamp=true;return OK }
  if len(s.held)>=256 { return OVERFLOW }
- if len(s.held)>0 && timestamp<s.held[len(s.held)-1].timestamp { return BAD_ARGUMENT }
- append(&s.held,Held{timestamp,clamp(move,f32(-1),f32(1))});return OK
+ append(&s.held,Held{timestamp,value});s.last_held_timestamp=timestamp;s.has_held_timestamp=true;return OK
 }
 @(export)
 bom_client_enqueue_jump :: proc "c" (handle:u64,timestamp:f64) -> u32 {

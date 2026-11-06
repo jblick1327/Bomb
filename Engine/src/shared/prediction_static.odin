@@ -3,7 +3,7 @@ import b2 "vendor:box2d"
 
 // First prediction fixture: only validated static terrain. Dynamic topology
 // history/proxies are a separate required M5 step; this is not the final gate.
-Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position }
+Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position, Bomb_Contact_Uncertain }
 Prediction_Proxy :: struct { key:u64, body:b2.BodyId, reference:Vec2, rigid:bool }
 Static_Prediction :: struct {
  active: bool,
