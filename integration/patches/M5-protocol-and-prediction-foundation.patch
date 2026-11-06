@@ -1,0 +1,2292 @@
+From d7338b8f4ae69d84154da67de5141290163e745f Mon Sep 17 00:00:00 2001
+From: rblick <robertblick@gmail.com>
+Date: Fri, 6 Nov 2026 15:46:56 -0500
+Subject: [PATCH 1/2] Add tested scheduled-input, clock, request and
+ owner-state kernels for M5
+
+---
+ src/shared/input_clock.odin         | 101 ++++++++++++++++++++++++
+ src/shared/input_clock_test.odin    |  45 +++++++++++
+ src/shared/input_owner.odin         |  48 ++++++++++++
+ src/shared/input_requests.odin      |  47 +++++++++++
+ src/shared/input_requests_test.odin |  45 +++++++++++
+ src/shared/input_schedule.odin      | 117 ++++++++++++++++++++++++++++
+ src/shared/input_schedule_test.odin |  89 +++++++++++++++++++++
+ src/shared/input_wire.odin          |  75 ++++++++++++++++++
+ src/shared/input_wire_test.odin     |  60 ++++++++++++++
+ src/shared/player.odin              |   3 +
+ src/shared/sim_player.odin          |  31 ++++++--
+ 11 files changed, 654 insertions(+), 7 deletions(-)
+ create mode 100644 src/shared/input_clock.odin
+ create mode 100644 src/shared/input_clock_test.odin
+ create mode 100644 src/shared/input_owner.odin
+ create mode 100644 src/shared/input_requests.odin
+ create mode 100644 src/shared/input_requests_test.odin
+ create mode 100644 src/shared/input_schedule.odin
+ create mode 100644 src/shared/input_schedule_test.odin
+ create mode 100644 src/shared/input_wire.odin
+ create mode 100644 src/shared/input_wire_test.odin
+
+diff --git a/src/shared/input_clock.odin b/src/shared/input_clock.odin
+new file mode 100644
+index 0000000..dcecdbf
+--- /dev/null
++++ b/src/shared/input_clock.odin
+@@ -0,0 +1,101 @@
++package shared
++
++import math "core:math"
++
++// Whole ticks never pass through f64. Only bounded differences and sub-ticks do.
++Server_Stamp :: struct { tick: u64, phase: f64 }
++Clock_Probe :: struct { active: bool, nonce: u64, sent: f64 }
++Clock_Sample :: struct { valid: bool, received,rtt: f64, stamp: Server_Stamp }
++Input_Clock :: struct {
++ probes: [32]Clock_Probe,
++ samples: [64]Clock_Sample,
++ sample_index: int,
++ next_nonce: u64,
++ valid,resync: bool,
++ estimate: Server_Stamp,
++ updated_at,rtt,jitter95,raw_error: f64,
++ lead: u32,
++ rejected,accepted: u64,
++}
++
++server_stamp_advance :: proc(s: Server_Stamp,seconds: f64) -> Server_Stamp {
++ if seconds<=0 || math.is_nan(seconds) || math.is_inf(seconds) { return s }
++ ticks:=min(seconds*60,3600.0*60)+s.phase
++ whole:=u64(math.floor(ticks))
++ if whole>max(u64)-s.tick { return {max(u64),0} }
++ return {s.tick+whole,ticks-f64(whole)}
++}
++server_stamp_error :: proc(a,b: Server_Stamp) -> f64 {
++ delta:f64
++ if a.tick>=b.tick { delta=f64(min(a.tick-b.tick,u64(1000000))) }
++ else { delta=-f64(min(b.tick-a.tick,u64(1000000))) }
++ return delta+a.phase-b.phase
++}
++server_stamp_adjust :: proc(s: Server_Stamp,delta: f64) -> Server_Stamp {
++ phase:=s.phase+clamp(delta,-0.05,0.05)
++ tick:=s.tick
++ if phase<0 { if tick==0 { return {} };tick-=1;phase+=1 }
++ if phase>=1 { if tick==max(u64) { return {tick,0} };tick+=1;phase-=1 }
++ return {tick,phase}
++}
++input_clock_probe :: proc(c: ^Input_Clock,now: f64) -> (u64,bool) {
++ if math.is_nan(now) || math.is_inf(now) || c.next_nonce==max(u64) { return 0,false }
++ // Reclaim only expired probes; never replace a live outstanding nonce.
++ for &p in c.probes {
++  if p.active && now-p.sent>1 { p={} }
++  if !p.active {
++   c.next_nonce+=1;p={true,c.next_nonce,now};return p.nonce,true
++  }
++ }
++ return 0,false
++}
++input_clock_now :: proc(c: ^Input_Clock,now: f64) -> (Server_Stamp,bool) {
++ if !c.valid || math.is_nan(now) || math.is_inf(now) { return {},false }
++ if now<c.updated_at { c.resync=true;return c.estimate,false }
++ if now-c.updated_at>0.25 { c.resync=true }
++ c.estimate=server_stamp_advance(c.estimate,now-c.updated_at);c.updated_at=now
++ return c.estimate,true
++}
++input_clock_echo :: proc(c: ^Input_Clock,nonce: u64,stamp: Server_Stamp,now: f64) -> bool {
++ if math.is_nan(now) || math.is_inf(now) || math.is_nan(stamp.phase) || math.is_inf(stamp.phase) || stamp.phase<0 || stamp.phase>=1 { c.rejected+=1;return false }
++ found: ^Clock_Probe
++ for &p in c.probes { if p.active && p.nonce==nonce { found=&p;break } }
++ if found==nil { c.rejected+=1;return false }
++ elapsed:=now-found.sent;found.active=false
++ if elapsed<0 || elapsed>1 || (c.accepted>=4 && elapsed>c.rtt*4+0.05) { c.rejected+=1;return false }
++ received_stamp:=server_stamp_advance(stamp,elapsed/2)
++ if c.accepted==0 { c.rtt=elapsed } else { c.rtt+=(elapsed-c.rtt)/8 }
++ c.samples[c.sample_index%len(c.samples)]={true,now,elapsed,received_stamp};c.sample_index=(c.sample_index+1)%len(c.samples)
++ // Positive one-way jitter distribution; insertion-sort a fixed bounded array.
++ positive:[64]f64;count:=0
++ best: ^Clock_Sample
++ for &sample in c.samples {
++  if !sample.valid || now-sample.received>8 { continue }
++  if best==nil || sample.rtt<best.rtt || (sample.rtt==best.rtt && sample.received>best.received) { best=&sample }
++  value:=max(0.0,(sample.rtt-c.rtt)/2);j:=count
++  for j>0 && positive[j-1]>value { positive[j]=positive[j-1];j-=1 }
++  positive[j]=value;count+=1
++ }
++ if count>0 { c.jitter95=positive[max(0,int(math.ceil(f64(count)*0.95))-1)] }
++ c.lead=u32(clamp(math.ceil((c.rtt/2+c.jitter95)*60)+2,2,15))
++ candidate:=server_stamp_advance(best.stamp,now-best.received)
++ if !c.valid { c.estimate=candidate;c.updated_at=now;c.valid=true }
++ else {
++  previous:=c.estimate
++  _,_=input_clock_now(c,now)
++  c.raw_error=server_stamp_error(candidate,c.estimate)
++  if math.abs(c.raw_error)>8 { c.resync=true }
++  adjusted:=server_stamp_adjust(c.estimate,c.raw_error)
++  // A negative correction can slow progress, but never reverse accepted time.
++  if server_stamp_error(adjusted,previous)>=0 { c.estimate=adjusted }
++ }
++ c.accepted+=1
++ return true
++}
++
++input_clock_target_origin :: proc(c: ^Input_Clock,now: f64) -> (u64,bool) {
++ stamp,valid:=input_clock_now(c,now)
++ if !valid || stamp.tick>max(u64)-u64(c.lead)-1 { return 0,false }
++ // Ceil phase then add the delivery margin, without converting the tick to float.
++ return stamp.tick+u64(stamp.phase>0)+u64(c.lead),true
++}
+diff --git a/src/shared/input_clock_test.odin b/src/shared/input_clock_test.odin
+new file mode 100644
+index 0000000..697ce1e
+--- /dev/null
++++ b/src/shared/input_clock_test.odin
+@@ -0,0 +1,45 @@
++package shared
++import t "core:testing"
++import math "core:math"
++
++@(test)
++clock_exact_large_ticks_nonce_and_phase :: proc(test: ^t.T) {
++ c:Input_Clock;c.next_nonce=9007199254740993
++ nonce,ok:=input_clock_probe(&c,10);t.expect(test,ok && nonce==9007199254740994)
++ t.expect(test,input_clock_echo(&c,nonce,{9007199254742001,0.25},10.1))
++ stamp,valid:=input_clock_now(&c,10.1)
++ t.expect(test,valid && stamp.tick==9007199254742004 && math.abs(stamp.phase-0.25)<1e-6)
++ target,valid_target:=input_clock_target_origin(&c,10.1)
++ t.expect(test,valid_target && target==9007199254742004+1+u64(c.lead))
++ t.expect(test,!input_clock_echo(&c,nonce,{99,0},10.2))
++ t.expect(test,!input_clock_echo(&c,nonce+1,{99,0},10.2))
++}
++
++@(test)
++clock_bounded_probes_outliers_and_lead :: proc(test: ^t.T) {
++ c:Input_Clock
++ for i in 0..<32 { _,ok:=input_clock_probe(&c,f64(i)*0.001);t.expect(test,ok) }
++ _,overflow:=input_clock_probe(&c,0.05);t.expect(test,!overflow)
++ _,reclaimed:=input_clock_probe(&c,1.1);t.expect(test,reclaimed)
++ c={}
++ for i in 0..<20 {
++  now:=f64(i)*0.25;nonce,_:=input_clock_probe(&c,now)
++  t.expect(test,input_clock_echo(&c,nonce,{u64(i*15+3),0},now+0.1))
++ }
++ t.expect(test,c.lead>=5 && c.lead<=6 && c.accepted==20)
++ nonce,_:=input_clock_probe(&c,6)
++ t.expect(test,!input_clock_echo(&c,nonce,{600,0},6.9))
++ nonce,_=input_clock_probe(&c,7)
++ t.expect(test,!input_clock_echo(&c,nonce,{600,1},7.1))
++}
++
++@(test)
++clock_never_reverses_and_marks_discontinuity :: proc(test: ^t.T) {
++ c:Input_Clock;nonce,_:=input_clock_probe(&c,0)
++ _=input_clock_echo(&c,nonce,{1000,0},0.1)
++ old:=c.estimate
++ nonce,_=input_clock_probe(&c,0.11);_=input_clock_echo(&c,nonce,{1000,0},0.111)
++ t.expect(test,server_stamp_error(c.estimate,old)>=0)
++ _,valid:=input_clock_now(&c,0.05);t.expect(test,!valid && c.resync)
++ c.resync=false;_,valid=input_clock_now(&c,0.5);t.expect(test,valid && c.resync)
++}
+diff --git a/src/shared/input_owner.odin b/src/shared/input_owner.odin
+new file mode 100644
+index 0000000..91bf774
+--- /dev/null
++++ b/src/shared/input_owner.odin
+@@ -0,0 +1,48 @@
++package shared
++import b2 "vendor:box2d"
++
++Owner_State :: struct {
++ identity: Input_Identity,
++ state_tick,topology_revision,finalized_through,last_applied_sequence,teleport_serial: u64,
++ position,velocity,support_velocity: Vec2,
++ coyote,buffered_jump: f32,
++ support_cell: u64,
++ grounded: bool,
++ support_kind: u8,
++ held: i8,
++ missing: u32,
++}
++owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revision: u64) -> Owner_State {
++ return {
++  identity=schedule.identity,state_tick=tick,topology_revision=revision,
++  finalized_through=schedule.finalized_through,last_applied_sequence=schedule.last_applied_sequence,
++  teleport_serial=player.teleport_serial,
++  position=from_b2(b2.Body_GetPosition(player.body)),velocity=from_b2(b2.Body_GetLinearVelocity(player.body)),
++  support_velocity=player.support_velocity,coyote=player.coyote,buffered_jump=player.buffered_jump,
++  support_cell=player.support_cell,grounded=player.grounded,support_kind=player.support_kind,
++  held=schedule.held,missing=schedule.missing,
++ }
++}
++owner_state_valid :: proc(o: Owner_State) -> bool {
++ return o.identity.incarnation!=0 && o.identity.generation!=0 && o.finalized_through<=o.state_tick &&
++  finite(o.position.x) && finite(o.position.y) && finite(o.velocity.x) && finite(o.velocity.y) &&
++  finite(o.support_velocity.x) && finite(o.support_velocity.y) && finite(o.coyote) && finite(o.buffered_jump) &&
++  o.coyote>=0 && o.coyote<=PLAYER_TUNING.coyote_time+0.00001 && o.buffered_jump>=0 && o.buffered_jump<=PLAYER_TUNING.jump_buffer+0.00001 &&
++  o.support_kind<=3 && o.held!=min(i8) && o.missing<=INPUT_HELD_GRACE+1 &&
++  (o.support_kind==1 || o.support_cell==0)
++}
++owner_state_restore :: proc(world: b2.WorldId,player: ^Player,o: Owner_State) -> bool {
++ if !owner_state_valid(o) { return false }
++ radius:=player.blast_radius
++ // Recreate only the prediction body: stale contact manifolds/warm starts may
++ // not survive an authoritative rewind. The server never calls this helper.
++ if player.active && b2.Body_IsValid(player.body) { b2.DestroyBody(player.body) }
++ player^=player_create(world,radius)
++ b2.Body_SetTransform(player.body,to_b2(o.position),b2.MakeRot(0))
++ b2.Body_SetLinearVelocity(player.body,to_b2(o.velocity))
++ player.grounded=o.grounded;player.coyote=o.coyote;player.buffered_jump=o.buffered_jump
++ player.support_velocity=o.support_velocity;player.support_cell=o.support_cell;player.support_kind=o.support_kind
++ player.teleport_serial=o.teleport_serial
++ player_refresh_pose(player)
++ return true
++}
+diff --git a/src/shared/input_requests.odin b/src/shared/input_requests.odin
+new file mode 100644
+index 0000000..07264aa
+--- /dev/null
++++ b/src/shared/input_requests.odin
+@@ -0,0 +1,47 @@
++package shared
++
++REQUEST_RESULT_WINDOW :: 1024
++Request_Status :: enum u8 { Pending, Accepted, Rejected, Expired, Wrong_Epoch, Wrong_Connection, Too_Old, Conflict, Capacity }
++Request_Result :: struct { request_id,effect_tick,event_id: u64, status: Request_Status, reason: u16 }
++Request_Entry :: struct { occupied: bool, request_id,fingerprint: u64, result: Request_Result }
++Request_Cache :: struct {
++ incarnation: u64,
++ highest,low_watermark: u64,
++ entries: [REQUEST_RESULT_WINDOW]Request_Entry,
++}
++Request_Begin :: enum { New, Replay, Too_Old, Conflict, Capacity, Wrong_Connection }
++
++request_cache_begin :: proc(c: ^Request_Cache,incarnation,id,fingerprint: u64) -> (Request_Begin,Request_Result) {
++ if incarnation==0 || incarnation!=c.incarnation { return .Wrong_Connection,{request_id=id,status=.Wrong_Connection} }
++ if id==0 { return .Too_Old,{request_id=id,status=.Too_Old} }
++ slot:=&c.entries[id%REQUEST_RESULT_WINDOW]
++ if slot.occupied && slot.request_id==id {
++  if slot.fingerprint!=fingerprint { return .Conflict,{request_id=id,status=.Conflict} }
++  return .Replay,slot.result
++ }
++ if id<=c.low_watermark || id<=c.highest { return .Too_Old,{request_id=id,status=.Too_Old} }
++ if slot.occupied && slot.result.status==.Pending { return .Capacity,{request_id=id,status=.Capacity} }
++ if slot.occupied { c.low_watermark=max(c.low_watermark,slot.request_id) }
++ c.highest=id
++ slot^={occupied=true,request_id=id,fingerprint=fingerprint,result={request_id=id,status=.Pending}}
++ return .New,slot.result
++}
++request_cache_finish :: proc(c: ^Request_Cache,result: Request_Result) -> bool {
++ slot:=&c.entries[result.request_id%REQUEST_RESULT_WINDOW]
++ if !slot.occupied || slot.request_id!=result.request_id || slot.result.status!=.Pending || result.status==.Pending { return false }
++ slot.result=result;return true
++}
++request_cache_expire_epoch :: proc(c: ^Request_Cache,tick: u64) {
++ for &slot in c.entries {
++  if slot.occupied && slot.result.status==.Pending { slot.result={request_id=slot.request_id,effect_tick=tick,status=.Wrong_Epoch} }
++ }
++}
++// Exact tick age filter; bounds/rate/host/aim authorization remain separate.
++blast_intent_status :: proc(expected_incarnation,incarnation: u64,expected_epoch,epoch: u32,now_tick,created_tick,deadline_tick: u64) -> Request_Status {
++ if incarnation==0 || incarnation!=expected_incarnation { return .Wrong_Connection }
++ if epoch!=expected_epoch { return .Wrong_Epoch }
++ if created_tick>now_tick && created_tick-now_tick>2 { return .Rejected }
++ if deadline_tick<created_tick || deadline_tick-created_tick>30 { return .Rejected }
++ if now_tick>deadline_tick { return .Expired }
++ return .Accepted
++}
+diff --git a/src/shared/input_requests_test.odin b/src/shared/input_requests_test.odin
+new file mode 100644
+index 0000000..5558dec
+--- /dev/null
++++ b/src/shared/input_requests_test.odin
+@@ -0,0 +1,45 @@
++package shared
++import t "core:testing"
++
++@(test)
++requests_terminal_replay_conflict_and_high_identifiers :: proc(test: ^t.T) {
++ c:=Request_Cache{incarnation=9007199254740999}
++ id:=u64(9007199254742001)
++ state,_:=request_cache_begin(&c,c.incarnation,id,77);t.expect_value(test,state,Request_Begin.New)
++ pending:Request_Result;state,pending=request_cache_begin(&c,c.incarnation,id,77)
++ t.expect(test,state==.Replay && pending.status==.Pending)
++ result:=Request_Result{id,9007199254743999,9007199254744001,.Accepted,0}
++ t.expect(test,request_cache_finish(&c,result))
++ replay:Request_Result;state,replay=request_cache_begin(&c,c.incarnation,id,77)
++ t.expect(test,state==.Replay && replay==result)
++ state,_=request_cache_begin(&c,c.incarnation,id,78);t.expect_value(test,state,Request_Begin.Conflict)
++ state,_=request_cache_begin(&c,c.incarnation+1,id,77);t.expect_value(test,state,Request_Begin.Wrong_Connection)
++ t.expect(test,!request_cache_finish(&c,result))
++}
++
++@(test)
++requests_eviction_watermark_never_reexecutes_old_or_unresolved :: proc(test: ^t.T) {
++ c:=Request_Cache{incarnation=1}
++ for id in u64(1)..=REQUEST_RESULT_WINDOW {
++  state,_:=request_cache_begin(&c,1,id,id);t.expect_value(test,state,Request_Begin.New)
++  if id!=1 { t.expect(test,request_cache_finish(&c,{request_id=id,status=.Rejected,reason=7})) }
++ }
++ state,_:=request_cache_begin(&c,1,REQUEST_RESULT_WINDOW+1,99);t.expect_value(test,state,Request_Begin.Capacity)
++ t.expect(test,request_cache_finish(&c,{request_id=1,status=.Accepted,effect_tick=60,event_id=90}))
++ state,_=request_cache_begin(&c,1,REQUEST_RESULT_WINDOW+1,99);t.expect_value(test,state,Request_Begin.New)
++ state,_=request_cache_begin(&c,1,1,1);t.expect_value(test,state,Request_Begin.Too_Old)
++ request_cache_expire_epoch(&c,100)
++ result:Request_Result;state,result=request_cache_begin(&c,1,REQUEST_RESULT_WINDOW+1,99)
++ t.expect(test,state==.Replay && result.status==.Wrong_Epoch && result.effect_tick==100)
++}
++
++@(test)
++requests_expiry_no_rewind_and_epoch_precondition :: proc(test: ^t.T) {
++ t.expect_value(test,blast_intent_status(1,1,4,4,100,75,105),Request_Status.Accepted)
++ t.expect_value(test,blast_intent_status(1,1,4,4,106,75,105),Request_Status.Expired)
++ t.expect_value(test,blast_intent_status(1,1,4,3,100,75,105),Request_Status.Wrong_Epoch)
++ t.expect_value(test,blast_intent_status(1,2,4,4,100,75,105),Request_Status.Wrong_Connection)
++ t.expect_value(test,blast_intent_status(1,1,4,4,100,103,130),Request_Status.Rejected)
++ t.expect_value(test,blast_intent_status(1,1,4,4,100,90,121),Request_Status.Rejected)
++ t.expect_value(test,blast_intent_status(1,1,4,4,100,100,99),Request_Status.Rejected)
++}
+diff --git a/src/shared/input_schedule.odin b/src/shared/input_schedule.odin
+new file mode 100644
+index 0000000..811b0ea
+--- /dev/null
++++ b/src/shared/input_schedule.odin
+@@ -0,0 +1,117 @@
++package shared
++
++// M5 scheduling kernel. Integration into the v4 wire path follows separately.
++// All identities and target arithmetic remain integer; no presentation clock here.
++INPUT_FUTURE_WINDOW :: u64(32)
++INPUT_HELD_GRACE :: u32(6)
++INPUT_HISTORY :: 256
++
++Scheduled_Command :: struct {
++ sequence, target_tick: u64,
++ move: i8,
++ jump_edge: u64,
++}
++Input_Identity :: struct { incarnation: u64, epoch: u32, generation: u64 }
++Schedule_Proposal :: struct { identity: Input_Identity, first_tick, first_sequence: u64 }
++Schedule_Result :: enum { Accepted, Wrong_Connection, Wrong_Epoch, Old_Generation, Obsolete, Too_Far, Overflow }
++Command_Result :: enum { Accepted, Duplicate, Conflict, Too_Late, Too_Far, Wrong_Identity, Wrong_Slot, Invalid_Move, Not_Synchronized }
++Schedule_Slot :: struct { occupied: bool, command: Scheduled_Command }
++Input_Schedule :: struct {
++ identity: Input_Identity,
++ synchronized: bool,
++ first_tick,first_sequence,finalized_through,last_applied_sequence,last_jump_edge: u64,
++ slots: [32]Schedule_Slot,
++ held: i8,
++ missing: u32,
++ accepted,duplicates,conflicts,too_late,wrong_identity,starved,neutralized,duplicate_jumps: u64,
++}
++Scheduled_Step :: struct { command: Scheduled_Command, applied,carried,neutralized: bool }
++
++input_schedule_reset :: proc(s: ^Input_Schedule,incarnation: u64,epoch: u32,now_tick: u64,p: Schedule_Proposal) -> Schedule_Result {
++ if p.identity.incarnation!=incarnation || incarnation==0 { return .Wrong_Connection }
++ if p.identity.epoch!=epoch { return .Wrong_Epoch }
++ if p.identity.generation==0 || (s.synchronized && p.identity.incarnation==s.identity.incarnation && p.identity.generation<=s.identity.generation) { return .Old_Generation }
++ if now_tick>max(u64)-INPUT_FUTURE_WINDOW || p.first_sequence==0 || p.first_sequence>max(u64)-INPUT_FUTURE_WINDOW { return .Overflow }
++ if p.first_tick<now_tick+2 { return .Obsolete }
++ if p.first_tick>now_tick+INPUT_FUTURE_WINDOW { return .Too_Far }
++ // Rejection above leaves the previous schedule completely unchanged.
++ s^=Input_Schedule{identity=p.identity,synchronized=true,first_tick=p.first_tick,first_sequence=p.first_sequence,finalized_through=now_tick}
++ return .Accepted
++}
++
++input_schedule_insert :: proc(s: ^Input_Schedule,identity: Input_Identity,now_tick: u64,c: Scheduled_Command) -> Command_Result {
++ if !s.synchronized { return .Not_Synchronized }
++ if identity!=s.identity { s.wrong_identity+=1;return .Wrong_Identity }
++ if c.move==min(i8) { return .Invalid_Move }
++ if c.target_tick<=s.finalized_through || c.target_tick<=now_tick { s.too_late+=1;return .Too_Late }
++ if c.target_tick-now_tick>INPUT_FUTURE_WINDOW { return .Too_Far }
++ if c.target_tick<s.first_tick { return .Wrong_Slot }
++ offset:=c.target_tick-s.first_tick
++ if offset>max(u64)-s.first_sequence || c.sequence!=s.first_sequence+offset { return .Wrong_Slot }
++ slot:=&s.slots[c.target_tick%u64(len(s.slots))]
++ if slot.occupied && slot.command.target_tick>s.finalized_through {
++  if slot.command==c { s.duplicates+=1;return .Duplicate }
++  s.conflicts+=1;return .Conflict
++ }
++ slot^={occupied=true,command=c};s.accepted+=1
++ return .Accepted
++}
++
++input_schedule_consume :: proc(s: ^Input_Schedule,tick: u64) -> (step: Scheduled_Step) {
++ if !s.synchronized || tick<=s.finalized_through { return }
++ // A discontinuity cannot carry stale held movement across the skipped interval.
++ if tick!=s.finalized_through+1 { s.held=0;s.missing=INPUT_HELD_GRACE }
++ slot:=&s.slots[tick%u64(len(s.slots))]
++ if tick>=s.first_tick && slot.occupied && slot.command.target_tick==tick {
++  step.command=slot.command;step.applied=true;slot^={}
++  s.held=step.command.move;s.missing=0;s.last_applied_sequence=step.command.sequence
++  if step.command.jump_edge!=0 {
++   if step.command.jump_edge<=s.last_jump_edge { step.command.jump_edge=0;s.duplicate_jumps+=1 }
++   else { s.last_jump_edge=step.command.jump_edge }
++  }
++ } else {
++  s.missing=min(s.missing+1,INPUT_HELD_GRACE+1);s.starved+=1
++  step.command.target_tick=tick
++  if tick>=s.first_tick && s.missing<=INPUT_HELD_GRACE { step.command.move=s.held;step.carried=true }
++  else { s.held=0;step.neutralized=true;s.neutralized+=1 }
++ }
++ s.finalized_through=tick
++ return
++}
++
++Command_History :: struct {
++ identity: Input_Identity,
++ first_tick,first_sequence,next_tick,next_sequence,finalized_through: u64,
++ accepted: bool,
++ slots: [INPUT_HISTORY]Schedule_Slot,
++}
++command_history_begin :: proc(h: ^Command_History,p: Schedule_Proposal) {
++ h^={identity=p.identity,first_tick=p.first_tick,first_sequence=p.first_sequence,next_tick=p.first_tick,next_sequence=p.first_sequence,accepted=true}
++}
++command_history_push :: proc(h: ^Command_History,move: i8,jump_edge: u64) -> (Scheduled_Command,bool) {
++ if !h.accepted || move==min(i8) || h.next_tick==max(u64) || h.next_sequence==max(u64) { return {},false }
++ slot:=&h.slots[h.next_tick%INPUT_HISTORY]
++ if slot.occupied && slot.command.target_tick>h.finalized_through { return {},false }
++ c:=Scheduled_Command{sequence=h.next_sequence,target_tick=h.next_tick,move=move,jump_edge=jump_edge}
++ slot^={occupied=true,command=c};h.next_sequence+=1;h.next_tick+=1
++ return c,true
++}
++command_history_finalize :: proc(h: ^Command_History,identity: Input_Identity,tick: u64) -> bool {
++ if !h.accepted || identity!=h.identity || tick<h.finalized_through { return false }
++ // An owner may finalize missing slots; it may not ACK commands from the future.
++ if tick>=h.next_tick { return false }
++ h.finalized_through=tick
++ for &slot in h.slots { if slot.occupied && slot.command.target_tick<=tick { slot={} } }
++ return true
++}
++command_history_redundancy :: proc(h: ^Command_History) -> (out: [4]Scheduled_Command,count: int) {
++ if !h.accepted || h.next_tick<=h.first_tick { return }
++ tick:=h.next_tick-1
++ for count<4 && tick>=h.first_tick {
++  slot:=h.slots[tick%INPUT_HISTORY]
++  if !slot.occupied || slot.command.target_tick!=tick { break }
++  out[count]=slot.command;count+=1
++  if tick==0 { break };tick-=1
++ }
++ return
++}
+diff --git a/src/shared/input_schedule_test.odin b/src/shared/input_schedule_test.odin
+new file mode 100644
+index 0000000..8627d35
+--- /dev/null
++++ b/src/shared/input_schedule_test.odin
+@@ -0,0 +1,89 @@
++package shared
++import t "core:testing"
++
++@(test)
++schedule_identity_slots_and_duplicate_conflict :: proc(test: ^t.T) {
++ s:Input_Schedule
++ id:=Input_Identity{incarnation=9007199254741001,epoch=3,generation=4294967319}
++ p:=Schedule_Proposal{identity=id,first_tick=9007199254741100,first_sequence=9007199254741999}
++ now:=p.first_tick-3
++ t.expect_value(test,input_schedule_reset(&s,id.incarnation,id.epoch,now,p),Schedule_Result.Accepted)
++ c:=Scheduled_Command{sequence=p.first_sequence,target_tick=p.first_tick,move=127,jump_edge=9007199254741901}
++ t.expect_value(test,input_schedule_insert(&s,id,now,c),Command_Result.Accepted)
++ t.expect_value(test,input_schedule_insert(&s,id,now,c),Command_Result.Duplicate)
++ conflict:=c;conflict.move=-127
++ t.expect_value(test,input_schedule_insert(&s,id,now,conflict),Command_Result.Conflict)
++ bad:=id;bad.generation-=1
++ t.expect_value(test,input_schedule_insert(&s,bad,now,c),Command_Result.Wrong_Identity)
++ wrong_slot:=c;wrong_slot.sequence+=1
++ t.expect_value(test,input_schedule_insert(&s,id,now,wrong_slot),Command_Result.Wrong_Slot)
++ _=input_schedule_consume(&s,now+1);_=input_schedule_consume(&s,now+2)
++ step:=input_schedule_consume(&s,p.first_tick)
++ t.expect(test,step.applied && step.command==c)
++ t.expect_value(test,s.last_applied_sequence,c.sequence)
++ t.expect_value(test,s.finalized_through,c.target_tick)
++ t.expect_value(test,input_schedule_insert(&s,id,p.first_tick,c),Command_Result.Too_Late)
++}
++
++@(test)
++schedule_missing_slots_carry_only_six_held_never_edges :: proc(test: ^t.T) {
++ s:Input_Schedule;id:=Input_Identity{1,1,1};p:=Schedule_Proposal{id,12,100}
++ t.expect_value(test,input_schedule_reset(&s,1,1,10,p),Schedule_Result.Accepted)
++ t.expect_value(test,input_schedule_insert(&s,id,10,{100,12,127,9007199254740993}),Command_Result.Accepted)
++ _=input_schedule_consume(&s,11);step:=input_schedule_consume(&s,12)
++ t.expect(test,step.applied && step.command.jump_edge==9007199254740993)
++ for tick in u64(13)..=18 {
++  step=input_schedule_consume(&s,tick)
++  t.expect(test,step.carried && step.command.move==127 && step.command.jump_edge==0 && !step.applied)
++ }
++ step=input_schedule_consume(&s,19)
++ t.expect(test,step.neutralized && step.command.move==0 && step.command.jump_edge==0)
++ t.expect_value(test,s.finalized_through,u64(19));t.expect_value(test,s.last_applied_sequence,u64(100))
++ t.expect_value(test,input_schedule_insert(&s,id,19,{101,13,-127,99}),Command_Result.Too_Late)
++}
++
++@(test)
++schedule_reset_acceptance_is_atomic_and_terminal :: proc(test: ^t.T) {
++ s:Input_Schedule;id:=Input_Identity{2,7,10};p:=Schedule_Proposal{id,102,1000}
++ t.expect_value(test,input_schedule_reset(&s,2,7,100,p),Schedule_Result.Accepted)
++ t.expect_value(test,input_schedule_insert(&s,id,100,{1000,102,127,1}),Command_Result.Accepted)
++ stale:=p;stale.identity.generation+=1;stale.first_tick=101
++ t.expect_value(test,input_schedule_reset(&s,2,7,100,stale),Schedule_Result.Obsolete)
++ t.expect_value(test,s.identity,id)
++ stale.first_tick=133;t.expect_value(test,input_schedule_reset(&s,2,7,100,stale),Schedule_Result.Too_Far)
++ stale.first_tick=105;stale.first_sequence=9007199254740999
++ t.expect_value(test,input_schedule_reset(&s,2,7,100,stale),Schedule_Result.Accepted)
++ t.expect_value(test,input_schedule_insert(&s,id,100,{1000,102,127,1}),Command_Result.Wrong_Identity)
++ t.expect_value(test,input_schedule_reset(&s,2,7,100,stale),Schedule_Result.Old_Generation)
++ for tick in u64(101)..=105 {
++  step:=input_schedule_consume(&s,tick);t.expect(test,!step.applied && step.command.jump_edge==0 && step.command.move==0)
++ }
++}
++
++@(test)
++schedule_repeated_jump_cannot_execute_at_another_slot :: proc(test: ^t.T) {
++ s:Input_Schedule;id:=Input_Identity{1,1,1};p:=Schedule_Proposal{id,2,1}
++ _=input_schedule_reset(&s,1,1,0,p)
++ _=input_schedule_insert(&s,id,0,{1,2,0,9007199254740993})
++ _=input_schedule_insert(&s,id,0,{2,3,0,9007199254740993})
++ _=input_schedule_consume(&s,1)
++ a:=input_schedule_consume(&s,2);b:=input_schedule_consume(&s,3)
++ t.expect(test,a.command.jump_edge!=0 && b.command.jump_edge==0 && b.applied)
++ t.expect_value(test,s.duplicate_jumps,u64(1))
++}
++
++@(test)
++history_redundancy_finalization_and_bounded_backlog :: proc(test: ^t.T) {
++ h:Command_History;p:=Schedule_Proposal{Input_Identity{9,9,9},1000,9007199254740993}
++ command_history_begin(&h,p)
++ for i in 0..<INPUT_HISTORY { _,ok:=command_history_push(&h,127,u64(i));t.expect(test,ok) }
++ _,overflow:=command_history_push(&h,0,0);t.expect(test,!overflow)
++ four,count:=command_history_redundancy(&h);t.expect_value(test,count,4)
++ for c,i in four { t.expect_value(test,c.target_tick,u64(1255-i));t.expect_value(test,c.sequence,p.first_sequence+u64(255-i)) }
++ t.expect(test,!command_history_finalize(&h,Input_Identity{9,9,8},1255))
++ t.expect(test,!command_history_finalize(&h,p.identity,1256))
++ t.expect(test,command_history_finalize(&h,p.identity,1255))
++ _,ok:=command_history_push(&h,-127,0);t.expect(test,ok)
++ _,count=command_history_redundancy(&h);t.expect_value(test,count,1)
++ t.expect(test,!command_history_finalize(&h,p.identity,1254))
++}
+diff --git a/src/shared/input_wire.odin b/src/shared/input_wire.odin
+new file mode 100644
+index 0000000..bc19a33
+--- /dev/null
++++ b/src/shared/input_wire.odin
+@@ -0,0 +1,75 @@
++package shared
++import nc "../netcode"
++
++// V4 codecs are not dispatched by protocol-3 sessions. Switch the application
++// version only when the client/server scheduled path is installed together.
++SCHEDULED_MSG_INPUT :: u8(0xD0)
++SCHEDULED_MSG_PROBE :: u8(0xD1)
++SCHEDULED_MSG_ECHO :: u8(0xD2)
++SCHEDULED_MSG_CONTROL :: u8(0xD3)
++SCHEDULED_MSG_OWNER :: u8(0xD4)
++SCHEDULED_MSG_REQUEST :: u8(0xD5)
++SCHEDULED_MSG_RESULT :: u8(0xD6)
++
++Scheduled_Input :: struct { identity: Input_Identity, has_ack: bool, ack: u64, count: int, commands: [4]Scheduled_Command }
++Schedule_Control_Kind :: enum u8 { Offer, Request, Accepted, Rejected }
++Schedule_Control :: struct { kind: Schedule_Control_Kind, proposal: Schedule_Proposal, server: Server_Stamp, reason: Schedule_Result }
++
++input_write_identity :: proc(w:^nc.Writer,id:Input_Identity) {
++ nc.write_u64(w,id.incarnation);nc.write_u32(w,id.epoch);nc.write_u64(w,id.generation)
++}
++input_read_identity :: proc(r:^nc.Reader) -> Input_Identity { return {nc.read_u64(r),nc.read_u32(r),nc.read_u64(r)} }
++scheduled_input_encode :: proc(w:^nc.Writer,input:Scheduled_Input) -> bool {
++ if input.count<0 || input.count>4 { return false }
++ nc.write_u8(w,SCHEDULED_MSG_INPUT);input_write_identity(w,input.identity)
++ nc.write_bool(w,input.has_ack);nc.write_u64(w,input.ack);nc.write_u8(w,u8(input.count))
++ for i in 0..<input.count {
++  c:=input.commands[i];if c.move==min(i8) { return false }
++  nc.write_u64(w,c.sequence);nc.write_u64(w,c.target_tick);nc.write_u8(w,u8(c.move));nc.write_u64(w,c.jump_edge)
++ }
++ return len(w.data)<=1150
++}
++scheduled_input_decode :: proc(data:[]u8) -> (input:Scheduled_Input,ok:bool) {
++ r:nc.Reader;nc.reader_init(&r,data)
++ if nc.read_u8(&r)!=SCHEDULED_MSG_INPUT { return }
++ input.identity=input_read_identity(&r);input.has_ack=nc.read_bool(&r);input.ack=nc.read_u64(&r);input.count=int(nc.read_u8(&r))
++ if !r.ok || input.count>4 { return {},false }
++ for i in 0..<input.count {
++  input.commands[i]={nc.read_u64(&r),nc.read_u64(&r),i8(nc.read_u8(&r)),nc.read_u64(&r)}
++  if input.commands[i].move==min(i8) { return {},false }
++ }
++ return input,r.ok && r.pos==len(data)
++}
++schedule_control_encode :: proc(w:^nc.Writer,c:Schedule_Control) {
++ nc.write_u8(w,SCHEDULED_MSG_CONTROL);nc.write_u8(w,u8(c.kind));input_write_identity(w,c.proposal.identity)
++ nc.write_u64(w,c.proposal.first_tick);nc.write_u64(w,c.proposal.first_sequence)
++ nc.write_u64(w,c.server.tick);nc.write_f32(w,f32(c.server.phase));nc.write_u8(w,u8(c.reason))
++}
++schedule_control_decode :: proc(data:[]u8) -> (c:Schedule_Control,ok:bool) {
++ r:nc.Reader;nc.reader_init(&r,data)
++ if nc.read_u8(&r)!=SCHEDULED_MSG_CONTROL { return }
++ kind:=nc.read_u8(&r);c.proposal.identity=input_read_identity(&r)
++ c.proposal.first_tick=nc.read_u64(&r);c.proposal.first_sequence=nc.read_u64(&r)
++ c.server.tick=nc.read_u64(&r);c.server.phase=f64(nc.read_f32(&r));reason:=nc.read_u8(&r)
++ if !r.ok || r.pos!=len(data) || kind>u8(Schedule_Control_Kind.Rejected) || reason>u8(Schedule_Result.Overflow) || !finite(f32(c.server.phase)) || c.server.phase<0 || c.server.phase>=1 { return {},false }
++ c.kind=Schedule_Control_Kind(kind);c.reason=Schedule_Result(reason);return c,true
++}
++owner_state_encode :: proc(w:^nc.Writer,o:Owner_State) {
++ nc.write_u8(w,SCHEDULED_MSG_OWNER);input_write_identity(w,o.identity)
++ nc.write_u64(w,o.state_tick);nc.write_u64(w,o.topology_revision);nc.write_u64(w,o.finalized_through)
++ nc.write_u64(w,o.last_applied_sequence);nc.write_u64(w,o.teleport_serial)
++ nc.write_f32(w,o.position.x);nc.write_f32(w,o.position.y);nc.write_f32(w,o.velocity.x);nc.write_f32(w,o.velocity.y)
++ nc.write_f32(w,o.support_velocity.x);nc.write_f32(w,o.support_velocity.y);nc.write_f32(w,o.coyote);nc.write_f32(w,o.buffered_jump)
++ nc.write_u64(w,o.support_cell);nc.write_bool(w,o.grounded);nc.write_u8(w,o.support_kind);nc.write_u8(w,u8(o.held));nc.write_u8(w,u8(o.missing))
++}
++owner_state_decode :: proc(data:[]u8) -> (o:Owner_State,ok:bool) {
++ r:nc.Reader;nc.reader_init(&r,data)
++ if nc.read_u8(&r)!=SCHEDULED_MSG_OWNER { return }
++ o.identity=input_read_identity(&r)
++ o.state_tick=nc.read_u64(&r);o.topology_revision=nc.read_u64(&r);o.finalized_through=nc.read_u64(&r)
++ o.last_applied_sequence=nc.read_u64(&r);o.teleport_serial=nc.read_u64(&r)
++ o.position={nc.read_f32(&r),nc.read_f32(&r)};o.velocity={nc.read_f32(&r),nc.read_f32(&r)}
++ o.support_velocity={nc.read_f32(&r),nc.read_f32(&r)};o.coyote=nc.read_f32(&r);o.buffered_jump=nc.read_f32(&r)
++ o.support_cell=nc.read_u64(&r);o.grounded=nc.read_bool(&r);o.support_kind=nc.read_u8(&r);o.held=i8(nc.read_u8(&r));o.missing=u32(nc.read_u8(&r))
++ return o,r.ok && r.pos==len(data) && owner_state_valid(o)
++}
+diff --git a/src/shared/input_wire_test.odin b/src/shared/input_wire_test.odin
+new file mode 100644
+index 0000000..1c43f44
+--- /dev/null
++++ b/src/shared/input_wire_test.odin
+@@ -0,0 +1,60 @@
++package shared
++import t "core:testing"
++import nc "../netcode"
++import b2 "vendor:box2d"
++
++@(test)
++scheduled_wire_integer_roundtrip_budget_and_truncation :: proc(test:^t.T) {
++ input:=Scheduled_Input{identity={9007199254740999,7,4294967301},has_ack=true,ack=9007199254742001,count=4}
++ for &c,i in input.commands { c={9007199254743001+u64(i),9007199254744001+u64(i),i8(i*20-30),9007199254745001+u64(i)} }
++ w:nc.Writer;nc.writer_init(&w,256);defer nc.writer_destroy(&w)
++ t.expect(test,scheduled_input_encode(&w,input));t.expect(test,len(w.data)<200)
++ decoded,ok:=scheduled_input_decode(w.data[:]);t.expect(test,ok && decoded==input)
++ for size in 0..<len(w.data) { _,valid:=scheduled_input_decode(w.data[:size]);t.expect(test,!valid) }
++ append(&w.data,u8(0));_,ok=scheduled_input_decode(w.data[:]);t.expect(test,!ok)
++}
++
++@(test)
++owner_wire_full_state_precision_and_truncation :: proc(test:^t.T) {
++ o:=Owner_State{identity={9007199254740999,7,4294967301},state_tick=9007199254742001,topology_revision=9007199254742003,
++ finalized_through=9007199254742001,last_applied_sequence=9007199254743001,teleport_serial=9007199254744001,
++ position={1.234567,-2.345678},velocity={3.456789,-4.567891},support_velocity={0.333333,0.444444},coyote=.073,buffered_jump=.056,
++ support_cell=9007199254745001,grounded=true,support_kind=1,held=-127,missing=3}
++ w:nc.Writer;nc.writer_init(&w,256);defer nc.writer_destroy(&w);owner_state_encode(&w,o)
++ decoded,ok:=owner_state_decode(w.data[:]);t.expect(test,ok && decoded==o && len(w.data)<200)
++ for size in 0..<len(w.data) { _,valid:=owner_state_decode(w.data[:size]);t.expect(test,!valid) }
++ o.velocity.x=transmute(f32)u32(0x7fc00000);nc.writer_reset(&w);owner_state_encode(&w,o)
++ _,ok=owner_state_decode(w.data[:]);t.expect(test,!ok)
++}
++
++@(test)
++schedule_control_exact_origin_and_invalid_enum :: proc(test:^t.T) {
++ c:=Schedule_Control{kind=.Accepted,proposal={{9007199254740999,7,9007199254741001},9007199254742001,9007199254743001},server={9007199254741999,0.5}}
++ w:nc.Writer;nc.writer_init(&w,128);defer nc.writer_destroy(&w);schedule_control_encode(&w,c)
++ decoded,ok:=schedule_control_decode(w.data[:]);t.expect(test,ok && decoded==c)
++ for size in 0..<len(w.data) { _,valid:=schedule_control_decode(w.data[:size]);t.expect(test,!valid) }
++ w.data[1]=255;_,ok=schedule_control_decode(w.data[:]);t.expect(test,!ok)
++}
++
++@(test)
++owner_restore_all_movement_state_and_no_prediction_respawn :: proc(test:^t.T) {
++ def:=b2.DefaultWorldDef();def.gravity={0,-9.8};world:=b2.CreateWorld(def);defer b2.DestroyWorld(world)
++ player:=player_create(world,2.3)
++ o:=Owner_State{identity={1,2,3},state_tick=100,finalized_through=100,last_applied_sequence=99,teleport_serial=9007199254740993,
++ position={1.234567,1.3},velocity={2.345678,3.456789},support_velocity={.3,.4},coyote=.073,buffered_jump=.056,
++ support_cell=9007199254745001,grounded=true,support_kind=1}
++ t.expect(test,owner_state_restore(world,&player,o))
++ t.expect_value(test,from_b2(b2.Body_GetPosition(player.body)),o.position)
++ t.expect_value(test,from_b2(b2.Body_GetLinearVelocity(player.body)),o.velocity)
++ t.expect(test,player.grounded && player.coyote==o.coyote && player.buffered_jump==o.buffered_jump && player.support_velocity==o.support_velocity && player.support_cell==o.support_cell && player.teleport_serial==o.teleport_serial)
++ // First replay uses the owner's support cache, then the identical movement kernel.
++ player_movement_from_support(&player,1,false,1.0/60.0)
++ v:=from_b2(b2.Body_GetLinearVelocity(player.body));t.expect(test,v.y==PLAYER_TUNING.jump_speed+o.support_velocity.y)
++ b2.World_Step(world,1.0/60.0,PHYSICS_SUBSTEPS);player_after_movement_step(&player)
++ t.expect(test,finite(player.pose.position.x) && finite(player.pose.position.y))
++ b2.Body_SetTransform(player.body,{100,100},b2.MakeRot(0));serial:=player.teleport_serial
++ player_after_movement_step(&player);t.expect(test,player_out_of_bounds(&player) && player.teleport_serial==serial && player.pose.position.x==100)
++ bad:=o;bad.coyote=-1;position:=player.pose.position
++ t.expect(test,!owner_state_restore(world,&player,bad) && player.pose.position==position)
++ t.expect(test,player_after_step(&player) && player.teleport_serial==serial+1)
++}
+diff --git a/src/shared/player.odin b/src/shared/player.odin
+index be08113..37d0b73 100644
+--- a/src/shared/player.odin
++++ b/src/shared/player.odin
+@@ -9,6 +9,9 @@ Player :: struct {
+ 	grounded: bool,
+ 	coyote, buffered_jump: f32,
+ 	support_velocity: Vec2,
++	support_cell: u64,
++	support_kind: u8, // 0 none, 1 stable cell, 2 static floor, 3 unidentified dynamic body
++	teleport_serial: u64,
+ 	blast_radius: f32,
+ 	// Runtime-only mirror of the body pose, refreshed after every physics step
+ 	// and snapshot load. Drawing reads this, never the body.
+diff --git a/src/shared/sim_player.odin b/src/shared/sim_player.odin
+index 88aacca..8e5ffc2 100644
+--- a/src/shared/sim_player.odin
++++ b/src/shared/sim_player.odin
+@@ -38,7 +38,7 @@ player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
+ 	// Players pass through each other (negative shared group) and collide with everything else.
+ 	shape.filter.groupIndex=-1
+ 	_ = b2.CreateCapsuleShape(body,shape,b2.Capsule{center1={0,-PLAYER_SEGMENT},center2={0,PLAYER_SEGMENT},radius=PLAYER_RADIUS})
+-	player:=Player{active=true,body=body,blast_radius=blast_radius}
++	player:=Player{active=true,body=body,blast_radius=blast_radius,teleport_serial=1}
+ 	player_refresh_pose(&player)
+ 	return player
+ }
+@@ -48,13 +48,14 @@ player_respawn :: proc(player: ^Player) {
+ 	b2.Body_SetTransform(body,to_b2(PLAYER_SPAWN),b2.MakeRot(0))
+ 	b2.Body_SetLinearVelocity(body,{})
+ 	b2.Body_SetAngularVelocity(body,0)
+-	player^=Player{active=true,body=body,blast_radius=player.blast_radius}
++	player^=Player{active=true,body=body,blast_radius=player.blast_radius,teleport_serial=player.teleport_serial+1}
+ 	player_refresh_pose(player)
+ }
+ 
+ player_read_support :: proc(player: ^Player) {
+ 	player.grounded=false
+ 	player.support_velocity={}
++	player.support_cell=0;player.support_kind=0
+ 	position:=from_b2(b2.Body_GetPosition(player.body))
+ 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
+ 	buffer:=make([]b2.ContactData,int(b2.Body_GetContactCapacity(player.body)))
+@@ -63,7 +64,8 @@ player_read_support :: proc(player: ^Player) {
+ 		a,b:=b2.Shape_GetBody(contact.shapeIdA),b2.Shape_GetBody(contact.shapeIdB)
+ 		normal:=from_b2(contact.manifold.normal)
+ 		other:=a
+-		if a==player.body { normal=vmul(normal,-1); other=b }
++		other_shape:=contact.shapeIdA
++		if a==player.body { normal=vmul(normal,-1); other=b;other_shape=contact.shapeIdB }
+ 		if normal.y<0.55 { continue }
+ 		for i in 0..<int(contact.manifold.pointCount) {
+ 			point:=contact.manifold.points[i]
+@@ -71,6 +73,9 @@ player_read_support :: proc(player: ^Player) {
+ 			if point.separation<=0.025 && point.point.y<position.y-0.1 && vdot(vsub(velocity,support_velocity),normal)<0.8 {
+ 				player.grounded=true
+ 				player.support_velocity=support_velocity
++				player.support_cell=u64(uintptr(b2.Shape_GetUserData(other_shape)))
++				player.support_kind=1
++				if player.support_cell==0 { player.support_kind=b2.Body_GetType(other)==.staticBody?u8(2):u8(3) }
+ 			}
+ 		}
+ 	}
+@@ -78,6 +83,12 @@ player_read_support :: proc(player: ^Player) {
+ 
+ player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
+ 	player_read_support(player)
++	player_movement_from_support(player,move,jump_pressed,dt)
++}
++
++// Shared movement kernel: prediction may seed the first replay step with the
++// authoritative support record after recreating its contact body.
++player_movement_from_support :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
+ 	if player.grounded { player.coyote=PLAYER_TUNING.coyote_time } else { player.coyote=max(f32(0),player.coyote-dt) }
+ 	if jump_pressed { player.buffered_jump=PLAYER_TUNING.jump_buffer }
+ 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
+@@ -93,13 +104,19 @@ player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32)
+ 	b2.Body_SetLinearVelocity(player.body,to_b2(velocity))
+ }
+ 
+-player_after_step :: proc(player: ^Player) -> bool {
++player_out_of_bounds :: proc(player: ^Player) -> bool {
+ 	position:=from_b2(b2.Body_GetPosition(player.body))
+-	if position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y) {
++	return position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y)
++}
++player_after_movement_step :: proc(player: ^Player) {
++	player_read_support(player)
++	player_refresh_pose(player)
++}
++player_after_step :: proc(player: ^Player) -> bool {
++	if player_out_of_bounds(player) {
+ 		player_respawn(player)
+ 		return true
+ 	}
+-	player_read_support(player)
+-	player_refresh_pose(player)
++	player_after_movement_step(player)
+ 	return false
+ }
+-- 
+2.56.0.windows.2
+
+
+From 9b9da61b42a56f3e29603dc5cca89cee0818be58 Mon Sep 17 00:00:00 2001
+From: rblick <robertblick@gmail.com>
+Date: Fri, 6 Nov 2026 16:15:20 -0500
+Subject: [PATCH 2/2] Implement protocol 4 scheduled input and terminal
+ requests; validate static replay
+
+---
+ scripts/build-client.ps1                   |   6 +-
+ scripts/test-client-core.ps1               |  17 +++
+ src/ffi/client.odin                        |  13 ++-
+ src/net_game_ui.odin                       |  13 ++-
+ src/net_real.odin                          |  23 +++-
+ src/shared/input_link.odin                 |  90 +++++++++++++++
+ src/shared/input_link_test.odin            |  48 ++++++++
+ src/shared/input_network.odin              | 115 +++++++++++++++++++
+ src/shared/input_owner.odin                |   3 +-
+ src/shared/input_request_network.odin      | 122 +++++++++++++++++++++
+ src/shared/input_request_network_test.odin |  52 +++++++++
+ src/shared/input_requests.odin             |  12 +-
+ src/shared/input_schedule.odin             |   2 +-
+ src/shared/input_wire.odin                 |   4 +-
+ src/shared/input_wire_test.odin            |   2 +-
+ src/shared/net_client.odin                 |  16 ++-
+ src/shared/net_frame.odin                  |  10 +-
+ src/shared/net_session.odin                |   4 +-
+ src/shared/prediction_history.odin         | 115 +++++++++++++++++++
+ src/shared/prediction_history_test.odin    |  37 +++++++
+ src/shared/prediction_static.odin          |  77 +++++++++++++
+ src/shared/prediction_static_test.odin     |  68 ++++++++++++
+ src/shared/sim_net_host.odin               |   4 +-
+ src/shared/sim_net_real.odin               |   5 +
+ src/shared/sim_net_server.odin             |  39 ++++++-
+ src/shared/sim_yard.odin                   |   2 +-
+ src/shared_aliases.odin                    |   1 +
+ tests/interop/Program.cs                   |  11 ++
+ 28 files changed, 872 insertions(+), 39 deletions(-)
+ create mode 100644 scripts/test-client-core.ps1
+ create mode 100644 src/shared/input_link.odin
+ create mode 100644 src/shared/input_link_test.odin
+ create mode 100644 src/shared/input_network.odin
+ create mode 100644 src/shared/input_request_network.odin
+ create mode 100644 src/shared/input_request_network_test.odin
+ create mode 100644 src/shared/prediction_history.odin
+ create mode 100644 src/shared/prediction_history_test.odin
+ create mode 100644 src/shared/prediction_static.odin
+ create mode 100644 src/shared/prediction_static_test.odin
+
+diff --git a/scripts/build-client.ps1 b/scripts/build-client.ps1
+index 25734c4..f00a89a 100644
+--- a/scripts/build-client.ps1
++++ b/scripts/build-client.ps1
+@@ -29,6 +29,10 @@ try {
+     $compiler=(& $config.OdinCompiler version | Out-String).Trim()
+     $schema=Get-Content -LiteralPath (Join-Path $root 'bindings/bom-abi.json') -Raw|ConvertFrom-Json
+     $commit=(& git -C $root rev-parse HEAD 2>$null|Out-String).Trim()
+-    [ordered]@{abi_major=$schema.abi_major;abi_minor=$schema.abi_minor;source_commit=$commit;source_sha256=$sourceHash;build_tag=$tag;dll_sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant();compiler=$compiler;game_protocol=3;canonical_version=2;client='shared native client, no managed codec';validation='See integration/tasks.json and integration/evidence for executed gates.'} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $build 'bomcore.build.json') -Encoding utf8
++    $sessionSource=Get-Content -LiteralPath (Join-Path $root 'src/shared/net_session.odin') -Raw
++    $protocol=[int]([regex]::Match($sessionSource,'GAME_PROTOCOL_VERSION\s*::\s*u32\((\d+)\)').Groups[1].Value)
++    $sourceChanges=@(& git -C $root status --porcelain --untracked-files=all -- src bindings scripts tests)
++    $sourceDirty=$sourceChanges.Count -gt 0
++    [ordered]@{abi_major=$schema.abi_major;abi_minor=$schema.abi_minor;source_commit=$commit;source_dirty=$sourceDirty;source_sha256=$sourceHash;build_tag=$tag;dll_sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant();compiler=$compiler;game_protocol=$protocol;canonical_version=2;client='shared native client, no managed codec';validation='See integration/tasks.json and integration/evidence for executed gates.'} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $build 'bomcore.build.json') -Encoding utf8
+     Write-Output "Native client identity: $sourceHash ($tag)"
+ } finally {$env:PATH=$oldPath;$env:LIB=$oldLib}
+diff --git a/scripts/test-client-core.ps1 b/scripts/test-client-core.ps1
+new file mode 100644
+index 0000000..6a2dd68
+--- /dev/null
++++ b/scripts/test-client-core.ps1
+@@ -0,0 +1,17 @@
++[CmdletBinding()]
++param([Parameter(Mandatory=$true)][string]$ConfigPath)
++$ErrorActionPreference='Stop'
++$root=Split-Path -Parent $PSScriptRoot
++$config=Get-Content -LiteralPath $ConfigPath -Raw|ConvertFrom-Json
++$oldPath=$env:PATH;$oldLib=$env:LIB
++try {
++ $env:PATH=$config.LinkerDirectory+';'+$env:PATH;$env:LIB=$config.LibraryDirectories -join ';'
++ foreach($package in @('shared','ffi')) {
++  # Box2D world creation and the ABI owner-thread fixtures run on one thread,
++  # just as the production native client does. Parallel fixtures can race the
++  # process-global Box2D world registry and violate the ABI's ownership contract.
++  $arguments=@('test',(Join-Path $root "src/$package"),"-out:$(Join-Path $root "build/$package-tests.exe")",'-define:ODIN_TEST_THREADS=1','-define:ODIN_TEST_FANCY=false','-define:ODIN_TEST_TRACK_MEMORY=true','-define:ODIN_TEST_FAIL_ON_BAD_MEMORY=true')+@($config.CompilerArguments)
++  & $config.OdinCompiler @arguments
++  if($LASTEXITCODE -ne 0){throw "$package client-core tests failed with exit $LASTEXITCODE"}
++ }
++}finally{$env:PATH=$oldPath;$env:LIB=$oldLib}
+diff --git a/src/ffi/client.odin b/src/ffi/client.odin
+index 5bbfba0..28ed974 100644
+--- a/src/ffi/client.odin
++++ b/src/ffi/client.odin
+@@ -8,7 +8,8 @@ import w "core:sys/windows"
+ import nc "../netcode"
+ import core "../shared"
+ 
+-// Initial live polling bridge. Prediction/provenance and the full M3 gates remain pending.
++// Live shared-native polling bridge. M5 scheduled input is being validated;
++// prediction, provenance and round capabilities have separate milestone gates.
+ OK :: u32(0)
+ INVALID_HANDLE :: u32(1)
+ BAD_ARGUMENT :: u32(2)
+@@ -32,6 +33,7 @@ Client_Slot :: struct {
+  endpoint: nc.Address,
+  token: string,
+  connection_generation,sample_sequence,event_sequence,ack_event_id: u64,
++ input_generation: u64,
+  cached_epoch,input_epoch,journal_epoch: u32, cached_revision,canonical_hash,stall_count: u64,
+  presented_tick: f64,
+  input_error: u32,
+@@ -206,9 +208,10 @@ collect_presented :: proc(s:^Client_Slot) -> u32 {
+ }
+ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
+  s:=cast(^Client_Slot)data
+- if c.epoch!=s.input_epoch {
++ generation:=c.input_link.history.identity.generation
++ if c.epoch!=s.input_epoch || (c.real_gate && generation!=s.input_generation) {
+   clear(&s.held);clear(&s.jumps);clear(&s.actions)
+-  s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch
++  s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch;s.input_generation=generation
+  }
+  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
+  c.human_move=s.held_move
+@@ -230,6 +233,7 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
+  dt:=now-s.last_now;s.last_now=now;s.transport_now+=max(f64(0),dt)
+  if dt<0 || dt>0.25 || s.accumulator+dt>core.NET_STEP_DT*4+1e-8 {
+   s.stall_count+=1
++  core.input_link_clear_intent(&s.client.input_link)
+   clear(&s.held);clear(&s.jumps);clear(&s.actions);clear(&s.client.blasts)
+   s.held_move=0;s.client.human_jump_pending=false;s.client.has_clock=false
+   s.accumulator=0;s.next_tick=now+core.NET_STEP_DT
+@@ -241,7 +245,8 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
+  }
+  for _ in 0..<4 {
+   if s.accumulator+1e-9<core.NET_STEP_DT { break }
+-  core.net_client_step(&s.client,s.transport_now,ffi_input_source,s)
++  fixed_now:=s.transport_now-s.accumulator+core.NET_STEP_DT
++  core.net_client_step(&s.client,fixed_now,ffi_input_source,s)
+   if len(s.client.stats.delay_history)>256 {
+    history:=s.client.stats.delay_history
+    copy(history[:256],history[len(history)-256:])
+diff --git a/src/net_game_ui.odin b/src/net_game_ui.odin
+index 1d6277c..d8a7ed8 100644
+--- a/src/net_game_ui.odin
++++ b/src/net_game_ui.odin
+@@ -10,6 +10,7 @@ import "core:crypto"
+ // A live human client and editor UI, independent from the solo World.
+ // The server remains on loopback for this integration increment.
+ Net_Game_UI :: struct {
++ input_captured: bool,
+  open: bool,
+  target_text: [65]u8,
+  target_edit: bool,
+@@ -165,9 +166,10 @@ net_gui_step :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
+   if from==ui.target { nc.client_receive(&ui.client.nc_client,packet,now) }
+  }
+  steps:=0
+- for now-ui.last_step>=NET_STEP_DT && steps<5 {
++ if now<ui.last_step || now-ui.last_step>NET_STEP_DT*4+1e-8 { ui.last_step=now;net_client_clear_intent(&ui.client);ui.client.has_clock=false }
++ for now-ui.last_step+1e-9>=NET_STEP_DT && steps<4 {
+   ui.last_step+=NET_STEP_DT
+-  net_client_step(&ui.client,now)
++  net_client_step(&ui.client,ui.last_step)
+   net_client_view_step(&ui.client,&ui.client_view)
+   // The same canonical-hash feedback used by the headless smoke client.
+   for applied in ui.client.applied {
+@@ -182,7 +184,6 @@ net_gui_step :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
+   clear(&ui.client.applied)
+   steps+=1
+  }
+- if steps==5 && now-ui.last_step>=NET_STEP_DT { ui.last_step=now }
+  net_gui_flush(ui)
+  c:=&ui.client
+  if ui.hosting && c.real_hello_ok && !c.real_is_host {
+@@ -226,7 +227,7 @@ net_gui_human_input :: proc(ui: ^Net_Game_UI,game: ^Sandbox,view: View,over_ui:
+  if !ui.active { return }
+  c:=&ui.client
+  c.human_move=0
+- if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok { return }
++ if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok || !rl.IsWindowFocused() { c.human_jump_pending=false;clear(&c.blasts);return }
+  if rl.IsKeyDown(.A) || rl.IsKeyDown(.LEFT) { c.human_move-=1 }
+  if rl.IsKeyDown(.D) || rl.IsKeyDown(.RIGHT) { c.human_move+=1 }
+  if rl.IsKeyPressed(.SPACE) && !game.block_jump { c.human_jump_pending=true }
+@@ -249,9 +250,13 @@ net_gui_human_input :: proc(ui: ^Net_Game_UI,game: ^Sandbox,view: View,over_ui:
+ // going through the network. Mouse-up releases the editor's placement latch.
+ net_gui_route_input :: proc(ui:^Net_Game_UI,game:^Sandbox,raw:Sandbox_Input,view:View,over_ui:bool) {
+  ui.client.human_move=0
++ captured:=ui.open || game.panel_open || game.editor.editing || !rl.IsWindowFocused()
++ if captured && !ui.input_captured { net_client_clear_intent(&ui.client) }
++ ui.input_captured=captured
+  if raw.menu_pressed {
+   if game.palette_open { game.palette_open=false;sandbox_clear_input(game) }
+   else { sandbox_set_panel(game,!game.panel_open) }
++  net_client_clear_intent(&ui.client)
+   return
+  }
+  if game.panel_open { return }
+diff --git a/src/net_real.odin b/src/net_real.odin
+index 668c6c6..519ce95 100644
+--- a/src/net_real.odin
++++ b/src/net_real.odin
+@@ -52,26 +52,39 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
+  defer net_client_view_destroy(&client_view)
+  net_client_init(&client,nc.random_salt(),0)
+  bot:Bot; bot_init(&bot,42,true)
+- defer net_client_destroy(&client)
++ defer {
++  nc.client_disconnect(&client.nc_client)
++  outgoing:=nc.client_take_outgoing(&client.nc_client)
++  for packet in outgoing { _=nc.socket_send(&sock,target,packet.data) }
++  nc.outgoing_free(&outgoing)
++  net_client_destroy(&client)
++ }
+  client.real_gate=true
+  client.real_host_token=host_token
+  client.real_protocol=protocol_version
+  client.verify=true
+  start:=time.tick_now()
+- last_tick:=f64(0)
++ last_now:=f64(0)
++ accumulator:=f64(0)
+  next_report:=f64(10)
+  upload_sent,reset_sent:=false,false
+  buf:[nc.MAX_PACKET+64]u8
+  for {
+   now:=time.duration_seconds(time.tick_since(start))
++  elapsed:=now-last_now;last_now=now
++  if elapsed<0 || elapsed>0.25 || accumulator+elapsed>NET_STEP_DT*4+1e-8 {
++   accumulator=0;net_client_clear_intent(&client);client.has_clock=false
++  } else { accumulator+=elapsed }
+   if seconds>0 && now>=seconds { break }
+   for {
+    packet,from,has:=nc.socket_receive(&sock,buf[:])
+    if !has { break }
+    if from==target { nc.client_receive(&client.nc_client,packet,now) }
+   }
+-  if now-last_tick>=NET_STEP_DT {
+-   net_client_step(&client,now,net_bot_client_input,&bot)
++  steps:=0
++  for accumulator+1e-9>=NET_STEP_DT && steps<4 {
++   fixed_now:=now-accumulator+NET_STEP_DT
++   net_client_step(&client,fixed_now,net_bot_client_input,&bot)
+    if hidden_window { net_client_view_step(&client,&client_view) }
+    if client.real_hello_ok {
+     if len(upload_data)>0 && !upload_sent { upload_sent=net_host_client_send_layout(&client,upload_data) }
+@@ -91,7 +104,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
+     nc.writer_destroy(&writer)
+    }
+    clear(&client.applied)
+-   last_tick=now
++   accumulator-=NET_STEP_DT;steps+=1
+   }
+   packets:=nc.client_take_outgoing(&client.nc_client)
+   for p in packets { _=nc.socket_send(&sock,target,p.data) }
+diff --git a/src/shared/input_link.odin b/src/shared/input_link.odin
+new file mode 100644
+index 0000000..0ff1ff8
+--- /dev/null
++++ b/src/shared/input_link.odin
+@@ -0,0 +1,90 @@
++package shared
++
++// Native schedule handshake state. Both frontends use this; no frontend may
++// invent target ticks or shift already-issued commands after a rejected origin.
++Input_Link :: struct {
++ clock: Input_Clock,
++ history: Command_History,
++ offer,pending: Schedule_Proposal,
++ has_offer,awaiting,active: bool,
++ next_generation,jump_edge_counter: u64,
++ has_owner: bool,
++ owner: Owner_State,
++ resets,rejections,retired_slots: u64,
++}
++
++input_link_offer :: proc(c:^Input_Link,offer:Schedule_Control) -> bool {
++ if offer.kind!=.Offer || offer.proposal.identity.incarnation==0 || offer.proposal.identity.generation==0 { return false }
++ // A stale offer cannot revive the previous epoch or connection.
++ if c.has_offer && offer.proposal.identity.incarnation==c.offer.identity.incarnation && offer.proposal.identity.epoch<c.offer.identity.epoch { return false }
++ c.offer=offer.proposal;c.has_offer=true;c.awaiting=false;c.active=false;c.history={};c.has_owner=false
++ c.next_generation=max(c.next_generation,offer.proposal.identity.generation)
++ c.resets+=1
++ return true
++}
++
++input_link_prepare_reset :: proc(c:^Input_Link,now:f64) -> (request:Schedule_Control,ready:bool) {
++ if !c.has_offer || c.awaiting || c.active || c.next_generation==max(u64) { return }
++ tick,ok:=input_clock_target_origin(&c.clock,now);if !ok { return }
++ // The clock determines the target. The server's offered tick is only a lower
++ // bound; it is not a hidden mapping of the client's sequence onto another slot.
++ tick=max(tick,c.offer.first_tick)
++ c.pending={identity=c.offer.identity,first_tick=tick,first_sequence=c.offer.first_sequence}
++ c.pending.identity.generation=c.next_generation;c.next_generation+=1
++ c.awaiting=true;command_history_begin(&c.history,c.pending)
++ return {kind=.Request,proposal=c.pending},true
++}
++
++input_link_control_result :: proc(c:^Input_Link,result:Schedule_Control) -> bool {
++ if !c.awaiting || result.proposal!=c.pending { return false }
++ if result.kind==.Accepted {
++  c.awaiting=false;c.active=true;c.clock.resync=false;c.has_owner=false;return true
++ }
++ if result.kind==.Rejected {
++  c.awaiting=false;c.active=false;c.history={};c.rejections+=1
++  // A rejected proposal's command bytes are terminal, never retargeted. A new
++  // attempt uses a fresh generation and a fresh clock-derived origin.
++  return true
++ }
++ return false
++}
++
++input_link_clear_intent :: proc(c:^Input_Link) {
++ c.active=false;c.awaiting=false;c.history={};c.has_owner=false;c.resets+=1
++}
++
++input_link_command :: proc(c:^Input_Link,move:i8,jump:bool) -> (Scheduled_Command,bool) {
++ if !c.active && !c.awaiting { return {},false }
++ held:=move;press:=jump
++ if !c.active { held=0;press=false }
++ edge:=u64(0)
++ if press {
++  if c.jump_edge_counter==max(u64) { input_link_clear_intent(c);return {},false }
++  c.jump_edge_counter+=1;edge=c.jump_edge_counter
++ }
++ command,ok:=command_history_push(&c.history,held,edge)
++ if !ok { input_link_clear_intent(c) }
++ return command,ok
++}
++
++input_link_packet :: proc(c:^Input_Link,has_ack:bool,ack:u64) -> (packet:Scheduled_Input,ready:bool) {
++ if !c.active { return }
++ packet.identity=c.history.identity;packet.has_ack=has_ack;packet.ack=ack
++ packet.commands,packet.count=command_history_redundancy(&c.history)
++ return packet,true
++}
++
++input_link_owner :: proc(c:^Input_Link,owner:Owner_State) -> bool {
++ if !c.active || owner.identity!=c.history.identity || !owner_state_valid(owner) || (c.has_owner && owner.state_tick<=c.owner.state_tick) { return false }
++ if owner.finalized_through>=c.history.next_tick {
++  // The server advanced past all locally issued targets. Clear and negotiate;
++  // no replay or silently shifted origin can rescue a stalled schedule.
++  input_link_clear_intent(c);return false
++ }
++ previous:=c.history.finalized_through
++ if !command_history_finalize(&c.history,owner.identity,owner.finalized_through) { return false }
++ baseline:=max(previous,c.history.first_tick-1)
++ if owner.finalized_through>baseline { c.retired_slots+=owner.finalized_through-baseline }
++ c.owner=owner;c.has_owner=true
++ return true
++}
+diff --git a/src/shared/input_link_test.odin b/src/shared/input_link_test.odin
+new file mode 100644
+index 0000000..1fe0001
+--- /dev/null
++++ b/src/shared/input_link_test.odin
+@@ -0,0 +1,48 @@
++package shared
++import t "core:testing"
++
++@(test)
++input_link_waits_for_acceptance_and_rejects_stale_results :: proc(test:^t.T) {
++ c:Input_Link
++ offer:=Schedule_Control{kind=.Offer,proposal={{9007199254740999,4,7},1002,9007199254742001},server={1000,0}}
++ t.expect(test,input_link_offer(&c,offer))
++ _,ready:=input_link_prepare_reset(&c,0);t.expect(test,!ready)
++ nonce,_:=input_clock_probe(&c.clock,0);_=input_clock_echo(&c.clock,nonce,{1000,0},.1)
++ request,ok:=input_link_prepare_reset(&c,.1);t.expect(test,ok && request.kind==.Request)
++ command,ok_command:=input_link_command(&c,127,true)
++ t.expect(test,ok_command && command.move==0 && command.jump_edge==0)
++ _,ready=input_link_packet(&c,false,0);t.expect(test,!ready)
++ accepted:=request;accepted.kind=.Accepted
++ stale:=accepted;stale.proposal.first_tick+=1;t.expect(test,!input_link_control_result(&c,stale))
++ t.expect(test,input_link_control_result(&c,accepted))
++ command,ok_command=input_link_command(&c,127,true)
++ t.expect(test,ok_command && command.move==127 && command.jump_edge==1 && command.target_tick==request.proposal.first_tick+1)
++ packet,ready_packet:=input_link_packet(&c,true,9007199254740997)
++ t.expect(test,ready_packet && packet.count==2 && packet.ack==9007199254740997 && packet.commands[0]==command)
++}
++
++@(test)
++input_link_rejected_origin_is_not_retargeted :: proc(test:^t.T) {
++ c:Input_Link;_=input_link_offer(&c,{kind=.Offer,proposal={{1,1,1},2,1}})
++ nonce,_:=input_clock_probe(&c.clock,0);_=input_clock_echo(&c.clock,nonce,{0,.5},.01)
++ first,ready:=input_link_prepare_reset(&c,.01);t.expect(test,ready)
++ _,_=input_link_command(&c,127,true)
++ rejected:=first;rejected.kind=.Rejected;rejected.reason=.Obsolete
++ t.expect(test,input_link_control_result(&c,rejected) && !c.history.accepted)
++ second,ready_second:=input_link_prepare_reset(&c,.1)
++ t.expect(test,ready_second && second.proposal.identity.generation>first.proposal.identity.generation && second.proposal.first_tick>first.proposal.first_tick)
++ t.expect(test,!input_link_control_result(&c,Schedule_Control{kind=.Accepted,proposal=first.proposal}))
++}
++
++@(test)
++input_link_owner_finalizes_missing_slots_and_stall_resets :: proc(test:^t.T) {
++ c:Input_Link;p:=Schedule_Proposal{{1,1,1},100,9007199254740993}
++ c.active=true;c.has_offer=true;c.offer=p;command_history_begin(&c.history,p)
++ for i in 0..<8 { _,_=input_link_command(&c,127,i==0) }
++ owner:=Owner_State{identity=p.identity,state_tick=105,finalized_through=105,last_applied_sequence=p.first_sequence,teleport_serial=1}
++ t.expect(test,input_link_owner(&c,owner) && c.history.finalized_through==105)
++ packet,ready:=input_link_packet(&c,false,0);t.expect(test,ready && packet.count==2 && packet.commands[1].target_tick==106)
++ t.expect(test,!input_link_owner(&c,owner))
++ owner.state_tick=108;owner.finalized_through=108
++ t.expect(test,!input_link_owner(&c,owner) && !c.active && !c.history.accepted)
++}
+diff --git a/src/shared/input_network.odin b/src/shared/input_network.odin
+new file mode 100644
+index 0000000..b6d699a
+--- /dev/null
++++ b/src/shared/input_network.odin
+@@ -0,0 +1,115 @@
++package shared
++import nc "../netcode"
++
++net_scheduled_send_control :: proc(ns:^Net_Server,index:int,control:Schedule_Control) {
++ w:nc.Writer;nc.writer_init(&w,80);defer nc.writer_destroy(&w);schedule_control_encode(&w,control)
++ _=nc.server_send_reliable(&ns.srv,index,w.data[:])
++}
++net_scheduled_server_offer :: proc(ns:^Net_Server,index:int) {
++ c:=&ns.clients[index]
++ generation:=max(u64(1),c.schedule.identity.generation+1)
++ c.schedule.synchronized=false;c.schedule.held=0;c.schedule.slots={}
++ request_cache_expire_epoch(c.requests,ns.tick)
++ c.move=0;c.jump_pending=false;clear(&c.blast_queue)
++ net_scheduled_send_control(ns,index,{kind=.Offer,proposal={{c.incarnation,ns.game.world.scene.epoch,generation},ns.tick+2,1},server={ns.tick,0}})
++}
++net_scheduled_server_owner :: proc(ns:^Net_Server,index:int) {
++ c:=&ns.clients[index];p:=&ns.game.world.players[index]
++ if !c.schedule.synchronized || !p.active { return }
++ owner:=owner_state_capture(p,&c.schedule,ns.tick,ns.game.world.scene.structure_revision)
++ w:nc.Writer;nc.writer_init(&w,160);defer nc.writer_destroy(&w);owner_state_encode(&w,owner)
++ _=nc.server_send_unreliable(&ns.srv,index,w.data[:])
++}
++net_scheduled_server_message :: proc(ns:^Net_Server,index:int,channel:u8,data:[]u8) -> bool {
++ if len(data)==0 { return false }
++ c:=&ns.clients[index]
++ switch data[0] {
++ case SCHEDULED_MSG_REQUEST:
++  if channel==nc.CHANNEL_RELIABLE { net_request_server_dispatch(ns,index,data) };return true
++ case SCHEDULED_MSG_CONTROL:
++  if channel!=nc.CHANNEL_RELIABLE { return true }
++  control,ok:=schedule_control_decode(data);if !ok || control.kind!=.Request { return true }
++  result:=input_schedule_reset(&c.schedule,c.incarnation,ns.game.world.scene.epoch,ns.tick,control.proposal)
++  control.kind=result==.Accepted?Schedule_Control_Kind.Accepted:Schedule_Control_Kind.Rejected
++  control.reason=result;control.server={ns.tick,0};net_scheduled_send_control(ns,index,control)
++  return true
++ case SCHEDULED_MSG_INPUT:
++  if channel!=nc.CHANNEL_UNRELIABLE { return true }
++  packet,ok:=scheduled_input_decode(data);if !ok { return true }
++  if packet.identity.incarnation!=c.incarnation || packet.identity.epoch!=ns.game.world.scene.epoch { return true }
++  if packet.has_ack { net_server_ack(ns,c,packet.ack) }
++  for k in 0..<packet.count { _=input_schedule_insert(&c.schedule,packet.identity,ns.tick,packet.commands[k]) }
++  return true
++ case SCHEDULED_MSG_PROBE:
++  if channel==nc.CHANNEL_UNRELIABLE && len(data)==9 { r:nc.Reader;nc.reader_init(&r,data);_=nc.read_u8(&r);c.echo_nonce=nc.read_u64(&r) }
++  return true
++ }
++ return false
++}
++// Called after the real server's fixed-step loop, immediately before producing
++// outgoing datagrams. Phase identifies send time, not receive/processing time.
++net_scheduled_server_echoes :: proc(ns:^Net_Server,phase:f64,now:f64) {
++ sent:=false
++ for &c,i in ns.clients {
++  if !c.active || c.echo_nonce==0 { continue }
++  w:nc.Writer;nc.writer_init(&w,24)
++  nc.write_u8(&w,SCHEDULED_MSG_ECHO);nc.write_u64(&w,c.echo_nonce);nc.write_u64(&w,ns.tick);nc.write_f32(&w,f32(clamp(phase,0,0.999999)))
++  _=nc.server_send_unreliable(&ns.srv,i,w.data[:]);nc.writer_destroy(&w);c.echo_nonce=0;sent=true
++ }
++ if sent { nc.server_update(&ns.srv,now) }
++}
++net_scheduled_client_message :: proc(c:^Net_Client,channel:u8,data:[]u8,now:f64) -> bool {
++ if len(data)==0 { return false }
++ link:=&c.input_link
++ switch data[0] {
++ case SCHEDULED_MSG_RESULT:
++  if channel==nc.CHANNEL_RELIABLE { net_request_client_result(c,data) };return true
++ case SCHEDULED_MSG_ECHO:
++  if channel!=nc.CHANNEL_UNRELIABLE || len(data)!=21 { return true }
++  r:nc.Reader;nc.reader_init(&r,data);_=nc.read_u8(&r);nonce:=nc.read_u64(&r);tick:=nc.read_u64(&r);phase:=nc.read_f32(&r)
++  if r.ok { _=input_clock_echo(&link.clock,nonce,{tick,f64(phase)},now) }
++  return true
++ case SCHEDULED_MSG_CONTROL:
++  if channel!=nc.CHANNEL_RELIABLE { return true }
++  control,ok:=schedule_control_decode(data);if !ok { return true }
++  if control.kind==.Offer { _=input_link_offer(link,control);c.human_move=0;c.human_jump_pending=false;clear(&c.blasts) }
++  else { _=input_link_control_result(link,control) }
++  return true
++ case SCHEDULED_MSG_OWNER:
++  if channel!=nc.CHANNEL_UNRELIABLE { return true }
++  owner,ok:=owner_state_decode(data);if ok { _=input_link_owner(link,owner) };return true
++ }
++ return false
++}
++net_scheduled_client_update :: proc(c:^Net_Client,now:f64) {
++ link:=&c.input_link
++ if now>=c.input_probe_at {
++  nonce,ok:=input_clock_probe(&link.clock,now)
++  if ok {
++   w:nc.Writer;nc.writer_init(&w,16);nc.write_u8(&w,SCHEDULED_MSG_PROBE);nc.write_u64(&w,nonce)
++   _=nc.client_send_unreliable(&c.nc_client,w.data[:]);nc.writer_destroy(&w)
++  }
++  c.input_probe_at=now+.25
++ }
++ if link.clock.valid { _,_=input_clock_now(&link.clock,now) }
++ if link.clock.resync && link.active { input_link_clear_intent(link);c.human_move=0;c.human_jump_pending=false;clear(&c.blasts) }
++ control,ready:=input_link_prepare_reset(link,now)
++ if ready {
++  w:nc.Writer;nc.writer_init(&w,80);schedule_control_encode(&w,control)
++  if !nc.client_send_reliable(&c.nc_client,w.data[:]) { link.awaiting=false;link.history={} }
++  nc.writer_destroy(&w)
++ }
++}
++net_scheduled_client_input :: proc(c:^Net_Client) {
++ net_request_client_blasts(c)
++ _,created:=input_link_command(&c.input_link,move_quantize(c.human_move),c.human_jump_pending)
++ if c.human_jump_pending { c.jump_counter+=1;c.stats.jumps_pressed+=1;c.human_jump_pending=false }
++ if !created { return }
++ packet,ready:=input_link_packet(&c.input_link,c.has_complete,c.newest_complete);if !ready { return }
++ w:nc.Writer;nc.writer_init(&w,160);defer nc.writer_destroy(&w)
++ if !scheduled_input_encode(&w,packet) { return }
++ if c.stats.input_count==0 { c.stats.input_payload_hash=14695981039346656037 }
++ for byte in w.data { c.stats.input_payload_hash=(c.stats.input_payload_hash~u64(byte))*1099511628211 }
++ c.stats.input_count+=1;c.stats.input_bytes+=len(w.data);c.stats.input_max=max(c.stats.input_max,len(w.data))
++ _=nc.client_send_unreliable(&c.nc_client,w.data[:])
++}
+diff --git a/src/shared/input_owner.odin b/src/shared/input_owner.odin
+index 91bf774..dbe8e72 100644
+--- a/src/shared/input_owner.odin
++++ b/src/shared/input_owner.odin
+@@ -3,7 +3,7 @@ import b2 "vendor:box2d"
+ 
+ Owner_State :: struct {
+  identity: Input_Identity,
+- state_tick,topology_revision,finalized_through,last_applied_sequence,teleport_serial: u64,
++ state_tick,topology_revision,finalized_through,last_applied_sequence,last_jump_edge,teleport_serial: u64,
+  position,velocity,support_velocity: Vec2,
+  coyote,buffered_jump: f32,
+  support_cell: u64,
+@@ -16,6 +16,7 @@ owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revis
+  return {
+   identity=schedule.identity,state_tick=tick,topology_revision=revision,
+   finalized_through=schedule.finalized_through,last_applied_sequence=schedule.last_applied_sequence,
++  last_jump_edge=schedule.last_jump_edge,
+   teleport_serial=player.teleport_serial,
+   position=from_b2(b2.Body_GetPosition(player.body)),velocity=from_b2(b2.Body_GetLinearVelocity(player.body)),
+   support_velocity=player.support_velocity,coyote=player.coyote,buffered_jump=player.buffered_jump,
+diff --git a/src/shared/input_request_network.odin b/src/shared/input_request_network.odin
+new file mode 100644
+index 0000000..4884d31
+--- /dev/null
++++ b/src/shared/input_request_network.odin
+@@ -0,0 +1,122 @@
++package shared
++import nc "../netcode"
++import sha2 "core:crypto/sha2"
++import strings "core:strings"
++
++REQUEST_BLAST :: u8(1)
++Pending_Request :: struct { active:bool, id:u64, kind:u8 }
++Request_Envelope :: struct { incarnation:u64, epoch:u32, id,created,deadline:u64, kind:u8, payload:[]u8 }
++
++request_envelope_decode :: proc(data:[]u8) -> (q:Request_Envelope,ok:bool) {
++ if len(data)<38 || len(data)>NET_APP_MAX_LAYOUT+64 { return }
++ r:nc.Reader;nc.reader_init(&r,data)
++ if nc.read_u8(&r)!=SCHEDULED_MSG_REQUEST { return }
++ q.incarnation=nc.read_u64(&r);q.epoch=nc.read_u32(&r);q.id=nc.read_u64(&r);q.created=nc.read_u64(&r);q.deadline=nc.read_u64(&r);q.kind=nc.read_u8(&r)
++ q.payload=data[r.pos:]
++ return q,r.ok && q.id!=0 && (q.kind==REQUEST_BLAST || q.kind==NET_APP_HOST_COMMAND || q.kind==NET_APP_LAYOUT_UPLOAD)
++}
++request_reason_text :: proc(result:Request_Result) -> string {
++ switch result.status {
++ case .Accepted:return ""
++ case .Expired:return "blast intent expired"
++ case .Wrong_Epoch:return "epoch changed"
++ case .Wrong_Connection:return "connection changed"
++ case .Too_Old:return "request ID is terminal or too old"
++ case .Conflict:return "conflicting request contents"
++ case .Capacity:return "request result window is full"
++ case .Rejected:
++  switch result.reason { case 1:return "host only";case 3:return "outside world";case 4:return "blast rate exceeded";case 5:return "solid aim";case:return "invalid request" }
++ case .Pending:return "request pending"
++ }
++ return "invalid request result"
++}
++net_request_send_result :: proc(ns:^Net_Server,index:int,kind:u8,result:Request_Result) {
++ w:nc.Writer;nc.writer_init(&w,40);defer nc.writer_destroy(&w)
++ nc.write_u8(&w,SCHEDULED_MSG_RESULT);nc.write_u8(&w,kind);nc.write_u64(&w,result.request_id);nc.write_u8(&w,u8(result.status))
++ nc.write_u64(&w,result.effect_tick);nc.write_u64(&w,result.event_id);nc.write_u16(&w,result.reason)
++ _=nc.server_send_reliable(&ns.srv,index,w.data[:])
++}
++net_request_server_dispatch :: proc(ns:^Net_Server,index:int,data:[]u8) {
++ q,ok:=request_envelope_decode(data);if !ok { return }
++ c:=&ns.clients[index]
++ hash:[32]u8;ctx:sha2.Context_256;sha2.init_256(&ctx);sha2.update(&ctx,data);sha2.final(&ctx,hash[:])
++ begin,previous:=request_cache_begin(c.requests,q.incarnation,q.id,hash)
++ if begin!=.New { net_request_send_result(ns,index,q.kind,previous);return }
++ result:=Request_Result{request_id=q.id,effect_tick=ns.tick+1,status=.Accepted}
++ if q.epoch!=ns.game.world.scene.epoch { result.status=.Wrong_Epoch }
++ else if q.kind==REQUEST_BLAST {
++  result.status=blast_intent_status(c.incarnation,q.incarnation,ns.game.world.scene.epoch,q.epoch,ns.tick+1,q.created,q.deadline)
++  if result.status==.Accepted {
++   r:nc.Reader;nc.reader_init(&r,q.payload);point:=Vec2{nc.read_f32(&r),nc.read_f32(&r)}
++   if !r.ok || r.pos!=len(q.payload) || !finite(point.x) || !finite(point.y) { result.status=.Rejected;result.reason=2 }
++   else {
++    recent:=0;for tick in c.blast_ticks { if ns.tick+1-tick<NET_BLAST_RATE_TICKS { recent+=1 } }
++    if point.x<YARD_LEFT || point.x>YARD_RIGHT || point.y<=YARD_FLOOR_BOTTOM || point.y>NET_YARD_CEILING { result.status=.Rejected;result.reason=3;c.stats.rejected_outside+=1 }
++    else if recent>=NET_BLAST_RATE_COUNT { result.status=.Rejected;result.reason=4;c.stats.rejected_rate+=1 }
++    else if !sandbox_valid_aim(&ns.game.world.scene,point) { result.status=.Rejected;result.reason=5;c.stats.rejected_solid+=1 }
++    else {
++     world_explode(&ns.game.world,point,c.radius,&ns.pre_events)
++     ns.next_event_id+=1;result.event_id=ns.next_event_id
++     ns.pre_events.explosions[len(ns.pre_events.explosions)-1].event_id=result.event_id
++     c.stats.blasts_applied+=1;append(&c.blast_ticks,ns.tick+1)
++    }
++   }
++  }
++  if result.status!=.Accepted {
++   c.stats.blasts_rejected+=1;ns.next_event_id+=1;result.event_id=ns.next_event_id
++   w:nc.Writer;nc.writer_init(&w,32);event_encode_rejected(&w,ns.tick+1,0,result.event_id)
++   _=nc.server_send_reliable(&ns.srv,index,w.data[:]);nc.writer_destroy(&w)
++  }
++ } else {
++  reason:="invalid request"
++  if len(q.payload)>0 && q.payload[0]==q.kind {
++   if q.kind==NET_APP_HOST_COMMAND { reason=net_host_apply_command(ns,index,q.payload) }
++   else { reason=net_host_apply_layout(ns,index,q.payload) }
++  }
++  if reason!="" { result.status=.Rejected;result.reason=ns.clients[index].is_host?u16(2):u16(1) }
++ }
++ _=request_cache_finish(c.requests,result);net_request_send_result(ns,index,q.kind,result)
++}
++
++net_request_client_send :: proc(c:^Net_Client,kind:u8,payload:[]u8,created:u64=0,deadline:u64=0) -> bool {
++ if !c.real_hello_ok || !c.input_link.has_offer || !c.has_epoch || c.request_counter==max(u64) { return false }
++ id:=c.request_counter+1;slot:=&c.request_pending[id%u64(len(c.request_pending))]
++ if slot.active { return false }
++ w:nc.Writer;nc.writer_init(&w,len(payload)+48);defer nc.writer_destroy(&w)
++ nc.write_u8(&w,SCHEDULED_MSG_REQUEST);nc.write_u64(&w,c.input_link.offer.identity.incarnation);nc.write_u32(&w,c.epoch)
++ nc.write_u64(&w,id);nc.write_u64(&w,created);nc.write_u64(&w,deadline);nc.write_u8(&w,kind);nc.write_raw(&w,payload)
++ if !nc.client_send_reliable(&c.nc_client,w.data[:]) { return false }
++ c.request_counter=id;slot^={true,id,kind}
++ if kind!=REQUEST_BLAST { c.host_request_id=id }
++ return true
++}
++net_request_client_result :: proc(c:^Net_Client,data:[]u8) {
++ r:nc.Reader;nc.reader_init(&r,data);_=nc.read_u8(&r);kind:=nc.read_u8(&r)
++ result:Request_Result;result.request_id=nc.read_u64(&r);status:=nc.read_u8(&r)
++ result.effect_tick=nc.read_u64(&r);result.event_id=nc.read_u64(&r);result.reason=nc.read_u16(&r)
++ if !r.ok || r.pos!=len(data) || status==0 || status>u8(Request_Status.Capacity) { return }
++ pending:=&c.request_pending[result.request_id%u64(len(c.request_pending))]
++ if !pending.active || pending.id!=result.request_id || pending.kind!=kind { return }
++ result.status=Request_Status(status);pending^={};c.last_request_result=result
++ if kind!=REQUEST_BLAST && result.request_id==c.host_request_id {
++  c.control_serial+=1;c.control_kind=kind;c.control_ok=result.status==.Accepted
++  delete(c.control_reason);c.control_reason=strings.clone(request_reason_text(result))
++ }
++}
++net_request_client_blasts :: proc(c:^Net_Client) {
++ if !c.input_link.active || !c.input_link.clock.valid { clear(&c.blasts);return }
++ created:=c.input_link.clock.estimate.tick
++ if created>max(u64)-30 { clear(&c.blasts);return }
++ // The timestamped FFI queue already enforces the local 500ms bound. The
++ // reliable application deadline also prevents intent delayed in transport.
++ for blast in c.blasts {
++  w:nc.Writer;nc.writer_init(&w,8)
++  nc.write_f32(&w,nc.dequantize_pos(blast.x));nc.write_f32(&w,nc.dequantize_pos(blast.y))
++  if !net_request_client_send(c,REQUEST_BLAST,w.data[:],created,created+30) {
++   c.stats.blasts_dropped+=1
++   if c.real_reason=="" { c.real_reason=strings.clone("reliable action queue full; reconnect required") }
++  }
++  nc.writer_destroy(&w)
++ }
++ clear(&c.blasts)
++}
+diff --git a/src/shared/input_request_network_test.odin b/src/shared/input_request_network_test.odin
+new file mode 100644
+index 0000000..90fe67d
+--- /dev/null
++++ b/src/shared/input_request_network_test.odin
+@@ -0,0 +1,52 @@
++package shared
++import t "core:testing"
++import nc "../netcode"
++
++test_request_envelope :: proc(w:^nc.Writer,incarnation:u64,epoch:u32,id:u64,kind:u8,payload:[]u8,created:u64=0,deadline:u64=0) {
++ nc.writer_reset(w);nc.write_u8(w,SCHEDULED_MSG_REQUEST);nc.write_u64(w,incarnation);nc.write_u32(w,epoch)
++ nc.write_u64(w,id);nc.write_u64(w,created);nc.write_u64(w,deadline);nc.write_u8(w,kind);nc.write_raw(w,payload)
++}
++
++@(test)
++short_host_request_decodes_without_blast_sized_minimum :: proc(test:^t.T) {
++ w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
++ payload:=[2]u8{NET_APP_HOST_COMMAND,NET_HOST_RESET}
++ test_request_envelope(&w,9007199254740999,7,9007199254742001,NET_APP_HOST_COMMAND,payload[:])
++ q,ok:=request_envelope_decode(w.data[:]);t.expect(test,ok && len(w.data)==40 && len(q.payload)==2 && q.id==9007199254742001)
++ for size in 0..<38 { _,valid:=request_envelope_decode(w.data[:size]);t.expect(test,!valid) }
++}
++
++@(test)
++real_request_dispatch_reset_dedup_and_old_epoch_precondition :: proc(test:^t.T) {
++ ns,ok:=net_real_create_server("");t.expect(test,ok);if !ok { return };defer net_server_destroy(&ns)
++ ns.real_logging=false;ns.real_gate=true;net_server_join(&ns,0);ns.clients[0].is_host=true
++ epoch:=ns.game.world.scene.epoch;incarnation:=ns.clients[0].incarnation
++ w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
++ payload:=[2]u8{NET_APP_HOST_COMMAND,NET_HOST_RESET}
++ id:=u64(9007199254742001)
++ test_request_envelope(&w,incarnation,epoch,id,NET_APP_HOST_COMMAND,payload[:])
++ net_request_server_dispatch(&ns,0,w.data[:]);after:=ns.game.world.scene.epoch
++ t.expect(test,after>epoch && ns.clients[0].requests.entries[id%1024].result.status==.Accepted)
++ net_request_server_dispatch(&ns,0,w.data[:]);t.expect_value(test,ns.game.world.scene.epoch,after)
++ test_request_envelope(&w,incarnation,epoch,id+1,NET_APP_HOST_COMMAND,payload[:])
++ net_request_server_dispatch(&ns,0,w.data[:])
++ t.expect(test,ns.game.world.scene.epoch==after && ns.clients[0].requests.entries[(id+1)%1024].result.status==.Wrong_Epoch)
++ // A protocol-3 peer cannot enter this application session.
++ t.expect(test,net_app_hello_error({version=3,build="BOM-menus-2026-11-05"})!="")
++}
++
++@(test)
++real_request_dispatch_blast_executes_once_and_reports_effect_identity :: proc(test:^t.T) {
++ ns,ok:=net_real_create_server("");t.expect(test,ok);if !ok { return };defer net_server_destroy(&ns)
++ ns.real_logging=false;ns.real_gate=true;net_server_join(&ns,0)
++ payload:nc.Writer;nc.writer_init(&payload,8);defer nc.writer_destroy(&payload)
++ nc.write_f32(&payload,-6.4);nc.write_f32(&payload,2.3)
++ w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
++ id:=u64(9007199254742001)
++ test_request_envelope(&w,ns.clients[0].incarnation,ns.game.world.scene.epoch,id,REQUEST_BLAST,payload.data[:],0,30)
++ net_request_server_dispatch(&ns,0,w.data[:]);result:=ns.clients[0].requests.entries[id%1024].result
++ t.expect(test,result.status==.Accepted && result.event_id!=0 && result.effect_tick==1 && ns.clients[0].stats.blasts_applied==1)
++ net_request_server_dispatch(&ns,0,w.data[:]);t.expect(test,ns.clients[0].stats.blasts_applied==1 && ns.clients[0].requests.entries[id%1024].result==result)
++ w.data[len(w.data)-1]~=u8(1);net_request_server_dispatch(&ns,0,w.data[:])
++ t.expect(test,ns.clients[0].stats.blasts_applied==1 && ns.clients[0].requests.entries[id%1024].result==result)
++}
+diff --git a/src/shared/input_requests.odin b/src/shared/input_requests.odin
+index 07264aa..bf69c09 100644
+--- a/src/shared/input_requests.odin
++++ b/src/shared/input_requests.odin
+@@ -3,7 +3,7 @@ package shared
+ REQUEST_RESULT_WINDOW :: 1024
+ Request_Status :: enum u8 { Pending, Accepted, Rejected, Expired, Wrong_Epoch, Wrong_Connection, Too_Old, Conflict, Capacity }
+ Request_Result :: struct { request_id,effect_tick,event_id: u64, status: Request_Status, reason: u16 }
+-Request_Entry :: struct { occupied: bool, request_id,fingerprint: u64, result: Request_Result }
++Request_Entry :: struct { occupied: bool, request_id: u64, fingerprint: [32]u8, result: Request_Result }
+ Request_Cache :: struct {
+  incarnation: u64,
+  highest,low_watermark: u64,
+@@ -11,19 +11,23 @@ Request_Cache :: struct {
+ }
+ Request_Begin :: enum { New, Replay, Too_Old, Conflict, Capacity, Wrong_Connection }
+ 
+-request_cache_begin :: proc(c: ^Request_Cache,incarnation,id,fingerprint: u64) -> (Request_Begin,Request_Result) {
++request_cache_key :: proc(value:$T) -> (key:[32]u8) {
++ when T==[32]u8 { return value } else { for i in 0..<8 { key[i]=u8(u64(value)>>u32(i*8)) };return }
++}
++request_cache_begin :: proc(c: ^Request_Cache,incarnation,id:u64,fingerprint:$T) -> (Request_Begin,Request_Result) {
++ key:=request_cache_key(fingerprint)
+  if incarnation==0 || incarnation!=c.incarnation { return .Wrong_Connection,{request_id=id,status=.Wrong_Connection} }
+  if id==0 { return .Too_Old,{request_id=id,status=.Too_Old} }
+  slot:=&c.entries[id%REQUEST_RESULT_WINDOW]
+  if slot.occupied && slot.request_id==id {
+-  if slot.fingerprint!=fingerprint { return .Conflict,{request_id=id,status=.Conflict} }
++  if slot.fingerprint!=key { return .Conflict,{request_id=id,status=.Conflict} }
+   return .Replay,slot.result
+  }
+  if id<=c.low_watermark || id<=c.highest { return .Too_Old,{request_id=id,status=.Too_Old} }
+  if slot.occupied && slot.result.status==.Pending { return .Capacity,{request_id=id,status=.Capacity} }
+  if slot.occupied { c.low_watermark=max(c.low_watermark,slot.request_id) }
+  c.highest=id
+- slot^={occupied=true,request_id=id,fingerprint=fingerprint,result={request_id=id,status=.Pending}}
++ slot^={occupied=true,request_id=id,fingerprint=key,result={request_id=id,status=.Pending}}
+  return .New,slot.result
+ }
+ request_cache_finish :: proc(c: ^Request_Cache,result: Request_Result) -> bool {
+diff --git a/src/shared/input_schedule.odin b/src/shared/input_schedule.odin
+index 811b0ea..1ab01b9 100644
+--- a/src/shared/input_schedule.odin
++++ b/src/shared/input_schedule.odin
+@@ -30,7 +30,7 @@ Scheduled_Step :: struct { command: Scheduled_Command, applied,carried,neutraliz
+ input_schedule_reset :: proc(s: ^Input_Schedule,incarnation: u64,epoch: u32,now_tick: u64,p: Schedule_Proposal) -> Schedule_Result {
+  if p.identity.incarnation!=incarnation || incarnation==0 { return .Wrong_Connection }
+  if p.identity.epoch!=epoch { return .Wrong_Epoch }
+- if p.identity.generation==0 || (s.synchronized && p.identity.incarnation==s.identity.incarnation && p.identity.generation<=s.identity.generation) { return .Old_Generation }
++ if p.identity.generation==0 || (p.identity.incarnation==s.identity.incarnation && p.identity.generation<=s.identity.generation) { return .Old_Generation }
+  if now_tick>max(u64)-INPUT_FUTURE_WINDOW || p.first_sequence==0 || p.first_sequence>max(u64)-INPUT_FUTURE_WINDOW { return .Overflow }
+  if p.first_tick<now_tick+2 { return .Obsolete }
+  if p.first_tick>now_tick+INPUT_FUTURE_WINDOW { return .Too_Far }
+diff --git a/src/shared/input_wire.odin b/src/shared/input_wire.odin
+index bc19a33..8135bfd 100644
+--- a/src/shared/input_wire.odin
++++ b/src/shared/input_wire.odin
+@@ -57,7 +57,7 @@ schedule_control_decode :: proc(data:[]u8) -> (c:Schedule_Control,ok:bool) {
+ owner_state_encode :: proc(w:^nc.Writer,o:Owner_State) {
+  nc.write_u8(w,SCHEDULED_MSG_OWNER);input_write_identity(w,o.identity)
+  nc.write_u64(w,o.state_tick);nc.write_u64(w,o.topology_revision);nc.write_u64(w,o.finalized_through)
+- nc.write_u64(w,o.last_applied_sequence);nc.write_u64(w,o.teleport_serial)
++ nc.write_u64(w,o.last_applied_sequence);nc.write_u64(w,o.last_jump_edge);nc.write_u64(w,o.teleport_serial)
+  nc.write_f32(w,o.position.x);nc.write_f32(w,o.position.y);nc.write_f32(w,o.velocity.x);nc.write_f32(w,o.velocity.y)
+  nc.write_f32(w,o.support_velocity.x);nc.write_f32(w,o.support_velocity.y);nc.write_f32(w,o.coyote);nc.write_f32(w,o.buffered_jump)
+  nc.write_u64(w,o.support_cell);nc.write_bool(w,o.grounded);nc.write_u8(w,o.support_kind);nc.write_u8(w,u8(o.held));nc.write_u8(w,u8(o.missing))
+@@ -67,7 +67,7 @@ owner_state_decode :: proc(data:[]u8) -> (o:Owner_State,ok:bool) {
+  if nc.read_u8(&r)!=SCHEDULED_MSG_OWNER { return }
+  o.identity=input_read_identity(&r)
+  o.state_tick=nc.read_u64(&r);o.topology_revision=nc.read_u64(&r);o.finalized_through=nc.read_u64(&r)
+- o.last_applied_sequence=nc.read_u64(&r);o.teleport_serial=nc.read_u64(&r)
++ o.last_applied_sequence=nc.read_u64(&r);o.last_jump_edge=nc.read_u64(&r);o.teleport_serial=nc.read_u64(&r)
+  o.position={nc.read_f32(&r),nc.read_f32(&r)};o.velocity={nc.read_f32(&r),nc.read_f32(&r)}
+  o.support_velocity={nc.read_f32(&r),nc.read_f32(&r)};o.coyote=nc.read_f32(&r);o.buffered_jump=nc.read_f32(&r)
+  o.support_cell=nc.read_u64(&r);o.grounded=nc.read_bool(&r);o.support_kind=nc.read_u8(&r);o.held=i8(nc.read_u8(&r));o.missing=u32(nc.read_u8(&r))
+diff --git a/src/shared/input_wire_test.odin b/src/shared/input_wire_test.odin
+index 1c43f44..e06f16c 100644
+--- a/src/shared/input_wire_test.odin
++++ b/src/shared/input_wire_test.odin
+@@ -17,7 +17,7 @@ scheduled_wire_integer_roundtrip_budget_and_truncation :: proc(test:^t.T) {
+ @(test)
+ owner_wire_full_state_precision_and_truncation :: proc(test:^t.T) {
+  o:=Owner_State{identity={9007199254740999,7,4294967301},state_tick=9007199254742001,topology_revision=9007199254742003,
+- finalized_through=9007199254742001,last_applied_sequence=9007199254743001,teleport_serial=9007199254744001,
++ finalized_through=9007199254742001,last_applied_sequence=9007199254743001,last_jump_edge=9007199254743007,teleport_serial=9007199254744001,
+  position={1.234567,-2.345678},velocity={3.456789,-4.567891},support_velocity={0.333333,0.444444},coyote=.073,buffered_jump=.056,
+  support_cell=9007199254745001,grounded=true,support_kind=1,held=-127,missing=3}
+  w:nc.Writer;nc.writer_init(&w,256);defer nc.writer_destroy(&w);owner_state_encode(&w,o)
+diff --git a/src/shared/net_client.odin b/src/shared/net_client.odin
+index be331b8..e0254da 100644
+--- a/src/shared/net_client.odin
++++ b/src/shared/net_client.odin
+@@ -69,6 +69,11 @@ Net_Client_Stats :: struct {
+ }
+ 
+ Net_Client :: struct {
++ input_link: Input_Link,
++ input_probe_at: f64,
++ request_counter,host_request_id: u64,
++ request_pending: [1024]Pending_Request,
++ last_request_result: Request_Result,
+  nc_client: nc.Client,
+  real_gate: bool,real_hello_sent: bool,real_hello_ok: bool,
+  real_is_host: bool,real_host_left: bool,
+@@ -121,6 +126,11 @@ net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64) {
+ 
+ net_frame_asm_free :: proc(a: ^Frame_Asm) { delete(a.gone); delete(a.entries); free(a) }
+ 
++net_client_clear_intent :: proc(c:^Net_Client) {
++ input_link_clear_intent(&c.input_link)
++ c.human_move=0;c.human_jump_pending=false;clear(&c.blasts)
++}
++
+ net_client_clear_state :: proc(c: ^Net_Client) {
+  for q in c.queue { delete(q.data) }; clear(&c.queue)
+  for a in c.pending { net_frame_asm_free(a) }; clear(&c.pending)
+@@ -167,6 +177,7 @@ net_client_note_late :: proc(c: ^Net_Client,tick: u64,event: bool) {
+ net_client_reset :: proc(c: ^Net_Client) {
+  c.stats.resets+=1
+  net_client_clear_state(c)
++ input_link_clear_intent(&c.input_link)
+  c.presentation_reset_serial+=1
+ }
+ 
+@@ -256,7 +267,7 @@ net_client_on_frame :: proc(c: ^Net_Client,data: []u8,now: f64) {
+  append(&var.gone,..part.gone[:]); append(&var.entries,..part.entries[:])
+  if !c.has_seen || part.tick>=c.newest_seen {
+   c.has_seen=true; c.newest_seen=part.tick; c.confirmed_blast=part.blast_seq
+-  for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) }
++  if !c.real_gate { for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) } }
+  }
+  if var.got==var.count {
+   net_client_complete_frame(c,var,now)
+@@ -396,6 +407,7 @@ net_client_ensure_anchored :: proc(c: ^Net_Client) {
+ }
+ 
+ net_client_make_input :: proc(c: ^Net_Client) {
++ if c.real_gate { net_scheduled_client_input(c);return }
+  move:f32
+  index:=c.nc_client.client_index
+  move=c.human_move
+@@ -427,6 +439,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
+   net_app_client_send_hello(c)
+   msgs:=nc.client_take_messages(&c.nc_client); defer nc.messages_free(&msgs)
+   for m in msgs {
++   if c.real_gate && net_scheduled_client_message(c,m.channel,m.data,now) { continue }
+    if m.channel==nc.CHANNEL_RELIABLE {
+     if !net_app_client_control(c,m.data) { net_client_on_reliable(c,m.data) }
+    }
+@@ -438,6 +451,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
+   net_client_compute_drawn(c)
+   append(&c.stats.delay_history,u8(c.delay))
+   if !c.real_gate || c.real_hello_ok {
++   if c.real_gate { net_scheduled_client_update(c,now) }
+    if input_source!=nil { input_source(c,source_data) }
+    net_client_make_input(c)
+   }
+diff --git a/src/shared/net_frame.odin b/src/shared/net_frame.odin
+index 5764050..9b141db 100644
+--- a/src/shared/net_frame.odin
++++ b/src/shared/net_frame.odin
+@@ -312,21 +312,23 @@ input_decode :: proc(data: []u8) -> (in_: Net_Input,ok: bool) {
+ 
+ seq16_newer :: proc(a,b: u16) -> bool { d:=a-b; return d!=0 && d<32768 }
+ 
+-event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32) {
++event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32,event_id:u64=0) {
+  nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_EXPLOSION); nc.write_varint(w,tick)
++ nc.write_u64(w,event_id)
+  nc.write_f32(w,position.x); nc.write_f32(w,position.y); nc.write_f32(w,radius)
+ }
+ 
+-event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16) {
+- nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick); nc.write_u16(w,seq)
++event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16,event_id:u64=0) {
++ nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick);nc.write_u64(w,event_id); nc.write_u16(w,seq)
+ }
+ 
+-Net_Event :: struct { kind: u8, tick: u64, position: Vec2, radius: f32, seq: u16 }
++Net_Event :: struct { kind: u8, tick: u64, position: Vec2, radius: f32, seq: u16, event_id:u64 }
+ 
+ event_decode :: proc(data: []u8) -> (e: Net_Event,ok: bool) {
+  r:nc.Reader; nc.reader_init(&r,data)
+  if nc.read_u8(&r)!=NET_MSG_EVENT { return {},false }
+  e.kind=nc.read_u8(&r); e.tick=nc.read_varint(&r)
++ e.event_id=nc.read_u64(&r)
+  switch e.kind {
+  case NET_EVENT_EXPLOSION: e.position={nc.read_f32(&r),nc.read_f32(&r)}; e.radius=nc.read_f32(&r)
+  case NET_EVENT_BLAST_REJECTED: e.seq=nc.read_u16(&r)
+diff --git a/src/shared/net_session.odin b/src/shared/net_session.odin
+index bdac706..21c9231 100644
+--- a/src/shared/net_session.odin
++++ b/src/shared/net_session.odin
+@@ -5,9 +5,9 @@ import nc "../netcode"
+ import fmt "core:fmt"
+ import strings "core:strings"
+ 
+-GAME_PROTOCOL_VERSION :: u32(3)
++GAME_PROTOCOL_VERSION :: u32(4)
+ 
+-GAME_BUILD_ID :: "BOM-menus-2026-11-05"
++GAME_BUILD_ID :: "BOM-scheduled-input-2026-11-06"
+ 
+ NET_APP_HELLO :: u8(0xC2)
+ 
+diff --git a/src/shared/prediction_history.odin b/src/shared/prediction_history.odin
+new file mode 100644
+index 0000000..77b156d
+--- /dev/null
++++ b/src/shared/prediction_history.odin
+@@ -0,0 +1,115 @@
++package shared
++import math "core:math"
++
++PREDICTION_HISTORY_TICKS :: 256
++PREDICTION_TOPOLOGY_LIMIT :: 16
++PREDICTION_TOPOLOGY_BYTES :: 32*1024*1024
++PREDICTION_EXTRAPOLATE_TICKS :: u64(6)
++
++Collision_Topology :: struct { scene:Scene, effective_tick:u64, bytes:int }
++Collision_Frame :: struct { valid:bool, tick:u64, epoch:u32, poses:Pose_Table }
++Collision_History :: struct {
++ epoch:u32,
++ topology:[dynamic]^Collision_Topology,
++ bytes:int,
++ frames:[PREDICTION_HISTORY_TICKS]Collision_Frame,
++ newest:u64,
++ has_frame:bool,
++ dropped_windows:u64,
++}
++
++collision_history_destroy :: proc(h:^Collision_History) {
++ for topology in h.topology { scene_destroy(&topology.scene);free(topology) }
++ delete(h.topology)
++ for &frame in h.frames { if frame.valid { delete(frame.poses) } }
++ h^={}
++}
++collision_history_topology :: proc(h:^Collision_History,tick:u64,revision:u64=0) -> ^Collision_Topology {
++ best:^Collision_Topology
++ for topology in h.topology {
++  if topology.effective_tick>tick || (revision!=0 && topology.scene.structure_revision!=revision) { continue }
++  if best==nil || topology.effective_tick>best.effective_tick || (topology.effective_tick==best.effective_tick && topology.scene.structure_revision>best.scene.structure_revision) { best=topology }
++ }
++ return best
++}
++collision_topology_copy :: proc(source:^Scene,effective:u64) -> ^Collision_Topology {
++ out:=new(Collision_Topology);out.scene=new_scene(0);s:=&out.scene
++ s.epoch=source.epoch;s.structure_revision=source.structure_revision;s.anchor_y=source.anchor_y;out.effective_tick=effective
++ append(&s.materials,..source.materials[:]);for &m in s.materials { m.name="" }
++ out.bytes=size_of(Collision_Topology)+len(s.materials)*size_of(Material)
++ for original in source.subdivisions {
++  if !original.live { continue }
++  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,frame=original.frame,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points)}
++  s.sub_rows[sub.id]=len(s.subdivisions);append(&s.subdivisions,sub)
++  out.bytes+=size_of(Subdivision)+len(sub.outline.points)*size_of(Vec2)+32
++ }
++ for original in source.pieces {
++  if !original.live { continue }
++  piece:=Piece{id=original.id,material=original.material,ref_rest=original.ref_rest,has_ref_rest=true,live=true}
++  for id in original.subdivisions { if id in s.sub_rows { append(&piece.subdivisions,id) } }
++  s.piece_rows[piece.id]=len(s.pieces);append(&s.pieces,piece)
++  out.bytes+=size_of(Piece)+len(piece.subdivisions)*size_of(u64)+32
++ }
++ return out
++}
++collision_history_record_topology :: proc(h:^Collision_History,source:^Scene,effective:u64) -> bool {
++ if h.epoch!=source.epoch { dropped:=h.dropped_windows;collision_history_destroy(h);h.epoch=source.epoch;h.dropped_windows=dropped }
++ for existing in h.topology { if existing.scene.structure_revision==source.structure_revision { return true } }
++ topology:=collision_topology_copy(source,effective)
++ if topology.bytes>PREDICTION_TOPOLOGY_BYTES { scene_destroy(&topology.scene);free(topology);return false }
++ // Reclaim versions older than the retained pose window, preserving the one
++ // effective at its first tick. No replay may subsequently claim older history.
++ oldest:=h.newest>255?h.newest-255:u64(0)
++ keeper:=collision_history_topology(h,oldest)
++ i:=0
++ for i<len(h.topology) {
++  old:=h.topology[i]
++  if old!=keeper && old.effective_tick<oldest {
++   h.bytes-=old.bytes;scene_destroy(&old.scene);free(old);ordered_remove(&h.topology,i)
++  } else { i+=1 }
++ }
++ if len(h.topology)>=PREDICTION_TOPOLOGY_LIMIT || h.bytes+topology.bytes>PREDICTION_TOPOLOGY_BYTES {
++  // Explicit bounded-history invalidation. Retain fresh truth and warm again;
++  // never pretend today's shattered geometry describes the evicted past.
++  dropped:=h.dropped_windows+1;epoch:=h.epoch;collision_history_destroy(h);h.epoch=epoch;h.dropped_windows=dropped
++ }
++ append(&h.topology,topology);h.bytes+=topology.bytes
++ return true
++}
++collision_history_record_frame :: proc(h:^Collision_History,epoch:u32,tick:u64,poses:^Pose_Table) -> bool {
++ if epoch!=h.epoch || len(poses^)>4096 { return false }
++ if h.has_frame && tick<h.newest && h.newest-tick>=PREDICTION_HISTORY_TICKS { return false }
++ slot:=&h.frames[tick%PREDICTION_HISTORY_TICKS]
++ if slot.valid { delete(slot.poses) }
++ slot^={true,tick,epoch,table_clone(poses)}
++ h.newest=max(h.newest,tick);h.has_frame=true
++ return true
++}
++// Poses are sampled at an integer simulation tick. Interpolation uses bracketing
++// received samples; future extrapolation is bounded to 100ms and marked estimated.
++collision_history_pose :: proc(h:^Collision_History,tick,key:u64) -> (pose:Net_Drawn,estimated,valid:bool) {
++ lower,upper:^Collision_Frame
++ for &frame in h.frames {
++  if !frame.valid || frame.epoch!=h.epoch { continue }
++  if frame.tick<=tick && (lower==nil || frame.tick>lower.tick) { lower=&frame }
++  if frame.tick>=tick && (upper==nil || frame.tick<upper.tick) { upper=&frame }
++ }
++ if lower==nil { return }
++ a,found:=lower.poses[key];if !found { return }
++ if upper!=nil {
++  b,exists:=upper.poses[key];if !exists { return }
++  if upper.tick==lower.tick { return net_drawn_single(a),false,true }
++  return net_drawn_from(a,b,f32(tick-lower.tick)/f32(upper.tick-lower.tick)),false,true
++ }
++ if tick-lower.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
++ previous:^Collision_Frame
++ for &frame in h.frames { if frame.valid && frame.epoch==h.epoch && frame.tick<lower.tick && (previous==nil || frame.tick>previous.tick) { previous=&frame } }
++ if previous==nil { return }
++ b,exists:=previous.poses[key];if !exists { return }
++ current:=net_drawn_single(a);old:=net_drawn_single(b)
++ delta:=f32(lower.tick-previous.tick);ahead:=f32(tick-lower.tick)
++ current.x+=(current.x-old.x)/delta*ahead;current.y+=(current.y-old.y)/delta*ahead
++ current.angle+=radians_delta(current.angle,old.angle)/delta*ahead
++ if !finite(current.x) || !finite(current.y) || math.abs(current.x)>1e6 || math.abs(current.y)>1e6 { return }
++ return current,true,true
++}
+diff --git a/src/shared/prediction_history_test.odin b/src/shared/prediction_history_test.odin
+new file mode 100644
+index 0000000..18aa11d
+--- /dev/null
++++ b/src/shared/prediction_history_test.odin
+@@ -0,0 +1,37 @@
++package shared
++import t "core:testing"
++import math "core:math"
++
++@(test)
++collision_history_versions_are_effective_at_tick_and_bounded :: proc(test:^t.T) {
++ source:=test_prediction_static_scene();defer scene_destroy(&source)
++ h:Collision_History;defer collision_history_destroy(&h)
++ t.expect(test,collision_history_record_topology(&h,&source,10))
++ source.structure_revision=2;t.expect(test,collision_history_record_topology(&h,&source,20))
++ t.expect(test,collision_history_topology(&h,9)==nil)
++ t.expect_value(test,collision_history_topology(&h,19).scene.structure_revision,u64(1))
++ t.expect_value(test,collision_history_topology(&h,20).scene.structure_revision,u64(2))
++ t.expect(test,collision_history_topology(&h,19,2)==nil)
++ for revision in u64(3)..=20 { source.structure_revision=revision;t.expect(test,collision_history_record_topology(&h,&source,revision*10)) }
++ t.expect(test,len(h.topology)<=PREDICTION_TOPOLOGY_LIMIT && h.bytes<=PREDICTION_TOPOLOGY_BYTES && h.dropped_windows==1)
++ t.expect(test,collision_history_topology(&h,10)==nil)
++ source.epoch=2;source.structure_revision=1;t.expect(test,collision_history_record_topology(&h,&source,300))
++ t.expect(test,h.epoch==2 && len(h.topology)==1 && !h.has_frame)
++}
++
++@(test)
++collision_pose_history_interpolates_and_limits_extrapolation :: proc(test:^t.T) {
++ h:=Collision_History{epoch=1};defer collision_history_destroy(&h)
++ poses:=make(Pose_Table);defer delete(poses);key:=ent_key(.Piece,9007199254740993)
++ poses[key]=pose_state_make(0,1,0);t.expect(test,collision_history_record_frame(&h,1,100,&poses))
++ poses[key]=pose_state_make(2,3,f32(math.PI/2));t.expect(test,collision_history_record_frame(&h,1,102,&poses))
++ pose,estimated,valid:=collision_history_pose(&h,101,key)
++ t.expect(test,valid && !estimated && math.abs(pose.x-1)<1e-6 && math.abs(pose.angle-f32(math.PI/4))<1e-6)
++ pose,estimated,valid=collision_history_pose(&h,108,key)
++ t.expect(test,valid && estimated && math.abs(pose.x-8)<1e-6)
++ _,_,valid=collision_history_pose(&h,109,key);t.expect(test,!valid)
++ _,_,valid=collision_history_pose(&h,99,key);t.expect(test,!valid)
++ _,_,valid=collision_history_pose(&h,101,key+1);t.expect(test,!valid)
++ poses[key]=pose_state_make(300,0,0);t.expect(test,collision_history_record_frame(&h,1,400,&poses))
++ t.expect(test,!collision_history_record_frame(&h,1,100,&poses))
++}
+diff --git a/src/shared/prediction_static.odin b/src/shared/prediction_static.odin
+new file mode 100644
+index 0000000..931e27d
+--- /dev/null
++++ b/src/shared/prediction_static.odin
+@@ -0,0 +1,77 @@
++package shared
++import b2 "vendor:box2d"
++
++// First prediction fixture: only validated static terrain. Dynamic topology
++// history/proxies are a separate required M5 step; this is not the final gate.
++Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position }
++Static_Prediction :: struct {
++ active: bool,
++ scene: Scene,
++ player: Player,
++ epoch:u32,
++ revision,state_tick,last_jump_edge:u64,
++ identity:Input_Identity,
++ reason:Prediction_Reason,
++}
++prediction_static_destroy :: proc(p:^Static_Prediction) {
++ if p.active { scene_destroy(&p.scene) }
++ p^={}
++}
++prediction_static_build :: proc(p:^Static_Prediction,source:^Scene) -> bool {
++ prediction_static_destroy(p)
++ live:=0
++ for sub in source.subdivisions { if sub.live { live+=1 } }
++ if live>4096 { p.reason=.Capacity;return false }
++ for piece in source.pieces {
++  if piece.live && !piece_anchored(source,piece.id,source.anchor_y) { p.reason=.Dynamic_History_Required;return false }
++ }
++ p.scene=new_scene(0);p.epoch=source.epoch;p.revision=source.structure_revision
++ def:=b2.DefaultWorldDef();def.gravity={0,-9.8}
++ p.scene.physics={active=true,world=b2.CreateWorld(def)};p.active=true
++ append(&p.scene.materials,..source.materials[:])
++ bodies:=make(map[u64]b2.BodyId);defer delete(bodies)
++ for original in source.subdivisions {
++  if !original.live { continue }
++  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points)}
++  p.scene.sub_rows[sub.id]=len(p.scene.subdivisions);append(&p.scene.subdivisions,sub)
++  rubber:=source.materials[sub.material].flexibility>0
++  body,exists:=bodies[sub.owner]
++  if rubber || !exists {
++   bd:=b2.DefaultBodyDef();if rubber { bd.position=to_b2(sub.rest_center) }
++   body=b2.CreateBody(p.scene.physics.world,bd)
++   if !rubber { bodies[sub.owner]=body }
++  }
++  p.scene.subdivisions[p.scene.sub_rows[sub.id]].body=body
++  // Exactly the authoritative decomposition, hull welding, fallback and filter.
++  physics_create_region_shapes(&p.scene,sub.id,body)
++ }
++ floor_def:=b2.DefaultBodyDef();floor_def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
++ floor:=b2.CreateBody(p.scene.physics.world,floor_def)
++ shape:=b2.DefaultShapeDef();shape.material.friction=.65
++ _=b2.CreatePolygonShape(floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*.5))
++ p.player=player_create(p.scene.physics.world)
++ return true
++}
++prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History) -> bool {
++ if !p.active { p.reason=.Uninitialized;return false }
++ if owner.identity.epoch!=p.epoch { p.reason=.Wrong_Epoch;return false }
++ if owner.topology_revision!=p.revision { p.reason=.Wrong_Revision;return false }
++ if !history.accepted || owner.identity!=history.identity || !owner_state_restore(p.scene.physics.world,&p.player,owner) { p.reason=.Invalid_Owner;return false }
++ p.identity=owner.identity;p.state_tick=owner.state_tick;p.last_jump_edge=owner.last_jump_edge
++ if history.next_tick<=owner.state_tick { p.reason=.Missing_Command;return false }
++ if history.next_tick-owner.state_tick>INPUT_HISTORY { p.reason=.Capacity;return false }
++ first:=true
++ for tick:=owner.state_tick+1;tick<history.next_tick;tick+=1 {
++  slot:=history.slots[tick%INPUT_HISTORY]
++  if !slot.occupied || slot.command.target_tick!=tick { p.reason=.Missing_Command;return false }
++  c:=slot.command;jump:=c.jump_edge!=0 && c.jump_edge>p.last_jump_edge
++  if jump { p.last_jump_edge=c.jump_edge }
++  if first { player_movement_from_support(&p.player,move_dequantize(c.move),jump,f32(NET_STEP_DT));first=false }
++  else { player_before_step(&p.player,move_dequantize(c.move),jump,f32(NET_STEP_DT)) }
++  b2.World_Step(p.scene.physics.world,f32(NET_STEP_DT),PHYSICS_SUBSTEPS)
++  player_after_movement_step(&p.player)
++  if player_out_of_bounds(&p.player) || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
++  p.state_tick=tick
++ }
++ p.reason=.None;return true
++}
+diff --git a/src/shared/prediction_static_test.odin b/src/shared/prediction_static_test.odin
+new file mode 100644
+index 0000000..1e25f2c
+--- /dev/null
++++ b/src/shared/prediction_static_test.odin
+@@ -0,0 +1,68 @@
++package shared
++import t "core:testing"
++import b2 "vendor:box2d"
++import log "core:log"
++
++test_prediction_static_scene :: proc() -> Scene {
++ s:=new_scene(0);s.epoch=1;s.structure_revision=1;s.anchor_y=-3
++ append(&s.materials,Material{})
++ points:=[4]Vec2{{-8,-3},{9,-3},{9,0},{-8,0}}
++ sub:=Subdivision{id=200,owner=100,material=0,outline=make_polygon(points[:]),rest_center={.5,-1.5},live=true}
++ s.sub_rows[200]=0;append(&s.subdivisions,sub)
++ piece:=Piece{id=100,material=0,live=true};append(&piece.subdivisions,u64(200));s.piece_rows[100]=0;append(&s.pieces,piece)
++ return s
++}
++
++@(test)
++static_prediction_replays_shared_run_jump_without_sandbox_respawn :: proc(test:^t.T) {
++ source:=test_prediction_static_scene();defer scene_destroy(&source)
++ predicted:Static_Prediction;defer prediction_static_destroy(&predicted)
++ t.expect(test,prediction_static_build(&predicted,&source))
++ def:=b2.DefaultWorldDef();def.gravity={0,-9.8};world:=b2.CreateWorld(def);defer b2.DestroyWorld(world)
++ bd:=b2.DefaultBodyDef();bd.position={.5,-1.5};ground:=b2.CreateBody(world,bd)
++ _=b2.CreatePolygonShape(ground,physics_shape_def(200),b2.MakeBox(8.5,1.5))
++ player:=player_create(world)
++ id:=Input_Identity{9007199254740999,1,9007199254741001}
++ history:Command_History;command_history_begin(&history,{id,1,9007199254742001})
++ schedule:=Input_Schedule{identity=id,synchronized=true}
++ owners:[256]Owner_State
++ future:[256]Vec2;future_valid:[256]bool
++ max_error:f32;compared:=0
++ for tick in u64(1)..=240 {
++  for history.next_tick<=tick+3 {
++   target:=history.next_tick;move:=target<120?i8(127):i8(-127)
++   edge:=target==30 || target==150?target:u64(0)
++   _,ok:=command_history_push(&history,move,edge);t.expect(test,ok)
++  }
++  command:=history.slots[tick%INPUT_HISTORY].command
++  player_before_step(&player,move_dequantize(command.move),command.jump_edge!=0,f32(NET_STEP_DT))
++  b2.World_Step(world,f32(NET_STEP_DT),PHYSICS_SUBSTEPS);player_after_movement_step(&player)
++  schedule.finalized_through=tick;schedule.last_applied_sequence=command.sequence
++  if command.jump_edge!=0 { schedule.last_jump_edge=command.jump_edge }
++  owners[tick%256]=owner_state_capture(&player,&schedule,tick,1)
++  if future_valid[tick%256] { max_error=max(max_error,vlen(vsub(future[tick%256],player.pose.position)));compared+=1 }
++  if tick>6 {
++   owner:=owners[(tick-6)%256]
++   t.expect(test,prediction_static_replay(&predicted,owner,&history))
++   t.expect(test,predicted.state_tick==tick+3 && predicted.reason==.None)
++   future[predicted.state_tick%256]=predicted.player.pose.position;future_valid[predicted.state_tick%256]=true
++   t.expect(test,command_history_finalize(&history,id,owner.finalized_through))
++  }
++ }
++ t.expect(test,compared>200 && max_error<.03)
++ log.infof("static shared-kernel replay comparisons=%d max_position_error=%.6f",compared,max_error)
++}
++
++@(test)
++static_prediction_rejects_dynamic_or_incompatible_history :: proc(test:^t.T) {
++ source:=test_prediction_static_scene();defer scene_destroy(&source)
++ predicted:Static_Prediction;defer prediction_static_destroy(&predicted)
++ source.anchor_y=-1e30
++ t.expect(test,!prediction_static_build(&predicted,&source) && predicted.reason==.Dynamic_History_Required)
++ source.anchor_y=-3;t.expect(test,prediction_static_build(&predicted,&source))
++ history:Command_History;command_history_begin(&history,{{1,1,1},1,1});_,_=command_history_push(&history,0,0)
++ owner:=Owner_State{identity={1,2,1},topology_revision=1}
++ t.expect(test,!prediction_static_replay(&predicted,owner,&history) && predicted.reason==.Wrong_Epoch)
++ owner.identity.epoch=1;owner.topology_revision=2
++ t.expect(test,!prediction_static_replay(&predicted,owner,&history) && predicted.reason==.Wrong_Revision)
++}
+diff --git a/src/shared/sim_net_host.odin b/src/shared/sim_net_host.odin
+index cf18f58..4d51254 100644
+--- a/src/shared/sim_net_host.odin
++++ b/src/shared/sim_net_host.odin
+@@ -103,7 +103,7 @@ net_host_client_send_layout :: proc(c: ^Net_Client,data: []u8) -> bool {
+  w:nc.Writer;nc.writer_init(&w,len(data)+8);defer nc.writer_destroy(&w)
+  nc.write_u8(&w,NET_APP_LAYOUT_UPLOAD)
+  nc.write_raw(&w,data)
+- return nc.client_send_reliable(&c.nc_client,w.data[:])
++ return net_request_client_send(c,NET_APP_LAYOUT_UPLOAD,w.data[:])
+ }
+ 
+ net_host_client_send_command :: proc(c: ^Net_Client,op: u8,mode: u8=0,radius: f32=0) -> bool {
+@@ -117,5 +117,5 @@ net_host_client_send_command :: proc(c: ^Net_Client,op: u8,mode: u8=0,radius: f3
+  case NET_HOST_BOMB_RADIUS: nc.write_f32(&w,radius)
+  case: return false
+  }
+- return nc.client_send_reliable(&c.nc_client,w.data[:])
++ return net_request_client_send(c,NET_APP_HOST_COMMAND,w.data[:])
+ }
+diff --git a/src/shared/sim_net_real.odin b/src/shared/sim_net_real.odin
+index 48166d6..4a3cf5f 100644
+--- a/src/shared/sim_net_real.odin
++++ b/src/shared/sim_net_real.odin
+@@ -90,6 +90,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
+  accumulator:=f64(0)
+  report_at:=f64(10)
+  last_bytes:[nc.MAX_CLIENTS]u64
++ last_generation:[nc.MAX_CLIENTS]u64
+  buf:[nc.MAX_PACKET+64]u8
+  overrun_count:=0
+  for {
+@@ -117,6 +118,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
+    fmt.eprintf("server tick overrun at %.2fs: dropping %.1fms of accumulated time\n",now,accumulator*1000)
+    accumulator=0
+   }
++  net_scheduled_server_echoes(&ns,(accumulator+time.duration_seconds(time.tick_since(start))-now)/NET_STEP_DT,now)
+   packets:=nc.server_take_outgoing(&ns.srv)
+   for p in packets { _=nc.socket_send(&sock,p.to,p.data) }
+   nc.outgoing_free(&packets)
+@@ -125,7 +127,10 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
+    for &c,i in ns.srv.clients {
+     if !c.active { continue }
+     bytes:=c.endpoint.stats.bytes_sent
++    if last_generation[i]!=ns.real_hash_generation[i] || bytes<last_bytes[i] { last_bytes[i]=0;last_generation[i]=ns.real_hash_generation[i] }
+     fmt.printf("  client=%d addr=%v RTT=%.0fms tx=%.0f kbit/s\n",i,c.address,c.endpoint.stats.rtt*1000,f64(bytes-last_bytes[i])*8/10000)
++    input:=&ns.clients[i].schedule
++    fmt.printf("INPUT client=%d incarnation=%d generation=%d finalized=%d applied_sequence=%d accepted=%d duplicates=%d conflicts=%d late=%d starved=%d neutralized=%d\n",i,ns.clients[i].incarnation,input.identity.generation,input.finalized_through,input.last_applied_sequence,input.accepted,input.duplicates,input.conflicts,input.too_late,input.starved,input.neutralized)
+     last_bytes[i]=bytes
+    }
+    report_at+=10
+diff --git a/src/shared/sim_net_server.odin b/src/shared/sim_net_server.odin
+index a9ffb3c..6f04074 100644
+--- a/src/shared/sim_net_server.odin
++++ b/src/shared/sim_net_server.odin
+@@ -25,6 +25,10 @@ Net_Server_Stats :: struct {
+ }
+ 
+ Net_Server_Client :: struct {
++ schedule: Input_Schedule,
++ incarnation: u64,
++ echo_nonce: u64,
++ requests: ^Request_Cache,
+  active: bool,
+  is_host: bool, // validated only in the real-process app handshake
+  ring: [NET_SENT_RING]Pose_Table,
+@@ -44,6 +48,8 @@ Net_Server_Client :: struct {
+ }
+ 
+ Net_Server :: struct {
++ next_incarnation: u64,
++ next_event_id: u64,
+  game: Headless_Game,
+  srv: nc.Server,
+  repl: Repl_Server,
+@@ -93,6 +99,7 @@ net_client_state_clear :: proc(c: ^Net_Server_Client) {
+ 
+ net_server_destroy :: proc(ns: ^Net_Server) {
+  for &c in ns.clients {
++  if c.requests!=nil { free(c.requests);c.requests=nil }
+   net_client_state_clear(&c)
+   delete(c.priority); delete(c.last_sent); delete(c.pending); delete(c.blast_queue); delete(c.blast_ticks)
+   delete(c.stats.frame_bytes); delete(c.stats.frame_parts); delete(c.stats.build_ms); delete(c.stats.staleness_samples)
+@@ -124,6 +131,9 @@ net_record_hash :: proc(ns: ^Net_Server) {
+ net_server_join :: proc(ns: ^Net_Server,index: int) {
+  ns.real_hash_generation[index]+=1
+  c:=&ns.clients[index]
++ ns.next_incarnation+=1;c.incarnation=ns.next_incarnation;c.schedule={};c.echo_nonce=0
++ if c.requests==nil { c.requests=new(Request_Cache) }
++ c.requests^=Request_Cache{incarnation=c.incarnation}
+  net_client_state_clear(c)
+  if c.priority==nil { c.priority=make(map[u64]f32) }
+  if c.last_sent==nil { c.last_sent=make(map[u64]Pose_State) }
+@@ -135,6 +145,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
+  world_add_player(&ns.game.world,index)
+  out:=repl_server_baseline(&ns.repl,&ns.game.world.scene,ns.tick); defer repl_output_destroy(&out)
+  net_send_reliable_parts(ns,index,&out)
++ if ns.real_gate { net_scheduled_server_offer(ns,index) }
+ }
+ 
+ net_server_leave :: proc(ns: ^Net_Server,index: int) {
+@@ -340,10 +351,9 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
+     }
+     continue // no input, hash or host command before authorization
+    }
+-   if ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
++   if ns.real_gate && net_scheduled_server_message(ns,ev.client,ev.channel,ev.data) { continue }
++   if !ns.real_gate && ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
+     if in_,ok:=input_decode(ev.data); ok { net_server_input(ns,ev.client,in_) }
+-   } else if ns.real_gate && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && (ev.data[0]==NET_APP_LAYOUT_UPLOAD || ev.data[0]==NET_APP_HOST_COMMAND) {
+-    net_host_dispatch(ns,ev.client,ev.data)
+    } else if ns.record_hashes && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && ev.data[0]==NET_REAL_HASH_REPORT {
+     r:nc.Reader;nc.reader_init(&r,ev.data)
+     _=nc.read_u8(&r)
+@@ -364,7 +374,14 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
+   c:=&ns.clients[i]
+   if !c.active || !w.players[i].active { continue }
+   if c.has_input { w.players[i].blast_radius=c.radius }
+-  commands.players[i].move=c.move; commands.players[i].jump=c.jump_pending; c.jump_pending=false
++  if ns.real_gate {
++   if c.schedule.identity.epoch==w.scene.epoch {
++    step:=input_schedule_consume(&c.schedule,ns.tick+1)
++    commands.players[i].move=move_dequantize(step.command.move);commands.players[i].jump=step.command.jump_edge!=0
++    if commands.players[i].jump { c.stats.jumps_applied+=1 }
++   }
++  } else { commands.players[i].move=c.move;commands.players[i].jump=c.jump_pending }
++  c.jump_pending=false
+   slice.sort_by(c.blast_queue[:],proc(a,b: Net_Blast) -> bool { return seq16_newer(b.seq,a.seq) })
+   for b in c.blast_queue { net_server_blast(ns,i,b) }
+   clear(&c.blast_queue)
+@@ -376,15 +393,25 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
+  ns.tick+=1
+  // Structure and events, reliable, to every client.
+  out:=repl_server_update(&ns.repl,&w.scene,ns.tick); defer repl_output_destroy(&out)
+- if w.scene.epoch!=ns.frame_epoch { net_server_reset_frames(ns) }
++ epoch_changed:=w.scene.epoch!=ns.frame_epoch
++ if epoch_changed { net_server_reset_frames(ns) }
+  if out.kind!=.None {
+   net_record_hash(ns)
+   for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { net_send_reliable_parts(ns,i,&out) } }
+  }
++ if ns.real_gate {
++  for i in 0..<nc.MAX_CLIENTS {
++   if !ns.clients[i].active { continue }
++   if epoch_changed || post.player_respawned[i] { net_scheduled_server_offer(ns,i) }
++   net_scheduled_server_owner(ns,i)
++  }
++ }
+  for list in ([2][dynamic]Explosion_Event{ns.pre_events.explosions,post.explosions}) {
+   for e in list {
++   event_id:=e.event_id
++   if event_id==0 { ns.next_event_id+=1;event_id=ns.next_event_id }
+    wr:nc.Writer; nc.writer_init(&wr,24)
+-   event_encode_explosion(&wr,ns.tick,e.position,e.radius)
++   event_encode_explosion(&wr,ns.tick,e.position,e.radius,event_id)
+    for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { nc.server_send_reliable(&ns.srv,i,wr.data[:]) } }
+    nc.writer_destroy(&wr); ns.explosions_emitted+=1
+   }
+diff --git a/src/shared/sim_yard.odin b/src/shared/sim_yard.odin
+index 9fd7227..79506da 100644
+--- a/src/shared/sim_yard.odin
++++ b/src/shared/sim_yard.odin
+@@ -38,7 +38,7 @@ Tick_Commands :: struct {
+  remove_region,break_connection: u64,
+ }
+ 
+-Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int }
++Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int, event_id: u64 }
+ 
+ Tick_Events :: struct {
+  explosions: [dynamic]Explosion_Event,
+diff --git a/src/shared_aliases.odin b/src/shared_aliases.odin
+index 34f1a4e..e075f9b 100644
+--- a/src/shared_aliases.odin
++++ b/src/shared_aliases.odin
+@@ -131,6 +131,7 @@ net_client_on_structure :: shared.net_client_on_structure
+ net_client_record_applied :: shared.net_client_record_applied
+ net_client_reset :: shared.net_client_reset
+ net_client_step :: shared.net_client_step
++net_client_clear_intent :: shared.net_client_clear_intent
+ net_client_update_clock :: shared.net_client_update_clock
+ net_client_update_delay :: shared.net_client_update_delay
+ net_drawn_from :: shared.net_drawn_from
+diff --git a/tests/interop/Program.cs b/tests/interop/Program.cs
+index 506a625..ab542a0 100644
+--- a/tests/interop/Program.cs
++++ b/tests/interop/Program.cs
+@@ -90,6 +90,7 @@ static class Program {
+   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}
+   ulong[] handles={Create(),Create()};ulong[] epochs={0,0},revisions={ulong.MaxValue,ulong.MaxValue};bool[] ready={false,false};
+   ulong[] maxGeneration={0,0};int snapshots=0,events=0;var seen=new HashSet<(int,ulong,uint,ulong)>();
++  double traveled=0,jumpRise=0;float lastX=0,lastY=0;ulong poseGeneration=0;uint poseEpoch=0;bool hasLocalPose=false;
+   bool reset=false,reconnected=false,jumped=false,blasted=false;ulong hostRequest=0,guestRequest=0;bool hostResult=false,guestResult=false;bool invalidBlast=false,invalidBlastSeen=false,guestLayoutRejected=false,malformedRejected=false,layoutAccepted=false;ulong guestLayout=0,hostLayout=0;int layoutStage=0;double started=Now,lastReport=started;
+   try {
+    Connect(handles[0],port,Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"");Connect(handles[1],port);
+@@ -127,6 +128,14 @@ static class Program {
+        }
+        for(uint poseIndex=0;poseIndex<sample.pose_count;poseIndex++) {
+         var pose=Read<BomPose>(sample.poses,poseIndex);Check(float.IsFinite(pose.x)&&float.IsFinite(pose.y)&&float.IsFinite(pose.angle),"finite native poses");
++        if(i==0 && pose.kind==2 && pose.id==sample.local_player_id) {
++         if(hasLocalPose && poseGeneration==sample.connection_generation && poseEpoch==sample.epoch) {
++          double dx=Math.Abs(pose.x-lastX),dy=pose.y-lastY;
++          if(dx<0.5)traveled+=dx;
++          if(elapsed>2 && elapsed<3 && dy>0 && dy<0.5)jumpRise+=dy;
++         }
++         lastX=pose.x;lastY=pose.y;poseGeneration=sample.connection_generation;poseEpoch=sample.epoch;hasLocalPose=true;
++        }
+        }
+        for(uint eventIndex=0;eventIndex<sample.event_count;eventIndex++) {
+         var e=Read<BomEvent>(sample.events,eventIndex);Check(seen.Add((i,sample.connection_generation,sample.epoch,e.id)),"acknowledged event did not replay");events++;
+@@ -170,6 +179,8 @@ static class Program {
+    if(seconds>10 && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")))Check(hostResult&&guestResult&&guestLayoutRejected&&malformedRejected&&layoutAccepted&&invalidBlastSeen,"host/guest results, layout authorization, malformed/valid upload and invalid blast rejection");
+    if(seconds>10)Check(events>0,"actual native explosion events were copied and acknowledged");
+    if(seconds>10)Check(maxGeneration[1]>=2,"guest reconnected with a new generation");
++   if(seconds>10)Check(traveled>0.25 && jumpRise>0.03,"scheduled movement and jump produce real authoritative motion");
++   Console.WriteLine($"MOTION traveled={traveled:F6} jumpRise={jumpRise:F6}");
+    Console.WriteLine($"PASS real native clients seconds={seconds} snapshots={snapshots} events={events} reset={reset} reconnect={reconnected}");
+   } finally { foreach(ulong handle in handles)Ok(BomNative.bom_client_destroy(handle),"dispose native session"); }
+  }
+-- 
+2.56.0.windows.2
+
