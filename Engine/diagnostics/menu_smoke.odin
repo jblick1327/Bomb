@@ -17,7 +17,7 @@ menu_smoke_capture :: proc(game:^Sandbox,target:rl.RenderTexture2D,name:string,n
  poses:=make(map[u64]Pose);defer delete(poses)
  ui_overflows=0
  rl.BeginDrawing();rl.BeginTextureMode(target);rl.ClearBackground({19,28,42,255})
- if net!=nil && net.active && !game.editor.editing { net_client_draw(&net.client,sandbox_view(width,height),game.outline_width) }
+ if net!=nil && net.active && !game.editor.editing { net_client_draw(&net.client,&net.client_view,sandbox_view(width,height),game.outline_width) }
  else { sandbox_draw_world(game,sandbox_view(width,height),poses) }
  if net!=nil && net.open { _=net_gui_draw_panel(net,game,width,height) }
  else { _=sandbox_draw_hud(game,width,height,net) }

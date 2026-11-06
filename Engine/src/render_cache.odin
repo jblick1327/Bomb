@@ -1,4 +1,6 @@
 package main
+
+import shared "shared"
 import "core:time"
 
 import rl "vendor:raylib"
@@ -74,7 +76,7 @@ release_render_caches :: proc(caches: ^Render_Cache_State) {
 // This is the only phase that may insert cache entries. Complete it before
 // taking any cache pointer: an insertion can move the map's value storage.
 render_cache_prepass :: proc(s: ^Scene,caches: ^Render_Cache_State) {
- when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_cache_ms+=frame_ms(frame_start) } } }
+ when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if shared.frame_measuring { shared.frame_cache_ms+=frame_ms(frame_start) } } }
 
 	if !caches.initialized || caches.structure_revision!=s.structure_revision {
 		when ODIN_TEST { render_signature_test_calls+=1 }

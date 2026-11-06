@@ -5,45 +5,7 @@ import "core:math"
 import "core:time"
 import "core:strings"
 
-Sandbox_Settings :: struct {
-	blast_radius: f32,
-	blast_mode: Blast_Mode,
-	seed: u8,
-}
-DEFAULT_SANDBOX_SETTINGS :: Sandbox_Settings{blast_radius=5.0,seed=42}
-YARD_FLOOR_BOTTOM :: f32(-3)
-YARD_BASE_DEPTH :: f32(0.25)
-YARD_LEFT :: f32(-8)
-YARD_RIGHT :: f32(9)
-World :: struct {
-	scene: Scene,
-	floor: b2.BodyId,
-	players: [MAX_PLAYERS]Player,
-	bombs: [dynamic]Bomb,
-	next_bomb_id: u64,
-	rain: Bomb_Rain,
-	settings: Sandbox_Settings,
-	tick: u64,
-}
 // Per-player input. Applied only to active players; a player's blasts use that player's blast_radius.
-Player_Commands :: struct {
- move: f32,
- jump: bool,
- blasts: [dynamic]Vec2,
- radius: union { f32 },
-}
-Tick_Commands :: struct {
- players: [MAX_PLAYERS]Player_Commands,
- mode: union { Blast_Mode },
- bomb_radius: union { f32 }, // Sets settings.blast_radius, the falling-bomb radius.
- remove_region,break_connection: u64,
-}
-Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int }
-Tick_Events :: struct {
- explosions: [dynamic]Explosion_Event,
- player_respawned,blast_rejected: [MAX_PLAYERS]bool,
- structure_changed: bool,
-}
 Sandbox :: struct {
 	world: World,
 	render_caches: Render_Cache_State,
@@ -99,37 +61,14 @@ sandbox_reset :: proc(game: ^Sandbox) {
 	if mode,ok:=game.queued.mode.(Blast_Mode); ok { game.world.settings.blast_mode=mode }
 	if radius,ok:=game.queued.players[0].radius.(f32); ok && game.world.players[0].active { game.world.players[0].blast_radius=radius }
 	game.queued.players[0].radius=nil; game.queued.bomb_radius=nil; game.queued.mode=nil
-	revision:=game.world.scene.revision+1
-	epoch:=game.world.scene.epoch+1
-	scene_destroy(&game.world.scene)
-	s:=&game.world.scene
-	s^=new_scene(WOOD_MINIMUM_WIDTH)
-	s.revision=revision
-	s.epoch=epoch
-	material:=add_material(s,editor_material(.Stone))
-	seed:=game.world.settings.seed
-	objects: [dynamic]Built_Object; defer delete(objects)
- editor_build_objects(game,&objects)
- ground:=sandbox_add_ground(s,material,seed)
- build_mortar(s,objects[:],ground)
- build_glue(s,game.layout.glue[:],objects[:],ground)
-
-	sandbox_start_physics(game)
+ world_rebuild_layout(&game.world,&game.layout,game.editor.editing)
+ clear(&game.bursts); clear(&game.previous_bombs)
 	game.selected=0
 	game.editor.dragging=false
 	sandbox_clear_input(game)
 	
 }
 // The floor uses the same creation refinement as authored objects.
-sandbox_add_ground :: proc(s: ^Scene,material: int,seed: u8) -> Built_Object {
- first_id:=s.next_id+1
-	ground:=add_piece(s,material,derive_seed(seed,13))
-	points:=[4]Vec2{{YARD_LEFT,YARD_FLOOR_BOTTOM},{YARD_RIGHT,YARD_FLOOR_BOTTOM},{YARD_RIGHT,0},{YARD_LEFT,0}}
-	outline:=Polygon{points=points[:]}
-	_ = add_subdivision(s,ground,outline,Pose{position=centroid(outline)})
-	presplit_piece(s,ground)
- return Built_Object{first_id=first_id,end_id=s.next_id+1,lo={YARD_LEFT,YARD_FLOOR_BOTTOM},hi={YARD_RIGHT,0}}
-}
 sandbox_set_panel :: proc(game: ^Sandbox,open: bool) {
 	if game.materials_open { materials_commit_name(game) }
  game.panel_open=open
@@ -151,21 +90,6 @@ sandbox_mode :: proc(game: ^Sandbox) -> Blast_Mode {
  if mode,ok:=game.queued.mode.(Blast_Mode); ok { return mode }; return game.world.settings.blast_mode
 }
 // Inclusive edges are solid too. Use the logical posed outline, not the cosmetic mesh.
-point_in_subdivision :: proc(sub: Subdivision,point: Vec2) -> bool {
-	local:=vadd(sub.rest_center,vrotate(vsub(point,sub.pose.position),-sub.pose.angle))
-	inside:=false
-	for a,i in sub.outline.points {
-		b:=sub.outline.points[(i+1)%len(sub.outline.points)]
-		edge:=vsub(b,a); relative:=vsub(local,a)
-		if math.abs(vcross(edge,relative))<0.00001 && vdot(relative,edge)>=0 && vdot(relative,edge)<=vdot(edge,edge) { return true }
-		if (a.y>local.y)!=(b.y>local.y) && local.x<(b.x-a.x)*(local.y-a.y)/(b.y-a.y)+a.x { inside=!inside }
-	}
-	return inside
-}
-sandbox_valid_aim :: proc(s: ^Scene,point: Vec2) -> bool {
-	for sub in s.subdivisions { if sub.live && point_in_subdivision(sub,point) { return false } }
-	return true
-}
 sandbox_blast :: proc(game: ^Sandbox,point: Vec2) -> bool {
 	if game.editor.editing || game.panel_open || game.world.settings.blast_mode!=.Manual { return false }
 	append(&game.queued.players[0].blasts,point)
@@ -182,13 +106,6 @@ sandbox_explode :: proc(game: ^Sandbox,point: Vec2) {
  events:=Tick_Events{}
  world_explode(&game.world,point,game.world.settings.blast_radius,&events)
  sandbox_present_events(game,&events)
-}
-world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
- start:=time.tick_now()
- regions:=len(w.scene.subdivisions)
- blast_pass(&w.scene,Blast{position=point,radius=radius})
- append(&events.explosions,Explosion_Event{position=point,radius=radius,elapsed_ms=f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond),regions=regions})
- events.structure_changed=true
 }
 
 // Input routing is independent of raylib, so menu consumption has a direct regression check.
@@ -263,65 +180,8 @@ sandbox_present_events :: proc(game: ^Sandbox,events: ^Tick_Events) {
  if events.player_respawned[0] { sandbox_notice(game,"Back at spawn") }
  delete(events.explosions)
 }
-world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
- events:=Tick_Events{}
- if radius,ok:=commands.bomb_radius.(f32); ok { w.settings.blast_radius=clamp(radius,f32(0.5),f32(6)) }
- for player_commands,i in commands.players {
-  if radius,ok:=player_commands.radius.(f32); ok && w.players[i].active { w.players[i].blast_radius=clamp(radius,f32(0.5),f32(6)) }
- }
- if mode,ok:=commands.mode.(Blast_Mode); ok && mode!=w.settings.blast_mode {
-  w.settings.blast_mode=mode
-  bomb_rain_clear(w)
-  w.rain.until_drop=bomb_drop_delay(&w.rain)
- }
- failures:=Failures{}
- if commands.remove_region!=0 { append(&failures.discard_subdivisions,commands.remove_region) }
- if commands.break_connection!=0 { append(&failures.connections,commands.break_connection) }
- if len(failures.discard_subdivisions)+len(failures.connections)>0 {
-  apply_failures(&w.scene,failures); physics_sync_structure(&w.scene); events.structure_changed=true
- }
- free_failures(&failures)
- // Blasts apply in player-index order, each player's blasts in order.
- for player_commands,i in commands.players {
-  if !w.players[i].active { continue }
-  for point in player_commands.blasts {
-   if sandbox_valid_aim(&w.scene,point) { world_explode(w,point,w.players[i].blast_radius,&events) }
-   else { events.blast_rejected[i]=true }
-  }
- }
- bomb_rain_before_step(w,dt)
- for &player,i in w.players {
-  if player.active { player_before_step(&player,commands.players[i].move,commands.players[i].jump,dt) }
- }
- physics_tick(&w.scene,dt)
- world_refresh_poses(w)
- bomb_rain_after_step(w,dt,&events)
- if world_remove_out_of_bounds(w) { events.structure_changed=true }
- for &player,i in w.players {
-  if player.active { events.player_respawned[i]=player_after_step(&player) }
- }
- world_refresh_poses(w)
- w.tick+=1
- return events
-}
 // Presentation mirrors: refreshed from the bodies after every physics step and snapshot load.
-world_refresh_poses :: proc(w: ^World) {
- for &player in w.players { player_refresh_pose(&player) }
- for &bomb in w.bombs { bomb.pose=read_body_state(bomb.body).pose }
-}
 // This is yard cleanup, not an impact or another generation of damage.
-world_remove_out_of_bounds :: proc(game: ^World) -> bool {
-	f:=Failures{}
-	defer delete(f.discard_subdivisions)
-	for sub in game.scene.subdivisions {
-		p:=sub.pose.position
-		if sub.live && p.y<YARD_FLOOR_BOTTOM-2 { append(&f.discard_subdivisions,sub.id) }
-	}
-	if len(f.discard_subdivisions)==0 { return false }
-	apply_failures(&game.scene,f)
-	physics_sync_structure(&game.scene)
-	return true
-}
 sandbox_advance :: proc(game: ^Sandbox,dt: f32,input: Sandbox_Input) {
 	game.status_time=max(f32(0),game.status_time-dt)
 	if game.panel_open || game.editor.editing { game.accumulator=0; game.jump_queued=false; return }
@@ -350,36 +210,5 @@ sandbox_start_physics :: proc(game: ^Sandbox) {
  world_start_physics(&game.world)
  clear(&game.bursts); clear(&game.previous_bombs)
 }
-world_start_physics :: proc(game: ^World) {
- s:=&game.scene
-	physics_init(s,{0,-9.8},YARD_FLOOR_BOTTOM)
-	def:=b2.DefaultBodyDef()
-	def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
-	game.floor=b2.CreateBody(s.physics.world,def)
-	shape:=b2.DefaultShapeDef(); shape.material.friction=0.65
-	// Extend beyond the playable edges so excavation never opens the screen bottom.
-	_ = b2.CreatePolygonShape(game.floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*0.5))
-	// A rebuild keeps the active player set (and their radii); a fresh world starts with player 0.
-	was:=game.players
-	game.players={}
-	any_active:=false
-	for player in was { if player.active { any_active=true } }
-	if !any_active { world_add_player(game,0) }
-	else { for i in 0..<MAX_PLAYERS { if was[i].active { world_add_player(game,i); game.players[i].blast_radius=was[i].blast_radius } } }
-	bomb_rain_reset(&game.rain,game.settings.seed)
-	clear(&game.bombs)
-	game.tick=0
-}
 
 // Players share PLAYER_SPAWN. A new player starts at the current manual blast radius.
-world_add_player :: proc(w: ^World,index: int) -> bool {
- if index<0 || index>=MAX_PLAYERS || w.players[index].active || !w.scene.physics.active { return false }
- w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius)
- return true
-}
-world_remove_player :: proc(w: ^World,index: int) -> bool {
- if index<0 || index>=MAX_PLAYERS || !w.players[index].active { return false }
- if b2.Body_IsValid(w.players[index].body) { b2.DestroyBody(w.players[index].body) }
- w.players[index]={}
- return true
-}

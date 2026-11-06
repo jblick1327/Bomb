@@ -1,5 +1,7 @@
 package main
 
+import shared "shared"
+
 import "core:testing"
 import "core:sync"
 import "core:fmt"
@@ -100,15 +102,14 @@ glass_drop_shock_reduces_largest_piece :: proc(t: ^testing.T) {
  testing.expect(t,tick>0 && stats.pieces>8 && stats.largest_fraction<0.88401365)
 }
 when ODIN_TEST {
-@(thread_local) glass_commit_test_calls: int
 @(test)
 glass_blast_and_impact_use_one_structural_commit :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  g:=sandbox_editor_create(); defer sandbox_destroy(&g); g.editor.palette=recipe_slot(.Glass)
  testing.expect(t,editor_place(&g,{0,0},{5,2.5})); sandbox_toggle_editor(&g)
  for _ in 0..<120 { sandbox_tick(&g,0,false) }
- before:=glass_commit_test_calls; sandbox_fixture_radius(&g,3); sandbox_explode(&g,{-0.6,1.25})
- blast_commits:=glass_commit_test_calls-before
+ before:=shared.glass_commit_test_calls; sandbox_fixture_radius(&g,3); sandbox_explode(&g,{-0.6,1.25})
+ blast_commits:=shared.glass_commit_test_calls-before
  drop:=sandbox_editor_create(); defer sandbox_destroy(&drop); drop.editor.palette=recipe_slot(.Glass)
  testing.expect(t,editor_place(&drop,{0,0},{2,1})); sandbox_toggle_editor(&drop)
  for p in drop.world.scene.pieces {
@@ -117,8 +118,8 @@ glass_blast_and_impact_use_one_structural_commit :: proc(t: ^testing.T) {
  }
  physics_read_motion(&drop.world.scene); revision:=drop.world.scene.revision; impact_commits:=0
  for _ in 0..<180 {
-  before=glass_commit_test_calls; sandbox_tick(&drop,0,false)
-  if drop.world.scene.revision!=revision { impact_commits=glass_commit_test_calls-before; break }
+  before=shared.glass_commit_test_calls; sandbox_tick(&drop,0,false)
+  if drop.world.scene.revision!=revision { impact_commits=shared.glass_commit_test_calls-before; break }
  }
  fmt.printf("Glass commit check: blast=%d impact_batch=%d\n",blast_commits,impact_commits)
  testing.expect(t,blast_commits==1 && impact_commits==1)

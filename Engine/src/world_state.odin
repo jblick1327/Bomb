@@ -5,7 +5,6 @@ import "core:math"
 import "core:encoding/json"
 import "core:os"
 
-Wire_Body :: struct { pose: Pose, rotation: b2.Rot }
 Wire_Player :: struct { body: Wire_Body, coyote,buffered_jump: f32 }
 // v4: every active player, by index.
 Wire_Player_Entry :: struct { index: int, body: Wire_Body, coyote,buffered_jump: f32, blast_radius: f32 }
@@ -29,10 +28,6 @@ World_Snapshot_V3 :: struct {
  rain: Bomb_Rain,
  settings: Sandbox_Settings,
  tick: u64,
-}
-read_body_state :: proc(body: b2.BodyId) -> Wire_Body {
- rotation:=b2.Body_GetRotation(body)
- return {pose={position=from_b2(b2.Body_GetPosition(body)),angle=math.atan2(rotation.s,rotation.c),velocity=from_b2(b2.Body_GetLinearVelocity(body)),angular_velocity=b2.Body_GetAngularVelocity(body)},rotation=rotation}
 }
 read_world_state :: proc(w: ^World) -> World_Snapshot {
  out:=World_Snapshot{version=4,scene=read_state(&w.scene),rain=w.rain,settings=w.settings,tick=w.tick}

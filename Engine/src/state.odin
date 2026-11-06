@@ -36,8 +36,6 @@ Snapshot :: struct {
 	connections: [dynamic]Wire_Connection,
 	pieces: [dynamic]Piece,
 }
-finite :: proc(value: f32) -> bool { return !math.is_nan(value) && !math.is_inf(value) }
-valid_vec :: proc(v: Vec2) -> bool { return finite(v.x) && finite(v.y) }
 validate_scene :: proc(s: ^Scene) -> (bool,string) {
 	membership := make(map[u64]int)
 	defer delete(membership)

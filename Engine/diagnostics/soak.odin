@@ -1,5 +1,7 @@
 package main
 
+
+import shared "shared"
 import "core:fmt"
 import "core:mem"
 import "core:os"
@@ -25,7 +27,12 @@ soak_yard :: proc() -> Sandbox {
 	return g
 }
 soak_rebuild_layout :: proc(g: ^Sandbox) {
-	s:=&g.world.scene
+ soak_rebuild_world(&g.world,&g.layout)
+ g.selected=0; sandbox_clear_input(g)
+}
+soak_rebuild_headless :: proc(g: ^Headless_Game) { soak_rebuild_world(&g.world,&g.layout) }
+soak_rebuild_world :: proc(w: ^World,layout: ^Layout) {
+	s:=&w.scene
 	f:=Failures{}
 	for sub in s.subdivisions { if sub.live { append(&f.discard_subdivisions,sub.id) } }
 	revision:=s.revision
@@ -34,14 +41,12 @@ soak_rebuild_layout :: proc(g: ^Sandbox) {
 	assert(len(s.materials)==5)
 	materials:=[8]int{1,2,3,4,0,0,0,0}
 	objects: [dynamic]Built_Object; defer delete(objects)
- editor_build_rectangles(g,materials,&objects)
- ground:=sandbox_add_ground(s,0,g.world.settings.seed)
+ layout_build_rectangles(w,layout,false,materials,&objects)
+ ground:=sandbox_add_ground(s,0,w.settings.seed)
  build_mortar(s,objects[:],ground)
 	if s.revision==revision { s.revision+=1 }
 	physics_sync_structure(s)
-	for &player in g.world.players { if player.active { player_respawn(&player) } }
-	g.selected=0
-	sandbox_clear_input(g)
+	for &player in w.players { if player.active { player_respawn(&player) } }
 }
 run_soak :: proc(minutes: int = 20) {
 	track: mem.Tracking_Allocator
@@ -66,7 +71,7 @@ run_soak :: proc(minutes: int = 20) {
 			// Replenishment is included in that tick's timing. Sample the exhausted
 			// cycle at each even minute before replenishing on the next tick.
 			if tick==0 && minute>1 && minute%2==1 { soak_rebuild_layout(&g) }
-   when BOM_PROFILE { profile_tick=u64((minute-1)*3600+tick+1) }
+   when BOM_PROFILE { shared.profile_tick=u64((minute-1)*3600+tick+1) }
 			sandbox_tick(&g,0,false); soak_sample(&ticks,start)
 			peak_regions=max(peak_regions,len(g.world.scene.subdivisions)); peak_links=max(peak_links,len(g.world.scene.connections)); peak_pieces=max(peak_pieces,len(g.world.scene.pieces))
 		}

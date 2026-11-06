@@ -17,6 +17,7 @@ Net_Game_UI :: struct {
  hosting: bool,
  socket: nc.Socket,
  client: Net_Client,
+ client_view: Net_Client_View,
  target: nc.Address,
  start: time.Tick,
  last_step: f64,
@@ -53,6 +54,7 @@ net_gui_leave :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
  if ui.active {
   nc.client_disconnect(&ui.client.nc_client)
   net_gui_flush(ui)
+  net_client_view_destroy(&ui.client_view)
   net_client_destroy(&ui.client)
   nc.socket_close(&ui.socket)
   ui.active=false
@@ -74,6 +76,7 @@ net_gui_destroy :: proc(ui: ^Net_Game_UI) {
  if ui.active {
   nc.client_disconnect(&ui.client.nc_client)
   net_gui_flush(ui)
+  net_client_view_destroy(&ui.client_view)
   net_client_destroy(&ui.client)
   nc.socket_close(&ui.socket)
  }
@@ -97,7 +100,6 @@ net_gui_connect :: proc(ui: ^Net_Game_UI, game: ^Sandbox, address: nc.Address, t
  ui.client.real_gate=true
  ui.client.verify=true
  ui.client.real_host_token=token
- ui.client.bot_enabled=false
  ui.start=time.tick_now()
  ui.last_step=0
  ui.target=address
@@ -166,6 +168,7 @@ net_gui_step :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
  for now-ui.last_step>=NET_STEP_DT && steps<5 {
   ui.last_step+=NET_STEP_DT
   net_client_step(&ui.client,now)
+  net_client_view_step(&ui.client,&ui.client_view)
   // The same canonical-hash feedback used by the headless smoke client.
   for applied in ui.client.applied {
    w:nc.Writer;nc.writer_init(&w,32)

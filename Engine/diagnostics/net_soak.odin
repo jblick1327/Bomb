@@ -153,10 +153,14 @@ net_soak_run :: proc(cfg: Net_Soak_Config) -> Net_Soak_Result {
  sandbox_fixture_mode(&g,.Falling_Bombs)
  ns:Net_Server; net_server_init(&ns,g,true)
  defer net_server_destroy(&ns)
+ views:[nc.MAX_CLIENTS]Net_Client_View
+ defer { for &view in views { net_client_view_destroy(&view) } }
  clients:[nc.MAX_CLIENTS]Net_Client
+ bots:[nc.MAX_CLIENTS]Bot
  links:[nc.MAX_CLIENTS]Net_Link
  for i in 0..<nc.MAX_CLIENTS {
-  net_client_init(&clients[i],u32(0x5a17+i*7919),0,cfg.seed+u64(i)*0x9e3779b97f4a7c15,true)
+  net_client_init(&clients[i],u32(0x5a17+i*7919),0)
+  bot_init(&bots[i],cfg.seed+u64(i)*0x9e3779b97f4a7c15,true)
   clients[i].verify=true
   config:=NET_REMOTE_LINK; if i==0 { config=NET_LOCAL_LINK }
   nc.link_init(&links[i].c2s,config,cfg.seed*31+u64(i)*2+1); nc.link_init(&links[i].s2c,config,cfg.seed*31+u64(i)*2+2)
@@ -179,14 +183,14 @@ net_soak_run :: proc(cfg: Net_Soak_Config) -> Net_Soak_Result {
   if n==cfg.ticks+1 {
    // Flush: bots idle, no new bombs, so the structure settles.
    for i in 0..<nc.MAX_CLIENTS { clients[i].idle=true }
-   sandbox_fixture_mode(&ns.game,.Manual)
+   headless_game_mode(&ns.game,.Manual)
   }
   for i in 0..<nc.MAX_CLIENTS {
    packets:=nc.link_receive(&links[i].c2s,now); defer nc.packets_free(&packets)
    for p in packets { nc.server_receive(&ns.srv,nc.Address(i+1),p,now) }
   }
-  if cfg.refill && n>1 && (n-1)%3600==0 && ((n-1)/3600)%2==0 && n<=cfg.ticks { soak_rebuild_layout(&ns.game) }
-  if cfg.reset_tick>0 && n==cfg.reset_tick { sandbox_reset(&ns.game) }
+  if cfg.refill && n>1 && (n-1)%3600==0 && ((n-1)/3600)%2==0 && n<=cfg.ticks { soak_rebuild_headless(&ns.game) }
+  if cfg.reset_tick>0 && n==cfg.reset_tick { headless_game_reset(&ns.game) }
   net_server_tick(&ns,now)
   if ns.game.world.scene.epoch!=epoch_seen { epoch_seen=ns.game.world.scene.epoch; result.epochs_seen+=1 }
   outgoing:=nc.server_take_outgoing(&ns.srv)
@@ -202,7 +206,8 @@ net_soak_run :: proc(cfg: Net_Soak_Config) -> Net_Soak_Result {
    c:=&clients[i]
    packets:=nc.link_receive(&links[i].s2c,now); defer nc.packets_free(&packets)
    for p in packets { nc.client_receive(&c.nc_client,p,now) }
-   net_client_step(c,now)
+   net_client_step(c,now,net_bot_client_input,&bots[i])
+   net_client_view_step(c,&views[i])
    out:=nc.client_take_outgoing(&c.nc_client)
    for o in out { nc.link_send(&links[i].c2s,o.data,now) }
    nc.outgoing_free(&out)
@@ -312,7 +317,7 @@ net_soak_run :: proc(cfg: Net_Soak_Config) -> Net_Soak_Result {
  result.max_part=FRAME_PART_MAX
  result.delay_local_final=clients[0].delay
  net_soak_report(&ns,&clients,&links,&errors,&over,&result,&report,total,cfg)
- if cfg.render_dir!="" { net_soak_render(&ns,&clients,cfg.render_dir) }
+ if cfg.render_dir!="" { net_soak_render(&ns,&clients,&views,cfg.render_dir) }
  if cfg.report_path!="" { _ = os.write_entire_file(cfg.report_path,transmute([]byte)strings.to_string(report)) }
  return result
 }
@@ -405,7 +410,7 @@ net_soak_report :: proc(ns: ^Net_Server,clients: ^[nc.MAX_CLIENTS]Net_Client,lin
  fmt.sbprintf(report," ],\n \"world_tick_ms\": {{\"p50\": %.5f, \"p99\": %.5f, \"max\": %.5f}}, \"server_tick_ms\": {{\"p50\": %.5f, \"p99\": %.5f, \"max\": %.5f}}, \"reliable_structure_bytes\": %d, \"explosions_emitted\": %d\n}}\n",pct_f64(world,0.5),pct_f64(world,0.99),pct_f64(world,1),pct_f64(ticks,0.5),pct_f64(ticks,0.99),pct_f64(ticks,1),ns.reliable_bytes,ns.explosions_emitted)
 }
 
-net_soak_render :: proc(ns: ^Net_Server,clients: ^[nc.MAX_CLIENTS]Net_Client,directory: string) {
+net_soak_render :: proc(ns: ^Net_Server,clients: ^[nc.MAX_CLIENTS]Net_Client,views: ^[nc.MAX_CLIENTS]Net_Client_View,directory: string) {
  _ = os.make_directory_all(directory)
  target:=rl.LoadRenderTexture(1280,800); defer rl.UnloadRenderTexture(target)
  view:=sandbox_view(1280,800)
@@ -417,7 +422,7 @@ net_soak_render :: proc(ns: ^Net_Server,clients: ^[nc.MAX_CLIENTS]Net_Client,dir
  _ = rl.ExportImage(image,fmt.ctprintf("%s/host.png",directory)); rl.UnloadImage(image)
  for i in 0..<nc.MAX_CLIENTS {
   rl.BeginDrawing(); rl.BeginTextureMode(target); rl.ClearBackground({19,28,42,255})
-  net_client_draw(&clients[i],view)
+  net_client_draw(&clients[i],&views[i],view)
   rl.EndTextureMode(); rl.EndDrawing()
   shot:=rl.LoadImageFromTexture(target.texture); rl.ImageFlipVertical(&shot)
   _ = rl.ExportImage(shot,fmt.ctprintf("%s/client-%d.png",directory,i)); rl.UnloadImage(shot)

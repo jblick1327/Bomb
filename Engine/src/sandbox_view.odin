@@ -327,7 +327,7 @@ run_sandbox :: proc(smoke: bool = false,smoke_input: bool = false,smoke_msaa: bo
 		if smoke { rl.BeginTextureMode(target) }
 		rl.ClearBackground({19,28,42,255})
 		if net_ui.active && !game.editor.editing {
-			net_client_draw(&net_ui.client,view,game.outline_width)
+			net_client_draw(&net_ui.client,&net_ui.client_view,view,game.outline_width)
 			net_gui_draw_local_outline(&net_ui,view)
 			if !net_ui.open && !game.panel_open && !over_ui { net_gui_aim_draw(&net_ui,view,mouse) }
 		} else {

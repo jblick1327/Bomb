@@ -48,7 +48,7 @@ sandbox_smoke_ui_frame :: proc(game: ^Sandbox,target: rl.RenderTexture2D,net:^Ne
 	rl.BeginDrawing()
 	rl.BeginTextureMode(target)
 	rl.ClearBackground({19,28,42,255})
- if online && !game.editor.editing { net_client_draw(&net.client,view,game.outline_width);net_gui_draw_local_outline(net,view) }
+ if online && !game.editor.editing { net_client_draw(&net.client,&net.client_view,view,game.outline_width);net_gui_draw_local_outline(net,view) }
  else { sandbox_draw_world(game,view,poses) }
 	if !network_panel && !game.panel_open && !over_ui { if online { net_gui_aim_draw(net,view,mouse) } else { sandbox_draw_aim(game,view,mouse) } }
  action:=Sandbox_UI_Action.None

@@ -1,14 +1,13 @@
 package main
+
+import shared "shared"
 import rl "vendor:raylib"
 import "core:time"
 import "core:fmt"
-BOM_FRAME_BENCH :: #config(BOM_FRAME_BENCH,false)
 when BOM_FRAME_BENCH {
- frame_measuring: bool
- frame_cache_ms,frame_physics_ms: f64
  foreign import frame_gl "system:opengl32.lib"
  foreign frame_gl { @(link_name="glFinish") frame_gl_finish :: proc "system" () --- }
- frame_ms :: proc(start:time.Tick)->f64 { return f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond) }
+
  run_frame_bench :: proc() {
   rl.SetTraceLogLevel(.WARNING)
   rl.SetConfigFlags({.MSAA_4X_HINT,.WINDOW_HIGHDPI,.WINDOW_RESIZABLE,.WINDOW_HIDDEN})
@@ -23,7 +22,7 @@ when BOM_FRAME_BENCH {
    hits:=0; previous_blast:=false
    for tick in 1..=10000 {
     if tick>1 && (tick-1)%7200==0 { soak_rebuild_layout(&g) }
-    frame_measuring=true; frame_cache_ms=0; frame_physics_ms=0; blast={}
+    shared.frame_measuring=true; shared.frame_cache_ms=0; shared.frame_physics_ms=0; blast={}
     start:=time.tick_now(); sandbox_tick(&g,0,false); tick_ms:=frame_ms(start)
     hit:=blast.count>0
     measure:=tick>600 && (hit || previous_blast)
@@ -43,10 +42,10 @@ when BOM_FRAME_BENCH {
     _=sandbox_draw_hud(&g,f32(rl.GetScreenWidth()),f32(rl.GetScreenHeight()))
     rl.EndDrawing(); delete(frames)
     draw_ms:=frame_ms(draw_start); gpu_start:=time.tick_now(); frame_gl_finish(); gpu_ms:=frame_ms(gpu_start)
-    total:=frame_ms(start); frame_measuring=false
+    total:=frame_ms(start); shared.frame_measuring=false
     if measure {
      r,l,p:=counts_runtime(&g.world.scene); kind:=string("next"); if hit { kind="blast" }
-     fmt.printf("%d,%d,%s,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%d,%d\n",run,tick,kind,total,tick_ms,blast.total_ms,frame_physics_ms,draw_ms,frame_cache_ms,gpu_ms,r,l,p)
+     fmt.printf("%d,%d,%s,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%d,%d\n",run,tick,kind,total,tick_ms,blast.total_ms,shared.frame_physics_ms,draw_ms,shared.frame_cache_ms,gpu_ms,r,l,p)
     }
     if measure && hit { hits+=1 }
     if hits>=8 && previous_blast && !hit { break }
