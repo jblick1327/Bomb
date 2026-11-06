@@ -38,7 +38,7 @@ player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
 	// Players pass through each other (negative shared group) and collide with everything else.
 	shape.filter.groupIndex=-1
 	_ = b2.CreateCapsuleShape(body,shape,b2.Capsule{center1={0,-PLAYER_SEGMENT},center2={0,PLAYER_SEGMENT},radius=PLAYER_RADIUS})
-	player:=Player{active=true,body=body,blast_radius=blast_radius}
+	player:=Player{active=true,body=body,blast_radius=blast_radius,teleport_serial=1}
 	player_refresh_pose(&player)
 	return player
 }
@@ -48,13 +48,14 @@ player_respawn :: proc(player: ^Player) {
 	b2.Body_SetTransform(body,to_b2(PLAYER_SPAWN),b2.MakeRot(0))
 	b2.Body_SetLinearVelocity(body,{})
 	b2.Body_SetAngularVelocity(body,0)
-	player^=Player{active=true,body=body,blast_radius=player.blast_radius}
+	player^=Player{active=true,body=body,blast_radius=player.blast_radius,teleport_serial=player.teleport_serial+1}
 	player_refresh_pose(player)
 }
 
 player_read_support :: proc(player: ^Player) {
 	player.grounded=false
 	player.support_velocity={}
+	player.support_cell=0;player.support_kind=0
 	position:=from_b2(b2.Body_GetPosition(player.body))
 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
 	buffer:=make([]b2.ContactData,int(b2.Body_GetContactCapacity(player.body)))
@@ -63,7 +64,8 @@ player_read_support :: proc(player: ^Player) {
 		a,b:=b2.Shape_GetBody(contact.shapeIdA),b2.Shape_GetBody(contact.shapeIdB)
 		normal:=from_b2(contact.manifold.normal)
 		other:=a
-		if a==player.body { normal=vmul(normal,-1); other=b }
+		other_shape:=contact.shapeIdA
+		if a==player.body { normal=vmul(normal,-1); other=b;other_shape=contact.shapeIdB }
 		if normal.y<0.55 { continue }
 		for i in 0..<int(contact.manifold.pointCount) {
 			point:=contact.manifold.points[i]
@@ -71,6 +73,9 @@ player_read_support :: proc(player: ^Player) {
 			if point.separation<=0.025 && point.point.y<position.y-0.1 && vdot(vsub(velocity,support_velocity),normal)<0.8 {
 				player.grounded=true
 				player.support_velocity=support_velocity
+				player.support_cell=u64(uintptr(b2.Shape_GetUserData(other_shape)))
+				player.support_kind=1
+				if player.support_cell==0 { player.support_kind=b2.Body_GetType(other)==.staticBody?u8(2):u8(3) }
 			}
 		}
 	}
@@ -78,6 +83,12 @@ player_read_support :: proc(player: ^Player) {
 
 player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
 	player_read_support(player)
+	player_movement_from_support(player,move,jump_pressed,dt)
+}
+
+// Shared movement kernel: prediction may seed the first replay step with the
+// authoritative support record after recreating its contact body.
+player_movement_from_support :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
 	if player.grounded { player.coyote=PLAYER_TUNING.coyote_time } else { player.coyote=max(f32(0),player.coyote-dt) }
 	if jump_pressed { player.buffered_jump=PLAYER_TUNING.jump_buffer }
 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
@@ -93,13 +104,19 @@ player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32)
 	b2.Body_SetLinearVelocity(player.body,to_b2(velocity))
 }
 
-player_after_step :: proc(player: ^Player) -> bool {
+player_out_of_bounds :: proc(player: ^Player) -> bool {
 	position:=from_b2(b2.Body_GetPosition(player.body))
-	if position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y) {
+	return position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y)
+}
+player_after_movement_step :: proc(player: ^Player) {
+	player_read_support(player)
+	player_refresh_pose(player)
+}
+player_after_step :: proc(player: ^Player) -> bool {
+	if player_out_of_bounds(player) {
 		player_respawn(player)
 		return true
 	}
-	player_read_support(player)
-	player_refresh_pose(player)
+	player_after_movement_step(player)
 	return false
 }
