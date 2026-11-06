@@ -222,6 +222,17 @@ int main(void) {
  CHECK(bom_debug_layout(14,25)==OFFSET(BomPredictionStats,visual_offset_y));
  CHECK(bom_debug_layout(14,26)==OFFSET(BomPredictionStats,reserved));
  CHECK(bom_debug_layout(14,27)==OFFSET(BomPredictionStats,conservative_seconds));
+ CHECK(bom_debug_layout(15,0)==sizeof(BomRequestResult));
+ CHECK(bom_debug_layout(15,1)==__alignof(BomRequestResult));
+ CHECK(bom_debug_layout(15,2)==OFFSET(BomRequestResult,struct_size));
+ CHECK(bom_debug_layout(15,3)==OFFSET(BomRequestResult,version));
+ CHECK(bom_debug_layout(15,4)==OFFSET(BomRequestResult,flags));
+ CHECK(bom_debug_layout(15,5)==OFFSET(BomRequestResult,kind));
+ CHECK(bom_debug_layout(15,6)==OFFSET(BomRequestResult,request_id));
+ CHECK(bom_debug_layout(15,7)==OFFSET(BomRequestResult,effect_tick));
+ CHECK(bom_debug_layout(15,8)==OFFSET(BomRequestResult,event_id));
+ CHECK(bom_debug_layout(15,9)==OFFSET(BomRequestResult,status));
+ CHECK(bom_debug_layout(15,10)==OFFSET(BomRequestResult,reason));
  CHECK(bom_abi_version()==1 && bom_build_tag()!=0);
  CHECK(bom_client_create(0,&handle)==2 && bom_client_create(&create,0)==2);
  for(i=0;i<100;i++) {
@@ -242,8 +253,8 @@ int main(void) {
  { BomConnectInfo connect={0};connect.struct_size=sizeof(connect);connect.version=1;connect.ipv4=0x7f000001;connect.port=1;
    connect.token_length=129;CHECK(bom_client_connect(handle,&connect)==2);connect.token_length=0;
    CHECK(bom_client_connect(handle,&connect)==0);
-   for(i=0;i<256;i++)CHECK(bom_client_set_held_input(handle,(double)i,0)==0);
-   CHECK(bom_client_set_held_input(handle,256,0)==8);
+   for(i=0;i<256;i++)CHECK(bom_client_set_held_input(handle,(double)i,(i%2)?-1.0f:1.0f)==0);
+   CHECK(bom_client_set_held_input(handle,256,1)==8);
    for(i=0;i<64;i++)CHECK(bom_client_enqueue_jump(handle,(double)i)==0);
    CHECK(bom_client_enqueue_jump(handle,64)==8);
    for(i=0;i<64;i++)CHECK(bom_client_enqueue_action(handle,(double)i,0,1)==0);
