@@ -7,10 +7,10 @@
   "odin_archive_sha256": "809fec8d14a1b978290502f203ff2964f17c8daccf0a3d82a42d1efae533adee",
   "odin_archive_head": "482fa59a62ee641816023cec869f019cdcc218a2",
   "odin_working_tree": "Archive contains significant uncommitted source/test reorganization and networking changes; preserve working bytes, not HEAD alone.",
-  "odin_compiler_required": "dev-2026-05 ea5175d (README baseline; downloaded identity must be verified)",
+  "odin_compiler_required": "dev-2026-05 ea5175d (verified pinned compiler)",
   "game_protocol": 3,
   "game_build": "BOM-menus-2026-11-05",
-  "native_dll_sha256": null,
+  "native_dll_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
   "original_unity_changes": [
     "Deleted URP/PT_Nature_Free_URP_12.unitypackage.meta",
     "Deleted URP/PT_Nature_Free_URP_14.unitypackage.meta",
@@ -24,5 +24,28 @@
   },
   "portable_windows_sdk": "Microsoft.Windows.SDK.CPP.x64 10.0.26100.3916",
   "msvc": "14.51.36231 x64",
-  "m2_first_step_binary_sha256": "886c9bc3a4f24529548bd0358d5701106795b1c7d9aa2e6c53f09a1db3ae84bf"
+  "m2_first_step_binary_sha256": "886c9bc3a4f24529548bd0358d5701106795b1c7d9aa2e6c53f09a1db3ae84bf",
+  "odin_import_commit": "f3ca3aa3d18a4fdc33c9b716f2f39e030a9eae89",
+  "odin_integration_commit": "24ad69d3be3e3b751f08d43e207c005fa7180176",
+  "native_client": {
+    "abi_major": 1,
+    "abi_minor": 1,
+    "source_commit": "24ad69d3be3e3b751f08d43e207c005fa7180176",
+    "source_sha256": "abce0a2660b91ee6797c6945305a984876694fbde7889d7265eadbbdc3696725",
+    "build_tag": 773740224102240750,
+    "dll_sha256": "819c5d4ba57fd063637e22b9c5a4f34cb3549412e7aa41413365864afe706335",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 3,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "unity_connector": {
+    "client": "Unity Hub resources/unity.exe official CLI",
+    "project_package": "0.7.0-exp.1 unchanged",
+    "verified": "Discovery and reachable Pipeline service on isolated validation Editor; closed after build."
+  },
+  "windows_sdk_installed": "Windows SDK 10.0.26100.0 via existing Visual Studio installer; installation exit 0",
+  "unity_il2cpp_module": "Installed for pinned 6000.2.14f1; standalone validation tracked in M4",
+  "m3_core_gate_commit": "7c04fdefc33e33c8b418bbae434babc025c44736"
 }

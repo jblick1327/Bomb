@@ -3,14 +3,13 @@
   "tasks": [
     {
       "id": "M0",
-      "status": "in_progress",
+      "status": "passed",
       "dependencies": [],
       "evidence": [
-        "evidence/M0/summary.json"
+        "evidence/M0/summary.json",
+        "evidence/M0/unity-baseline/summary.json"
       ],
-      "blocking_reasons": [
-        "Visual captures, scene audit and standalone gates not yet run; installed IL2CPP variation not found"
-      ]
+      "blocking_reasons": []
     },
     {
       "id": "M1",
@@ -25,41 +24,54 @@
     },
     {
       "id": "M2",
-      "status": "in_progress",
+      "status": "passed",
       "dependencies": [
         "M1"
       ],
       "evidence": [
         "evidence/M2/summary.json",
-        "evidence/M2/udp-smoke.json"
+        "evidence/M2/comparison/summary.json",
+        "evidence/M2/headless/summary.json",
+        "evidence/M2/menus/summary.json"
       ],
       "blocking_reasons": []
     },
     {
       "id": "M3",
-      "status": "pending",
+      "status": "passed",
       "dependencies": [
         "M2"
       ],
-      "evidence": [],
+      "evidence": [
+        "evidence/M3/summary.json",
+        "evidence/M3/live-20261106T164857Z/summary.json",
+        "evidence/M3/live-20261106T164857Z/hash-coverage.json"
+      ],
       "blocking_reasons": []
     },
     {
       "id": "M4",
-      "status": "pending",
+      "status": "passed",
       "dependencies": [
         "M3"
       ],
-      "evidence": [],
+      "evidence": [
+        "evidence/M4/summary.json",
+        "evidence/M4/unity-live-20261106T180618597709Z/summary.json",
+        "evidence/M4/unity-live-20261106T181447199186Z/summary.json",
+        "evidence/M4/unity-live-20261106T181054796379Z/summary.json"
+      ],
       "blocking_reasons": []
     },
     {
       "id": "M5",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         "M4"
       ],
-      "evidence": [],
+      "evidence": [
+        "contracts/scheduled-input-v4.md"
+      ],
       "blocking_reasons": []
     },
     {
