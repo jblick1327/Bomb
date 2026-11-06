@@ -544,6 +544,32 @@
         "reason",
         "[]u8"
       ]
+    ],
+    "BomActorShapeInfo": [
+      [
+        "struct_size",
+        "u32"
+      ],
+      [
+        "version",
+        "u32"
+      ],
+      [
+        "player_radius",
+        "f32"
+      ],
+      [
+        "player_segment",
+        "f32"
+      ],
+      [
+        "bomb_radius",
+        "f32"
+      ],
+      [
+        "reserved",
+        "u32"
+      ]
     ]
   },
   "functions": {
@@ -800,6 +826,16 @@
           "*BomCommandResult"
         ]
       ]
+    ],
+    "bom_actor_shape_info": [
+      "u32",
+      [
+        [
+          "info",
+          "*BomActorShapeInfo"
+        ]
+      ]
     ]
-  }
+  },
+  "abi_minor": 1
 }

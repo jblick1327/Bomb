@@ -155,6 +155,14 @@ typedef struct BomCommandResult {
  unsigned int reason_length;
  unsigned char* reason;
 } BomCommandResult;
+typedef struct BomActorShapeInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ float player_radius;
+ float player_segment;
+ float bomb_radius;
+ unsigned int reserved;
+} BomActorShapeInfo;
 __declspec(dllimport) unsigned int __cdecl bom_abi_version(void);
 __declspec(dllimport) unsigned long long __cdecl bom_build_tag(void);
 __declspec(dllimport) unsigned int __cdecl bom_client_create(BomCreateInfo* info, unsigned long long* handle);
@@ -175,4 +183,5 @@ __declspec(dllimport) unsigned int __cdecl bom_client_get_stats(unsigned long lo
 __declspec(dllimport) unsigned int __cdecl bom_client_last_error(unsigned long long handle, BomError* error);
 __declspec(dllimport) unsigned int __cdecl bom_client_request_host_command(unsigned long long handle, BomHostCommand* command, unsigned long long* command_id);
 __declspec(dllimport) unsigned int __cdecl bom_client_get_command_result(unsigned long long handle, BomCommandResult* result);
+__declspec(dllimport) unsigned int __cdecl bom_actor_shape_info(BomActorShapeInfo* info);
 #endif

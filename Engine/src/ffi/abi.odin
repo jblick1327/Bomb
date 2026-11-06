@@ -167,6 +167,15 @@ BomCommandResult :: struct {
  reason: [^]u8,
 }
 
+BomActorShapeInfo :: struct {
+ struct_size: u32,
+ version: u32,
+ player_radius: f32,
+ player_segment: f32,
+ bomb_radius: f32,
+ reserved: u32,
+}
+
 @(export)
 bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
  switch type_id {
@@ -359,6 +368,17 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 5: return u32(offset_of(BomCommandResult,status))
   case 6: return u32(offset_of(BomCommandResult,reason_length))
   case 7: return u32(offset_of(BomCommandResult,reason))
+  }
+ case 12:
+  switch field_id {
+  case 0: return u32(size_of(BomActorShapeInfo))
+  case 1: return u32(align_of(BomActorShapeInfo))
+  case 2: return u32(offset_of(BomActorShapeInfo,struct_size))
+  case 3: return u32(offset_of(BomActorShapeInfo,version))
+  case 4: return u32(offset_of(BomActorShapeInfo,player_radius))
+  case 5: return u32(offset_of(BomActorShapeInfo,player_segment))
+  case 6: return u32(offset_of(BomActorShapeInfo,bomb_radius))
+  case 7: return u32(offset_of(BomActorShapeInfo,reserved))
   }
  }
  return 0xffffffff

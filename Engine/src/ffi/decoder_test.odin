@@ -13,6 +13,14 @@ empty_baseline :: proc(tick,revision:u64) -> []u8 {
 }
 
 @(test)
+actor_shape_metadata_matches_authoritative_constructors :: proc(t:^testing.T) {
+ info:=BomActorShapeInfo{struct_size=u32(size_of(BomActorShapeInfo)),version=1}
+ testing.expect(t,bom_actor_shape_info(&info)==OK)
+ testing.expect(t,info.player_radius==core.PLAYER_RADIUS && info.player_segment==core.PLAYER_SEGMENT && info.bomb_radius==core.BOMB_RADIUS)
+ info.version=2;testing.expect(t,bom_actor_shape_info(&info)==BAD_ARGUMENT)
+}
+
+@(test)
 presentation_clock_stays_after_topology_and_before_received_poses :: proc(t:^testing.T) {
  c:core.Net_Client;c.has_complete=true;c.newest_complete=102;c.delay=2;c.rep.tick=100
  core.net_client_update_clock(&c);testing.expect(t,c.clock==100 && c.has_clock)

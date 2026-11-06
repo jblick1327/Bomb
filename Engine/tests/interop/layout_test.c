@@ -159,6 +159,14 @@ int main(void) {
  CHECK(bom_debug_layout(11,5)==OFFSET(BomCommandResult,status));
  CHECK(bom_debug_layout(11,6)==OFFSET(BomCommandResult,reason_length));
  CHECK(bom_debug_layout(11,7)==OFFSET(BomCommandResult,reason));
+ CHECK(bom_debug_layout(12,0)==sizeof(BomActorShapeInfo));
+ CHECK(bom_debug_layout(12,1)==__alignof(BomActorShapeInfo));
+ CHECK(bom_debug_layout(12,2)==OFFSET(BomActorShapeInfo,struct_size));
+ CHECK(bom_debug_layout(12,3)==OFFSET(BomActorShapeInfo,version));
+ CHECK(bom_debug_layout(12,4)==OFFSET(BomActorShapeInfo,player_radius));
+ CHECK(bom_debug_layout(12,5)==OFFSET(BomActorShapeInfo,player_segment));
+ CHECK(bom_debug_layout(12,6)==OFFSET(BomActorShapeInfo,bomb_radius));
+ CHECK(bom_debug_layout(12,7)==OFFSET(BomActorShapeInfo,reserved));
  CHECK(bom_abi_version()==1 && bom_build_tag()!=0);
  CHECK(bom_client_create(0,&handle)==2 && bom_client_create(&create,0)==2);
  for(i=0;i<100;i++) {

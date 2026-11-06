@@ -27,6 +27,8 @@ try {
     & $config.OdinCompiler @arguments
     if($LASTEXITCODE -ne 0){throw "Native client build exited $LASTEXITCODE"}
     $compiler=(& $config.OdinCompiler version | Out-String).Trim()
-    [ordered]@{abi_major=1;source_sha256=$sourceHash;build_tag=$tag;dll_sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant();compiler=$compiler;game_protocol=3;canonical_version=2;client='shared native client, no managed codec';remaining_gate='M3 validation in progress'} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $build 'bomcore.build.json') -Encoding utf8
+    $schema=Get-Content -LiteralPath (Join-Path $root 'bindings/bom-abi.json') -Raw|ConvertFrom-Json
+    $commit=(& git -C $root rev-parse HEAD 2>$null|Out-String).Trim()
+    [ordered]@{abi_major=$schema.abi_major;abi_minor=$schema.abi_minor;source_commit=$commit;source_sha256=$sourceHash;build_tag=$tag;dll_sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant();compiler=$compiler;game_protocol=3;canonical_version=2;client='shared native client, no managed codec';validation='See integration/tasks.json and integration/evidence for executed gates.'} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $build 'bomcore.build.json') -Encoding utf8
     Write-Output "Native client identity: $sourceHash ($tag)"
 } finally {$env:PATH=$oldPath;$env:LIB=$oldLib}

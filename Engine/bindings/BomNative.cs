@@ -156,6 +156,14 @@ namespace Bom.Native {
  public uint reason_length;
  public IntPtr reason;
 }
+[StructLayout(LayoutKind.Sequential)] public struct BomActorShapeInfo {
+ public uint struct_size;
+ public uint version;
+ public float player_radius;
+ public float player_segment;
+ public float bomb_radius;
+ public uint reserved;
+}
 public static class BomNative {
  public const uint AbiVersion = 1;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
@@ -178,5 +186,6 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_last_error(ulong handle, ref BomError error);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_request_host_command(ulong handle, ref BomHostCommand command, ref ulong command_id);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_command_result(ulong handle, ref BomCommandResult result);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_actor_shape_info(ref BomActorShapeInfo info);
 }
 }

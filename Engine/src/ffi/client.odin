@@ -87,7 +87,15 @@ bom_build_tag :: proc "c" () -> u64 { return BUILD_TAG }
 @(export)
 bom_build_info :: proc "c" (info:^BomBuildInfo) -> u32 {
  if info==nil || info.struct_size<u32(size_of(BomBuildInfo)) || info.version!=1 { return BAD_ARGUMENT }
- info^=BomBuildInfo{struct_size=u32(size_of(BomBuildInfo)),version=1,abi_major=1,abi_minor=0,game_protocol=core.GAME_PROTOCOL_VERSION,canonical_version=u32(core.REPL_CANON_VERSION),source_build_tag=BUILD_TAG,game_build=raw_data(string(core.GAME_BUILD_ID)),game_build_length=u32(len(core.GAME_BUILD_ID)),compiler_version=raw_data(string(ODIN_VERSION)),compiler_version_length=u32(len(ODIN_VERSION)),compiler_hash=raw_data(string(ODIN_VERSION_HASH)),compiler_hash_length=u32(len(ODIN_VERSION_HASH))}
+ info^=BomBuildInfo{struct_size=u32(size_of(BomBuildInfo)),version=1,abi_major=1,abi_minor=1,game_protocol=core.GAME_PROTOCOL_VERSION,canonical_version=u32(core.REPL_CANON_VERSION),source_build_tag=BUILD_TAG,game_build=raw_data(string(core.GAME_BUILD_ID)),game_build_length=u32(len(core.GAME_BUILD_ID)),compiler_version=raw_data(string(ODIN_VERSION)),compiler_version_length=u32(len(ODIN_VERSION)),compiler_hash=raw_data(string(ODIN_VERSION_HASH)),compiler_hash_length=u32(len(ODIN_VERSION_HASH))}
+ return OK
+}
+// Pure shape metadata keeps cosmetic fallback feet/radii aligned with the
+// authoritative constructors without implementing collision in Unity.
+@(export)
+bom_actor_shape_info :: proc "c" (info:^BomActorShapeInfo) -> u32 {
+ if info==nil || info.struct_size<u32(size_of(BomActorShapeInfo)) || info.version!=1 { return BAD_ARGUMENT }
+ info^=BomActorShapeInfo{struct_size=u32(size_of(BomActorShapeInfo)),version=1,player_radius=core.PLAYER_RADIUS,player_segment=core.PLAYER_SEGMENT,bomb_radius=core.BOMB_RADIUS}
  return OK
 }
 @(export)
