@@ -1,7 +1,7 @@
 package shared
 
 REQUEST_RESULT_WINDOW :: 1024
-Request_Status :: enum u8 { Pending, Accepted, Rejected, Expired, Wrong_Epoch, Wrong_Connection, Too_Old, Conflict, Capacity }
+Request_Status :: enum u8 { Pending, Accepted, Rejected, Expired, Wrong_Epoch, Wrong_Connection, Too_Old, Conflict, Capacity, Cleared }
 Request_Result :: struct { request_id,effect_tick,event_id: u64, status: Request_Status, reason: u16 }
 Request_Entry :: struct { occupied: bool, request_id: u64, fingerprint: [32]u8, result: Request_Result }
 Request_Cache :: struct {

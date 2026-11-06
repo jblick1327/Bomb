@@ -219,7 +219,7 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  s:=cast(^Client_Slot)data
  generation:=c.input_link.history.identity.generation
  if c.epoch!=s.input_epoch || (c.real_gate && generation!=s.input_generation) {
-  clear(&s.held);clear(&s.jumps);clear(&s.actions)
+  clear(&s.held);clear(&s.jumps);clear_queued_actions(s)
   s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch;s.input_generation=generation
  }
  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
@@ -228,7 +228,8 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  for len(s.actions)>0 && s.actions[0].timestamp<=s.next_tick+1e-9 {
   if len(c.blasts)>=core.NET_MAX_BLASTS { s.input_error=OVERFLOW;return }
   a:=s.actions[0];ordered_remove(&s.actions,0)
-  if s.next_tick-a.timestamp>0.5 { continue }
+  if s.next_tick-a.timestamp>0.5 { if c.real_gate && !core.net_request_client_local_result(c,core.REQUEST_BLAST,.Expired,0) { s.input_error=OVERFLOW;return };c.stats.blasts_dropped+=1;continue }
+  c.blast_ages[len(c.blasts)]=max(0.0,s.next_tick-a.timestamp)
   c.blast_seq+=1
   append(&c.blasts,core.Net_Blast{seq=c.blast_seq,x=nc.quantize_pos(a.x),y=nc.quantize_pos(a.y),radius_q=c.radius_q})
  }
@@ -243,7 +244,7 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
  if dt<0 || dt>0.25 || s.accumulator+dt>core.NET_STEP_DT*4+1e-8 {
   s.stall_count+=1
   core.input_link_clear_intent(&s.client.input_link)
-  clear(&s.held);clear(&s.jumps);clear(&s.actions);clear(&s.client.blasts)
+  clear(&s.held);clear(&s.jumps);clear_queued_actions(s);clear(&s.client.blasts)
   s.held_move=0;s.client.human_jump_pending=false;s.client.has_clock=false
   s.accumulator=0;s.next_tick=now+core.NET_STEP_DT
   s.fixed_transport_now=s.transport_now

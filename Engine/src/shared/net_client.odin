@@ -67,6 +67,7 @@ Net_Client_Stats :: struct {
  input_bytes,input_count,input_max: int,
  input_payload_hash: u64, // Diagnostic digest of the complete fixed-command byte stream.
  request_payload_hash:u64,
+ request_payload_count:u64,
 }
 
 Net_Client :: struct {
@@ -77,6 +78,7 @@ Net_Client :: struct {
  last_request_result: Request_Result,
  completed_requests:[1024]Completed_Request,
  highest_completed_request:u64,
+ last_request_created_tick,last_request_deadline_tick:u64,
  collision_history: Collision_History,
  prediction:^Prediction_Controller,
  prediction_enabled:bool,
@@ -105,6 +107,7 @@ Net_Client :: struct {
  input_seq,jump_counter,blast_seq: u16,
  radius_q: u8,
  blasts: [dynamic]Net_Blast,
+ blast_ages:[NET_MAX_BLASTS]f64,
  last_ack_sent: u64, has_ack_sent: bool, acks_to_check: [dynamic]u64,
  // presentation
  drawn: map[u64]Net_Drawn,
@@ -136,6 +139,7 @@ net_frame_asm_free :: proc(a: ^Frame_Asm) { delete(a.gone); delete(a.entries); f
 net_client_clear_intent :: proc(c:^Net_Client) {
  input_link_clear_intent(&c.input_link)
  c.human_move=0;c.human_jump_pending=false;clear(&c.blasts)
+ c.blast_ages={}
 }
 
 net_client_clear_state :: proc(c: ^Net_Client) {
@@ -146,6 +150,7 @@ net_client_clear_state :: proc(c: ^Net_Client) {
  c.has_clock=false; c.clock=0; c.delay=NET_DELAY_MIN
  clear(&c.arrivals); clear(&c.missing); clear(&c.loss_times)
  clear(&c.blasts); clear(&c.drawn); clear(&c.acks_to_check); c.has_ack_sent=false
+ c.blast_ages={}
  clear(&c.anchored); c.anchored_valid=false
  clear(&c.events)
 }

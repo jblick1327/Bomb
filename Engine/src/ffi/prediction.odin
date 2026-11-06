@@ -1,6 +1,11 @@
 package ffi
 import core "../shared"
 
+clear_queued_actions :: proc(s:^Client_Slot) {
+ if s.live && s.client.real_gate { for _ in s.actions { if !core.net_request_client_local_result(&s.client,core.REQUEST_BLAST,.Cleared,0) { s.input_error=OVERFLOW;break } } }
+ clear(&s.actions)
+}
+
 @(export)
 bom_client_next_request_result :: proc "c" (handle,after_request_id:u64,result:^BomRequestResult) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status }
@@ -13,7 +18,9 @@ bom_client_next_request_result :: proc "c" (handle,after_request_id:u64,result:^
   if best==nil || entry.result.request_id<best.result.request_id { best=&entry }
  }
  if best!=nil {
+  for pending in s.client.request_pending { if pending.active && pending.id>after_request_id && pending.id<best.result.request_id { return OK } }
   result.flags=1
+  if best.local { result.flags|=4 }
   if best.result.request_id!=after_request_id+1 { result.flags|=2 }
   result.kind=u32(best.kind);result.request_id=best.result.request_id;result.effect_tick=best.result.effect_tick;result.event_id=best.result.event_id
   result.status=u32(best.result.status);result.reason=u32(best.result.reason)
@@ -36,7 +43,7 @@ bom_client_reset_prediction_metrics :: proc "c" (handle:u64) -> u32 {
 bom_client_clear_intent :: proc "c" (handle:u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
- clear(&s.held);clear(&s.jumps);clear(&s.actions);s.held_move=0;s.input_generation=0
+ clear(&s.held);clear(&s.jumps);clear_queued_actions(s);s.held_move=0;s.input_generation=0
  core.net_client_clear_intent(&s.client)
  core.prediction_controller_reset(&s.client)
  return OK

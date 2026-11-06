@@ -81,7 +81,7 @@ sample_preserves_full_ids_reference_pivots_and_rubber_centers :: proc(t:^testing
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
  s,status:=get_slot(handle);testing.expect(t,status==OK);context=s.ctx
- core.net_client_init(&s.client,1234,0);nc.endpoint_init(&s.client.nc_client.endpoint,1234);s.live=true
+ core.net_client_init(&s.client,1234,0);s.live=true
  defer testing.expect(t,bom_client_destroy(handle)==OK)
  rep:=&s.client.rep
  core.replica_add_material(rep,core.Material{name="rigid",color={255,0,0}})
@@ -112,7 +112,7 @@ complete_topology_transaction_remains_until_acknowledged :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
  s,status:=get_slot(handle);testing.expect(t,status==OK);context=s.ctx
- core.net_client_init(&s.client,1234,0);nc.endpoint_init(&s.client.nc_client.endpoint,1234);s.live=true
+ core.net_client_init(&s.client,1234,0);s.live=true
  defer testing.expect(t,bom_client_destroy(handle)==OK)
  core.net_client_on_structure(&s.client,empty_baseline(100,10))
  sample:=BomSample{struct_size=u32(size_of(BomSample)),version=1}

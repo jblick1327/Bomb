@@ -13,7 +13,7 @@ timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16,u64) {
  s,status:=get_slot(handle);testing.expect(t,status==OK)
  context=s.ctx
  core.net_client_init(&s.client,1234,0)
- nc.endpoint_init(&s.client.nc_client.endpoint,1234)
+ 
  s.client.nc_client.state=.Connected;s.client.real_gate=false;s.live=true
  defer { testing.expect(t,bom_client_destroy(handle)==OK) }
  testing.expect(t,bom_client_set_held_input(handle,0,1)==OK)
@@ -85,7 +85,7 @@ test_timing_stall_backward_and_duplicate_do_not_burst :: proc(t:^testing.T) {
  s,status:=get_slot(handle);testing.expect(t,status==OK)
  context=s.ctx
  core.net_client_init(&s.client,1235,0);s.client.nc_client.state=.Connected;s.live=true
- nc.endpoint_init(&s.client.nc_client.endpoint,1235)
+ 
  defer { testing.expect(t,bom_client_destroy(handle)==OK) }
  testing.expect(t,bom_client_update(handle,0)==OK)
  testing.expect(t,bom_client_enqueue_jump(handle,0.1)==OK)

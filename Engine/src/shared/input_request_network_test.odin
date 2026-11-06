@@ -2,6 +2,22 @@ package shared
 import t "core:testing"
 import nc "../netcode"
 
+@(test)
+blast_deadline_includes_local_queue_age_instead_of_restarting_at_send :: proc(test:^t.T) {
+ c:Net_Client;net_client_init(&c,1234,0);defer net_client_destroy(&c)
+ c.nc_client.state=.Connected
+ c.real_gate=true;c.real_hello_ok=true;c.has_epoch=true;c.epoch=1
+ c.input_link.has_offer=true;c.input_link.offer.identity={1,1,1};c.input_link.active=true
+ c.input_link.clock={valid=true,estimate={9007199254741000,.25}}
+ append(&c.blasts,Net_Blast{});c.blast_ages[0]=.4
+ net_request_client_blasts(&c)
+ t.expect_value(test,c.last_request_created_tick,u64(9007199254740976))
+ t.expect_value(test,c.last_request_deadline_tick,c.last_request_created_tick+30)
+ t.expect(test,c.request_counter==1 && c.request_pending[1].active && c.blast_ages[0]==0)
+ append(&c.blasts,Net_Blast{});c.blast_ages[0]=.6;net_request_client_blasts(&c)
+ t.expect(test,c.request_counter==2 && c.completed_requests[2].local && c.completed_requests[2].result.status==.Expired && !c.request_pending[2].active)
+}
+
 test_request_envelope :: proc(w:^nc.Writer,incarnation:u64,epoch:u32,id:u64,kind:u8,payload:[]u8,created:u64=0,deadline:u64=0) {
  nc.writer_reset(w);nc.write_u8(w,SCHEDULED_MSG_REQUEST);nc.write_u64(w,incarnation);nc.write_u32(w,epoch)
  nc.write_u64(w,id);nc.write_u64(w,created);nc.write_u64(w,deadline);nc.write_u8(w,kind);nc.write_raw(w,payload)

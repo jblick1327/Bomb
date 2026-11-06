@@ -2,10 +2,11 @@ package shared
 import nc "../netcode"
 import sha2 "core:crypto/sha2"
 import strings "core:strings"
+import math "core:math"
 
 REQUEST_BLAST :: u8(1)
 Pending_Request :: struct { active:bool, id:u64, kind:u8 }
-Completed_Request :: struct { kind:u8, result:Request_Result }
+Completed_Request :: struct { kind:u8, result:Request_Result, local:bool }
 Request_Envelope :: struct { incarnation:u64, epoch:u32, id,created,deadline:u64, kind:u8, payload:[]u8 }
 
 request_envelope_decode :: proc(data:[]u8) -> (q:Request_Envelope,ok:bool) {
@@ -25,6 +26,7 @@ request_reason_text :: proc(result:Request_Result) -> string {
  case .Too_Old:return "request ID is terminal or too old"
  case .Conflict:return "conflicting request contents"
  case .Capacity:return "request result window is full"
+ case .Cleared:return "input cleared locally"
  case .Rejected:
   switch result.reason { case 1:return "host only";case 3:return "outside world";case 4:return "blast rate exceeded";case 5:return "solid aim";case:return "invalid request" }
  case .Pending:return "request pending"
@@ -87,9 +89,11 @@ net_request_client_send :: proc(c:^Net_Client,kind:u8,payload:[]u8,created:u64=0
  nc.write_u8(&w,SCHEDULED_MSG_REQUEST);nc.write_u64(&w,c.input_link.offer.identity.incarnation);nc.write_u32(&w,c.epoch)
  nc.write_u64(&w,id);nc.write_u64(&w,created);nc.write_u64(&w,deadline);nc.write_u8(&w,kind);nc.write_raw(&w,payload)
  if !nc.client_send_reliable(&c.nc_client,w.data[:]) { return false }
- if c.request_counter==0 { c.stats.request_payload_hash=14695981039346656037 }
+ if c.stats.request_payload_count==0 { c.stats.request_payload_hash=14695981039346656037 }
  for byte in w.data { c.stats.request_payload_hash=(c.stats.request_payload_hash~u64(byte))*1099511628211 }
+ c.stats.request_payload_count+=1
  c.request_counter=id;slot^={true,id,kind}
+ c.last_request_created_tick=created;c.last_request_deadline_tick=deadline
  if kind!=REQUEST_BLAST { c.host_request_id=id }
  return true
 }
@@ -101,19 +105,24 @@ net_request_client_result :: proc(c:^Net_Client,data:[]u8) {
  pending:=&c.request_pending[result.request_id%u64(len(c.request_pending))]
  if !pending.active || pending.id!=result.request_id || pending.kind!=kind { return }
  result.status=Request_Status(status);pending^={};c.last_request_result=result
- c.completed_requests[result.request_id%1024]={kind,result};c.highest_completed_request=max(c.highest_completed_request,result.request_id)
+ c.completed_requests[result.request_id%1024]={kind=kind,result=result};c.highest_completed_request=max(c.highest_completed_request,result.request_id)
  if kind!=REQUEST_BLAST && result.request_id==c.host_request_id {
   c.control_serial+=1;c.control_kind=kind;c.control_ok=result.status==.Accepted
   delete(c.control_reason);c.control_reason=strings.clone(request_reason_text(result))
  }
 }
 net_request_client_blasts :: proc(c:^Net_Client) {
+ defer c.blast_ages={}
  if !c.input_link.active || !c.input_link.clock.valid { clear(&c.blasts);return }
- created:=c.input_link.clock.estimate.tick
- if created>max(u64)-30 { clear(&c.blasts);return }
  // The timestamped FFI queue already enforces the local 500ms bound. The
  // reliable application deadline also prevents intent delayed in transport.
- for blast in c.blasts {
+ for blast,index in c.blasts {
+  age:=max(0.0,c.blast_ages[index])
+  if age>.5 { if !net_request_client_local_result(c,REQUEST_BLAST,.Expired,0) && c.real_reason=="" { c.real_reason=strings.clone("native request result queue full; reconnect required") };c.stats.blasts_dropped+=1;continue }
+  stamp:=c.input_link.clock.estimate
+  whole:=u64(math.ceil(max(0.0,age*60-stamp.phase)))
+  created:=stamp.tick>=whole?stamp.tick-whole:u64(0)
+  if created>max(u64)-30 { continue }
   w:nc.Writer;nc.writer_init(&w,8)
   nc.write_f32(&w,nc.dequantize_pos(blast.x));nc.write_f32(&w,nc.dequantize_pos(blast.y))
   if !net_request_client_send(c,REQUEST_BLAST,w.data[:],created,created+30) {
@@ -123,4 +132,14 @@ net_request_client_blasts :: proc(c:^Net_Client) {
   nc.writer_destroy(&w)
  }
  clear(&c.blasts)
+}
+
+net_request_client_local_result :: proc(c:^Net_Client,kind:u8,status:Request_Status,reason:u16) -> bool {
+ if c.request_counter==max(u64) { return false }
+ id:=c.request_counter+1
+ if c.request_pending[id%1024].active { return false }
+ result:=Request_Result{request_id=id,status=status,reason=reason}
+ c.request_counter=id;c.last_request_result=result
+ c.completed_requests[id%1024]={kind=kind,result=result,local=true};c.highest_completed_request=max(c.highest_completed_request,id)
+ return true
 }
