@@ -312,21 +312,23 @@ input_decode :: proc(data: []u8) -> (in_: Net_Input,ok: bool) {
 
 seq16_newer :: proc(a,b: u16) -> bool { d:=a-b; return d!=0 && d<32768 }
 
-event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32) {
+event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32,event_id:u64=0) {
  nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_EXPLOSION); nc.write_varint(w,tick)
+ nc.write_u64(w,event_id)
  nc.write_f32(w,position.x); nc.write_f32(w,position.y); nc.write_f32(w,radius)
 }
 
-event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16) {
- nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick); nc.write_u16(w,seq)
+event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16,event_id:u64=0) {
+ nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick);nc.write_u64(w,event_id); nc.write_u16(w,seq)
 }
 
-Net_Event :: struct { kind: u8, tick: u64, position: Vec2, radius: f32, seq: u16 }
+Net_Event :: struct { kind: u8, tick: u64, position: Vec2, radius: f32, seq: u16, event_id:u64 }
 
 event_decode :: proc(data: []u8) -> (e: Net_Event,ok: bool) {
  r:nc.Reader; nc.reader_init(&r,data)
  if nc.read_u8(&r)!=NET_MSG_EVENT { return {},false }
  e.kind=nc.read_u8(&r); e.tick=nc.read_varint(&r)
+ e.event_id=nc.read_u64(&r)
  switch e.kind {
  case NET_EVENT_EXPLOSION: e.position={nc.read_f32(&r),nc.read_f32(&r)}; e.radius=nc.read_f32(&r)
  case NET_EVENT_BLAST_REJECTED: e.seq=nc.read_u16(&r)

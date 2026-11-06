@@ -69,6 +69,11 @@ Net_Client_Stats :: struct {
 }
 
 Net_Client :: struct {
+ input_link: Input_Link,
+ input_probe_at: f64,
+ request_counter,host_request_id: u64,
+ request_pending: [1024]Pending_Request,
+ last_request_result: Request_Result,
  nc_client: nc.Client,
  real_gate: bool,real_hello_sent: bool,real_hello_ok: bool,
  real_is_host: bool,real_host_left: bool,
@@ -121,6 +126,11 @@ net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64) {
 
 net_frame_asm_free :: proc(a: ^Frame_Asm) { delete(a.gone); delete(a.entries); free(a) }
 
+net_client_clear_intent :: proc(c:^Net_Client) {
+ input_link_clear_intent(&c.input_link)
+ c.human_move=0;c.human_jump_pending=false;clear(&c.blasts)
+}
+
 net_client_clear_state :: proc(c: ^Net_Client) {
  for q in c.queue { delete(q.data) }; clear(&c.queue)
  for a in c.pending { net_frame_asm_free(a) }; clear(&c.pending)
@@ -167,6 +177,7 @@ net_client_note_late :: proc(c: ^Net_Client,tick: u64,event: bool) {
 net_client_reset :: proc(c: ^Net_Client) {
  c.stats.resets+=1
  net_client_clear_state(c)
+ input_link_clear_intent(&c.input_link)
  c.presentation_reset_serial+=1
 }
 
@@ -256,7 +267,7 @@ net_client_on_frame :: proc(c: ^Net_Client,data: []u8,now: f64) {
  append(&var.gone,..part.gone[:]); append(&var.entries,..part.entries[:])
  if !c.has_seen || part.tick>=c.newest_seen {
   c.has_seen=true; c.newest_seen=part.tick; c.confirmed_blast=part.blast_seq
-  for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) }
+  if !c.real_gate { for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) } }
  }
  if var.got==var.count {
   net_client_complete_frame(c,var,now)
@@ -396,6 +407,7 @@ net_client_ensure_anchored :: proc(c: ^Net_Client) {
 }
 
 net_client_make_input :: proc(c: ^Net_Client) {
+ if c.real_gate { net_scheduled_client_input(c);return }
  move:f32
  index:=c.nc_client.client_index
  move=c.human_move
@@ -427,6 +439,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
   net_app_client_send_hello(c)
   msgs:=nc.client_take_messages(&c.nc_client); defer nc.messages_free(&msgs)
   for m in msgs {
+   if c.real_gate && net_scheduled_client_message(c,m.channel,m.data,now) { continue }
    if m.channel==nc.CHANNEL_RELIABLE {
     if !net_app_client_control(c,m.data) { net_client_on_reliable(c,m.data) }
    }
@@ -438,6 +451,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
   net_client_compute_drawn(c)
   append(&c.stats.delay_history,u8(c.delay))
   if !c.real_gate || c.real_hello_ok {
+   if c.real_gate { net_scheduled_client_update(c,now) }
    if input_source!=nil { input_source(c,source_data) }
    net_client_make_input(c)
   }

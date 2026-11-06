@@ -90,6 +90,7 @@ static class Program {
   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}
   ulong[] handles={Create(),Create()};ulong[] epochs={0,0},revisions={ulong.MaxValue,ulong.MaxValue};bool[] ready={false,false};
   ulong[] maxGeneration={0,0};int snapshots=0,events=0;var seen=new HashSet<(int,ulong,uint,ulong)>();
+  double traveled=0,jumpRise=0;float lastX=0,lastY=0;ulong poseGeneration=0;uint poseEpoch=0;bool hasLocalPose=false;
   bool reset=false,reconnected=false,jumped=false,blasted=false;ulong hostRequest=0,guestRequest=0;bool hostResult=false,guestResult=false;bool invalidBlast=false,invalidBlastSeen=false,guestLayoutRejected=false,malformedRejected=false,layoutAccepted=false;ulong guestLayout=0,hostLayout=0;int layoutStage=0;double started=Now,lastReport=started;
   try {
    Connect(handles[0],port,Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"");Connect(handles[1],port);
@@ -127,6 +128,14 @@ static class Program {
        }
        for(uint poseIndex=0;poseIndex<sample.pose_count;poseIndex++) {
         var pose=Read<BomPose>(sample.poses,poseIndex);Check(float.IsFinite(pose.x)&&float.IsFinite(pose.y)&&float.IsFinite(pose.angle),"finite native poses");
+        if(i==0 && pose.kind==2 && pose.id==sample.local_player_id) {
+         if(hasLocalPose && poseGeneration==sample.connection_generation && poseEpoch==sample.epoch) {
+          double dx=Math.Abs(pose.x-lastX),dy=pose.y-lastY;
+          if(dx<0.5)traveled+=dx;
+          if(elapsed>2 && elapsed<3 && dy>0 && dy<0.5)jumpRise+=dy;
+         }
+         lastX=pose.x;lastY=pose.y;poseGeneration=sample.connection_generation;poseEpoch=sample.epoch;hasLocalPose=true;
+        }
        }
        for(uint eventIndex=0;eventIndex<sample.event_count;eventIndex++) {
         var e=Read<BomEvent>(sample.events,eventIndex);Check(seen.Add((i,sample.connection_generation,sample.epoch,e.id)),"acknowledged event did not replay");events++;
@@ -170,6 +179,8 @@ static class Program {
    if(seconds>10 && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")))Check(hostResult&&guestResult&&guestLayoutRejected&&malformedRejected&&layoutAccepted&&invalidBlastSeen,"host/guest results, layout authorization, malformed/valid upload and invalid blast rejection");
    if(seconds>10)Check(events>0,"actual native explosion events were copied and acknowledged");
    if(seconds>10)Check(maxGeneration[1]>=2,"guest reconnected with a new generation");
+   if(seconds>10)Check(traveled>0.25 && jumpRise>0.03,"scheduled movement and jump produce real authoritative motion");
+   Console.WriteLine($"MOTION traveled={traveled:F6} jumpRise={jumpRise:F6}");
    Console.WriteLine($"PASS real native clients seconds={seconds} snapshots={snapshots} events={events} reset={reset} reconnect={reconnected}");
   } finally { foreach(ulong handle in handles)Ok(BomNative.bom_client_destroy(handle),"dispose native session"); }
  }

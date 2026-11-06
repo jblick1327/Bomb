@@ -103,7 +103,7 @@ net_host_client_send_layout :: proc(c: ^Net_Client,data: []u8) -> bool {
  w:nc.Writer;nc.writer_init(&w,len(data)+8);defer nc.writer_destroy(&w)
  nc.write_u8(&w,NET_APP_LAYOUT_UPLOAD)
  nc.write_raw(&w,data)
- return nc.client_send_reliable(&c.nc_client,w.data[:])
+ return net_request_client_send(c,NET_APP_LAYOUT_UPLOAD,w.data[:])
 }
 
 net_host_client_send_command :: proc(c: ^Net_Client,op: u8,mode: u8=0,radius: f32=0) -> bool {
@@ -117,5 +117,5 @@ net_host_client_send_command :: proc(c: ^Net_Client,op: u8,mode: u8=0,radius: f3
  case NET_HOST_BOMB_RADIUS: nc.write_f32(&w,radius)
  case: return false
  }
- return nc.client_send_reliable(&c.nc_client,w.data[:])
+ return net_request_client_send(c,NET_APP_HOST_COMMAND,w.data[:])
 }

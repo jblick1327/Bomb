@@ -10,6 +10,7 @@ import "core:crypto"
 // A live human client and editor UI, independent from the solo World.
 // The server remains on loopback for this integration increment.
 Net_Game_UI :: struct {
+ input_captured: bool,
  open: bool,
  target_text: [65]u8,
  target_edit: bool,
@@ -165,9 +166,10 @@ net_gui_step :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
   if from==ui.target { nc.client_receive(&ui.client.nc_client,packet,now) }
  }
  steps:=0
- for now-ui.last_step>=NET_STEP_DT && steps<5 {
+ if now<ui.last_step || now-ui.last_step>NET_STEP_DT*4+1e-8 { ui.last_step=now;net_client_clear_intent(&ui.client);ui.client.has_clock=false }
+ for now-ui.last_step+1e-9>=NET_STEP_DT && steps<4 {
   ui.last_step+=NET_STEP_DT
-  net_client_step(&ui.client,now)
+  net_client_step(&ui.client,ui.last_step)
   net_client_view_step(&ui.client,&ui.client_view)
   // The same canonical-hash feedback used by the headless smoke client.
   for applied in ui.client.applied {
@@ -182,7 +184,6 @@ net_gui_step :: proc(ui: ^Net_Game_UI,game: ^Sandbox) {
   clear(&ui.client.applied)
   steps+=1
  }
- if steps==5 && now-ui.last_step>=NET_STEP_DT { ui.last_step=now }
  net_gui_flush(ui)
  c:=&ui.client
  if ui.hosting && c.real_hello_ok && !c.real_is_host {
@@ -226,7 +227,7 @@ net_gui_human_input :: proc(ui: ^Net_Game_UI,game: ^Sandbox,view: View,over_ui: 
  if !ui.active { return }
  c:=&ui.client
  c.human_move=0
- if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok { return }
+ if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok || !rl.IsWindowFocused() { c.human_jump_pending=false;clear(&c.blasts);return }
  if rl.IsKeyDown(.A) || rl.IsKeyDown(.LEFT) { c.human_move-=1 }
  if rl.IsKeyDown(.D) || rl.IsKeyDown(.RIGHT) { c.human_move+=1 }
  if rl.IsKeyPressed(.SPACE) && !game.block_jump { c.human_jump_pending=true }
@@ -249,9 +250,13 @@ net_gui_human_input :: proc(ui: ^Net_Game_UI,game: ^Sandbox,view: View,over_ui: 
 // going through the network. Mouse-up releases the editor's placement latch.
 net_gui_route_input :: proc(ui:^Net_Game_UI,game:^Sandbox,raw:Sandbox_Input,view:View,over_ui:bool) {
  ui.client.human_move=0
+ captured:=ui.open || game.panel_open || game.editor.editing || !rl.IsWindowFocused()
+ if captured && !ui.input_captured { net_client_clear_intent(&ui.client) }
+ ui.input_captured=captured
  if raw.menu_pressed {
   if game.palette_open { game.palette_open=false;sandbox_clear_input(game) }
   else { sandbox_set_panel(game,!game.panel_open) }
+  net_client_clear_intent(&ui.client)
   return
  }
  if game.panel_open { return }

@@ -17,7 +17,7 @@ scheduled_wire_integer_roundtrip_budget_and_truncation :: proc(test:^t.T) {
 @(test)
 owner_wire_full_state_precision_and_truncation :: proc(test:^t.T) {
  o:=Owner_State{identity={9007199254740999,7,4294967301},state_tick=9007199254742001,topology_revision=9007199254742003,
- finalized_through=9007199254742001,last_applied_sequence=9007199254743001,teleport_serial=9007199254744001,
+ finalized_through=9007199254742001,last_applied_sequence=9007199254743001,last_jump_edge=9007199254743007,teleport_serial=9007199254744001,
  position={1.234567,-2.345678},velocity={3.456789,-4.567891},support_velocity={0.333333,0.444444},coyote=.073,buffered_jump=.056,
  support_cell=9007199254745001,grounded=true,support_kind=1,held=-127,missing=3}
  w:nc.Writer;nc.writer_init(&w,256);defer nc.writer_destroy(&w);owner_state_encode(&w,o)

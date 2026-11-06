@@ -8,7 +8,8 @@ import w "core:sys/windows"
 import nc "../netcode"
 import core "../shared"
 
-// Initial live polling bridge. Prediction/provenance and the full M3 gates remain pending.
+// Live shared-native polling bridge. M5 scheduled input is being validated;
+// prediction, provenance and round capabilities have separate milestone gates.
 OK :: u32(0)
 INVALID_HANDLE :: u32(1)
 BAD_ARGUMENT :: u32(2)
@@ -32,6 +33,7 @@ Client_Slot :: struct {
  endpoint: nc.Address,
  token: string,
  connection_generation,sample_sequence,event_sequence,ack_event_id: u64,
+ input_generation: u64,
  cached_epoch,input_epoch,journal_epoch: u32, cached_revision,canonical_hash,stall_count: u64,
  presented_tick: f64,
  input_error: u32,
@@ -206,9 +208,10 @@ collect_presented :: proc(s:^Client_Slot) -> u32 {
 }
 ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  s:=cast(^Client_Slot)data
- if c.epoch!=s.input_epoch {
+ generation:=c.input_link.history.identity.generation
+ if c.epoch!=s.input_epoch || (c.real_gate && generation!=s.input_generation) {
   clear(&s.held);clear(&s.jumps);clear(&s.actions)
-  s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch
+  s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch;s.input_generation=generation
  }
  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
  c.human_move=s.held_move
@@ -230,6 +233,7 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
  dt:=now-s.last_now;s.last_now=now;s.transport_now+=max(f64(0),dt)
  if dt<0 || dt>0.25 || s.accumulator+dt>core.NET_STEP_DT*4+1e-8 {
   s.stall_count+=1
+  core.input_link_clear_intent(&s.client.input_link)
   clear(&s.held);clear(&s.jumps);clear(&s.actions);clear(&s.client.blasts)
   s.held_move=0;s.client.human_jump_pending=false;s.client.has_clock=false
   s.accumulator=0;s.next_tick=now+core.NET_STEP_DT
@@ -241,7 +245,8 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
  }
  for _ in 0..<4 {
   if s.accumulator+1e-9<core.NET_STEP_DT { break }
-  core.net_client_step(&s.client,s.transport_now,ffi_input_source,s)
+  fixed_now:=s.transport_now-s.accumulator+core.NET_STEP_DT
+  core.net_client_step(&s.client,fixed_now,ffi_input_source,s)
   if len(s.client.stats.delay_history)>256 {
    history:=s.client.stats.delay_history
    copy(history[:256],history[len(history)-256:])

@@ -38,7 +38,7 @@ Tick_Commands :: struct {
  remove_region,break_connection: u64,
 }
 
-Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int }
+Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int, event_id: u64 }
 
 Tick_Events :: struct {
  explosions: [dynamic]Explosion_Event,

@@ -3,7 +3,7 @@ import b2 "vendor:box2d"
 
 Owner_State :: struct {
  identity: Input_Identity,
- state_tick,topology_revision,finalized_through,last_applied_sequence,teleport_serial: u64,
+ state_tick,topology_revision,finalized_through,last_applied_sequence,last_jump_edge,teleport_serial: u64,
  position,velocity,support_velocity: Vec2,
  coyote,buffered_jump: f32,
  support_cell: u64,
@@ -16,6 +16,7 @@ owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revis
  return {
   identity=schedule.identity,state_tick=tick,topology_revision=revision,
   finalized_through=schedule.finalized_through,last_applied_sequence=schedule.last_applied_sequence,
+  last_jump_edge=schedule.last_jump_edge,
   teleport_serial=player.teleport_serial,
   position=from_b2(b2.Body_GetPosition(player.body)),velocity=from_b2(b2.Body_GetLinearVelocity(player.body)),
   support_velocity=player.support_velocity,coyote=player.coyote,buffered_jump=player.buffered_jump,

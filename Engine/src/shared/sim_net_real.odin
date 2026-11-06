@@ -90,6 +90,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
  accumulator:=f64(0)
  report_at:=f64(10)
  last_bytes:[nc.MAX_CLIENTS]u64
+ last_generation:[nc.MAX_CLIENTS]u64
  buf:[nc.MAX_PACKET+64]u8
  overrun_count:=0
  for {
@@ -117,6 +118,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
    fmt.eprintf("server tick overrun at %.2fs: dropping %.1fms of accumulated time\n",now,accumulator*1000)
    accumulator=0
   }
+  net_scheduled_server_echoes(&ns,(accumulator+time.duration_seconds(time.tick_since(start))-now)/NET_STEP_DT,now)
   packets:=nc.server_take_outgoing(&ns.srv)
   for p in packets { _=nc.socket_send(&sock,p.to,p.data) }
   nc.outgoing_free(&packets)
@@ -125,7 +127,10 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
    for &c,i in ns.srv.clients {
     if !c.active { continue }
     bytes:=c.endpoint.stats.bytes_sent
+    if last_generation[i]!=ns.real_hash_generation[i] || bytes<last_bytes[i] { last_bytes[i]=0;last_generation[i]=ns.real_hash_generation[i] }
     fmt.printf("  client=%d addr=%v RTT=%.0fms tx=%.0f kbit/s\n",i,c.address,c.endpoint.stats.rtt*1000,f64(bytes-last_bytes[i])*8/10000)
+    input:=&ns.clients[i].schedule
+    fmt.printf("INPUT client=%d incarnation=%d generation=%d finalized=%d applied_sequence=%d accepted=%d duplicates=%d conflicts=%d late=%d starved=%d neutralized=%d\n",i,ns.clients[i].incarnation,input.identity.generation,input.finalized_through,input.last_applied_sequence,input.accepted,input.duplicates,input.conflicts,input.too_late,input.starved,input.neutralized)
     last_bytes[i]=bytes
    }
    report_at+=10

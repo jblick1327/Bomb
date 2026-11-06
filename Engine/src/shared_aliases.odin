@@ -131,6 +131,7 @@ net_client_on_structure :: shared.net_client_on_structure
 net_client_record_applied :: shared.net_client_record_applied
 net_client_reset :: shared.net_client_reset
 net_client_step :: shared.net_client_step
+net_client_clear_intent :: shared.net_client_clear_intent
 net_client_update_clock :: shared.net_client_update_clock
 net_client_update_delay :: shared.net_client_update_delay
 net_drawn_from :: shared.net_drawn_from

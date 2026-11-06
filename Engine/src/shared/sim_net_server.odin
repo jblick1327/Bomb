@@ -25,6 +25,10 @@ Net_Server_Stats :: struct {
 }
 
 Net_Server_Client :: struct {
+ schedule: Input_Schedule,
+ incarnation: u64,
+ echo_nonce: u64,
+ requests: ^Request_Cache,
  active: bool,
  is_host: bool, // validated only in the real-process app handshake
  ring: [NET_SENT_RING]Pose_Table,
@@ -44,6 +48,8 @@ Net_Server_Client :: struct {
 }
 
 Net_Server :: struct {
+ next_incarnation: u64,
+ next_event_id: u64,
  game: Headless_Game,
  srv: nc.Server,
  repl: Repl_Server,
@@ -93,6 +99,7 @@ net_client_state_clear :: proc(c: ^Net_Server_Client) {
 
 net_server_destroy :: proc(ns: ^Net_Server) {
  for &c in ns.clients {
+  if c.requests!=nil { free(c.requests);c.requests=nil }
   net_client_state_clear(&c)
   delete(c.priority); delete(c.last_sent); delete(c.pending); delete(c.blast_queue); delete(c.blast_ticks)
   delete(c.stats.frame_bytes); delete(c.stats.frame_parts); delete(c.stats.build_ms); delete(c.stats.staleness_samples)
@@ -124,6 +131,9 @@ net_record_hash :: proc(ns: ^Net_Server) {
 net_server_join :: proc(ns: ^Net_Server,index: int) {
  ns.real_hash_generation[index]+=1
  c:=&ns.clients[index]
+ ns.next_incarnation+=1;c.incarnation=ns.next_incarnation;c.schedule={};c.echo_nonce=0
+ if c.requests==nil { c.requests=new(Request_Cache) }
+ c.requests^=Request_Cache{incarnation=c.incarnation}
  net_client_state_clear(c)
  if c.priority==nil { c.priority=make(map[u64]f32) }
  if c.last_sent==nil { c.last_sent=make(map[u64]Pose_State) }
@@ -135,6 +145,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
  world_add_player(&ns.game.world,index)
  out:=repl_server_baseline(&ns.repl,&ns.game.world.scene,ns.tick); defer repl_output_destroy(&out)
  net_send_reliable_parts(ns,index,&out)
+ if ns.real_gate { net_scheduled_server_offer(ns,index) }
 }
 
 net_server_leave :: proc(ns: ^Net_Server,index: int) {
@@ -340,10 +351,9 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
     }
     continue // no input, hash or host command before authorization
    }
-   if ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
+   if ns.real_gate && net_scheduled_server_message(ns,ev.client,ev.channel,ev.data) { continue }
+   if !ns.real_gate && ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
     if in_,ok:=input_decode(ev.data); ok { net_server_input(ns,ev.client,in_) }
-   } else if ns.real_gate && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && (ev.data[0]==NET_APP_LAYOUT_UPLOAD || ev.data[0]==NET_APP_HOST_COMMAND) {
-    net_host_dispatch(ns,ev.client,ev.data)
    } else if ns.record_hashes && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && ev.data[0]==NET_REAL_HASH_REPORT {
     r:nc.Reader;nc.reader_init(&r,ev.data)
     _=nc.read_u8(&r)
@@ -364,7 +374,14 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
   c:=&ns.clients[i]
   if !c.active || !w.players[i].active { continue }
   if c.has_input { w.players[i].blast_radius=c.radius }
-  commands.players[i].move=c.move; commands.players[i].jump=c.jump_pending; c.jump_pending=false
+  if ns.real_gate {
+   if c.schedule.identity.epoch==w.scene.epoch {
+    step:=input_schedule_consume(&c.schedule,ns.tick+1)
+    commands.players[i].move=move_dequantize(step.command.move);commands.players[i].jump=step.command.jump_edge!=0
+    if commands.players[i].jump { c.stats.jumps_applied+=1 }
+   }
+  } else { commands.players[i].move=c.move;commands.players[i].jump=c.jump_pending }
+  c.jump_pending=false
   slice.sort_by(c.blast_queue[:],proc(a,b: Net_Blast) -> bool { return seq16_newer(b.seq,a.seq) })
   for b in c.blast_queue { net_server_blast(ns,i,b) }
   clear(&c.blast_queue)
@@ -376,15 +393,25 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
  ns.tick+=1
  // Structure and events, reliable, to every client.
  out:=repl_server_update(&ns.repl,&w.scene,ns.tick); defer repl_output_destroy(&out)
- if w.scene.epoch!=ns.frame_epoch { net_server_reset_frames(ns) }
+ epoch_changed:=w.scene.epoch!=ns.frame_epoch
+ if epoch_changed { net_server_reset_frames(ns) }
  if out.kind!=.None {
   net_record_hash(ns)
   for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { net_send_reliable_parts(ns,i,&out) } }
  }
+ if ns.real_gate {
+  for i in 0..<nc.MAX_CLIENTS {
+   if !ns.clients[i].active { continue }
+   if epoch_changed || post.player_respawned[i] { net_scheduled_server_offer(ns,i) }
+   net_scheduled_server_owner(ns,i)
+  }
+ }
  for list in ([2][dynamic]Explosion_Event{ns.pre_events.explosions,post.explosions}) {
   for e in list {
+   event_id:=e.event_id
+   if event_id==0 { ns.next_event_id+=1;event_id=ns.next_event_id }
    wr:nc.Writer; nc.writer_init(&wr,24)
-   event_encode_explosion(&wr,ns.tick,e.position,e.radius)
+   event_encode_explosion(&wr,ns.tick,e.position,e.radius,event_id)
    for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { nc.server_send_reliable(&ns.srv,i,wr.data[:]) } }
    nc.writer_destroy(&wr); ns.explosions_emitted+=1
   }

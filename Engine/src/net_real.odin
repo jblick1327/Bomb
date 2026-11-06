@@ -52,26 +52,39 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
  defer net_client_view_destroy(&client_view)
  net_client_init(&client,nc.random_salt(),0)
  bot:Bot; bot_init(&bot,42,true)
- defer net_client_destroy(&client)
+ defer {
+  nc.client_disconnect(&client.nc_client)
+  outgoing:=nc.client_take_outgoing(&client.nc_client)
+  for packet in outgoing { _=nc.socket_send(&sock,target,packet.data) }
+  nc.outgoing_free(&outgoing)
+  net_client_destroy(&client)
+ }
  client.real_gate=true
  client.real_host_token=host_token
  client.real_protocol=protocol_version
  client.verify=true
  start:=time.tick_now()
- last_tick:=f64(0)
+ last_now:=f64(0)
+ accumulator:=f64(0)
  next_report:=f64(10)
  upload_sent,reset_sent:=false,false
  buf:[nc.MAX_PACKET+64]u8
  for {
   now:=time.duration_seconds(time.tick_since(start))
+  elapsed:=now-last_now;last_now=now
+  if elapsed<0 || elapsed>0.25 || accumulator+elapsed>NET_STEP_DT*4+1e-8 {
+   accumulator=0;net_client_clear_intent(&client);client.has_clock=false
+  } else { accumulator+=elapsed }
   if seconds>0 && now>=seconds { break }
   for {
    packet,from,has:=nc.socket_receive(&sock,buf[:])
    if !has { break }
    if from==target { nc.client_receive(&client.nc_client,packet,now) }
   }
-  if now-last_tick>=NET_STEP_DT {
-   net_client_step(&client,now,net_bot_client_input,&bot)
+  steps:=0
+  for accumulator+1e-9>=NET_STEP_DT && steps<4 {
+   fixed_now:=now-accumulator+NET_STEP_DT
+   net_client_step(&client,fixed_now,net_bot_client_input,&bot)
    if hidden_window { net_client_view_step(&client,&client_view) }
    if client.real_hello_ok {
     if len(upload_data)>0 && !upload_sent { upload_sent=net_host_client_send_layout(&client,upload_data) }
@@ -91,7 +104,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
     nc.writer_destroy(&writer)
    }
    clear(&client.applied)
-   last_tick=now
+   accumulator-=NET_STEP_DT;steps+=1
   }
   packets:=nc.client_take_outgoing(&client.nc_client)
   for p in packets { _=nc.socket_send(&sock,target,p.data) }

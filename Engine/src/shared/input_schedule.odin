@@ -30,7 +30,7 @@ Scheduled_Step :: struct { command: Scheduled_Command, applied,carried,neutraliz
 input_schedule_reset :: proc(s: ^Input_Schedule,incarnation: u64,epoch: u32,now_tick: u64,p: Schedule_Proposal) -> Schedule_Result {
  if p.identity.incarnation!=incarnation || incarnation==0 { return .Wrong_Connection }
  if p.identity.epoch!=epoch { return .Wrong_Epoch }
- if p.identity.generation==0 || (s.synchronized && p.identity.incarnation==s.identity.incarnation && p.identity.generation<=s.identity.generation) { return .Old_Generation }
+ if p.identity.generation==0 || (p.identity.incarnation==s.identity.incarnation && p.identity.generation<=s.identity.generation) { return .Old_Generation }
  if now_tick>max(u64)-INPUT_FUTURE_WINDOW || p.first_sequence==0 || p.first_sequence>max(u64)-INPUT_FUTURE_WINDOW { return .Overflow }
  if p.first_tick<now_tick+2 { return .Obsolete }
  if p.first_tick>now_tick+INPUT_FUTURE_WINDOW { return .Too_Far }
