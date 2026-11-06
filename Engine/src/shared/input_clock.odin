@@ -11,6 +11,7 @@ Input_Clock :: struct {
  samples: [64]Clock_Sample,
  sample_index: int,
  next_nonce: u64,
+ last_echo_nonce:u64,
  valid,resync: bool,
  estimate: Server_Stamp,
  updated_at,rtt,jitter95,raw_error: f64,
@@ -57,6 +58,7 @@ input_clock_now :: proc(c: ^Input_Clock,now: f64) -> (Server_Stamp,bool) {
  return c.estimate,true
 }
 input_clock_echo :: proc(c: ^Input_Clock,nonce: u64,stamp: Server_Stamp,now: f64) -> bool {
+ if nonce<=c.last_echo_nonce { c.rejected+=1;return false }
  if math.is_nan(now) || math.is_inf(now) || math.is_nan(stamp.phase) || math.is_inf(stamp.phase) || stamp.phase<0 || stamp.phase>=1 { c.rejected+=1;return false }
  found: ^Clock_Probe
  for &p in c.probes { if p.active && p.nonce==nonce { found=&p;break } }
@@ -64,6 +66,19 @@ input_clock_echo :: proc(c: ^Input_Clock,nonce: u64,stamp: Server_Stamp,now: f64
  elapsed:=now-found.sent;found.active=false
  if elapsed<0 || elapsed>1 || (c.accepted>=4 && elapsed>c.rtt*4+0.05) { c.rejected+=1;return false }
  received_stamp:=server_stamp_advance(stamp,elapsed/2)
+ accepted_before:=c.estimate
+ rebased:=false
+ if c.valid {
+  _,_=input_clock_now(c,now)
+  fresh_error:=server_stamp_error(received_stamp,c.estimate)
+  if math.abs(fresh_error)>8 {
+   // A genuine server stall invalidates the old low-RTT extrapolation window.
+   // Reacquire explicitly; no old-generation command may be emitted after this
+   // flag. Normal accepted time remains monotonic between schedule resets.
+   c.samples={};c.sample_index=0;c.estimate=received_stamp;c.updated_at=now
+   c.raw_error=fresh_error;c.resync=true;rebased=true
+  }
+ }
  if c.accepted==0 { c.rtt=elapsed } else { c.rtt+=(elapsed-c.rtt)/8 }
  c.samples[c.sample_index%len(c.samples)]={true,now,elapsed,received_stamp};c.sample_index=(c.sample_index+1)%len(c.samples)
  // Positive one-way jitter distribution; insertion-sort a fixed bounded array.
@@ -80,8 +95,8 @@ input_clock_echo :: proc(c: ^Input_Clock,nonce: u64,stamp: Server_Stamp,now: f64
  c.lead=u32(clamp(math.ceil((c.rtt/2+c.jitter95)*60)+2,2,15))
  candidate:=server_stamp_advance(best.stamp,now-best.received)
  if !c.valid { c.estimate=candidate;c.updated_at=now;c.valid=true }
- else {
-  previous:=c.estimate
+ else if !rebased {
+  previous:=accepted_before
   _,_=input_clock_now(c,now)
   c.raw_error=server_stamp_error(candidate,c.estimate)
   if math.abs(c.raw_error)>8 { c.resync=true }
@@ -90,6 +105,7 @@ input_clock_echo :: proc(c: ^Input_Clock,nonce: u64,stamp: Server_Stamp,now: f64
   if server_stamp_error(adjusted,previous)>=0 { c.estimate=adjusted }
  }
  c.accepted+=1
+ c.last_echo_nonce=nonce
  return true
 }
 

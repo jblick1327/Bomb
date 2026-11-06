@@ -3,6 +3,18 @@ import t "core:testing"
 import math "core:math"
 
 @(test)
+clock_server_stall_reacquires_fresh_time_and_requires_schedule_reset :: proc(test:^t.T) {
+ c:Input_Clock;nonce,_:=input_clock_probe(&c,0)
+ t.expect(test,input_clock_echo(&c,nonce,{1000,0},.1))
+ nonce,_=input_clock_probe(&c,1)
+ t.expect(test,input_clock_echo(&c,nonce,{1010,0},1.1))
+ t.expect(test,c.resync && c.estimate.tick==1013 && c.raw_error < -40)
+ valid_samples:=0;for sample in c.samples { if sample.valid { valid_samples+=1 } }
+ t.expect_value(test,valid_samples,1)
+ t.expect(test,!input_clock_echo(&c,nonce-1,{2000,0},1.2))
+}
+
+@(test)
 clock_exact_large_ticks_nonce_and_phase :: proc(test: ^t.T) {
  c:Input_Clock;c.next_nonce=9007199254740993
  nonce,ok:=input_clock_probe(&c,10);t.expect(test,ok && nonce==9007199254740994)
