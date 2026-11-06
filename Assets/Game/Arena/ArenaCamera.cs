@@ -72,7 +72,7 @@ public sealed class ArenaCamera : MonoBehaviour
             ? Mathf.Min(fullArenaSize, followViewportHeight * 0.5f)
             : fullArenaSize;
 
-        Vector3 desiredCenter = player != null && player.gameObject.activeInHierarchy
+        Vector3 desiredCenter = followPlayer && player != null && player.gameObject.activeInHierarchy
             ? player.transform.position
             : bounds.center;
         Vector2 playerPadding = GetPlayerPadding();
@@ -98,7 +98,7 @@ public sealed class ArenaCamera : MonoBehaviour
         if (player == null) return Vector2.one * playerEdgeMargin;
         CharacterController controller = player.GetComponent<CharacterController>();
         if (controller == null) return Vector2.one * playerEdgeMargin;
-        float horizontal = controller.radius * Mathf.Max(player.transform.lossyScale.x, player.transform.lossyScale.z);
+        float horizontal = controller.radius * Mathf.Max(Mathf.Abs(player.transform.lossyScale.x), Mathf.Abs(player.transform.lossyScale.z));
         float vertical = controller.height * player.transform.lossyScale.y * 0.5f;
         return new Vector2(horizontal + playerEdgeMargin, vertical + playerEdgeMargin);
     }
