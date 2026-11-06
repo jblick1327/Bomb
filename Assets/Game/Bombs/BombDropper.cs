@@ -66,6 +66,20 @@ public sealed class BombDropper : MonoBehaviour
     [SerializeField, Min(1f), InspectorName("Maximum lifetime (seconds)")]
     private float bombLifetime = 15f;
 
+    [Header("Bomb types")]
+    [Tooltip("Chance that each drop is a timed bomb. 0 = all impact, 1 = all timed.")]
+    [SerializeField, Range(0f, 1f)] private float timedBombChance = 0.5f;
+    [Tooltip("Countdown starts on the timed bomb's first solid impact.")]
+    [SerializeField, Min(0.1f), InspectorName("Timed bomb fuse (seconds)")]
+    private float timedBombFuse = 3f;
+
+    [Header("Bomb appearance")]
+    [Tooltip("Optional mesh for both bomb types. Leave empty to use the original sphere and fuse.")]
+    [SerializeField] private Mesh bombMesh;
+    [Tooltip("Rotation of the custom mesh, in degrees.")]
+    [SerializeField] private Vector3 bombMeshRotation;
+    [Tooltip("Custom meshes are centered and fitted to the bomb diameter, then multiplied by this value. Collision size still uses Bomb Radius.")]
+    [SerializeField, Min(0.01f)] private float bombMeshScale = 1f;
     [SerializeField] private Material bombMaterial;
     [SerializeField] private Material blastMaterial;
     [SerializeField] private Material yardGrassMaterial;
@@ -74,6 +88,15 @@ public sealed class BombDropper : MonoBehaviour
     private float blastDuration = 0.35f;
     [Tooltip("Draw spawn range, crater outline and lethal radius when selected in the Scene view.")]
     [SerializeField] private bool showSizePreviews;
+
+    [Header("Explosion audio")]
+    [Tooltip("Optional sound played at each explosion. Import an audio file and assign its AudioClip here.")]
+    [SerializeField] private AudioClip explosionClip;
+    [SerializeField, Range(0f, 1f)] private float explosionVolume = 1f;
+    [Tooltip("0 = equal volume everywhere; 1 = positional 3D sound.")]
+    [SerializeField, Range(0f, 1f)] private float explosionSpatialBlend = 1f;
+    [SerializeField, Min(0.01f)] private float explosionMinDistance = 5f;
+    [SerializeField, Min(0.01f)] private float explosionMaxDistance = 50f;
 
     [SerializeField] private ArenaLayout layout;
     [SerializeField] private ArenaSession session;
@@ -141,6 +164,13 @@ public sealed class BombDropper : MonoBehaviour
 
     public FallingBomb DropBomb()
     {
+        BombType type = Random.value < Mathf.Clamp01(timedBombChance)
+            ? BombType.Timed : BombType.Impact;
+        return DropBomb(type);
+    }
+
+    public FallingBomb DropBomb(BombType type)
+    {
         if (!CanRun || layout == null) return null;
         ResolveGround();
         float leftEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.min.x : layout.LeftEdge;
@@ -148,13 +178,13 @@ public sealed class BombDropper : MonoBehaviour
         float minX = leftEdge + bombRadius + spawnEdgePadding;
         float maxX = rightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
-        var body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        body.name = "Falling Bomb";
+        var body = new GameObject();
+        body.name = type == BombType.Timed ? "Timed Bomb" : "Impact Bomb";
         body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
         body.transform.SetParent(GetTransientRoot(), true);
-        body.transform.localScale = Vector3.one * bombRadius * 2f;
-        body.GetComponent<Renderer>().sharedMaterial = bombMaterial;
-        var collider = body.GetComponent<SphereCollider>();
+        var collider = body.AddComponent<SphereCollider>();
+        collider.radius = bombRadius;
+        CreateBombVisual(body.transform);
         var rigidbody = body.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
@@ -167,9 +197,46 @@ public sealed class BombDropper : MonoBehaviour
             if (rubbleCollider != null) Physics.IgnoreCollision(collider, rubbleCollider);
         }
 
+        var bomb = body.AddComponent<FallingBomb>();
+        bomb.Initialize(this, fallAcceleration, bombLifetime, type, timedBombFuse);
+        DroppedBombCount++;
+        return bomb;
+    }
+
+    private void CreateBombVisual(Transform bomb)
+    {
+        GameObject visual;
+        if (bombMesh != null)
+        {
+            visual = new GameObject("Bomb Mesh");
+            visual.transform.SetParent(bomb, false);
+            visual.AddComponent<MeshFilter>().sharedMesh = bombMesh;
+            var renderer = visual.AddComponent<MeshRenderer>();
+            // Cover every submesh with the selected bomb material.
+            var materials = new Material[Mathf.Max(1, bombMesh.subMeshCount)];
+            for (int i = 0; i < materials.Length; i++) materials[i] = bombMaterial;
+            renderer.sharedMaterials = materials;
+            Bounds bounds = bombMesh.bounds;
+            float longestSide = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+            float scale = bombRadius * 2f * Mathf.Max(0.01f, bombMeshScale) / Mathf.Max(0.0001f, longestSide);
+            Quaternion rotation = Quaternion.Euler(bombMeshRotation);
+            visual.transform.localScale = Vector3.one * scale;
+            visual.transform.localRotation = rotation;
+            visual.transform.localPosition = -(rotation * bounds.center) * scale;
+            return;
+        }
+
+        visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        visual.name = "Bomb Mesh";
+        visual.transform.SetParent(bomb, false);
+        visual.transform.localScale = Vector3.one * bombRadius * 2f;
+        visual.GetComponent<Renderer>().sharedMaterial = bombMaterial;
+        visual.GetComponent<Collider>().enabled = false;
+        Destroy(visual.GetComponent<Collider>());
+
         var fuse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         fuse.name = "Fuse";
-        fuse.transform.SetParent(body.transform, false);
+        fuse.transform.SetParent(visual.transform, false);
         fuse.transform.localPosition = new Vector3(0.12f, 0.52f, 0f);
         fuse.transform.localRotation = Quaternion.Euler(0f, 0f, -20f);
         fuse.transform.localScale = new Vector3(0.1f, 0.15f, 0.1f);
@@ -177,16 +244,38 @@ public sealed class BombDropper : MonoBehaviour
         fuse.GetComponent<Collider>().enabled = false;
         Destroy(fuse.GetComponent<Collider>());
         fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
+    }
 
-        var bomb = body.AddComponent<FallingBomb>();
-        bomb.Initialize(this, fallAcceleration, bombLifetime);
-        DroppedBombCount++;
-        return bomb;
+    private void PlayExplosionSound(Vector3 position)
+    {
+        if (explosionClip == null || explosionVolume <= 0f) return;
+        // Independent of the bomb and round effects, so a lethal explosion or
+        // round restart cannot cut the clip off when those objects are cleared.
+        var sound = new GameObject("Explosion Sound");
+        sound.transform.position = position;
+        var source = sound.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.clip = explosionClip;
+        source.volume = Mathf.Clamp01(explosionVolume);
+        source.spatialBlend = Mathf.Clamp01(explosionSpatialBlend);
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = Mathf.Max(0.01f, explosionMinDistance);
+        source.maxDistance = Mathf.Max(source.minDistance + 0.01f, explosionMaxDistance);
+        source.Play();
+        Destroy(sound, explosionClip.length);
     }
 
     public void Explode(Vector2 center)
     {
+        Explode(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
+    }
+
+    public void Explode(Vector3 position)
+    {
         if (!CanRun) return;
+        Vector2 center = new Vector2(position.x, position.y);
+        PlayExplosionSound(position);
         ResolveGround();
         if (enableCrater)
         {
