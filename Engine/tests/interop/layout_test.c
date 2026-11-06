@@ -83,6 +83,18 @@ int main(void) {
  CHECK(bom_debug_layout(6,23)==OFFSET(BomSample,error_text));
  CHECK(bom_debug_layout(6,24)==OFFSET(BomSample,error_length));
  CHECK(bom_debug_layout(6,25)==OFFSET(BomSample,reserved));
+ CHECK(bom_debug_layout(6,26)==OFFSET(BomSample,received_epoch));
+ CHECK(bom_debug_layout(6,27)==OFFSET(BomSample,received_flags));
+ CHECK(bom_debug_layout(6,28)==OFFSET(BomSample,received_revision));
+ CHECK(bom_debug_layout(6,29)==OFFSET(BomSample,transaction_id));
+ CHECK(bom_debug_layout(6,30)==OFFSET(BomSample,effective_tick));
+ CHECK(bom_debug_layout(6,31)==OFFSET(BomSample,from_revision));
+ CHECK(bom_debug_layout(6,32)==OFFSET(BomSample,to_revision));
+ CHECK(bom_debug_layout(6,33)==OFFSET(BomSample,transaction_flags));
+ CHECK(bom_debug_layout(6,34)==OFFSET(BomSample,catalog_revision));
+ CHECK(bom_debug_layout(6,35)==OFFSET(BomSample,catalog_hash));
+ CHECK(bom_debug_layout(6,36)==OFFSET(BomSample,owner_prediction_status));
+ CHECK(bom_debug_layout(6,37)==OFFSET(BomSample,round_state));
  CHECK(bom_debug_layout(7,0)==sizeof(BomBuildInfo));
  CHECK(bom_debug_layout(7,1)==__alignof(BomBuildInfo));
  CHECK(bom_debug_layout(7,2)==OFFSET(BomBuildInfo,struct_size));

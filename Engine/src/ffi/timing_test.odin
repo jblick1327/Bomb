@@ -7,7 +7,7 @@ import nc "../netcode"
 
 // Deterministic adapter unit fixture, separate from the real UDP executable gates.
 // Synthetic receive timestamps only prevent a transport timeout in this clock test.
-timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16) {
+timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16,u64) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
  s,status:=get_slot(handle);testing.expect(t,status==OK)
@@ -20,6 +20,9 @@ timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16) {
  testing.expect(t,bom_client_set_held_input(handle,2.25,-1)==OK)
  testing.expect(t,bom_client_set_held_input(handle,5.5,0)==OK)
  testing.expect(t,bom_client_enqueue_jump(handle,1.025)==OK)
+ testing.expect(t,bom_client_enqueue_jump(handle,1.030)==OK)
+ testing.expect(t,bom_client_enqueue_action(handle,3.1415,-6.4,2.3)==OK)
+ testing.expect(t,bom_client_enqueue_action(handle,3.1425,1000,1000)==OK)
  testing.expect(t,bom_client_update(handle,0)==OK)
  now:=f64(0)
  for dt in intervals {
@@ -29,15 +32,17 @@ timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16) {
  }
  testing.expect(t,math.abs(now-10)<1e-6)
  testing.expect(t,s.stall_count==0 && s.held_move==0)
- return u64(s.client.stats.input_count),s.client.jump_counter
+ return u64(s.client.stats.input_count),s.client.jump_counter,s.client.stats.input_payload_hash
 }
 @(test)
 test_timing_same_commands_for_30_60_144_and_irregular :: proc(t:^testing.T) {
+ expected:u64
  for fps in ([4]int{30,60,144,1000}) {
   intervals:=make([]f64,fps*10);defer delete(intervals)
   for &dt in intervals { dt=1/f64(fps) }
-  commands,jumps:=timing_fixture(t,intervals)
-  testing.expect(t,commands==600 && jumps==1,"render schedule produces exactly 600 fixed commands and one edge")
+  commands,jumps,digest:=timing_fixture(t,intervals)
+  if expected==0 { expected=digest }
+  testing.expect(t,commands==600 && jumps==2 && digest==expected,"complete command bytes preserve both close edges and actions across render schedules")
  }
  irregular:[dynamic]f64;defer delete(irregular)
  now:=f64(0);i:=0
@@ -46,8 +51,8 @@ test_timing_same_commands_for_30_60_144_and_irregular :: proc(t:^testing.T) {
   dt:=pattern[i%5]
   dt=min(dt,10-now);append(&irregular,dt);now+=dt;i+=1
  }
- commands,jumps:=timing_fixture(t,irregular[:])
- testing.expect(t,commands==600 && jumps==1)
+ commands,jumps,digest:=timing_fixture(t,irregular[:])
+ testing.expect(t,commands==600 && jumps==2 && digest==expected)
 }
 @(test)
 test_fractional_sample_does_not_advance_fixed_commands :: proc(t:^testing.T) {

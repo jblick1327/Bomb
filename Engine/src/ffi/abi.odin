@@ -84,6 +84,18 @@ BomSample :: struct {
  error_text: [^]u8,
  error_length: u32,
  reserved: u32,
+ received_epoch: u32,
+ received_flags: u32,
+ received_revision: u64,
+ transaction_id: u64,
+ effective_tick: u64,
+ from_revision: u64,
+ to_revision: u64,
+ transaction_flags: u32,
+ catalog_revision: u32,
+ catalog_hash: u64,
+ owner_prediction_status: u32,
+ round_state: u32,
 }
 
 BomBuildInfo :: struct {
@@ -256,6 +268,18 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 23: return u32(offset_of(BomSample,error_text))
   case 24: return u32(offset_of(BomSample,error_length))
   case 25: return u32(offset_of(BomSample,reserved))
+  case 26: return u32(offset_of(BomSample,received_epoch))
+  case 27: return u32(offset_of(BomSample,received_flags))
+  case 28: return u32(offset_of(BomSample,received_revision))
+  case 29: return u32(offset_of(BomSample,transaction_id))
+  case 30: return u32(offset_of(BomSample,effective_tick))
+  case 31: return u32(offset_of(BomSample,from_revision))
+  case 32: return u32(offset_of(BomSample,to_revision))
+  case 33: return u32(offset_of(BomSample,transaction_flags))
+  case 34: return u32(offset_of(BomSample,catalog_revision))
+  case 35: return u32(offset_of(BomSample,catalog_hash))
+  case 36: return u32(offset_of(BomSample,owner_prediction_status))
+  case 37: return u32(offset_of(BomSample,round_state))
   }
  case 7:
   switch field_id {

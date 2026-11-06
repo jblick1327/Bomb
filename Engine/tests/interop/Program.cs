@@ -72,6 +72,12 @@ static class Program {
    Check(ready,"single host received baseline");Console.WriteLine("PASS single real native host");
   } finally {Ok(BomNative.bom_client_destroy(handle),"single host destroy");}
  }
+ static ulong Layout(ulong handle,byte[] bytes) {
+  IntPtr buffer=Marshal.AllocHGlobal(bytes.Length);try {
+   Marshal.Copy(bytes,0,buffer,bytes.Length);var command=new BomHostCommand{struct_size=(uint)Marshal.SizeOf<BomHostCommand>(),version=1,op=4,layout=buffer,layout_length=(uint)bytes.Length};ulong id=0;
+   Ok(BomNative.bom_client_request_host_command(handle,ref command,ref id),"layout request copied");return id;
+  }finally{Marshal.FreeHGlobal(buffer);}
+ }
  static void Main(string[] args) {
   var identity=new BomBuildInfo{struct_size=(uint)Marshal.SizeOf<BomBuildInfo>(),version=1};Ok(BomNative.bom_build_info(ref identity),"build identity");
   Check(identity.abi_major==1 && identity.source_build_tag==BomNative.bom_build_tag(),"native identity matches ABI");
@@ -83,7 +89,7 @@ static class Program {
   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}
   ulong[] handles={Create(),Create()};ulong[] epochs={0,0},revisions={ulong.MaxValue,ulong.MaxValue};bool[] ready={false,false};
   ulong[] maxGeneration={0,0};int snapshots=0,events=0;var seen=new HashSet<(int,ulong,uint,ulong)>();
-  bool reset=false,reconnected=false,jumped=false,blasted=false;ulong hostRequest=0,guestRequest=0;bool hostResult=false,guestResult=false;double started=Now,lastReport=started;
+  bool reset=false,reconnected=false,jumped=false,blasted=false;ulong hostRequest=0,guestRequest=0;bool hostResult=false,guestResult=false;bool invalidBlast=false,invalidBlastSeen=false,guestLayoutRejected=false,malformedRejected=false,layoutAccepted=false;ulong guestLayout=0,hostLayout=0;int layoutStage=0;double started=Now,lastReport=started;
   try {
    Connect(handles[0],port,Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"");Connect(handles[1],port);
    while(Now-started<seconds) {
@@ -93,6 +99,7 @@ static class Program {
      Ok(BomNative.bom_client_set_held_input(handle,now,move),"held input");
      if(i==0 && elapsed>2 && !jumped){Ok(BomNative.bom_client_enqueue_jump(handle,now),"jump");jumped=true;}
      if(i==0 && elapsed>3 && !blasted){Ok(BomNative.bom_client_enqueue_action(handle,now,-6.4f,2.3f),"action");blasted=true;}
+     if(i==0&&elapsed>4&&!invalidBlast){Ok(BomNative.bom_client_enqueue_action(handle,now,1000,1000),"outside-world blast queued");invalidBlast=true;}
      Ok(BomNative.bom_client_update(handle,now),"update");
      var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Ok(BomNative.bom_client_acquire_sample(handle,ref sample),"acquire");
      try {
@@ -101,6 +108,10 @@ static class Program {
       if((sample.flags&3)==3) {
        ready[i]=true;maxGeneration[i]=Math.Max(maxGeneration[i],sample.connection_generation);
        Check(sample.cell_count>0,"live baseline has cells");
+       Check((sample.received_flags&1)!=0,"received truth validated");
+       if(sample.received_epoch==sample.epoch)Check(sample.received_revision>=sample.revision,"received/presented revisions are separate");
+       Check(sample.to_revision==sample.revision,"complete snapshot transaction revision");
+       if((sample.flags&4)!=0)Check(sample.effective_tick<=sample.presentation_tick+0.00001,"topology is due before presentation");
        if(epochs[i]!=sample.epoch || revisions[i]!=sample.revision) {
         var ids=new HashSet<ulong>();
         for(uint cellIndex=0;cellIndex<sample.cell_count;cellIndex++) {
@@ -137,13 +148,25 @@ static class Program {
      if(i==0 && hostRequest!=0 && result.command_id==hostRequest && result.status>=2){Check(result.status==2,"host command accepted by server");hostResult=true;}
      if(i==1 && guestRequest!=0 && result.command_id==guestRequest && result.status>=2){Check(result.status==3 && result.reason_length>0,"guest command rejected by server with reason");guestResult=true;}
     }
+    if(elapsed>2 && guestResult && guestLayout==0)guestLayout=Layout(handles[1],System.Text.Encoding.UTF8.GetBytes("{}"));
+    if(elapsed>6 && reset && hostResult && layoutStage==0){hostLayout=Layout(handles[0],System.Text.Encoding.UTF8.GetBytes("{invalid"));layoutStage=1;}
+    if(elapsed>7 && layoutStage==2){hostLayout=Layout(handles[0],File.ReadAllBytes("src/presets/materials.json"));layoutStage=3;}
+    for(int i=0;i<2;i++) {
+     var result=new BomCommandResult{struct_size=(uint)Marshal.SizeOf<BomCommandResult>(),version=1};Ok(BomNative.bom_client_get_command_result(handles[i],ref result),"layout result");
+     if(i==1&&guestLayout!=0&&result.command_id==guestLayout&&result.status>=2){Check(result.status==3&&Marshal.PtrToStringUTF8(result.reason,(int)result.reason_length)=="host only","layout upload checks server authorization");guestLayoutRejected=true;}
+     if(i==0&&hostLayout!=0&&result.command_id==hostLayout&&result.status>=2){
+      if(layoutStage==1){Check(result.status==3&&result.reason_length>0,"malformed native layout rejected safely");malformedRejected=true;layoutStage=2;}
+      else if(layoutStage==3){Check(result.status==2,"valid native layout accepted");layoutAccepted=true;layoutStage=4;}
+     }
+     var stats=new BomStats{struct_size=(uint)Marshal.SizeOf<BomStats>(),version=1};Ok(BomNative.bom_client_get_stats(handles[i],ref stats),"live memory/queue statistics");if(i==0&&(stats.flags&8)!=0)invalidBlastSeen=true;
+    }
     if(elapsed>resetAfter && ready.All(x=>x) && !reset && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN"))) { Ok(BomNative.bom_client_host_command(handles[0],1,0,0),"host reset");reset=true; }
     if(elapsed>8 && !reconnected) { Ok(BomNative.bom_client_disconnect(handles[1]),"disconnect guest");Connect(handles[1],port);reconnected=true; }
     if(now-lastReport>10){Console.WriteLine($"LIVE seconds={elapsed:F1} snapshots={snapshots} events={events}");lastReport=now;}
     Thread.Sleep(5);
    }
    Check(ready.All(x=>x),"both actual native clients received baselines");Check(snapshots>=2,"topology samples copied");
-   if(seconds>10 && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")))Check(hostResult&&guestResult,"server authorization results correlate to native request IDs");
+   if(seconds>10 && !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")))Check(hostResult&&guestResult&&guestLayoutRejected&&malformedRejected&&layoutAccepted&&invalidBlastSeen,"host/guest results, layout authorization, malformed/valid upload and invalid blast rejection");
    if(seconds>10)Check(events>0,"actual native explosion events were copied and acknowledged");
    if(seconds>10)Check(maxGeneration[1]>=2,"guest reconnected with a new generation");
    Console.WriteLine($"PASS real native clients seconds={seconds} snapshots={snapshots} events={events} reset={reset} reconnect={reconnected}");

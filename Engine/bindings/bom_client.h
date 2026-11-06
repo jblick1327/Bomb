@@ -78,6 +78,18 @@ typedef struct BomSample {
  unsigned char* error_text;
  unsigned int error_length;
  unsigned int reserved;
+ unsigned int received_epoch;
+ unsigned int received_flags;
+ unsigned long long received_revision;
+ unsigned long long transaction_id;
+ unsigned long long effective_tick;
+ unsigned long long from_revision;
+ unsigned long long to_revision;
+ unsigned int transaction_flags;
+ unsigned int catalog_revision;
+ unsigned long long catalog_hash;
+ unsigned int owner_prediction_status;
+ unsigned int round_state;
 } BomSample;
 typedef struct BomBuildInfo {
  unsigned int struct_size;

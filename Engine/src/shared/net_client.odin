@@ -65,6 +65,7 @@ Net_Client_Stats :: struct {
  delay_history: [dynamic]u8,
  frames_lost: int,
  input_bytes,input_count,input_max: int,
+ input_payload_hash: u64, // Diagnostic digest of the complete fixed-command byte stream.
 }
 
 Net_Client :: struct {
@@ -75,7 +76,8 @@ Net_Client :: struct {
  real_protocol: u32,real_build: string,real_host_token: string,
  real_reason: string,
  control_serial: u64, control_kind: u8, control_ok: bool, control_reason: string,
- rep: Replica,
+ rep: Replica, // Presented topology, advanced only at the presentation clock.
+ received: Replica, // Validated received truth; never used to render early topology.
  epoch: u32, has_epoch: bool,
  queue: [dynamic]Net_Queued,
  pending: [dynamic]^Frame_Asm,
@@ -110,6 +112,7 @@ net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64) {
  c.real_protocol=GAME_PROTOCOL_VERSION
  c.real_build=GAME_BUILD_ID
  replica_init(&c.rep)
+ replica_init(&c.received)
  c.delay=NET_DELAY_MIN
  c.drawn=make(map[u64]Net_Drawn); c.anchored=make(map[u64]bool)
  c.radius_q=radius_quantize(DEFAULT_SANDBOX_SETTINGS.blast_radius)
@@ -136,6 +139,7 @@ net_client_destroy :: proc(c: ^Net_Client) {
  delete(c.real_reason)
  delete(c.control_reason)
  replica_destroy(&c.rep)
+ replica_destroy(&c.received)
  c.presentation_reset_serial+=1
  delete(c.queue); delete(c.pending); delete(c.arrivals); delete(c.missing); delete(c.loss_times)
  delete(c.blasts); delete(c.acks_to_check); delete(c.drawn); delete(c.anchored); delete(c.events); delete(c.applied)
@@ -169,6 +173,11 @@ net_client_reset :: proc(c: ^Net_Client) {
 net_client_on_structure :: proc(c: ^Net_Client,message: []u8) {
  kind,tick,epoch,ok:=repl_peek(message)
  if !ok { delete(message); c.stats.structure_errors+=1; return }
+ if err:=replica_apply_message(&c.received,message); err!="" {
+  delete(message);c.stats.structure_errors+=1
+  if c.real_reason=="" { c.real_reason=strings.clone(err) }
+  return
+ }
  if kind==.Baseline && (!c.has_epoch || epoch!=u64(c.epoch)) {
   net_client_reset(c)
   if err:=replica_apply_message(&c.rep,message); err!="" { c.stats.structure_errors+=1 }
@@ -286,12 +295,14 @@ net_client_update_delay :: proc(c: ^Net_Client,now: f64) {
 
 net_client_update_clock :: proc(c: ^Net_Client) {
  if !c.has_complete { return }
- target:=f64(c.newest_complete)-f64(c.delay)
- if !c.has_clock { c.clock=target; c.has_clock=true; c.stats.snaps+=1; return }
+ if c.newest_complete<c.rep.tick { c.has_clock=false;return }
+ floor:=f64(c.rep.tick);ceiling:=max(floor,f64(c.newest_complete))
+ target:=clamp(f64(c.newest_complete)-f64(c.delay),floor,ceiling)
+ if !c.has_clock { c.clock=clamp(max(c.clock,target),floor,ceiling); c.has_clock=true; c.stats.snaps+=1; return }
  err:=target-c.clock
- if math.abs(err)>NET_CLOCK_SNAP_TICKS { c.clock=target; c.stats.snaps+=1; return }
+ if math.abs(err)>NET_CLOCK_SNAP_TICKS { c.clock=clamp(max(c.clock,target),floor,ceiling); c.stats.snaps+=1; return }
  adjust:=clamp(err*NET_CLOCK_GAIN,-NET_CLOCK_MAX_ADJUST,NET_CLOCK_MAX_ADJUST)
- c.clock+=1+adjust
+ c.clock=clamp(c.clock+1+adjust,floor,ceiling)
  c.stats.clock_ticks+=1; c.stats.adjust_sum+=adjust; c.stats.adjust_abs_max=max(c.stats.adjust_abs_max,math.abs(adjust))
  if math.abs(adjust)>=NET_CLOCK_MAX_ADJUST-1e-12 { c.stats.clock_saturated+=1 }
 }
@@ -404,6 +415,8 @@ net_client_make_input :: proc(c: ^Net_Client) {
  for b,i in c.blasts { in_.blasts[i]=b }
  w:nc.Writer; nc.writer_init(&w,64); defer nc.writer_destroy(&w)
  input_encode(in_,&w)
+ if c.stats.input_count==0 { c.stats.input_payload_hash=14695981039346656037 }
+ for byte in w.data { c.stats.input_payload_hash=(c.stats.input_payload_hash~u64(byte))*1099511628211 }
  c.stats.input_bytes+=len(w.data); c.stats.input_count+=1; c.stats.input_max=max(c.stats.input_max,len(w.data))
  nc.client_send_unreliable(&c.nc_client,w.data[:])
 }

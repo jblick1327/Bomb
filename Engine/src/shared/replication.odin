@@ -50,7 +50,7 @@ repl_read_cell :: proc(r: ^nc.Reader) -> Repl_Cell {
  c.id=nc.read_varint(r); c.owner=nc.read_varint(r); c.material=int(nc.read_varint(r))
  c.frame=nc.read_f32(r)
  count:=nc.read_varint(r)
- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return c }
+ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r))/8 { nc.reader_fail(r); return c }
  c.outline=make([]Vec2,int(count))
  for i in 0..<int(count) { c.outline[i]={nc.read_f32(r),nc.read_f32(r)} }
  c.rest_center={nc.read_f32(r),nc.read_f32(r)}
@@ -69,7 +69,7 @@ repl_read_connection :: proc(r: ^nc.Reader) -> Repl_Connection {
  c:Repl_Connection
  c.id=nc.read_varint(r); c.a=nc.read_varint(r); c.b=nc.read_varint(r); c.mortar=nc.read_bool(r)
  count:=nc.read_varint(r)
- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return c }
+ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r))/20 { nc.reader_fail(r); return c }
  c.glue=make([]Glue_Sample,int(count))
  for i in 0..<int(count) { c.glue[i]={p={nc.read_f32(r),nc.read_f32(r)},q={nc.read_f32(r),nc.read_f32(r)},w=nc.read_f32(r)} }
  return c
@@ -82,7 +82,7 @@ repl_write_id_list :: proc(w: ^nc.Writer,ids: []u64) {
 
 repl_read_id_list :: proc(r: ^nc.Reader) -> []u64 {
  count:=nc.read_varint(r)
- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return nil }
+ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return nil }
  ids:=make([]u64,int(count))
  for i in 0..<int(count) { ids[i]=nc.read_varint(r) }
  return ids
@@ -450,33 +450,49 @@ replica_apply_baseline :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
  tick:=nc.read_varint(r)
  version:=nc.read_u8(r)
  epoch:=nc.read_varint(r); revision:=nc.read_varint(r); anchor_y:=nc.read_f32(r)
- if !r.ok || version!=REPL_CANON_VERSION { return "bad baseline header" }
+ if !r.ok || version!=REPL_CANON_VERSION || epoch>0xffffffff || !finite(anchor_y) { return "bad baseline header" }
  scene_destroy(&rep.scene)
  rep.scene=new_scene(0)
  s:=&rep.scene
  s.epoch=u32(epoch); s.structure_revision=revision; s.anchor_y=anchor_y
  count:=nc.read_varint(r)
- for _ in 0..<count { replica_add_material(rep,repl_read_material(r)); if !r.ok { return "truncated materials" } }
+ if count>1024 { return "too many baseline materials" }
+ for _ in 0..<count { m:=repl_read_material(r);if !r.ok || !repl_valid_material(m) { return "invalid baseline material" };replica_add_material(rep,m) }
  cell_count:=nc.read_varint(r)
+ if cell_count>REPL_MAX_CELLS { return "too many baseline cells" }
+ vertices:=0
  for _ in 0..<cell_count {
   c:=repl_read_cell(r); defer delete(c.outline)
   if !r.ok { return "truncated cells" }
+  vertices+=len(c.outline)
+  if !repl_valid_cell(c,len(s.materials)) || c.id in s.sub_rows || vertices>REPL_MAX_VERTICES { return "invalid or duplicate baseline cell" }
   replica_add_cell(rep,c)
  }
  conns:[dynamic]Repl_Connection; defer { for c in conns { delete(c.glue) }; delete(conns) }
  conn_count:=nc.read_varint(r)
- for _ in 0..<conn_count { c:=repl_read_connection(r); if !r.ok { return "truncated connections" }; append(&conns,c) }
+ if conn_count>REPL_MAX_VERTICES { return "too many baseline connections" }
+ for _ in 0..<conn_count { c:=repl_read_connection(r); if !r.ok { delete(c.glue);return "truncated connections" }; append(&conns,c) }
  piece_count:=nc.read_varint(r)
+ if piece_count>REPL_MAX_CELLS { return "too many baseline pieces" }
+ listed_cells:=0
  for _ in 0..<piece_count {
   id:=nc.read_varint(r); material:=int(nc.read_varint(r)); ref_rest:=Vec2{nc.read_f32(r),nc.read_f32(r)}; cells:=repl_read_id_list(r); defer delete(cells)
   if !r.ok || !valid_vec(ref_rest) { return "truncated or invalid pieces" }
+  if !repl_valid_piece(rep,id,material,ref_rest,cells) || id in s.piece_rows { return "invalid baseline piece references" }
+  listed_cells+=len(cells)
+  for cell in cells { if s.subdivisions[s.sub_rows[cell]].owner!=id { return "baseline owner/membership mismatch" } }
   replica_add_piece(rep,id,material,ref_rest,cells)
  }
- for c in conns { replica_add_connection(rep,c) }
+ if listed_cells!=len(s.subdivisions) { return "baseline membership does not cover cells" }
+ for sub in s.subdivisions { if sub.owner not_in s.piece_rows { return "baseline cell owner is missing" } }
+ for c in conns {
+  if !repl_valid_connection(c) || c.id in s.conn_rows || c.a not_in s.sub_rows || c.b not_in s.sub_rows { return "invalid baseline connection references" }
+  replica_add_connection(rep,c)
+ }
  touched:=make(map[u64]bool); defer delete(touched)
  for p in s.pieces { touched[p.id]=true }
  replica_finish_pieces(rep,touched)
- if nc.reader_remaining(r)!=0 { return "trailing bytes in baseline" }
+ if !r.ok || nc.reader_remaining(r)!=0 { return "truncated or trailing bytes in baseline" }
  rep.tick=tick; rep.has_baseline=true; rep.baselines_applied+=1; rep.rebuilt=true
  return ""
 }
@@ -484,7 +500,7 @@ replica_apply_baseline :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
 replica_apply_delta :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
  s:=&rep.scene
  tick:=nc.read_varint(r); epoch:=nc.read_varint(r); from:=nc.read_varint(r); to:=nc.read_varint(r)
- if !r.ok { return "bad delta header" }
+ if !r.ok || epoch>0xffffffff || to<from { return "bad delta header" }
  if !rep.has_baseline { return "delta before baseline" }
  if u32(epoch)!=s.epoch { return "delta from another epoch" }
  if from!=s.structure_revision { return "delta from_revision does not match" }
@@ -492,18 +508,22 @@ replica_apply_delta :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
  materials:[dynamic]Material; defer delete(materials)
  cells_added:[dynamic]Repl_Cell; defer { for c in cells_added { delete(c.outline) }; delete(cells_added) }
  conns_added:[dynamic]Repl_Connection; defer { for c in conns_added { delete(c.glue) }; delete(conns_added) }
- Piece_Add :: struct { id: u64, material: int, ref_rest: Vec2, cells: []u64 }
+ Piece_Add :: Repl_Piece_Add
  pieces_added:[dynamic]Piece_Add; defer { for p in pieces_added { delete(p.cells) }; delete(pieces_added) }
  pieces_changed:[dynamic]Piece_Add; defer { for p in pieces_changed { delete(p.cells) }; delete(pieces_changed) }
  count:=nc.read_varint(r)
+ if count>1024 || u64(len(s.materials))+count>1024 { return "too many delta materials" }
  for _ in 0..<count { m:=repl_read_material(r); if !r.ok { return "truncated materials" }; append(&materials,m) }
  count=nc.read_varint(r)
+ if count>REPL_MAX_CELLS { return "too many added cells" }
  for _ in 0..<count { c:=repl_read_cell(r); if !r.ok { delete(c.outline); return "truncated cells" }; append(&cells_added,c) }
  cells_removed:=repl_read_id_list(r); defer delete(cells_removed)
  count=nc.read_varint(r)
+ if count>REPL_MAX_VERTICES { return "too many added connections" }
  for _ in 0..<count { c:=repl_read_connection(r); if !r.ok { delete(c.glue); return "truncated connections" }; append(&conns_added,c) }
  conns_removed:=repl_read_id_list(r); defer delete(conns_removed)
  count=nc.read_varint(r)
+ if count>REPL_MAX_CELLS { return "too many added pieces" }
  for _ in 0..<count {
   id:=nc.read_varint(r); material:=int(nc.read_varint(r)); ref_rest:=Vec2{nc.read_f32(r),nc.read_f32(r)}; cells:=repl_read_id_list(r)
   if !r.ok || !valid_vec(ref_rest) { delete(cells); return "truncated or invalid pieces" }
@@ -511,12 +531,14 @@ replica_apply_delta :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
  }
  pieces_removed:=repl_read_id_list(r); defer delete(pieces_removed)
  count=nc.read_varint(r)
+ if count>REPL_MAX_CELLS { return "too many changed pieces" }
  for _ in 0..<count {
   id:=nc.read_varint(r); cells:=repl_read_id_list(r)
   if !r.ok { delete(cells); return "truncated changed pieces" }
   append(&pieces_changed,Piece_Add{id=id,cells=cells})
  }
  if !r.ok || nc.reader_remaining(r)!=0 { return "malformed delta" }
+ if problem:=repl_validate_delta(rep,materials[:],cells_added[:],cells_removed,conns_added[:],conns_removed,pieces_added[:],pieces_removed,pieces_changed[:]);problem!="" { return problem }
  // Apply: materials, removals (connections, pieces, cells), additions (cells, pieces, connections).
  for m in materials { replica_add_material(rep,m) }
  touched:=make(map[u64]bool); defer delete(touched)
@@ -558,12 +580,13 @@ replica_apply_message :: proc(rep: ^Replica,message: []u8) -> string {
 replica_receive :: proc(rep: ^Replica,part: []u8) -> (applied: bool,err: string) {
  r:nc.Reader; nc.reader_init(&r,part)
  mark:=nc.read_u8(&r); seq:=u32(nc.read_varint(&r)); index:=int(nc.read_varint(&r)); total:=int(nc.read_varint(&r))
- if !r.ok || mark!=REPL_PART_MARK || total<1 || index>=total { return false,"bad part header" }
+ if !r.ok || mark!=REPL_PART_MARK || total<1 || total>65536 || index<0 || index>=total { return false,"bad part header" }
  if index==0 {
   clear(&rep.part_buffer); rep.part_seq=seq; rep.part_total=total; rep.part_have=0
  } else if seq!=rep.part_seq || total!=rep.part_total || index!=rep.part_have {
   return false,"part out of sequence"
  }
+ if len(rep.part_buffer)+len(part)-r.pos>REPL_MAX_ASSEMBLED_BYTES { clear(&rep.part_buffer);return false,"assembled structure exceeds capacity" }
  append(&rep.part_buffer,..part[r.pos:])
  rep.part_have+=1
  if rep.part_have<rep.part_total { return false,"" }
@@ -576,12 +599,13 @@ replica_receive :: proc(rep: ^Replica,part: []u8) -> (applied: bool,err: string)
 replica_collect :: proc(rep: ^Replica,part: []u8) -> (message: []u8,complete: bool,err: string) {
  r:nc.Reader; nc.reader_init(&r,part)
  mark:=nc.read_u8(&r); seq:=u32(nc.read_varint(&r)); index:=int(nc.read_varint(&r)); total:=int(nc.read_varint(&r))
- if !r.ok || mark!=REPL_PART_MARK || total<1 || index>=total { return nil,false,"bad part header" }
+ if !r.ok || mark!=REPL_PART_MARK || total<1 || total>65536 || index<0 || index>=total { return nil,false,"bad part header" }
  if index==0 {
   clear(&rep.part_buffer); rep.part_seq=seq; rep.part_total=total; rep.part_have=0
  } else if seq!=rep.part_seq || total!=rep.part_total || index!=rep.part_have {
   return nil,false,"part out of sequence"
  }
+ if len(rep.part_buffer)+len(part)-r.pos>REPL_MAX_ASSEMBLED_BYTES { clear(&rep.part_buffer);return nil,false,"assembled structure exceeds capacity" }
  append(&rep.part_buffer,..part[r.pos:])
  rep.part_have+=1
  if rep.part_have<rep.part_total { return nil,false,"" }

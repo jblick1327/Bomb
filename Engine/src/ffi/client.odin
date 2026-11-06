@@ -45,6 +45,9 @@ Client_Slot :: struct {
  poses: [dynamic]BomPose,
  events: [dynamic]BomEvent,
  command_id,command_counter,command_serial: u64,command_pending,command_ok: bool,
+ topology_sequence,topology_accepted,topology_from,accepted_revision: u64,
+ accepted_epoch: u32,
+ last_connection_state: u32,
 }
 slots: [16]Client_Slot
 owner_thread: u32
@@ -59,6 +62,7 @@ get_slot :: proc "contextless" (handle: u64) -> (^Client_Slot,u32) {
 }
 close_client :: proc(s:^Client_Slot) {
  if s.live {
+  s.last_connection_state=u32(s.client.nc_client.state)
   if s.client.real_reason!="" { delete(s.last_error);s.last_error=strings.clone(s.client.real_reason) }
   nc.client_disconnect(&s.client.nc_client)
   outgoing:=nc.client_take_outgoing(&s.client.nc_client)
@@ -71,6 +75,10 @@ close_client :: proc(s:^Client_Slot) {
  clear(&s.cells);clear(&s.vertices);clear(&s.poses)
  s.held_move=0;s.accumulator=0;s.transport_now=0;s.canonical_hash=0;s.presented_tick=0;s.journal_epoch=0;s.input_epoch=0
  s.command_pending=false;s.command_id=0;s.command_ok=false;s.command_serial=0
+ s.topology_accepted=0;s.topology_from=0;s.accepted_revision=0;s.accepted_epoch=0
+}
+fail_client :: proc(s:^Client_Slot,code:u32,reason:string) -> u32 {
+ delete(s.last_error);s.last_error=strings.clone(reason);close_client(s);return code
 }
 @(export)
 bom_abi_version :: proc "c" () -> u32 { return 1 }
@@ -122,19 +130,19 @@ bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
  if info==nil || info.struct_size<u32(size_of(BomConnectInfo)) || info.version!=1 || info.port==0 || info.port>65535 || info.token_length>128 || (info.token_length>0 && info.token==nil) || info.reserved!=0 { return BAD_ARGUMENT }
  close_client(s)
  delete(s.last_error);s.last_error=""
- if !nc.socket_open(&s.socket) { return IO_ERROR }
+ if !nc.socket_open(&s.socket) { return fail_client(s,IO_ERROR,"could not open IPv4 UDP socket") }
  ip:=info.ipv4
  s.endpoint=nc.address_make({u8(ip>>24),u8(ip>>16),u8(ip>>8),u8(ip)},u16(info.port))
  if info.token_length>0 { s.token=strings.clone(string(info.token[:info.token_length])) }
  core.net_client_init(&s.client,nc.random_salt(),0)
  s.client.real_gate=true;s.client.real_host_token=s.token;s.client.verify=true
- s.connection_generation+=1;s.live=true
+ s.connection_generation+=1;s.live=true;s.last_connection_state=u32(nc.Client_State.Connecting)
  return OK
 }
 @(export)
 bom_client_disconnect :: proc "c" (handle:u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
- if s.acquired { return BUSY };close_client(s);return OK
+ if s.acquired { return BUSY };close_client(s);s.last_connection_state=u32(nc.Client_State.Disconnected);return OK
 }
 @(export)
 bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32 {
@@ -231,11 +239,13 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
    copy(history[:256],history[len(history)-256:])
    resize(&s.client.stats.delay_history,256)
   }
-  if s.input_error!=OK { error:=s.input_error;s.input_error=OK;close_client(s);return error }
-  collected:=collect_presented(s);if collected!=OK { close_client(s);return collected }
+  if s.input_error!=OK { error:=s.input_error;s.input_error=OK;return fail_client(s,error,"native input queue overflow; reconnect required") }
+  collected:=collect_presented(s);if collected!=OK { return fail_client(s,collected,"invalid or overflowing native presentation; reconnect required") }
   s.accumulator-=core.NET_STEP_DT;s.next_tick+=core.NET_STEP_DT
  }
  nc.client_update(&s.client.nc_client,s.transport_now);flush(s)
+ s.last_connection_state=u32(s.client.nc_client.state)
+ if s.client.real_reason!="" || s.client.nc_client.state==.Failed || s.client.nc_client.state==.Timed_Out || s.client.nc_client.state==.Disconnected { return fail_client(s,IO_ERROR,"connection closed, rejected or timed out; reconnect required") }
  return OK
 }
 @(export)
@@ -252,22 +262,23 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
   presented:=s.client.clock
   collected:=collect_presented(s)
   s.client.clock=fixed_clock
-  if collected!=OK { close_client(s);return collected }
+  if collected!=OK { return fail_client(s,collected,"invalid or overflowing fractional presentation; reconnect required") }
   s.presented_tick=presented
  }
  scene:=&s.client.rep.scene
  if !s.has_geometry || s.cached_epoch!=s.client.epoch || s.cached_revision!=scene.structure_revision {
+  s.topology_sequence+=1;s.topology_from=s.accepted_epoch==s.client.epoch?s.accepted_revision:0
   clear(&s.cells);clear(&s.vertices)
   for sub in scene.subdivisions {
    if !sub.live { continue }
-   if sub.material<0 || sub.material>=len(scene.materials) || len(sub.outline.points)<3 || !core.valid_vec(sub.rest_center) { close_client(s);return IO_ERROR }
-   if len(s.cells)>=100000 || len(s.vertices)+len(sub.outline.points)>1000000 { close_client(s);return OVERFLOW }
+   if sub.material<0 || sub.material>=len(scene.materials) || len(sub.outline.points)<3 || !core.valid_vec(sub.rest_center) { return fail_client(s,IO_ERROR,"invalid presented cell geometry or material") }
+   if len(s.cells)>=100000 || len(s.vertices)+len(sub.outline.points)>1000000 { return fail_client(s,OVERFLOW,"presented geometry exceeds capacity") }
    m:=scene.materials[sub.material];kind:=core.Ent_Kind.Piece;if m.flexibility>0 { kind=.Rubber }
    color:=u32(m.color[0])|(u32(m.color[1])<<8)|(u32(m.color[2])<<16)|0xff000000
    pivot:=sub.rest_center
    if kind==.Piece { if row,found:=scene.piece_rows[sub.owner];found { pivot=scene.pieces[row].ref_rest } }
    append(&s.cells,BomCell{id=sub.id,piece_id=sub.owner,material=u32(sub.material),pose_kind=u32(kind),rest_x=sub.rest_center.x,rest_y=sub.rest_center.y,pivot_x=pivot.x,pivot_y=pivot.y,vertex_start=u32(len(s.vertices)),vertex_count=u32(len(sub.outline.points)),color_rgba=color})
-   for p in sub.outline.points { if !core.valid_vec(p) { close_client(s);return IO_ERROR };append(&s.vertices,BomVertex{p.x,p.y}) }
+   for p in sub.outline.points { if !core.valid_vec(p) { return fail_client(s,IO_ERROR,"nonfinite presented outline") };append(&s.vertices,BomVertex{p.x,p.y}) }
   }
   s.cached_epoch=s.client.epoch;s.cached_revision=scene.structure_revision;s.has_geometry=true
  }
@@ -276,7 +287,7 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
  if s.client.rep.has_baseline {
   core.net_client_ensure_anchored(&s.client)
   for piece in scene.pieces {
-   if piece.live && (piece.material<0 || piece.material>=len(scene.materials)) { close_client(s);return IO_ERROR }
+   if piece.live && (piece.material<0 || piece.material>=len(scene.materials)) { return fail_client(s,IO_ERROR,"invalid presented piece material") }
    if !piece.live || !s.client.anchored[piece.id] || scene.materials[piece.material].flexibility>0 { continue }
    if _,exists:=s.client.drawn[core.ent_key(.Piece,piece.id)];!exists { append(&s.poses,BomPose{id=piece.id,kind=u32(core.Ent_Kind.Piece),x=piece.ref_rest.x,y=piece.ref_rest.y}) }
   }
@@ -289,6 +300,11 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
  local_id:=u32(0xffffffff);if s.live && s.client.nc_client.client_index>=0 { local_id=u32(s.client.nc_client.client_index) }
  s.sample_sequence+=1;s.ack_event_id=0;if len(s.events)>0 { s.ack_event_id=s.events[len(s.events)-1].id }
  sample^=BomSample{struct_size=u32(size_of(BomSample)),version=1,connection_generation=s.connection_generation,epoch=s.client.epoch,connection_state=u32(s.client.nc_client.state),revision=scene.structure_revision,sample_sequence=s.sample_sequence,presentation_tick=s.presented_tick,canonical_hash=s.canonical_hash,input_count=u64(s.client.stats.input_count),stall_count=s.stall_count,local_player_id=local_id,flags=flags,cell_count=u32(len(s.cells)),vertex_count=u32(len(s.vertices)),pose_count=u32(len(s.poses)),event_count=u32(len(s.events)),cells=raw_data(s.cells),vertices=raw_data(s.vertices),poses=raw_data(s.poses),events=raw_data(s.events),error_text=raw_data(s.client.real_reason),error_length=u32(len(s.client.real_reason))}
+ sample.received_epoch=s.client.received.scene.epoch;sample.received_revision=s.client.received.scene.structure_revision
+ if !s.live { sample.connection_state=s.last_connection_state }
+ if s.client.received.has_baseline { sample.received_flags=1 }
+ sample.transaction_id=s.topology_sequence;sample.effective_tick=s.client.rep.tick;sample.from_revision=s.topology_from;sample.to_revision=scene.structure_revision
+ if s.topology_accepted!=s.topology_sequence && s.client.rep.has_baseline { sample.transaction_flags=1;if s.accepted_epoch!=s.client.epoch { sample.transaction_flags|=2 } }
  s.acquired=true;return OK
 }
 @(export)
@@ -302,6 +318,7 @@ bom_client_ack_sample :: proc "c" (handle,sequence:u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
  if s.acquired { return BUSY };if sequence!=s.sample_sequence { return BAD_ARGUMENT }
  for len(s.events)>0 && s.events[0].id<=s.ack_event_id { ordered_remove(&s.events,0) }
+ s.topology_accepted=s.topology_sequence;s.accepted_revision=s.cached_revision;s.accepted_epoch=s.cached_epoch
  return OK
 }
 @(export)
@@ -348,7 +365,7 @@ bom_client_get_command_result :: proc "c" (handle:u64,result:^BomCommandResult) 
 bom_client_get_stats :: proc "c" (handle:u64,stats:^BomStats) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
  if stats==nil || stats.struct_size<u32(size_of(BomStats)) || stats.version!=1 { return BAD_ARGUMENT }
- flags:=u32(0);if s.live { flags|=1 };if s.acquired { flags|=2 };if s.client.real_is_host { flags|=4 }
+ flags:=u32(0);if s.live { flags|=1 };if s.acquired { flags|=2 };if s.client.real_is_host { flags|=4 };if s.client.stats.blast_rejections_seen>0 { flags|=8 }
  stats^=BomStats{struct_size=u32(size_of(BomStats)),version=1,connection_generation=s.connection_generation,input_count=u64(s.client.stats.input_count),stall_count=s.stall_count,presentation_tick=s.presented_tick,fixed_tick=s.client.clock,held_queued=u32(len(s.held)),jumps_queued=u32(len(s.jumps)),actions_queued=u32(len(s.actions)),events_queued=u32(len(s.events)),reliable_queued=u32(len(s.client.queue)),structure_errors=u32(s.client.stats.structure_errors),frames_complete=u32(s.client.stats.frames_complete),flags=flags,owned_bytes=u64(s.allocations.current_memory_allocated),peak_owned_bytes=u64(s.allocations.peak_memory_allocated),live_allocations=u64(len(s.allocations.allocation_map))}
  return OK
 }

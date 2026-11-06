@@ -79,6 +79,18 @@ namespace Bom.Native {
  public IntPtr error_text;
  public uint error_length;
  public uint reserved;
+ public uint received_epoch;
+ public uint received_flags;
+ public ulong received_revision;
+ public ulong transaction_id;
+ public ulong effective_tick;
+ public ulong from_revision;
+ public ulong to_revision;
+ public uint transaction_flags;
+ public uint catalog_revision;
+ public ulong catalog_hash;
+ public uint owner_prediction_status;
+ public uint round_state;
 }
 [StructLayout(LayoutKind.Sequential)] public struct BomBuildInfo {
  public uint struct_size;

@@ -318,14 +318,14 @@ net_client_clock_adjusts_by_at_most_five_percent_and_snaps :: proc(t: ^testing.T
  c.newest_complete=1000; c.delay=2; c.clock=990
  net_client_update_clock(&c)
  testing.expect(t,c.clock>990+1 && math.abs(c.clock-991.05)<1e-9 && c.stats.snaps==0,"far behind: rate is capped at +5%")
- c.clock=1010; net_client_update_clock(&c)
- testing.expect(t,math.abs(c.clock-1010.95)<1e-9,"far ahead: rate is capped at -5%")
- c.clock=997.9; net_client_update_clock(&c)
+ c.delay=12;c.clock=995; net_client_update_clock(&c)
+ testing.expect(t,math.abs(c.clock-995.95)<1e-9,"ahead of target within received poses: rate is capped at -5%")
+ c.delay=2;c.clock=997.9; net_client_update_clock(&c)
  testing.expect(t,math.abs(c.clock-998.9)<0.01,"on target: real time")
  c.clock=900; net_client_update_clock(&c)
  testing.expect(t,c.clock==998 && c.stats.snaps==1,"more than 0.5 s off: snap")
  c.clock=1031; net_client_update_clock(&c)
- testing.expect(t,c.clock==998 && c.stats.snaps==2)
+ testing.expect(t,c.clock==1000 && c.stats.snaps==2,"an injected invalid clock is bounded by the newest received pose")
 }
 @(test)
 net_client_delay_adapts_to_jitter_and_loss :: proc(t: ^testing.T) {

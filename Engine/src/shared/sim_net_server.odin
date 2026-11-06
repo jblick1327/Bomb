@@ -48,6 +48,7 @@ Net_Server :: struct {
  srv: nc.Server,
  repl: Repl_Server,
  clients: [nc.MAX_CLIENTS]Net_Server_Client,
+ real_hash_generation: [nc.MAX_CLIENTS]u64,
  tick: u64,
  frame_epoch: u32,
  current: map[u64]Net_Entity,
@@ -105,7 +106,12 @@ net_server_destroy :: proc(ns: ^Net_Server) {
 }
 
 net_send_reliable_parts :: proc(ns: ^Net_Server,client: int,out: ^Repl_Output) {
- for part in out.parts { if nc.server_send_reliable(&ns.srv,client,part) { ns.reliable_bytes+=len(part) } }
+ queued:=true
+ for part in out.parts { if nc.server_send_reliable(&ns.srv,client,part) { ns.reliable_bytes+=len(part) } else { queued=false } }
+ if ns.record_hashes && ns.real_logging {
+  s:=&ns.game.world.scene
+  fmt.printf("HASH EXPECT client=%d connection=%d epoch=%d revision=%d tick=%d queued=%s\n",client,ns.real_hash_generation[client],s.epoch,s.structure_revision,ns.tick,queued?"yes":"no")
+ }
 }
 
 net_record_hash :: proc(ns: ^Net_Server) {
@@ -116,6 +122,7 @@ net_record_hash :: proc(ns: ^Net_Server) {
 }
 
 net_server_join :: proc(ns: ^Net_Server,index: int) {
+ ns.real_hash_generation[index]+=1
  c:=&ns.clients[index]
  net_client_state_clear(c)
  if c.priority==nil { c.priority=make(map[u64]f32) }
@@ -131,6 +138,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
 }
 
 net_server_leave :: proc(ns: ^Net_Server,index: int) {
+ if ns.record_hashes && ns.real_logging { fmt.printf("HASH CLOSED client=%d connection=%d tick=%d\n",index,ns.real_hash_generation[index],ns.tick) }
  net_client_state_clear(&ns.clients[index])
  ns.clients[index].active=false
  ns.clients[index].is_host=false
@@ -342,9 +350,11 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
     epoch:=nc.read_u32(&r);revision:=nc.read_u64(&r);hash:=nc.read_u64(&r)
     if !r.ok || r.pos!=len(ev.data) { continue }
     ns.real_hash_checks+=1
+    result:="unrecorded"
     if expected,found:=ns.hashes[net_hash_key(epoch,revision)]; found {
-     if expected!=hash { ns.real_hash_mismatch+=1 }
+     if expected!=hash { ns.real_hash_mismatch+=1;result="mismatch" } else { result="match" }
     } else { ns.real_hash_unrecorded+=1 }
+    if ns.real_logging { fmt.printf("HASH REPORT client=%d connection=%d epoch=%d revision=%d hash=%d tick=%d result=%s\n",ev.client,ns.real_hash_generation[ev.client],epoch,revision,hash,ns.tick,result) }
    }
   }
  }
