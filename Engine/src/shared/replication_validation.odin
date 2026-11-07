@@ -14,6 +14,20 @@ repl_valid_cell :: proc(c:Repl_Cell,materials:int) -> bool {
  for p in c.outline { if !valid_vec(p) { return false } }
  return true
 }
+repl_valid_source_binding :: proc(s:^Scene,c:Repl_Cell,added_materials:[]Material=nil) -> bool {
+ if s.catalog==nil {return true}
+ for source in s.catalog.sources {
+  if source.identity!=c.provenance.source_identity {continue}
+  motion:=Motion_Policy.Dynamic;if source.motion=="fixed" {motion=.Fixed};if source.motion=="anchored" {motion=.Anchored}
+  if c.provenance.motion!=motion||(c.provenance.damage==.Indestructible)!=(source.damage=="indestructible") {return false}
+  for part in source.parts {
+   if part.part_id!=c.provenance.source_part_id {continue}
+   name:="";if c.material<len(s.materials)&&c.material>=0 {name=s.materials[c.material].name}else if c.material>=len(s.materials)&&c.material-len(s.materials)<len(added_materials) {name=added_materials[c.material-len(s.materials)].name}
+   sub:=Subdivision{outline=Polygon{c.outline},provenance=c.provenance}
+   return name==part.material&&cell_pinned(s,sub)==c.provenance.pinned
+  };return false
+ };return false
+}
 repl_valid_connection :: proc(c:Repl_Connection) -> bool {
  if c.id==0 || c.a==0 || c.b==0 || c.a==c.b { return false }
  for g in c.glue { if !valid_vec(g.p) || !valid_vec(g.q) || !finite(g.w) { return false } }
@@ -42,7 +56,7 @@ repl_validate_delta :: proc(rep:^Replica,materials:[]Material,cells_added:[]Repl
  for id in conns_removed { delete_key(&conns,id) }
  for m in materials { if !repl_valid_material(m) { return "invalid delta material" } }
  for c in cells_added {
-  if !repl_valid_cell(c,len(s.materials)+len(materials)) || cells[c.id] { return "invalid or duplicate delta cell" }
+  if !repl_valid_cell(c,len(s.materials)+len(materials)) || !repl_valid_source_binding(s,c,materials) || cells[c.id] { return "invalid or duplicate delta cell/source binding" }
   cells[c.id]=true
   vertices+=len(c.outline)
  }

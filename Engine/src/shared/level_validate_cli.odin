@@ -1,6 +1,5 @@
 package shared
 import os "core:os"
-import json "core:encoding/json"
 import fmt "core:fmt"
 
 level_hash_text :: proc(hash:[32]u8) -> string { bytes:=make([]u8,64);digits:="0123456789abcdef";for byte,i in hash {bytes[i*2]=digits[byte>>4];bytes[i*2+1]=digits[byte&15]};return transmute(string)bytes }
@@ -26,8 +25,8 @@ level_validate_cli :: proc(input,report_path:string) -> bool {
    if sub.fixture_count==0 {fmt.eprintln("Source has a cell without collision geometry:",source.identity);return false};report.fixture_count+=sub.fixture_count
   };append(&report.sources,row)
  }
- encoded,e:=json.marshal(report,{pretty=true});defer delete(encoded)
- if e!=nil||os.write_entire_file(report_path,encoded)!=nil {fmt.eprintln("Cannot write validation report:",report_path);return false}
+ encoded,encoded_ok:=exact_json_encode(report,true);defer delete(encoded)
+ if !encoded_ok||os.write_entire_file(report_path,encoded)!=nil {fmt.eprintln("Cannot write validation report:",report_path);return false}
  normalized:=fmt.aprintf("%s.layout.json",report_path);defer delete(normalized)
  if os.write_entire_file(normalized,transmute([]u8)w.scene.level_json)!=nil {fmt.eprintln("Cannot write normalized catalog:",normalized);return false}
  fmt.printf("LEVEL PASS sources=%d parts=%d cells=%d fixtures=%d gameplay=%s catalog=%s\n",report.source_count,report.part_count,report.cell_count,report.fixture_count,manifest,catalog)

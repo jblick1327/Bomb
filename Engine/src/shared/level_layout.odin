@@ -175,8 +175,8 @@ decode_level_layout :: proc(data:[]u8) -> (level:Level_Layout,ok:bool,problem:st
  if json.unmarshal(data,&wire,allocator=mem.arena_allocator(&arena))!=nil { return {},false,"Invalid version 4 layout JSON" }
  if wire.gameplay_config.version==0&&wire.gameplay_config_id=="bom-default-v1" { wire.gameplay_config=DEFAULT_GAMEPLAY_CONFIG }
  if reason:=level_layout_problem(&wire);reason!="" { return {},false,reason }
- canonical,err:=json.marshal(wire);defer delete(canonical)
- if err!=nil||len(canonical)>NET_APP_MAX_LAYOUT { return {},false,"Canonical level catalog exceeds the 200000-byte upload bound" }
+ canonical,canonical_ok:=exact_json_encode(wire,false);defer delete(canonical)
+ if !canonical_ok||len(canonical)>NET_APP_MAX_LAYOUT { return {},false,"Canonical level catalog exceeds the 200000-byte upload bound" }
  if json.unmarshal(data,&level)!=nil { destroy_level_layout(&level);return {},false,"Cannot retain validated level layout" }
  if level.gameplay_config.version==0 { level.gameplay_config=wire.gameplay_config }
  return level,true,""

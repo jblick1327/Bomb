@@ -470,7 +470,7 @@ replica_apply_baseline :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
   c:=repl_read_cell(r); defer delete(c.outline)
   if !r.ok { return "truncated cells" }
   vertices+=len(c.outline)
-  if !repl_valid_cell(c,len(s.materials)) || c.id in s.sub_rows || vertices>REPL_MAX_VERTICES { return "invalid or duplicate baseline cell" }
+  if !repl_valid_cell(c,len(s.materials)) || !repl_valid_source_binding(s,c) || c.id in s.sub_rows || vertices>REPL_MAX_VERTICES { return "invalid or duplicate baseline cell/source binding" }
   replica_add_cell(rep,c)
  }
  conns:[dynamic]Repl_Connection; defer { for c in conns { delete(c.glue) }; delete(conns) }

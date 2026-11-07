@@ -82,12 +82,13 @@ static class Program {
  }
  static void Main(string[] args) {
   var identity=new BomBuildInfo{struct_size=(uint)Marshal.SizeOf<BomBuildInfo>(),version=1};Ok(BomNative.bom_build_info(ref identity),"build identity");
-  Check(identity.abi_major==1 && identity.source_build_tag==BomNative.bom_build_tag(),"native identity matches ABI");
+  Check(identity.abi_major==BomNative.AbiVersion && identity.abi_minor==BomNative.AbiMinorVersion && identity.source_build_tag==BomNative.bom_build_tag(),"native identity matches generated ABI version");
   string expected=Environment.GetEnvironmentVariable("BOM_EXPECT_BUILD_TAG");if(!string.IsNullOrEmpty(expected))Check(ulong.Parse(expected)==identity.source_build_tag,"loaded DLL source identity");
   Console.WriteLine($"NATIVE ID tag={identity.source_build_tag} protocol={identity.game_protocol} canonical={identity.canonical_version} compiler={Marshal.PtrToStringUTF8(identity.compiler_version,(int)identity.compiler_version_length)}:{Marshal.PtrToStringUTF8(identity.compiler_hash,(int)identity.compiler_hash_length)}");
   Layouts();Lifetimes();Console.WriteLine("PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles");
   if(args.Length==0)return;
   uint port=uint.Parse(args[0]);double seconds=args.Length>1?double.Parse(args[1]):20;double resetAfter=args.Length>2?double.Parse(args[2]):5;
+  if(Environment.GetEnvironmentVariable("BOM_TEST_LEVEL_PROFILE")=="1"){LevelProfile.Run(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_PROFILE")=="1"){PredictionProfile.Run(port,seconds);return;}
   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}
   ulong[] handles={Create(),Create()};ulong[] epochs={0,0},revisions={ulong.MaxValue,ulong.MaxValue};bool[] ready={false,false};

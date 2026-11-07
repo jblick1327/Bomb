@@ -97,7 +97,7 @@ bom_build_tag :: proc "c" () -> u64 { return BUILD_TAG }
 @(export)
 bom_build_info :: proc "c" (info:^BomBuildInfo) -> u32 {
  if info==nil || info.struct_size<u32(size_of(BomBuildInfo)) || info.version!=1 { return BAD_ARGUMENT }
- info^=BomBuildInfo{struct_size=u32(size_of(BomBuildInfo)),version=1,abi_major=1,abi_minor=2,game_protocol=core.GAME_PROTOCOL_VERSION,canonical_version=u32(core.REPL_CANON_VERSION),source_build_tag=BUILD_TAG,game_build=raw_data(string(core.GAME_BUILD_ID)),game_build_length=u32(len(core.GAME_BUILD_ID)),compiler_version=raw_data(string(ODIN_VERSION)),compiler_version_length=u32(len(ODIN_VERSION)),compiler_hash=raw_data(string(ODIN_VERSION_HASH)),compiler_hash_length=u32(len(ODIN_VERSION_HASH))}
+ info^=BomBuildInfo{struct_size=u32(size_of(BomBuildInfo)),version=1,abi_major=BOM_ABI_MAJOR,abi_minor=BOM_ABI_MINOR,game_protocol=core.GAME_PROTOCOL_VERSION,canonical_version=u32(core.REPL_CANON_VERSION),source_build_tag=BUILD_TAG,game_build=raw_data(string(core.GAME_BUILD_ID)),game_build_length=u32(len(core.GAME_BUILD_ID)),compiler_version=raw_data(string(ODIN_VERSION)),compiler_version_length=u32(len(ODIN_VERSION)),compiler_hash=raw_data(string(ODIN_VERSION_HASH)),compiler_hash_length=u32(len(ODIN_VERSION_HASH))}
  return OK
 }
 // Pure shape metadata keeps cosmetic fallback feet/radii aligned with the
@@ -331,6 +331,7 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
  s.sample_sequence+=1;s.ack_event_id=0;if len(s.events)>0 { s.ack_event_id=s.events[len(s.events)-1].id }
  sample^=BomSample{struct_size=u32(size_of(BomSample)),version=1,connection_generation=s.connection_generation,epoch=s.client.epoch,connection_state=u32(s.client.nc_client.state),revision=scene.structure_revision,sample_sequence=s.sample_sequence,presentation_tick=s.presented_tick,canonical_hash=s.canonical_hash,input_count=u64(s.client.stats.input_count),stall_count=s.stall_count,local_player_id=local_id,flags=flags,cell_count=u32(len(s.cells)),vertex_count=u32(len(s.vertices)),pose_count=u32(len(s.poses)),event_count=u32(len(s.events)),cells=raw_data(s.cells),vertices=raw_data(s.vertices),poses=raw_data(s.poses),events=raw_data(s.events),error_text=raw_data(s.client.real_reason),error_length=u32(len(s.client.real_reason))}
  sample.received_epoch=s.client.received.scene.epoch;sample.received_revision=s.client.received.scene.structure_revision
+ if scene.catalog!=nil {hash:=transmute([4]u64)core.level_sha256(transmute([]u8)scene.level_json);sample.catalog_revision=scene.epoch;sample.catalog_hash=hash[0]}
  if s.client.prediction!=nil { sample.owner_prediction_status=u32(s.client.prediction.mode) }
  if !s.live { sample.connection_state=s.last_connection_state }
  if s.client.received.has_baseline { sample.received_flags=1 }

@@ -1,5 +1,4 @@
 package shared
-import json "core:encoding/json"
 import strings "core:strings"
 import math "core:math"
 
@@ -28,7 +27,7 @@ decode_unity_layout :: proc(data:[]u8) -> (layout:Layout,seed:u8,ok:bool,problem
 scene_apply_level :: proc(s:^Scene,level:^Level_Layout) {
  s.level_policy=level_resolve_policy(level)
  s.gameplay_manifest=level_gameplay_hash(level);s.config_hash=gameplay_config_hash(level.gameplay_config)
- bytes,err:=json.marshal(level^);assert(err==nil);assert(len(bytes)<=NET_APP_MAX_LAYOUT)
+ bytes,encoded:=exact_json_encode(level^,false);assert(encoded);assert(len(bytes)<=NET_APP_MAX_LAYOUT)
  s.level_json=transmute(string)bytes
  copy,valid,_:=decode_level_layout(bytes);assert(valid);s.catalog=new(Level_Layout);s.catalog^=copy
  for source in level.sources { for part in source.parts {

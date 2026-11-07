@@ -47,3 +47,12 @@ known_manifest_mismatch_after_level_change_never_reaches_presented_topology :: p
  for part in next.parts {net_client_on_reliable(&c,part)}
  t.expect(test,c.real_reason!=""&&c.rep.scene.epoch==1&&c.received.scene.epoch==2&&len(c.queue)==0,"incompatible catalog must not become visible or queued")
 }
+@(test)
+catalog_roundtrip_preserves_tiny_config_and_matrix_float_bits_and_gameplay_fingerprint :: proc(test:^t.T) {
+ level,ok,reason:=decode_level_layout(transmute([]u8)string(LEVEL_V4_TEST));t.expect(test,ok,reason);if !ok {return};defer destroy_level_layout(&level)
+ level.gameplay_config.player.jump_buffer=1.2345678e-9;level.sources[0].group_to_rest[4]=1.2345678e-9
+ scene:=new_scene(0);defer scene_destroy(&scene);scene_apply_level(&scene,&level)
+ t.expect(test,scene.catalog!=nil&&transmute(u32)scene.catalog.gameplay_config.player.jump_buffer==transmute(u32)level.gameplay_config.player.jump_buffer&&transmute(u32)scene.catalog.sources[0].group_to_rest[4]==transmute(u32)level.sources[0].group_to_rest[4])
+ copy:=new_scene(0);defer scene_destroy(&copy);t.expect(test,scene_restore_catalog_data(&copy,scene.level_json,scene.source_parts[:]))
+ t.expect(test,copy.gameplay_manifest==scene.gameplay_manifest&&copy.config_hash==scene.config_hash,"catalog text may not round tuning and invalidate a legitimate bundled manifest")
+}

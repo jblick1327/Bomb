@@ -2,6 +2,7 @@ package shared
 import t "core:testing"
 import json "core:encoding/json"
 import math "core:math"
+import strings "core:strings"
 
 LEVEL_V4_TEST :: `{"kind":"bom-layout","version":4,"seed":42,"next_identity":9007199254741002,
 "level_id":"unit-level","gameplay_config_id":"bom-default-v1","catalog_id":"unit-catalog",
@@ -49,4 +50,14 @@ level_v4_compound_hole_stays_empty_and_overlaps_are_detected :: proc(test:^t.T) 
  parts:=[4][]Vec2{bottom[:],top[:],left[:],right[:]};area:f32
  for part,i in parts { t.expect_value(test,level_polygon_problem(part,Level_Bounds{{-1,-1},{5,5}}),"");area+=polygon_area(Polygon{part});t.expect(test,!level_parts_overlap(part,hole[:]));for other in parts[:i] { t.expect(test,!level_parts_overlap(part,other)) } }
  t.expect(test,math.abs(area-12)<1e-6&&level_parts_overlap(bottom[:],overlap[:]))
+}
+@(test)
+cross_source_xy_overlap_requires_explicit_intent_and_spawn_capsules_cannot_start_in_solid :: proc(test:^t.T) {
+ level,ok,reason:=decode_level_layout(transmute([]u8)string(LEVEL_V4_TEST));t.expect(test,ok,reason);if !ok {return};defer destroy_level_layout(&level)
+ bytes,err:=json.marshal(level.sources[0]);t.expect(test,err==nil);defer delete(bytes)
+ duplicate:Level_Source;t.expect(test,json.unmarshal(bytes,&duplicate)==nil);duplicate.identity+=1;append(&level.sources,duplicate);level.next_identity+=1
+ t.expect(test,strings.contains(level_layout_problem(&level),"explicit intended overlap"))
+ append(&level.allowed_overlaps,Level_Allowed_Overlap{{level.sources[0].identity,level.sources[0].parts[0].part_id},{duplicate.identity,duplicate.parts[0].part_id},strings.clone("Deliberate coincident proxy test; both remain real XY solids")})
+ t.expect_value(test,level_layout_problem(&level),"")
+ level.spawns[0]={2,1};t.expect(test,strings.contains(level_layout_problem(&level),"capsule spawn overlaps"))
 }

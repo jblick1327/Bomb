@@ -343,6 +343,7 @@ namespace Bom.Native {
 }
 public static class BomNative {
  public const uint AbiVersion = 1;
+ public const uint AbiMinorVersion = 3;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern ulong bom_build_tag();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_create(ref BomCreateInfo info, ref ulong handle);
