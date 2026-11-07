@@ -4,6 +4,7 @@ import "base:runtime"
 import "core:math"
 import "core:mem"
 import "core:strings"
+import "core:fmt"
 import w "core:sys/windows"
 import nc "../netcode"
 import core "../shared"
@@ -30,6 +31,7 @@ Client_Slot :: struct {
  last_error: string,
  client: core.Net_Client,
  socket: nc.Socket,
+ local_port:u16,last_salt:u32,
  endpoint: nc.Address,
  token: string,
  connection_generation,sample_sequence,event_sequence,ack_event_id: u64,
@@ -149,11 +151,13 @@ bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
  if info==nil || info.struct_size<u32(size_of(BomConnectInfo)) || info.version!=1 || info.port==0 || info.port>65535 || info.token_length>128 || (info.token_length>0 && info.token==nil) || info.reserved!=0 { return BAD_ARGUMENT }
  close_client(s)
  delete(s.last_error);s.last_error=""
- if !nc.socket_open(&s.socket) { return fail_client(s,IO_ERROR,"could not open IPv4 UDP socket") }
+ if !nc.socket_open(&s.socket,s.local_port) { return fail_client(s,IO_ERROR,"could not bind or reopen the local IPv4 UDP port") }
+ s.local_port=nc.socket_port(&s.socket)
  ip:=info.ipv4
  s.endpoint=nc.address_make({u8(ip>>24),u8(ip>>16),u8(ip>>8),u8(ip)},u16(info.port))
  if info.token_length>0 { s.token=strings.clone(string(info.token[:info.token_length])) }
- core.net_client_init(&s.client,nc.random_salt(),0)
+ salt:=nc.random_salt();for salt==s.last_salt {salt=nc.random_salt()};s.last_salt=salt
+ core.net_client_init(&s.client,salt,0)
  s.client.real_gate=true;s.client.real_host_token=s.token;s.client.verify=true
  s.client.has_expected_manifest=s.has_expected_manifest;s.client.expected_manifest=s.expected_manifest
  s.client.prediction_enabled=!s.prediction_disabled
@@ -274,7 +278,7 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
  }
  nc.client_update(&s.client.nc_client,s.transport_now);flush(s)
  s.last_connection_state=u32(s.client.nc_client.state)
- if s.client.real_reason!="" || s.client.nc_client.state==.Failed || s.client.nc_client.state==.Timed_Out || s.client.nc_client.state==.Disconnected { return fail_client(s,IO_ERROR,"connection closed, rejected or timed out; reconnect required") }
+ if s.client.real_reason!="" || s.client.nc_client.state==.Failed || s.client.nc_client.state==.Timed_Out || s.client.nc_client.state==.Disconnected { reason:=fmt.aprintf("connection %v: %s; reconnect required",s.client.nc_client.state,s.client.nc_client.reject_reason);defer delete(reason);return fail_client(s,IO_ERROR,reason) }
  return OK
 }
 @(export)
