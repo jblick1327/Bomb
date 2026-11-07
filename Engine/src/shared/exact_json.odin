@@ -3,6 +3,7 @@ package shared
 import "base:runtime"
 import "core:encoding/json"
 import "core:reflect"
+import "core:math"
 import "core:strconv"
 import "core:strings"
 
@@ -28,6 +29,15 @@ exact_json_value :: proc(b: ^strings.Builder,v: any,pretty: bool,depth: int) -> 
  ti:=runtime.type_info_base(type_info_of(v.id))
  #partial switch info in ti.variant {
  case runtime.Type_Info_Float:
+  if ti.id==f64 {
+   f:=(^f64)(v.data)^
+   if math.is_nan(f)||math.is_inf(f) {return false}
+   if transmute(u64)f==0x8000000000000000 {strings.write_string(b,"-0.0");return true}
+   buf:[64]byte
+   number:=strconv.write_float(buf[:],f,'g',-1,64)
+   if len(number)>0&&number[0]=='+' {number=number[1:]}
+   strings.write_string(b,number);return true
+  }
   if ti.id!=f32 { return false }
   f:=(^f32)(v.data)^
   if !finite(f) { return false }

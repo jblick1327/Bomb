@@ -56,3 +56,10 @@ catalog_roundtrip_preserves_tiny_config_and_matrix_float_bits_and_gameplay_finge
  copy:=new_scene(0);defer scene_destroy(&copy);t.expect(test,scene_restore_catalog_data(&copy,scene.level_json,scene.source_parts[:]))
  t.expect(test,copy.gameplay_manifest==scene.gameplay_manifest&&copy.config_hash==scene.config_hash,"catalog text may not round tuning and invalidate a legitimate bundled manifest")
 }
+
+@(test)
+validation_report_serializes_double_precision_area :: proc(test:^t.T) {
+ report:=Level_Source_Report{identity=9007199254741001,area=1.23456789012345e-9}
+ encoded,ok:=exact_json_encode(report,false);defer delete(encoded)
+ t.expect(test,ok&&strings.contains(string(encoded),"1.23456789012345e-09"),"reports must preserve f64 values instead of failing serialization")
+}
