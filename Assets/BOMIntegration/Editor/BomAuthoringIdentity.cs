@@ -53,7 +53,7 @@ using UnityEngine.SceneManagement;
   var records=new Dictionary<string,BomIdentityRecord>();var owners=new Dictionary<ulong,string>();var used=new HashSet<ulong>();ulong next=Parse(instance.NextPartIdDecimal);if(next==0)next=1;
   foreach(var record in instance.PartIdentityRegistry){ulong id=Parse(record.IdentityDecimal);if(id==0||id>=ReservedSourceStart)continue;records[record.ObjectGlobalId]=record;used.Add(id);if(!owners.ContainsKey(id))owners[id]=record.ObjectGlobalId;if(id>=next)next=id+1;}
   foreach(var part in instance.GetComponentsInChildren<BomPhysicsPart>(true)){
-   if(part.GetComponentInParent<BomAssetInstance>()!=instance)continue;
+   if(part.GetComponentInParent<BomAssetInstance>(true)!=instance)continue;
    string key=Key(part);ulong id=part.PartId;
    if(records.TryGetValue(key,out var record))id=Parse(record.IdentityDecimal);
    else{

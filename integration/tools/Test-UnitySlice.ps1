@@ -21,7 +21,7 @@ Copy-Item -LiteralPath (Join-Path $config.OdinRoot 'build/bomcore.dll') -Destina
 $arguments=@((Join-Path $PSScriptRoot 'Run-UnityLive.py'),'--config',$ConfigPath,'--host-runner',(Join-Path $hostOutput 'Interop.dll'),'--seconds',"$Seconds",'--time-scale',"$TimeScale")
 if($PredictionOff){$arguments+='--prediction-off'}
 if($Backend -eq 'Editor'){$arguments+='--editor'}else{
- $output=Join-Path $integration "build/$Backend";New-Item -ItemType Directory -Path $output -Force|Out-Null
+ $output=Join-Path $integration "build/validation/$Backend";New-Item -ItemType Directory -Path $output -Force|Out-Null
  if(!$SkipBuild){
   $method=if($Backend -eq 'Mono'){'BomSliceBuilder.BuildMono'}else{'BomSliceBuilder.BuildIl2Cpp'}
   $oldOutput=$env:BOM_SLICE_OUTPUT

@@ -1,6 +1,6 @@
 # M6 layout, provenance and catalog contract
 
-Design checkpoint for the next milestone. M5 validation is still in progress; this file does not claim that layout v4, its exporter, or its physics policies are implemented.
+Implemented development contract for ABI 1.3 / protocol 5 / canonical 3. M5 passed on its separately preserved protocol-4 build. M6 acceptance status and executed evidence are recorded in evidence/M6; this document alone is not a passing test.
 
 ## Compatibility and authority
 
@@ -39,3 +39,15 @@ Immutable source identity/part, resolved motion flags and catalog binding partic
 The catalog/config metadata is reliable, bounded, hash-checked, versioned and epoch-scoped. Stage it with the matching baseline. Expose no mixed epoch or partially assembled catalog. The application handshake rejects a known expected gameplay-manifest mismatch before adding a player. A diagnostic client that uses the complete server-supplied gameplay data can operate without bundled art; missing or mismatched local visual content uses Tier 1 and reports the fallback.
 
 Update prediction collision construction from the same resolved cell policy, level bounds and server tuning. Historical collision versions retain the policy/config effective at their tick. The original yard, scripts and package settings remain protected; create a derived network yard and new presenters rather than editing the source scene YAML.
+
+## Implemented limits and representation
+
+The decoder uses bounded scratch parsing, then constructs a physics-free preview before accepting a layout. It caps uploads at 200,000 bytes, constructed cells at 100,000, sources at 512 and physical parts at 1,024. The conservative authoring work estimate is 500,000; the original 100,000 estimate rejected the inspected 40-by-30 ground even though the real export contains only 4,615 cells. This estimate adjustment changes neither the upload nor cell limits. Cross-source overlaps require explicit source/part endpoints and a reason; depth never exempts an XY overlap. Spawn validation tests the complete native player capsule.
+
+The embedded gameplay_config record is versioned independently and loaded at startup. Its native hash covers gravity, movement/jump tuning and bomb timing; gameplay-manifest hashing includes the resolved gameplay geometry, identities, policy and bounds while excluding cosmetic meshes, material colors, depth and source visual transforms. Catalog text preserves exact f32 bits. Validation reports also preserve f64 area totals.
+
+Scene persistence is version 3 with provenance_version 1. Old scenes and worlds resolve missing provenance as unknown/legacy. Canonical comparison for legacy captures compares every preexisting geometry/material/ownership/pose field exactly and permits only the new metadata fields; this is not a geometric tolerance. The original M2 byte-preservation evidence remains unchanged.
+
+BomCell keeps its previous stride. Separate versioned BomCatalogInfo, BomSourceBinding, BomCellBinding and BomLevelInfo records add metadata through bom_client_acquire_catalog while a matching sample is acquired. Managed code copies arrays and UTF-8 strings before releasing the sample. The 32-byte expected gameplay fingerprint is configured before connecting. Every reliable baseline includes an atomic hash-checked catalog with source/part bindings; topology cells are validated against it before presentation.
+
+For large scenes the prediction world retains every moving proxy and a bounded nearby window of immutable pinned collision cells. A swept capsule leaving that window falls back before an unsupported step. Unavailable moving-body history also falls back explicitly; the yard live evidence records both predicted and conservative frames. This does not expand the verified M5 static-profile latency claim to all dynamic yard frames.

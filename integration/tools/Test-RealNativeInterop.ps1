@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([Parameter(Mandatory=$true)][string]$ConfigPath,[ValidateRange(0,3600)][int]$Seconds=0)
+param([Parameter(Mandatory=$true)][string]$ConfigPath,[ValidateRange(0,3600)][int]$Seconds=0,[switch]$SkipBuild)
 $ErrorActionPreference='Stop'
 $integration=Split-Path -Parent $PSScriptRoot
 $config=Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
@@ -20,7 +20,7 @@ function Run([string]$Program,[string[]]$Arguments,[string]$Name) {
 }
 try {
  $env:PATH=$config.LinkerDirectory+';'+$env:PATH;$env:LIB=$config.LibraryDirectories -join ';'
- Run 'pwsh' @('-NoProfile','-File',(Join-Path $root 'scripts/build-client.ps1'),'-ConfigPath',$ConfigPath) 'live-dll-build'
+ if (!$SkipBuild) { Run 'pwsh' @('-NoProfile','-File',(Join-Path $root 'scripts/build-client.ps1'),'-ConfigPath',$ConfigPath) 'live-dll-build' }
  Run 'python' @((Join-Path $root 'scripts/generate-interop-caller.py')) 'generate-c-caller'
  $cExe=Join-Path $build 'layout-test.exe'
  Run 'cl.exe' @('/nologo','/W4',(Join-Path $root 'tests/interop/layout_test.c'),"/Fo$(Join-Path $build 'layout-test.obj')","/Fe$cExe",'/link',(Join-Path $build 'bomcore.lib'),'kernel32.lib') 'c-build'

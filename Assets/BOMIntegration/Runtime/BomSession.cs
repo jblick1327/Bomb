@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
 using Bom.Native;
 
 namespace Bom.Unity {
+public sealed class BomSourceState {
+ public BomSourceBinding Binding;
+ public string AssetKey="",CapKey="",VisualHash="";
+}
 // No managed networking or simulation. All borrowed native memory is copied
 // before release; presenters accept the complete snapshot before acknowledgement.
 public sealed class BomSession : IDisposable {
@@ -13,6 +17,10 @@ public sealed class BomSession : IDisposable {
  public BomSample Sample;
  public BomOwnerState Owner;
  public BomPredictionStats Prediction;
+ public BomCatalogInfo Catalog;
+ public BomCellBinding[] CellBindings=Array.Empty<BomCellBinding>();
+ public readonly Dictionary<ulong,BomSourceState> Sources=new Dictionary<ulong,BomSourceState>();
+ ulong catalogConnection,catalogTopologyRevision;uint catalogEpoch;
  public readonly List<BomRequestResult> RequestResults=new List<BomRequestResult>();
  ulong requestCursor,requestGeneration;
  public BomCell[] Cells=Array.Empty<BomCell>();
@@ -23,7 +31,7 @@ public sealed class BomSession : IDisposable {
  public static double Now => (double)Stopwatch.GetTimestamp()/Stopwatch.Frequency;
  public static void Check(uint result) { if(result!=0)throw new InvalidOperationException("Native client status "+result); }
  public static void VerifyLayouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo)};
   for(uint i=0;i<types.Length;i++) {
    Type t=types[i];if(Marshal.SizeOf(t)!=BomNative.bom_debug_layout(i,0))throw new InvalidOperationException(t.Name+" size differs");
    var fields=t.GetFields(BindingFlags.Instance|BindingFlags.Public);uint alignment=1;
@@ -46,6 +54,29 @@ public sealed class BomSession : IDisposable {
    Check(BomNative.bom_client_connect(Handle,ref info));
   } finally {if(text!=IntPtr.Zero)Marshal.FreeHGlobal(text);}
  }
+ public void ExpectGameplayManifest(string hex) {
+  if(string.IsNullOrEmpty(hex)){Check(BomNative.bom_client_expect_gameplay_manifest(Handle,IntPtr.Zero,0));return;}
+  if(hex.Length!=64)throw new ArgumentException("Expected gameplay manifest must contain 64 hexadecimal characters");
+  var bytes=new byte[32];for(int i=0;i<32;i++)bytes[i]=byte.Parse(hex.Substring(i*2,2),System.Globalization.NumberStyles.HexNumber,System.Globalization.CultureInfo.InvariantCulture);
+  IntPtr data=Marshal.AllocHGlobal(32);try{Marshal.Copy(bytes,0,data,32);Check(BomNative.bom_client_expect_gameplay_manifest(Handle,data,32));}finally{Marshal.FreeHGlobal(data);}
+ }
+ static string Utf8(IntPtr pointer,uint length){if(length>256||(length>0&&pointer==IntPtr.Zero))throw new InvalidOperationException("Invalid native catalog string");var bytes=new byte[length];if(length>0)Marshal.Copy(pointer,bytes,0,bytes.Length);return System.Text.Encoding.UTF8.GetString(bytes);}
+ public static string HashText(ulong a,ulong b,ulong c,ulong d){var bytes=new byte[32];Buffer.BlockCopy(new[]{a,b,c,d},0,bytes,0,32);return BitConverter.ToString(bytes).Replace("-","").ToLowerInvariant();}
+ void CopyCatalog(BomSample sample){
+  if(catalogConnection==sample.connection_generation&&catalogEpoch==sample.epoch&&catalogTopologyRevision==sample.revision)return;
+  var info=new BomCatalogInfo{struct_size=(uint)Marshal.SizeOf<BomCatalogInfo>(),version=1};Check(BomNative.bom_client_acquire_catalog(Handle,sample.sample_sequence,ref info));
+  if(info.epoch!=sample.epoch||info.binding_count!=sample.cell_count||info.source_count>512)throw new InvalidOperationException("Catalog/topology sample is incoherent");
+  Copy(info.bindings,info.binding_count,ref CellBindings);
+  var sources=new Dictionary<ulong,BomSourceState>();int stride=Marshal.SizeOf<BomSourceBinding>();
+  if(info.source_count>0&&info.sources==IntPtr.Zero)throw new InvalidOperationException("Missing native catalog array");
+  for(int i=0;i<info.source_count;i++){
+   var binding=Marshal.PtrToStructure<BomSourceBinding>(IntPtr.Add(info.sources,checked(i*stride)));
+   var source=new BomSourceState{AssetKey=Utf8(binding.asset_key,binding.asset_key_length),CapKey=Utf8(binding.cap_key,binding.cap_key_length),VisualHash=HashText(binding.visual_hash0,binding.visual_hash1,binding.visual_hash2,binding.visual_hash3)};
+   binding.asset_key=binding.cap_key=IntPtr.Zero;source.Binding=binding;sources.Add(binding.source_identity,source);
+  }
+  info.sources=info.bindings=IntPtr.Zero;Catalog=info;Sources.Clear();foreach(var source in sources)Sources.Add(source.Key,source.Value);
+  catalogConnection=sample.connection_generation;catalogEpoch=sample.epoch;catalogTopologyRevision=sample.revision;
+ }
  static void Copy<T>(IntPtr source,uint count,ref T[] target) where T:struct {
   if(count>1000000 || (count>0 && source==IntPtr.Zero))throw new InvalidOperationException("Invalid native array");
   if(target.Length<count)Array.Resize(ref target,checked((int)count));
@@ -60,8 +91,13 @@ public sealed class BomSession : IDisposable {
   }
   var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Check(BomNative.bom_client_acquire_sample(Handle,ref sample));
   try {
-   Copy(sample.cells,sample.cell_count,ref Cells);Copy(sample.vertices,sample.vertex_count,ref Vertices);
+   // Cell geometry is immutable for a native topology transaction. Copy it
+   // once; poses and events continue to be copied on every sample.
+   if(Sample.connection_generation!=sample.connection_generation||Sample.epoch!=sample.epoch||Sample.revision!=sample.revision||Sample.transaction_id!=sample.transaction_id||Sample.cell_count!=sample.cell_count||Sample.vertex_count!=sample.vertex_count){
+    Copy(sample.cells,sample.cell_count,ref Cells);Copy(sample.vertices,sample.vertex_count,ref Vertices);
+   }
    Copy(sample.poses,sample.pose_count,ref Poses);Copy(sample.events,sample.event_count,ref Events);
+   CopyCatalog(sample);
    if(sample.error_length>65536)throw new InvalidOperationException("Invalid error length");
    byte[] error=new byte[sample.error_length];if(error.Length>0)Marshal.Copy(sample.error_text,error,0,error.Length);Error=System.Text.Encoding.UTF8.GetString(error);
    // Clear pointer fields: managed users receive only the owned copies above.
