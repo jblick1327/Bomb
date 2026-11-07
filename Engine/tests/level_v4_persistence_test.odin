@@ -2,6 +2,7 @@ package main
 import t "core:testing"
 import sync "core:sync"
 import strings "core:strings"
+import shared "shared"
 
 @(test)
 authored_level_snapshot_preserves_catalog_bounds_high_ids_and_pins :: proc(test:^t.T) {
@@ -32,4 +33,14 @@ source_keys_survive_repeated_refinement_regroup_and_scene_snapshot :: proc(test:
  bytes,encoded:=encode_snapshot(&s);defer delete(bytes);t.expect(test,encoded)
  loaded,ok:=decode_snapshot(bytes);t.expect(test,ok);if !ok { return };defer scene_destroy(&loaded)
  for sub in loaded.subdivisions { t.expect(test,sub.provenance==s.subdivisions[s.sub_rows[sub.id]].provenance) }
+}
+@(test)
+odin_editor_preserves_unity_authored_metadata_and_stays_read_only :: proc(test:^t.T) {
+ sync.mutex_lock(&physics_test_mutex);defer sync.mutex_unlock(&physics_test_mutex)
+ g:=sandbox_editor_create();defer sandbox_destroy(&g)
+ data:=#load("presets/unity-policy-v4.json");t.expect(test,sandbox_load_layout_data(&g,transmute([]u8)data)&&g.layout.level!=nil&&!g.editor.editing)
+ before:=shared.level_gameplay_hash(g.layout.level);sandbox_toggle_editor(&g);t.expect(test,!g.editor.editing&&strings.contains(g.status,"read-only"))
+ bytes,encoded:=encode_layout(&g.layout,g.world.settings.seed);defer delete(bytes);t.expect(test,encoded)
+ restored,_,ok,reason:=decode_layout(bytes);t.expect(test,ok,reason);if !ok {return};defer destroy_layout(&restored)
+ t.expect(test,restored.level!=nil&&shared.level_gameplay_hash(restored.level)==before&&restored.level.sources[0].identity==9007199254741001)
 }

@@ -4,6 +4,7 @@ import "core:encoding/json"
 import "core:strings"
 
 encode_layout :: proc(layout: ^Layout,seed: u8) -> ([]byte,bool) {
+ if layout.level!=nil {return exact_json_encode(layout.level^)}
 	wire:=Wire_Layout{kind="bom-layout",version=3,seed=u64(seed),next_identity=layout.next_identity}
 	defer { delete(wire.objects); delete(wire.materials);delete(wire.glue) }
  append(&wire.glue,..layout.glue[:])
@@ -22,7 +23,7 @@ sandbox_replace_layout :: proc(game: ^Sandbox,layout: Layout,seed: u8) {
 	destroy_layout(&game.layout); game.layout=layout
  game.editor.palette=recipe_slot(.Wood); game.material_selected=0; game.material_name_edit=false; game.materials_open=false
 	game.world.settings.seed=seed
-	game.editor.editing=true
+	game.editor.editing=layout.level==nil
 	game.panel_open=false; game.layouts_open=false
  game.palette_open=false
 	sandbox_reset(game)
@@ -32,5 +33,6 @@ sandbox_load_layout_data :: proc(game: ^Sandbox,data: []byte) -> bool {
 	layout,seed,ok,problem:=decode_layout(data)
 	if !ok { sandbox_notice(game,problem); return false }
 	sandbox_replace_layout(game,layout,seed)
+ if game.layout.level!=nil {sandbox_notice(game,"Unity-authored level: read-only in the Odin editor; export preserves v4 metadata")}
 	return true
 }

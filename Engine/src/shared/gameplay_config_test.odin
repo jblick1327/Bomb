@@ -33,3 +33,17 @@ known_wrong_gameplay_manifest_rejects_before_adding_player :: proc(test:^t.T) {
  nc.writer_reset(&w);net_app_write_hello(&w,GAME_PROTOCOL_VERSION,GAME_BUILD_ID,"");net_app_server_hello(&ns,1,w.data[:],1)
  t.expect(test,ns.clients[1].active&&ns.game.world.players[1].active,"missing local art/manifest may use authoritative server data")
 }
+@(test)
+known_manifest_mismatch_after_level_change_never_reaches_presented_topology :: proc(test:^t.T) {
+ c:Net_Client;net_client_init(&c,1234,0);defer net_client_destroy(&c);c.has_expected_manifest=true
+ legacy:=test_prediction_static_scene();defer scene_destroy(&legacy)
+ server:Repl_Server;defer repl_server_destroy(&server)
+ first:=repl_server_baseline(&server,&legacy,0);defer repl_output_destroy(&first)
+ for part in first.parts {net_client_on_reliable(&c,part)}
+ t.expect(test,c.rep.has_baseline&&c.rep.scene.epoch==1&&c.real_reason=="")
+ layout,seed,ok,reason:=decode_layout(transmute([]u8)string(LEVEL_V4_TEST));t.expect(test,ok,reason);if !ok {return};defer destroy_layout(&layout)
+ w:=World{settings=DEFAULT_SANDBOX_SETTINGS};w.settings.seed=seed;world_rebuild_layout(&w,&layout,false);w.scene.epoch=2;defer scene_destroy(&w.scene);defer delete(w.bombs)
+ next:=repl_server_baseline(&server,&w.scene,1);defer repl_output_destroy(&next)
+ for part in next.parts {net_client_on_reliable(&c,part)}
+ t.expect(test,c.real_reason!=""&&c.rep.scene.epoch==1&&c.received.scene.epoch==2&&len(c.queue)==0,"incompatible catalog must not become visible or queued")
+}

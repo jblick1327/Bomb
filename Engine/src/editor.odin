@@ -52,6 +52,7 @@ editor_remove :: proc(game: ^Sandbox,point: Vec2) -> bool {
 	return false
 }
 sandbox_toggle_editor :: proc(game: ^Sandbox) {
+ if game.layout.level!=nil {sandbox_notice(game,"Unity-authored level: edit proxies in Unity; this view is read-only");return}
 	if game.panel_open { return }
 	game.palette_open=false
 	game.editor.editing=!game.editor.editing

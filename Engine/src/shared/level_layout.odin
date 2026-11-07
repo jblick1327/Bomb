@@ -3,10 +3,12 @@ package shared
 import json "core:encoding/json"
 import mem "core:mem"
 import math "core:math"
+import fmt "core:fmt"
 
 // Version 4 authoring data is separate from legacy editor rectangles. The
 // application loader will opt into it only with the coordinated wire change.
 SOURCE_RESERVED_START :: u64(0xffffffffffffff00)
+LEVEL_CONSTRUCTION_WORK_LIMIT :: 500000 // Conservative authoring work estimate, not a cell/upload cap.
 Level_Bounds :: struct { lo,hi:Vec2 }
 Level_Bomb_Settings :: struct { spawn_x:Vec2, spawn_height:f32, cleanup_bounds:Level_Bounds }
 Level_Part :: struct { part_id:u64, material:string, outline:[dynamic]Vec2, anchors:[dynamic]Segment }
@@ -20,6 +22,7 @@ Level_Source :: struct {
 }
 Level_Part_Key :: struct { source_identity,part_id:u64 }
 Level_Glue :: struct { a,b:Level_Part_Key }
+Level_Allowed_Overlap :: struct {a,b:Level_Part_Key,reason:string}
 Level_Layout :: struct {
  kind:string, version:int, seed:u64, next_identity:u64,
  level_id,gameplay_config_id,catalog_id:string,
@@ -30,10 +33,12 @@ Level_Layout :: struct {
  materials:[dynamic]Wire_Custom_Material,
  sources:[dynamic]Level_Source,
  glue:[dynamic]Level_Glue,
+ allowed_overlaps:[dynamic]Level_Allowed_Overlap,
 }
 destroy_level_layout :: proc(level:^Level_Layout) {
  delete(level.kind);delete(level.level_id);delete(level.gameplay_config_id);delete(level.catalog_id)
  delete(level.spawns);delete(level.glue)
+ for overlap in level.allowed_overlaps {delete(overlap.reason)};delete(level.allowed_overlaps)
  for m in level.materials { delete(m.name);delete(m.base) };delete(level.materials)
  for source in level.sources {
   delete(source.asset_key);delete(source.visual_hash);delete(source.cap_key);delete(source.motion);delete(source.damage)
@@ -69,10 +74,24 @@ level_polygon_problem :: proc(points:[]Vec2,bounds:Level_Bounds) -> string {
  return ""
 }
 level_parts_overlap :: proc(a,b:[]Vec2) -> bool {
+ alo,ahi,blo,bhi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30},Vec2{1e30,1e30},Vec2{-1e30,-1e30}
+ for p in a {alo={min(alo.x,p.x),min(alo.y,p.y)};ahi={max(ahi.x,p.x),max(ahi.y,p.y)}}
+ for p in b {blo={min(blo.x,p.x),min(blo.y,p.y)};bhi={max(bhi.x,p.x),max(bhi.y,p.y)}}
+ if min(ahi.x,bhi.x)-max(alo.x,blo.x)<=1e-6||min(ahi.y,bhi.y)-max(alo.y,blo.y)<=1e-6 {return false}
  aa:=convex_decomposition(Polygon{points=a});bb:=convex_decomposition(Polygon{points=b})
  defer { for p in aa { delete(p.points) };delete(aa);for p in bb { delete(p.points) };delete(bb) }
  for x in aa { for y in bb { intersection:=convex_intersection(x,y);area:=polygon_area(intersection);delete(intersection.points);if area>1e-6 { return true } } }
  return false
+}
+level_point_segment_distance :: proc(p,a,b:Vec2) -> f32 {d:=vsub(b,a);q:=vdot(d,d);if q<=0 {return vlen(vsub(p,a))};return vlen(vsub(p,vadd(a,vmul(d,clamp(vdot(vsub(p,a),d)/q,f32(0),f32(1))))))}
+level_spawn_overlaps :: proc(spawn:Vec2,points:[]Vec2) -> bool {
+ lo,hi:=Vec2{spawn.x,spawn.y-PLAYER_SEGMENT},Vec2{spawn.x,spawn.y+PLAYER_SEGMENT}
+ inside:=proc(p:Vec2,points:[]Vec2) -> bool {hit:=false;for a,i in points {b:=points[(i+1)%len(points)];if (a.y>p.y)!=(b.y>p.y)&&p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y)+a.x {hit=!hit}};return hit}
+ if inside(lo,points)||inside(hi,points) {return true}
+ for a,i in points {b:=points[(i+1)%len(points)];if segments_touch(lo,hi,a,b,1e-8) {return true}
+  distance:=min(level_point_segment_distance(a,lo,hi),level_point_segment_distance(b,lo,hi),level_point_segment_distance(lo,a,b),level_point_segment_distance(hi,a,b))
+  if distance<PLAYER_RADIUS-.00001 {return true}
+ };return false
 }
 level_layout_problem :: proc(level:^Level_Layout) -> string {
  if level.kind!="bom-layout"||level.version!=4 { return "Not a version 4 bom-layout" }
@@ -83,7 +102,7 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
  if len(level.spawns)!=4 { return "Exactly four explicit spawn points are required" }
  for spawn in level.spawns { if !level_bounds_contains(level.simulation_bounds,spawn)||!level_bounds_contains(level.kill_bounds,spawn) { return "Spawn outside simulation/kill bounds" } }
  if !valid_vec(level.bombs.spawn_x)||!finite(level.bombs.spawn_height)||level.bombs.spawn_x.y<level.bombs.spawn_x.x||level.bombs.spawn_x.x<level.simulation_bounds.lo.x||level.bombs.spawn_x.y>level.simulation_bounds.hi.x||level.bombs.spawn_height<level.simulation_bounds.lo.y||level.bombs.spawn_height>level.simulation_bounds.hi.y { return "Invalid bomb spawn limits" }
- if len(level.sources)>512||len(level.materials)>4||len(level.glue)>1024 { return "Level record count exceeds limits" }
+ if len(level.sources)>512||len(level.materials)>4||len(level.glue)>1024||len(level.allowed_overlaps)>1024 { return "Level record count exceeds limits" }
  palette:Layout;defer { for &m in palette.materials { m.name="" };destroy_layout(&palette) }
  for m in level.materials {
   base,known:=material_base_name(m.base);if !known { return "Unknown custom material base" }
@@ -111,9 +130,10 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
    key:=Level_Part_Key{source.identity,part.part_id};if part.part_id==0||part.part_id==max(u64)||parts[key] { return "Part identity is zero, duplicate or exhausted" };parts[key]=true
    known:=false;for slot in 0..<palette_count(&palette) { if layout_material(&palette,Slot(slot)).name==part.material { known=true;break } };if !known { return "Unknown physics material" }
    if problem:=level_polygon_problem(part.outline[:],level.simulation_bounds);problem!="" { return problem }
+   for spawn in level.spawns {if level_spawn_overlaps(spawn,part.outline[:]) {return "Player capsule spawn overlaps an opted-in physics proxy"}}
    lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30};for p in part.outline { lo={min(lo.x,p.x),min(lo.y,p.y)};hi={max(hi.x,p.x),max(hi.y,p.y)} }
    construction_budget+=math.ceil(f64(hi.x-lo.x)/.1)*math.ceil(f64(hi.y-lo.y)/.1)*f64(len(part.outline)-2)
-   if construction_budget>100000 { return "Proxy construction budget exceeds 100000 conservative grid-triangle units; split/simplify the authored level" }
+   if construction_budget>LEVEL_CONSTRUCTION_WORK_LIMIT { return "Proxy construction work estimate exceeds 500000 grid-triangle units; split/simplify the authored level" }
    if len(part.anchors)>128 { return "Too many anchor segments" }
    for anchor in part.anchors {
     if !valid_vec(anchor.a)||!valid_vec(anchor.b)||vlen(vsub(anchor.b,anchor.a))<.001 { return "Invalid anchor segment" }
@@ -132,6 +152,16 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
   if link.a==link.b||!parts[link.a]||!parts[link.b] { return "Glue refers to missing or identical parts" }
   if links[{link.a,link.b}]||links[{link.b,link.a}] { return "Duplicate glue link" };links[{link.a,link.b}]=true
  }
+ allowed:=make(map[[2]Level_Part_Key]bool);defer delete(allowed)
+ for overlap in level.allowed_overlaps {
+  if overlap.a.source_identity==overlap.b.source_identity||!parts[overlap.a]||!parts[overlap.b]||len(overlap.reason)<1||len(overlap.reason)>512||allowed[{overlap.a,overlap.b}]||allowed[{overlap.b,overlap.a}] {return "Invalid, duplicate or unexplained XY overlap declaration"}
+  allowed[{overlap.a,overlap.b}]=true
+ }
+ for source,i in level.sources {for other in level.sources[:i] {for a in source.parts {for b in other.parts {
+  if !level_parts_overlap(a.outline[:],b.outline[:]) {continue}
+  x,y:=Level_Part_Key{source.identity,a.part_id},Level_Part_Key{other.identity,b.part_id}
+  if !allowed[{x,y}]&&!allowed[{y,x}] {return fmt.tprintf("Overlapping XY proxies require an explicit intended overlap: source %d part %d / source %d part %d",x.source_identity,x.part_id,y.source_identity,y.part_id)}
+ }}}}
  return ""
 }
 decode_level_layout :: proc(data:[]u8) -> (level:Level_Layout,ok:bool,problem:string) {

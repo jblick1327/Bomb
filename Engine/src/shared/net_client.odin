@@ -205,6 +205,9 @@ net_client_on_structure :: proc(c: ^Net_Client,message: []u8) {
   if c.real_reason=="" { c.real_reason=strings.clone(err) }
   return
  }
+ if c.has_expected_manifest&&c.received.scene.gameplay_manifest!=c.expected_manifest {
+  delete(message);if c.real_reason=="" {c.real_reason=strings.clone("gameplay level/config manifest mismatch after world change")};return
+ }
  if c.real_gate { _=collision_history_record_topology(&c.collision_history,&c.received.scene,c.received.tick) }
  if kind==.Baseline && (!c.has_epoch || epoch!=u64(c.epoch)) {
   net_client_reset(c)

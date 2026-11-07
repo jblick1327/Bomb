@@ -1,9 +1,10 @@
 package shared
 import b2 "vendor:box2d"
+import math "core:math"
 
 // First prediction fixture: only validated static terrain. Dynamic topology
 // history/proxies are a separate required M5 step; this is not the final gate.
-Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position, Bomb_Contact_Uncertain }
+Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position, Bomb_Contact_Uncertain, Outside_Collision_Window }
 Prediction_Proxy :: struct { key:u64, body:b2.BodyId, reference:Vec2, rigid:bool }
 Static_Prediction :: struct {
  active: bool,
@@ -14,32 +15,42 @@ Static_Prediction :: struct {
  identity:Input_Identity,
  reason:Prediction_Reason,
  proxies:[dynamic]Prediction_Proxy,
+ has_region:bool,region:Level_Bounds,
 }
 prediction_static_destroy :: proc(p:^Static_Prediction) {
  if p.active { scene_destroy(&p.scene) }
  delete(p.proxies)
  p^={}
 }
-prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic:bool=false) -> bool {
+prediction_region_contains :: proc(region:Level_Bounds,position:Vec2,margin:f32) -> bool {return position.x>=region.lo.x+margin&&position.x<=region.hi.x-margin&&position.y>=region.lo.y+margin&&position.y<=region.hi.y-margin}
+prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic:bool=false,region:^Level_Bounds=nil) -> bool {
  prediction_static_destroy(p)
+ anchored:=make(map[u64]bool);defer delete(anchored)
+ for piece in source.pieces {if piece.live {anchored[piece.id]=piece_anchored(source,piece.id,source.anchor_y)}}
+ selected:=make(map[u64]bool);defer delete(selected)
  live:=0
- for sub in source.subdivisions { if sub.live { live+=1 } }
+ for sub in source.subdivisions {if sub.live {
+  pinned:=anchored[sub.owner];if source.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy {pinned=sub.provenance.pinned}
+  if region!=nil&&pinned {
+   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30};for point in sub.outline.points {lo={min(lo.x,point.x),min(lo.y,point.y)};hi={max(hi.x,point.x),max(hi.y,point.y)}}
+   if hi.x<region.lo.x||lo.x>region.hi.x||hi.y<region.lo.y||lo.y>region.hi.y {continue}
+  };selected[sub.id]=true;live+=1
+ }}
  if live>4096 { p.reason=.Capacity;return false }
  for piece in source.pieces {
   if piece.live && !piece_anchored(source,piece.id,source.anchor_y) && !allow_dynamic { p.reason=.Dynamic_History_Required;return false }
  }
  if !allow_dynamic {for sub in source.subdivisions {if sub.live&&source.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy&&!sub.provenance.pinned {p.reason=.Dynamic_History_Required;return false}}}
  p.scene=new_scene(0);p.epoch=source.epoch;p.revision=source.structure_revision
+ if region!=nil {p.has_region=true;p.region=region^}
  p.scene.level_policy=source.level_policy
  def:=b2.DefaultWorldDef();def.gravity=to_b2(scene_gameplay_config(source).gravity)
  p.scene.physics={active=true,world=b2.CreateWorld(def)};p.active=true
  append(&p.scene.materials,..source.materials[:])
  for &material in p.scene.materials { material.name="" }
  bodies:=make(map[u64]b2.BodyId);defer delete(bodies)
- anchored:=make(map[u64]bool);defer delete(anchored)
- for piece in source.pieces { if piece.live { anchored[piece.id]=piece_anchored(source,piece.id,source.anchor_y) } }
  for original in source.subdivisions {
-  if !original.live { continue }
+  if !original.live||!selected[original.id] { continue }
   sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points),provenance=original.provenance}
   p.scene.sub_rows[sub.id]=len(p.scene.subdivisions);append(&p.scene.subdivisions,sub)
   rubber:=source.materials[sub.material].flexibility>0
@@ -93,6 +104,11 @@ prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,col
   if topology==nil || topology.scene.structure_revision!=p.revision { p.reason=.Wrong_Revision;return false }
  }
  if !prediction_proxy_positions(p,collision,tick-1) { return false }
+ if p.has_region {
+  position:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body));config:=scene_gameplay_config(&p.scene)
+  margin:=PLAYER_HALF_HEIGHT+.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed,config.player.jump_speed)/60+max(math.abs(config.gravity.x),math.abs(config.gravity.y))/3600
+  if !prediction_region_contains(p.region,position,margin) {p.reason=.Outside_Collision_Window;return false}
+ }
  jump:=command.jump_edge!=0 && command.jump_edge>p.last_jump_edge
  if jump { p.last_jump_edge=command.jump_edge }
  if seed_support { player_movement_from_support(&p.player,move_dequantize(command.move),jump,f32(NET_STEP_DT)) }

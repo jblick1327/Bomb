@@ -45,8 +45,10 @@ prediction_bomb_uncertain :: proc(c:^Net_Client,owner:Owner_State,target:u64) ->
  h:=&c.collision_history;if !h.has_frame { return false }
  frame:=&h.frames[h.newest%PREDICTION_HISTORY_TICKS];if !frame.valid { return true }
  horizon:=f32(target-owner.state_tick)/60
- margin_x:=PLAYER_RADIUS+BOMB_RADIUS+.5+PLAYER_TUNING.speed*horizon
- margin_y:=PLAYER_HALF_HEIGHT+BOMB_RADIUS+.5+20*horizon
+ tuning:=PLAYER_TUNING;gravity:=f32(9.8);topology:=collision_history_topology(h,owner.state_tick,owner.topology_revision)
+ if topology!=nil {config:=scene_gameplay_config(&topology.scene);tuning=config.player;gravity=math.abs(config.gravity.y)}
+ margin_x:=PLAYER_RADIUS+BOMB_RADIUS+.5+max(tuning.speed,math.abs(owner.velocity.x))*horizon
+ margin_y:=PLAYER_HALF_HEIGHT+BOMB_RADIUS+.5+max(f32(20),tuning.jump_speed,math.abs(owner.velocity.y)+gravity*horizon)*horizon
  for key,pose in frame.poses {
   if key_kind(key)!=.Bomb { continue }
   if math.abs(pose_dq_pos(pose.x)-owner.position.x)<margin_x && math.abs(pose_dq_pos(pose.y)-owner.position.y)<margin_y { return true }
@@ -74,8 +76,10 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  topology:=collision_history_topology(&c.collision_history,owner.state_tick,owner.topology_revision)
  if topology==nil { prediction_set_mode(p,.Conservative,.Wrong_Revision);return }
  if prediction_bomb_uncertain(c,owner,target) { prediction_set_mode(p,.Conservative,.Bomb_Contact_Uncertain);return }
- if !p.world.active || p.world.revision!=owner.topology_revision || p.world.epoch!=owner.identity.epoch {
-  if !prediction_static_build(&p.world,&topology.scene,true) { prediction_set_mode(p,.Conservative,p.world.reason);return }
+ if !p.world.active || p.world.revision!=owner.topology_revision || p.world.epoch!=owner.identity.epoch || p.world.has_region&&!prediction_region_contains(p.world.region,owner.position,3) {
+  region:Level_Bounds;window:^Level_Bounds
+  if len(topology.scene.subdivisions)>2048 {region={vsub(owner.position,{8,8}),vadd(owner.position,{8,8})};window=&region}
+  if !prediction_static_build(&p.world,&topology.scene,true,window) { prediction_set_mode(p,.Conservative,p.world.reason);return }
  }
  old_position:Vec2;has_old:=false
  if p.mode==.Predicting && p.world.identity==owner.identity {

@@ -18,6 +18,11 @@ decode_unity_layout :: proc(data:[]u8) -> (layout:Layout,seed:u8,ok:bool,problem
  level,valid,reason:=decode_level_layout(data);if !valid { return {},0,false,reason }
  layout.level=new(Level_Layout);layout.level^=level;layout.next_identity=level.next_identity
  for m in level.materials { base,_:=material_base_name(m.base);custom:=custom_from_wire(m,base);custom.name=strings.clone(m.name);append(&layout.materials,custom) }
+ // Construct and bound the deterministic geometry before accepting an upload
+ // or creating a physics world. The old world survives a rejected layout.
+ preview:=World{scene=new_scene(WOOD_MINIMUM_WIDTH),settings=DEFAULT_SANDBOX_SETTINGS};preview.settings.seed=u8(level.seed)
+ world_build_level(&preview,&layout,false);defer scene_destroy(&preview.scene)
+ if preview.rebuild_error!="" { reason:=preview.rebuild_error;destroy_layout(&layout);return {},0,false,reason }
  return layout,u8(level.seed),true,""
 }
 scene_apply_level :: proc(s:^Scene,level:^Level_Layout) {
@@ -63,6 +68,7 @@ world_build_level :: proc(w:^World,layout:^Layout,editing:bool) {
   seed:=derive_seed(w.settings.seed,source.identity~part.part_id);if rubber { seed=0 }
   owner:=add_piece(s,materials[int(slot)],seed);first_id:=s.next_id+1
   build_level_part(s,Polygon{part.outline[:]},owner,rubber)
+  if len(s.subdivisions)>REPL_MAX_CELLS {w.rebuild_error="Constructed level exceeds the unchanged 100000-cell native capacity";return}
   motion:=Motion_Policy.Dynamic;if source.motion=="fixed" { motion=.Fixed };if source.motion=="anchored" { motion=.Anchored }
   damage:=Damage_Policy.Destructible;if source.damage=="indestructible" { damage=.Indestructible }
   for &sub in s.subdivisions { if sub.id<first_id { continue };sub.provenance={source.identity,part.part_id,motion,damage,false};cell_resolve_pin(s,sub.id) }

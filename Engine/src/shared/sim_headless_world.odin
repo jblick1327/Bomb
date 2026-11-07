@@ -22,6 +22,7 @@ headless_game_mode :: proc(game: ^Headless_Game,mode: Blast_Mode) {
 }
 
 world_rebuild_layout :: proc(w: ^World,layout: ^Layout,editing: bool) {
+ w.rebuild_error=""
 	revision:=w.scene.revision+1
 	epoch:=w.scene.epoch+1
 	scene_destroy(&w.scene)

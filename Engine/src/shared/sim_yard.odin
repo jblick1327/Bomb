@@ -14,6 +14,7 @@ YARD_LEFT :: f32(-8)
 YARD_RIGHT :: f32(9)
 
 World :: struct {
+ rebuild_error:string,
 	scene: Scene,
 	floor: b2.BodyId,
 	players: [MAX_PLAYERS]Player,
