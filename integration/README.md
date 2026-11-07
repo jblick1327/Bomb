@@ -2,7 +2,7 @@
 
 This branch contains a real native-connected Unity scene at `Assets/BOMIntegration/NativeSlice.unity`. Odin owns gameplay, networking and physics. Unity polls the versioned native API, copies coherent samples, and renders extrusion meshes and actor views. The original scenes, scripts, art and package/settings files remain reference content.
 
-M0–M5 passed. Scheduled input, owner reconciliation and genuine local prediction pass the two required ten-minute link profiles; final Mono prediction on/off and actual rendered response checks pass. M6 level authoring/export is in progress; M7–M9 remain pending. The earlier M4 Mono/IL2CPP evidence remains preserved. See STATUS.md and evidence/M5/summary.json; the full plan is not complete.
+M0-M6 passed. M7 source-mesh fracture rendering is in progress; M8-M9 remain pending. The full integration is not complete. See STATUS.md and evidence/M6/summary.json for the current checkpoint.
 
 The source roots remain separate. `source-lock.json` records archive/toolchain/native commit identities. The ignored `local.config.json` supplies absolute local paths; use `local.config.example.json` for another machine. Unity stays on 6000.2.14f1 and the supplied Odin May 2026 compiler/vendor setup remains pinned.
 
