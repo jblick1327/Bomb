@@ -25,6 +25,7 @@ scene_restore_catalog_data :: proc(s:^Scene,text:string,parts:[]Source_Part_Anch
  if text!="" {
   level,ok,_:=decode_level_layout(transmute([]u8)text);if !ok { return false };defer destroy_level_layout(&level)
   if !level_catalog_parts_match(s,&level) { return false };s.level_policy=level_resolve_policy(&level);s.gameplay_manifest=level_gameplay_hash(&level);s.config_hash=gameplay_config_hash(level.gameplay_config)
+  s.catalog=new(Level_Layout);s.catalog^=level;level={}
  };s.level_json=strings.clone(text);return true
 }
 
@@ -61,5 +62,8 @@ repl_read_catalog :: proc(r:^nc.Reader,s:^Scene) -> string {
   };append(&s.source_parts,part)
  }
  if !r.ok { return "truncated catalog" }
- if len(text)>0&&!level_catalog_parts_match(s,&level) { return "catalog/source-part metadata mismatch" };return ""
+ if len(text)>0 {
+  if !level_catalog_parts_match(s,&level) { return "catalog/source-part metadata mismatch" }
+  s.catalog=new(Level_Layout);s.catalog^=level;level={}
+ };return ""
 }

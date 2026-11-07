@@ -22,7 +22,7 @@ static class Program {
  }
  static T Read<T>(IntPtr pointer,uint index) where T:struct => Marshal.PtrToStructure<T>(IntPtr.Add(pointer,checked((int)index*Marshal.SizeOf<T>())));
  static void Layouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo)};
   for(uint i=0;i<types.Length;i++) {
    Type type=types[i];Check((uint)Marshal.SizeOf(type)==BomNative.bom_debug_layout(i,0),type.Name+" sizeof");
    FieldInfo[] fields=type.GetFields(BindingFlags.Public|BindingFlags.Instance);

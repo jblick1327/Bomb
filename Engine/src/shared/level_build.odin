@@ -25,6 +25,7 @@ scene_apply_level :: proc(s:^Scene,level:^Level_Layout) {
  s.gameplay_manifest=level_gameplay_hash(level);s.config_hash=gameplay_config_hash(level.gameplay_config)
  bytes,err:=json.marshal(level^);assert(err==nil);assert(len(bytes)<=NET_APP_MAX_LAYOUT)
  s.level_json=transmute(string)bytes
+ copy,valid,_:=decode_level_layout(bytes);assert(valid);s.catalog=new(Level_Layout);s.catalog^=copy
  for source in level.sources { for part in source.parts {
   anchors:=Source_Part_Anchors{source_identity=source.identity,source_part_id=part.part_id};append(&anchors.segments,..part.anchors[:]);append(&s.source_parts,anchors)
  } }

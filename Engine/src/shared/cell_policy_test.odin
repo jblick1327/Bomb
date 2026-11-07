@@ -2,8 +2,9 @@ package shared
 import t "core:testing"
 import b2 "vendor:box2d"
 
-test_policy_scene :: proc(motion:Motion_Policy,damage:Damage_Policy) -> (s:Scene,lower,upper,link:u64) {
- s=new_scene(0);material:=add_material(&s,editor_material(.Stone));owner:=add_piece(&s,material,0)
+test_policy_scene :: proc(motion:Motion_Policy,damage:Damage_Policy,rubber:bool=false) -> (s:Scene,lower,upper,link:u64) {
+ recipe:=Recipe.Stone;if rubber {recipe=.Rubber}
+ s=new_scene(0);material:=add_material(&s,editor_material(recipe));owner:=add_piece(&s,material,0)
  bottom:=[4]Vec2{{0,0},{1,0},{1,1},{0,1}};top:=[4]Vec2{{0,1},{1,1},{1,2},{0,2}}
  lower=add_subdivision(&s,owner,Polygon{bottom[:]},Pose{position={.5,.5}})
  upper=add_subdivision(&s,owner,Polygon{top[:]},Pose{position={.5,1.5}})
@@ -13,6 +14,15 @@ test_policy_scene :: proc(motion:Motion_Policy,damage:Damage_Policy) -> (s:Scene
  for id in ([2]u64{lower,upper}) { s.subdivisions[s.sub_rows[id]].provenance={9007199254741001,9007199254742001,motion,damage,false};cell_resolve_pin(&s,id) }
  physics_init(&s,{0,-9.8})
  return
+}
+@(test)
+flexible_authored_anchor_pins_only_its_own_cell_and_replication_keeps_the_dynamic_pose :: proc(test:^t.T) {
+ s,lower,upper,_:=test_policy_scene(.Anchored,.Destructible,true)
+ t.expect(test,b2.Body_GetType(s.subdivisions[s.sub_rows[lower]].body)==.staticBody&&b2.Body_GetType(s.subdivisions[s.sub_rows[upper]].body)==.dynamicBody)
+ p:Static_Prediction;t.expect(test,!prediction_static_build(&p,&s));t.expect(test,prediction_static_build(&p,&s,true)&&len(p.proxies)==1&&p.proxies[0].key==ent_key(.Rubber,upper));prediction_static_destroy(&p)
+ game:=Headless_Game{world=World{scene=s,settings=DEFAULT_SANDBOX_SETTINGS}}
+ ns:Net_Server;net_server_init_world(&ns,game);defer net_server_destroy(&ns);net_collect(&ns)
+ t.expect(test,ent_key(.Rubber,upper) in ns.current&&ent_key(.Rubber,lower) not_in ns.current)
 }
 @(test)
 six_motion_damage_policies_are_enforced_in_real_physics_and_failures :: proc(test:^t.T) {

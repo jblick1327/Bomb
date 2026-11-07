@@ -245,6 +245,121 @@ BomRequestResult :: struct {
  reason: u32,
 }
 
+BomLevelInfo :: struct {
+ flags: u32,
+ config_version: u32,
+ simulation_lo_x: f32,
+ simulation_lo_y: f32,
+ simulation_hi_x: f32,
+ simulation_hi_y: f32,
+ kill_lo_x: f32,
+ kill_lo_y: f32,
+ kill_hi_x: f32,
+ kill_hi_y: f32,
+ camera_lo_x: f32,
+ camera_lo_y: f32,
+ camera_hi_x: f32,
+ camera_hi_y: f32,
+ aim_lo_x: f32,
+ aim_lo_y: f32,
+ aim_hi_x: f32,
+ aim_hi_y: f32,
+ fragment_cull_lo_x: f32,
+ fragment_cull_lo_y: f32,
+ fragment_cull_hi_x: f32,
+ fragment_cull_hi_y: f32,
+ bomb_cleanup_lo_x: f32,
+ bomb_cleanup_lo_y: f32,
+ bomb_cleanup_hi_x: f32,
+ bomb_cleanup_hi_y: f32,
+ spawn0_x: f32,
+ spawn0_y: f32,
+ spawn1_x: f32,
+ spawn1_y: f32,
+ spawn2_x: f32,
+ spawn2_y: f32,
+ spawn3_x: f32,
+ spawn3_y: f32,
+ bomb_spawn_lo: f32,
+ bomb_spawn_hi: f32,
+ bomb_spawn_height: f32,
+ gravity_x: f32,
+ gravity_y: f32,
+ move_speed: f32,
+ move_acceleration: f32,
+ jump_speed: f32,
+ coyote_time: f32,
+ jump_buffer: f32,
+ bomb_fuse: f32,
+ bomb_drop_min: f32,
+ bomb_drop_max: f32,
+}
+
+BomCellBinding :: struct {
+ cell_id: u64,
+ source_identity: u64,
+ source_part_id: u64,
+ policy_flags: u32,
+ reserved: u32,
+}
+
+BomSourceBinding :: struct {
+ source_identity: u64,
+ flags: u32,
+ reserved: u32,
+ visual_hash0: u64,
+ visual_hash1: u64,
+ visual_hash2: u64,
+ visual_hash3: u64,
+ m00: f32,
+ m10: f32,
+ m20: f32,
+ m30: f32,
+ m01: f32,
+ m11: f32,
+ m21: f32,
+ m31: f32,
+ m02: f32,
+ m12: f32,
+ m22: f32,
+ m32: f32,
+ m03: f32,
+ m13: f32,
+ m23: f32,
+ m33: f32,
+ depth_lo: f32,
+ depth_hi: f32,
+ asset_key: [^]u8,
+ asset_key_length: u32,
+ cap_key_length: u32,
+ cap_key: [^]u8,
+}
+
+BomCatalogInfo :: struct {
+ struct_size: u32,
+ version: u32,
+ epoch: u32,
+ flags: u32,
+ revision: u64,
+ catalog_hash0: u64,
+ catalog_hash1: u64,
+ catalog_hash2: u64,
+ catalog_hash3: u64,
+ gameplay_hash0: u64,
+ gameplay_hash1: u64,
+ gameplay_hash2: u64,
+ gameplay_hash3: u64,
+ config_hash0: u64,
+ config_hash1: u64,
+ config_hash2: u64,
+ config_hash3: u64,
+ source_count: u32,
+ binding_count: u32,
+ sources: [^]BomSourceBinding,
+ bindings: [^]BomCellBinding,
+ level: BomLevelInfo,
+}
+
 @(export)
 bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
  switch type_id {
@@ -523,6 +638,129 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 8: return u32(offset_of(BomRequestResult,event_id))
   case 9: return u32(offset_of(BomRequestResult,status))
   case 10: return u32(offset_of(BomRequestResult,reason))
+  }
+ case 16:
+  switch field_id {
+  case 0: return u32(size_of(BomLevelInfo))
+  case 1: return u32(align_of(BomLevelInfo))
+  case 2: return u32(offset_of(BomLevelInfo,flags))
+  case 3: return u32(offset_of(BomLevelInfo,config_version))
+  case 4: return u32(offset_of(BomLevelInfo,simulation_lo_x))
+  case 5: return u32(offset_of(BomLevelInfo,simulation_lo_y))
+  case 6: return u32(offset_of(BomLevelInfo,simulation_hi_x))
+  case 7: return u32(offset_of(BomLevelInfo,simulation_hi_y))
+  case 8: return u32(offset_of(BomLevelInfo,kill_lo_x))
+  case 9: return u32(offset_of(BomLevelInfo,kill_lo_y))
+  case 10: return u32(offset_of(BomLevelInfo,kill_hi_x))
+  case 11: return u32(offset_of(BomLevelInfo,kill_hi_y))
+  case 12: return u32(offset_of(BomLevelInfo,camera_lo_x))
+  case 13: return u32(offset_of(BomLevelInfo,camera_lo_y))
+  case 14: return u32(offset_of(BomLevelInfo,camera_hi_x))
+  case 15: return u32(offset_of(BomLevelInfo,camera_hi_y))
+  case 16: return u32(offset_of(BomLevelInfo,aim_lo_x))
+  case 17: return u32(offset_of(BomLevelInfo,aim_lo_y))
+  case 18: return u32(offset_of(BomLevelInfo,aim_hi_x))
+  case 19: return u32(offset_of(BomLevelInfo,aim_hi_y))
+  case 20: return u32(offset_of(BomLevelInfo,fragment_cull_lo_x))
+  case 21: return u32(offset_of(BomLevelInfo,fragment_cull_lo_y))
+  case 22: return u32(offset_of(BomLevelInfo,fragment_cull_hi_x))
+  case 23: return u32(offset_of(BomLevelInfo,fragment_cull_hi_y))
+  case 24: return u32(offset_of(BomLevelInfo,bomb_cleanup_lo_x))
+  case 25: return u32(offset_of(BomLevelInfo,bomb_cleanup_lo_y))
+  case 26: return u32(offset_of(BomLevelInfo,bomb_cleanup_hi_x))
+  case 27: return u32(offset_of(BomLevelInfo,bomb_cleanup_hi_y))
+  case 28: return u32(offset_of(BomLevelInfo,spawn0_x))
+  case 29: return u32(offset_of(BomLevelInfo,spawn0_y))
+  case 30: return u32(offset_of(BomLevelInfo,spawn1_x))
+  case 31: return u32(offset_of(BomLevelInfo,spawn1_y))
+  case 32: return u32(offset_of(BomLevelInfo,spawn2_x))
+  case 33: return u32(offset_of(BomLevelInfo,spawn2_y))
+  case 34: return u32(offset_of(BomLevelInfo,spawn3_x))
+  case 35: return u32(offset_of(BomLevelInfo,spawn3_y))
+  case 36: return u32(offset_of(BomLevelInfo,bomb_spawn_lo))
+  case 37: return u32(offset_of(BomLevelInfo,bomb_spawn_hi))
+  case 38: return u32(offset_of(BomLevelInfo,bomb_spawn_height))
+  case 39: return u32(offset_of(BomLevelInfo,gravity_x))
+  case 40: return u32(offset_of(BomLevelInfo,gravity_y))
+  case 41: return u32(offset_of(BomLevelInfo,move_speed))
+  case 42: return u32(offset_of(BomLevelInfo,move_acceleration))
+  case 43: return u32(offset_of(BomLevelInfo,jump_speed))
+  case 44: return u32(offset_of(BomLevelInfo,coyote_time))
+  case 45: return u32(offset_of(BomLevelInfo,jump_buffer))
+  case 46: return u32(offset_of(BomLevelInfo,bomb_fuse))
+  case 47: return u32(offset_of(BomLevelInfo,bomb_drop_min))
+  case 48: return u32(offset_of(BomLevelInfo,bomb_drop_max))
+  }
+ case 17:
+  switch field_id {
+  case 0: return u32(size_of(BomCellBinding))
+  case 1: return u32(align_of(BomCellBinding))
+  case 2: return u32(offset_of(BomCellBinding,cell_id))
+  case 3: return u32(offset_of(BomCellBinding,source_identity))
+  case 4: return u32(offset_of(BomCellBinding,source_part_id))
+  case 5: return u32(offset_of(BomCellBinding,policy_flags))
+  case 6: return u32(offset_of(BomCellBinding,reserved))
+  }
+ case 18:
+  switch field_id {
+  case 0: return u32(size_of(BomSourceBinding))
+  case 1: return u32(align_of(BomSourceBinding))
+  case 2: return u32(offset_of(BomSourceBinding,source_identity))
+  case 3: return u32(offset_of(BomSourceBinding,flags))
+  case 4: return u32(offset_of(BomSourceBinding,reserved))
+  case 5: return u32(offset_of(BomSourceBinding,visual_hash0))
+  case 6: return u32(offset_of(BomSourceBinding,visual_hash1))
+  case 7: return u32(offset_of(BomSourceBinding,visual_hash2))
+  case 8: return u32(offset_of(BomSourceBinding,visual_hash3))
+  case 9: return u32(offset_of(BomSourceBinding,m00))
+  case 10: return u32(offset_of(BomSourceBinding,m10))
+  case 11: return u32(offset_of(BomSourceBinding,m20))
+  case 12: return u32(offset_of(BomSourceBinding,m30))
+  case 13: return u32(offset_of(BomSourceBinding,m01))
+  case 14: return u32(offset_of(BomSourceBinding,m11))
+  case 15: return u32(offset_of(BomSourceBinding,m21))
+  case 16: return u32(offset_of(BomSourceBinding,m31))
+  case 17: return u32(offset_of(BomSourceBinding,m02))
+  case 18: return u32(offset_of(BomSourceBinding,m12))
+  case 19: return u32(offset_of(BomSourceBinding,m22))
+  case 20: return u32(offset_of(BomSourceBinding,m32))
+  case 21: return u32(offset_of(BomSourceBinding,m03))
+  case 22: return u32(offset_of(BomSourceBinding,m13))
+  case 23: return u32(offset_of(BomSourceBinding,m23))
+  case 24: return u32(offset_of(BomSourceBinding,m33))
+  case 25: return u32(offset_of(BomSourceBinding,depth_lo))
+  case 26: return u32(offset_of(BomSourceBinding,depth_hi))
+  case 27: return u32(offset_of(BomSourceBinding,asset_key))
+  case 28: return u32(offset_of(BomSourceBinding,asset_key_length))
+  case 29: return u32(offset_of(BomSourceBinding,cap_key_length))
+  case 30: return u32(offset_of(BomSourceBinding,cap_key))
+  }
+ case 19:
+  switch field_id {
+  case 0: return u32(size_of(BomCatalogInfo))
+  case 1: return u32(align_of(BomCatalogInfo))
+  case 2: return u32(offset_of(BomCatalogInfo,struct_size))
+  case 3: return u32(offset_of(BomCatalogInfo,version))
+  case 4: return u32(offset_of(BomCatalogInfo,epoch))
+  case 5: return u32(offset_of(BomCatalogInfo,flags))
+  case 6: return u32(offset_of(BomCatalogInfo,revision))
+  case 7: return u32(offset_of(BomCatalogInfo,catalog_hash0))
+  case 8: return u32(offset_of(BomCatalogInfo,catalog_hash1))
+  case 9: return u32(offset_of(BomCatalogInfo,catalog_hash2))
+  case 10: return u32(offset_of(BomCatalogInfo,catalog_hash3))
+  case 11: return u32(offset_of(BomCatalogInfo,gameplay_hash0))
+  case 12: return u32(offset_of(BomCatalogInfo,gameplay_hash1))
+  case 13: return u32(offset_of(BomCatalogInfo,gameplay_hash2))
+  case 14: return u32(offset_of(BomCatalogInfo,gameplay_hash3))
+  case 15: return u32(offset_of(BomCatalogInfo,config_hash0))
+  case 16: return u32(offset_of(BomCatalogInfo,config_hash1))
+  case 17: return u32(offset_of(BomCatalogInfo,config_hash2))
+  case 18: return u32(offset_of(BomCatalogInfo,config_hash3))
+  case 19: return u32(offset_of(BomCatalogInfo,source_count))
+  case 20: return u32(offset_of(BomCatalogInfo,binding_count))
+  case 21: return u32(offset_of(BomCatalogInfo,sources))
+  case 22: return u32(offset_of(BomCatalogInfo,bindings))
+  case 23: return u32(offset_of(BomCatalogInfo,level))
   }
  }
  return 0xffffffff

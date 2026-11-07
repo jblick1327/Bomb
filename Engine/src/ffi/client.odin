@@ -47,6 +47,8 @@ Client_Slot :: struct {
  jumps: [dynamic]f64,
  actions: [dynamic]Action,
  cells: [dynamic]BomCell,
+ bindings:[dynamic]BomCellBinding,
+ sources:[dynamic]BomSourceBinding,
  vertices: [dynamic]BomVertex,
  poses: [dynamic]BomPose,
  events: [dynamic]BomEvent,
@@ -132,6 +134,7 @@ bom_client_destroy :: proc "c" (handle:u64) -> u32 {
  if s.acquired { return BUSY }
  close_client(s)
  delete(s.held);delete(s.jumps);delete(s.actions);delete(s.cells);delete(s.vertices);delete(s.poses);delete(s.events)
+ delete(s.bindings);delete(s.sources)
  delete(s.last_error)
  remaining:=s.allocations.current_memory_allocated
  mem.tracking_allocator_destroy(&s.allocations)
@@ -318,7 +321,8 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
    if _,exists:=s.client.drawn[core.ent_key(.Piece,piece.id)];!exists { append(&s.poses,BomPose{id=piece.id,kind=u32(core.Ent_Kind.Piece),x=piece.ref_rest.x,y=piece.ref_rest.y}) }
   }
   for sub in scene.subdivisions {
-   if !sub.live || scene.materials[sub.material].flexibility<=0 || !s.client.anchored[sub.owner] { continue }
+   pinned:=s.client.anchored[sub.owner];if sub.provenance.motion!=.Legacy {pinned=sub.provenance.pinned}
+   if !sub.live || scene.materials[sub.material].flexibility<=0 || !pinned { continue }
    if _,exists:=s.client.drawn[core.ent_key(.Rubber,sub.id)];!exists { append(&s.poses,BomPose{id=sub.id,kind=u32(core.Ent_Kind.Rubber),x=sub.rest_center.x,y=sub.rest_center.y}) }
   }
  }

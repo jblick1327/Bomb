@@ -28,6 +28,7 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
  for piece in source.pieces {
   if piece.live && !piece_anchored(source,piece.id,source.anchor_y) && !allow_dynamic { p.reason=.Dynamic_History_Required;return false }
  }
+ if !allow_dynamic {for sub in source.subdivisions {if sub.live&&source.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy&&!sub.provenance.pinned {p.reason=.Dynamic_History_Required;return false}}}
  p.scene=new_scene(0);p.epoch=source.epoch;p.revision=source.structure_revision
  p.scene.level_policy=source.level_policy
  def:=b2.DefaultWorldDef();def.gravity=to_b2(scene_gameplay_config(source).gravity)
