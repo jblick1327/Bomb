@@ -71,7 +71,13 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  owner:=link.owner;history:=&link.history;target:=history.next_tick-1
  if target<owner.state_tick { prediction_set_mode(p,.Conservative,.Missing_Command);return }
  if !p.has_owner || p.identity!=owner.identity || p.last_teleport!=owner.teleport_serial {
-  prediction_controller_reset(c);p.identity=owner.identity;p.last_teleport=owner.teleport_serial;p.has_owner=true
+  // A schedule generation changes command identity, not collision geometry.
+  // Keep the revision/epoch checked world; replay restores every player field
+  // from the new owner before another step. Rebuilding here can turn a single
+  // slow topology build into repeated stalls and schedule renegotiations.
+  p.visual_offset={};p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
+  p.world.identity={};p.world.state_tick=0;p.world.last_jump_edge=0
+  p.identity=owner.identity;p.last_teleport=owner.teleport_serial;p.has_owner=true
  }
  topology:=collision_history_topology(&c.collision_history,owner.state_tick,owner.topology_revision)
  if topology==nil { prediction_set_mode(p,.Conservative,.Wrong_Revision);return }
