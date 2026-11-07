@@ -44,11 +44,14 @@ player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
 }
 
 player_respawn :: proc(player: ^Player) {
+ player_respawn_at(player,PLAYER_SPAWN)
+}
+player_respawn_at :: proc(player:^Player,position:Vec2) {
 	body:=player.body
-	b2.Body_SetTransform(body,to_b2(PLAYER_SPAWN),b2.MakeRot(0))
+	b2.Body_SetTransform(body,to_b2(position),b2.MakeRot(0))
 	b2.Body_SetLinearVelocity(body,{})
 	b2.Body_SetAngularVelocity(body,0)
-	player^=Player{active=true,body=body,blast_radius=player.blast_radius,teleport_serial=player.teleport_serial+1}
+	player^=Player{active=true,body=body,blast_radius=player.blast_radius,teleport_serial=player.teleport_serial+1,tuning=player.tuning}
 	player_refresh_pose(player)
 }
 
@@ -89,13 +92,14 @@ player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32)
 // Shared movement kernel: prediction may seed the first replay step with the
 // authoritative support record after recreating its contact body.
 player_movement_from_support :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
-	if player.grounded { player.coyote=PLAYER_TUNING.coyote_time } else { player.coyote=max(f32(0),player.coyote-dt) }
-	if jump_pressed { player.buffered_jump=PLAYER_TUNING.jump_buffer }
+ tuning:=player_tuning(player)
+	if player.grounded { player.coyote=tuning.coyote_time } else { player.coyote=max(f32(0),player.coyote-dt) }
+	if jump_pressed { player.buffered_jump=tuning.jump_buffer }
 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
-	target:=clamp(move,f32(-1),f32(1))*PLAYER_TUNING.speed
-	velocity.x+=clamp(target-velocity.x,-PLAYER_TUNING.acceleration*dt,PLAYER_TUNING.acceleration*dt)
+	target:=clamp(move,f32(-1),f32(1))*tuning.speed
+	velocity.x+=clamp(target-velocity.x,-tuning.acceleration*dt,tuning.acceleration*dt)
 	if player.buffered_jump>0 && player.coyote>0 {
-		velocity.y=PLAYER_TUNING.jump_speed+max(f32(0),player.support_velocity.y)
+		velocity.y=tuning.jump_speed+max(f32(0),player.support_velocity.y)
 		player.grounded=false
 		player.coyote=0
 		player.buffered_jump=0

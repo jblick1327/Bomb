@@ -90,11 +90,11 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  if mode,ok:=commands.mode.(Blast_Mode); ok && mode!=w.settings.blast_mode {
   w.settings.blast_mode=mode
   bomb_rain_clear(w)
-  w.rain.until_drop=bomb_drop_delay(&w.rain)
+  w.rain.until_drop=bomb_drop_delay_config(&w.rain,scene_gameplay_config(&w.scene))
  }
  failures:=Failures{}
- if commands.remove_region!=0 { append(&failures.discard_subdivisions,commands.remove_region) }
- if commands.break_connection!=0 { append(&failures.connections,commands.break_connection) }
+ if commands.remove_region!=0 { failures.administrative=true;append(&failures.discard_subdivisions,commands.remove_region) }
+ if commands.break_connection!=0 { failures.administrative=true;append(&failures.connections,commands.break_connection) }
  if len(failures.discard_subdivisions)+len(failures.connections)>0 {
   apply_failures(&w.scene,failures); physics_sync_structure(&w.scene); events.structure_changed=true
  }
@@ -116,7 +116,12 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  bomb_rain_after_step(w,dt,&events)
  if world_remove_out_of_bounds(w) { events.structure_changed=true }
  for &player,i in w.players {
-  if player.active { events.player_respawned[i]=player_after_step(&player) }
+  if player.active {
+   if w.scene.level_policy.active {
+    player_after_movement_step(&player)
+    if !level_bounds_contains(w.scene.level_policy.kill,player.pose.position) { player_respawn_at(&player,w.scene.level_policy.spawns[i]);events.player_respawned[i]=true }
+   }else{events.player_respawned[i]=player_after_step(&player)}
+  }
  }
  world_refresh_poses(w)
  w.tick+=1
@@ -133,7 +138,8 @@ world_remove_out_of_bounds :: proc(game: ^World) -> bool {
 	defer delete(f.discard_subdivisions)
 	for sub in game.scene.subdivisions {
 		p:=sub.pose.position
-		if sub.live && p.y<YARD_FLOOR_BOTTOM-2 { append(&f.discard_subdivisions,sub.id) }
+  outside:=p.y<YARD_FLOOR_BOTTOM-2;if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.fragment_cull,p) }
+		if sub.live && outside { append(&f.discard_subdivisions,sub.id) }
 	}
 	if len(f.discard_subdivisions)==0 { return false }
 	apply_failures(&game.scene,f)
@@ -143,13 +149,17 @@ world_remove_out_of_bounds :: proc(game: ^World) -> bool {
 
 world_start_physics :: proc(game: ^World) {
  s:=&game.scene
-	physics_init(s,{0,-9.8},YARD_FLOOR_BOTTOM)
+ anchor:=YARD_FLOOR_BOTTOM;if s.level_policy.active { anchor=-1e30 }
+	physics_init(s,scene_gameplay_config(s).gravity,anchor)
+ game.floor={}
+ if !s.level_policy.active {
 	def:=b2.DefaultBodyDef()
 	def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
 	game.floor=b2.CreateBody(s.physics.world,def)
 	shape:=b2.DefaultShapeDef(); shape.material.friction=0.65
 	// Extend beyond the playable edges so excavation never opens the screen bottom.
 	_ = b2.CreatePolygonShape(game.floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*0.5))
+ }
 	// A rebuild keeps the active player set (and their radii); a fresh world starts with player 0.
 	was:=game.players
 	game.players={}
@@ -157,7 +167,7 @@ world_start_physics :: proc(game: ^World) {
 	for player in was { if player.active { any_active=true } }
 	if !any_active { world_add_player(game,0) }
 	else { for i in 0..<MAX_PLAYERS { if was[i].active { world_add_player(game,i); game.players[i].blast_radius=was[i].blast_radius } } }
-	bomb_rain_reset(&game.rain,game.settings.seed)
+	bomb_rain_reset(&game.rain,game.settings.seed,scene_gameplay_config(s))
 	clear(&game.bombs)
 	game.tick=0
 }
@@ -165,6 +175,8 @@ world_start_physics :: proc(game: ^World) {
 world_add_player :: proc(w: ^World,index: int) -> bool {
  if index<0 || index>=MAX_PLAYERS || w.players[index].active || !w.scene.physics.active { return false }
  w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius)
+ w.players[index].tuning=scene_gameplay_config(&w.scene).player
+ if w.scene.level_policy.active { b2.Body_SetTransform(w.players[index].body,to_b2(w.scene.level_policy.spawns[index]),b2.MakeRot(0));player_refresh_pose(&w.players[index]) }
  return true
 }
 

@@ -29,7 +29,8 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
   if piece.live && !piece_anchored(source,piece.id,source.anchor_y) && !allow_dynamic { p.reason=.Dynamic_History_Required;return false }
  }
  p.scene=new_scene(0);p.epoch=source.epoch;p.revision=source.structure_revision
- def:=b2.DefaultWorldDef();def.gravity={0,-9.8}
+ p.scene.level_policy=source.level_policy
+ def:=b2.DefaultWorldDef();def.gravity=to_b2(scene_gameplay_config(source).gravity)
  p.scene.physics={active=true,world=b2.CreateWorld(def)};p.active=true
  append(&p.scene.materials,..source.materials[:])
  for &material in p.scene.materials { material.name="" }
@@ -38,16 +39,17 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
  for piece in source.pieces { if piece.live { anchored[piece.id]=piece_anchored(source,piece.id,source.anchor_y) } }
  for original in source.subdivisions {
   if !original.live { continue }
-  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points)}
+  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points),provenance=original.provenance}
   p.scene.sub_rows[sub.id]=len(p.scene.subdivisions);append(&p.scene.subdivisions,sub)
   rubber:=source.materials[sub.material].flexibility>0
+  pinned:=anchored[sub.owner];if rubber&&sub.provenance.motion!=.Legacy { pinned=sub.provenance.pinned }
   body,exists:=bodies[sub.owner]
   if rubber || !exists {
    bd:=b2.DefaultBodyDef();if rubber { bd.position=to_b2(sub.rest_center) }
-   if !anchored[sub.owner] { bd.type=.kinematicBody }
+   if !pinned { bd.type=.kinematicBody }
    body=b2.CreateBody(p.scene.physics.world,bd)
    if !rubber { bodies[sub.owner]=body }
-   if !anchored[sub.owner] {
+   if !pinned {
     key:=ent_key(.Rubber,sub.id);reference:=sub.rest_center
     if !rubber { key=ent_key(.Piece,sub.owner);reference=source.pieces[source.piece_rows[sub.owner]].ref_rest }
     append(&p.proxies,Prediction_Proxy{key,body,reference,!rubber})
@@ -57,11 +59,14 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
   // Exactly the authoritative decomposition, hull welding, fallback and filter.
   physics_create_region_shapes(&p.scene,sub.id,body)
  }
+ if !source.level_policy.active {
  floor_def:=b2.DefaultBodyDef();floor_def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
  floor:=b2.CreateBody(p.scene.physics.world,floor_def)
  shape:=b2.DefaultShapeDef();shape.material.friction=.65
  _=b2.CreatePolygonShape(floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*.5))
+ }
  p.player=player_create(p.scene.physics.world)
+ p.player.tuning=scene_gameplay_config(source).player
  return true
 }
 prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64) -> bool {
@@ -92,7 +97,8 @@ prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,col
  if seed_support { player_movement_from_support(&p.player,move_dequantize(command.move),jump,f32(NET_STEP_DT)) }
  else { player_before_step(&p.player,move_dequantize(command.move),jump,f32(NET_STEP_DT)) }
  b2.World_Step(p.scene.physics.world,f32(NET_STEP_DT),PHYSICS_SUBSTEPS);player_after_movement_step(&p.player)
- if player_out_of_bounds(&p.player) || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
+ outside:=player_out_of_bounds(&p.player);if p.scene.level_policy.active { outside=!level_bounds_contains(p.scene.level_policy.kill,p.player.pose.position) }
+ if outside || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
  p.state_tick=tick;p.reason=.None;return true
 }
 prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil) -> bool {

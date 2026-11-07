@@ -42,6 +42,7 @@ custom_defaults :: proc(base:Recipe)->Custom_Material {
 }
 
 destroy_layout :: proc(layout:^Layout) {
+ if layout.level!=nil { destroy_level_layout(layout.level);free(layout.level) }
  for m in layout.materials { delete(m.name) }; delete(layout.materials); delete(layout.objects); delete(layout.glue); layout^={}
 }
 

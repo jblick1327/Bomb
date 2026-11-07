@@ -22,7 +22,7 @@ Glue_Link :: struct { a,b:u64 }
 
 Authored_Shape :: struct { angle:f32, shape:Shape_Kind, lo,hi: Vec2, material: Slot, identity: u64, mortar: bool }
 
-Layout :: struct { next_identity: u64, objects: [dynamic]Authored_Shape, materials: [dynamic]Custom_Material, glue:[dynamic]Glue_Link }
+Layout :: struct { next_identity: u64, objects: [dynamic]Authored_Shape, materials: [dynamic]Custom_Material, glue:[dynamic]Glue_Link, level:^Level_Layout }
 
 PALETTE_MATERIALS :: [Recipe]Material{
  .Wood = {name="wood",color={180,136,82},strip_thickness=0.2,blast_resistance=1.5,subdivision_strength=28,connection_strength=22,flexibility=0,impact_scale=1,generation_count=5,aspect_ratio=0.2},

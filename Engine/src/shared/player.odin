@@ -4,6 +4,7 @@ package shared
 import b2 "vendor:box2d"
 
 Player :: struct {
+ tuning:Player_Tuning `json:"-"`,
 	active: bool,
 	body: b2.BodyId,
 	grounded: bool,

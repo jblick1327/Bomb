@@ -26,6 +26,7 @@ Material :: struct {
 }
 
 Subdivision :: struct {
+ provenance:Cell_Provenance,
  frame:f32 `json:"frame,omitempty"`,
 	id, owner: u64,
 	material: int,
@@ -76,6 +77,10 @@ Endpoint_Pair :: struct { a,b: u64 }
 pair_key :: proc(a,b: u64) -> Endpoint_Pair { return {min(a,b),max(a,b)} }
 
 Scene :: struct {
+ level_json:string,
+ level_policy:Resolved_Level_Policy,
+ gameplay_manifest,config_hash:[32]u8,
+ source_parts:[dynamic]Source_Part_Anchors,
 	physics: Physics,
 	materials: [dynamic]Material,
 	owned_names: [dynamic]string,
@@ -173,6 +178,8 @@ is_live_subdivision :: proc(s: ^Scene,id: u64) -> bool {
 
 scene_destroy :: proc(s: ^Scene) {
 	physics_destroy(s)
+ delete(s.level_json)
+ for part in s.source_parts { delete(part.segments) };delete(s.source_parts)
  for c in s.connections { delete(c.rest_segments); delete(c.glue) }
 	for &sub in s.subdivisions { delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes) }
 	for p in s.pieces { delete(p.subdivisions); delete(p.connections) }

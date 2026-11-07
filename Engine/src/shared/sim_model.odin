@@ -11,6 +11,7 @@ Blast :: struct { position: Vec2, radius: f32 }
 Impact_Shock_Source :: struct { cell: u64, point: Vec2, load: f32 }
 
 Failures :: struct {
+ administrative:bool,
  subdivisions, connections, discard_subdivisions: [dynamic]u64,
  impact: bool,
  no_sibling_bonds: bool,
@@ -57,7 +58,7 @@ add_piece :: proc(s: ^Scene, material: int, seed: u8) -> u64 {
 add_subdivision :: proc(s: ^Scene, owner: u64, outline: Polygon, pose: Pose) -> u64 {
 	id := new_id(s)
 	piece := s.pieces[s.piece_rows[owner]]
-	retain_subdivision(s,Subdivision{id=id,owner=owner,material=piece.material,seed=piece.seed,outline=outline,pose=pose,live=true})
+	retain_subdivision(s,Subdivision{id=id,owner=owner,material=piece.material,seed=piece.seed,outline=outline,pose=pose,live=true,provenance={source_identity=SOURCE_DIAGNOSTIC,source_part_id=owner}})
 	append(&s.pieces[s.piece_rows[owner]].subdivisions,id)
 	s.pieces[s.piece_rows[owner]].mass+=polygon_area(outline)
 	s.pieces[s.piece_rows[owner]].render_revision+=1
@@ -194,7 +195,7 @@ rebuild_piece :: proc(s: ^Scene, old_id: u64) {
 		sort_ids(group[:])
 		// The union cannot be narrower than a member it contains.
 		wide_member:=false
-		for id in group { if s.subdivisions[s.sub_rows[id]].width>=s.minimum_width { wide_member=true; break } }
+		for id in group { sub:=s.subdivisions[s.sub_rows[id]];if sub.width>=s.minimum_width||!cell_damage_allowed(sub) { wide_member=true; break } }
 		if !wide_member && piece_width(s,group[:])<s.minimum_width {
 			for id in group { s.subdivisions[s.sub_rows[id]].live=false }
 			delete(group)

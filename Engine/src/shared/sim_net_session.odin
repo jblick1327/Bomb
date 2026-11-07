@@ -14,6 +14,8 @@ Net_App_Hello :: struct {
  version: u32,
  build: string, // views into the packet; do not persist without cloning
  token: string,
+ has_expected_manifest:bool,
+ expected_manifest:[32]u8,
 }
 
 net_app_read_hello :: proc(data: []u8) -> (hello: Net_App_Hello, valid: bool) {
@@ -23,6 +25,7 @@ net_app_read_hello :: proc(data: []u8) -> (hello: Net_App_Hello, valid: bool) {
  hello.version=nc.read_u32(&r)
  hello.build=nc.read_string(&r)
  hello.token=nc.read_string(&r)
+ if hello.version==GAME_PROTOCOL_VERSION { hello.has_expected_manifest=nc.read_bool(&r);if hello.has_expected_manifest {for &byte in hello.expected_manifest {byte=nc.read_u8(&r)}} }
  valid=r.ok && r.pos==len(data) && len(hello.build)>0 && len(hello.build)<=NET_APP_MAX_BUILD && len(hello.token)<=NET_APP_MAX_TOKEN
  return
 }
@@ -48,6 +51,7 @@ net_app_server_hello :: proc(ns: ^Net_Server,index: int,data: []u8,now: f64) {
  hello,ok:=net_app_read_hello(data)
  if !ok { net_app_send_reject(ns,index,"invalid hello",now);return }
  if reason:=net_app_hello_error(hello);reason!="" { net_app_send_reject(ns,index,reason,now);return }
+ if hello.has_expected_manifest&&hello.expected_manifest!=ns.game.world.scene.gameplay_manifest { net_app_send_reject(ns,index,"gameplay level/config manifest mismatch",now);return }
  is_host:=false
  if ns.real_host_token!="" && hello.token==ns.real_host_token {
   if ns.real_host_index>=0 && ns.real_host_index!=index { net_app_send_reject(ns,index,"host already connected",now);return }

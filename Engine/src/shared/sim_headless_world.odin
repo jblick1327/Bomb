@@ -18,7 +18,7 @@ headless_game_reset :: proc(game: ^Headless_Game) { world_rebuild_layout(&game.w
 headless_game_mode :: proc(game: ^Headless_Game,mode: Blast_Mode) {
  if mode==game.world.settings.blast_mode { return }
  game.world.settings.blast_mode=mode; bomb_rain_clear(&game.world)
- game.world.rain.until_drop=bomb_drop_delay(&game.world.rain)
+ game.world.rain.until_drop=bomb_drop_delay_config(&game.world.rain,scene_gameplay_config(&game.world.scene))
 }
 
 world_rebuild_layout :: proc(w: ^World,layout: ^Layout,editing: bool) {
@@ -29,6 +29,7 @@ world_rebuild_layout :: proc(w: ^World,layout: ^Layout,editing: bool) {
 	s^=new_scene(WOOD_MINIMUM_WIDTH)
 	s.revision=revision
 	s.epoch=epoch
+ if layout.level!=nil { world_build_level(w,layout,editing);world_start_physics(w);return }
 	material:=add_material(s,editor_material(.Stone))
 	seed:=w.settings.seed
 	objects: [dynamic]Built_Object; defer delete(objects)

@@ -28,17 +28,18 @@ owner_state_valid :: proc(o: Owner_State) -> bool {
  return o.identity.incarnation!=0 && o.identity.generation!=0 && o.finalized_through<=o.state_tick &&
   finite(o.position.x) && finite(o.position.y) && finite(o.velocity.x) && finite(o.velocity.y) &&
   finite(o.support_velocity.x) && finite(o.support_velocity.y) && finite(o.coyote) && finite(o.buffered_jump) &&
-  o.coyote>=0 && o.coyote<=PLAYER_TUNING.coyote_time+0.00001 && o.buffered_jump>=0 && o.buffered_jump<=PLAYER_TUNING.jump_buffer+0.00001 &&
+  o.coyote>=0 && o.coyote<=1.00001 && o.buffered_jump>=0 && o.buffered_jump<=1.00001 &&
   o.support_kind<=3 && o.held!=min(i8) && o.missing<=INPUT_HELD_GRACE+1 &&
   (o.support_kind==1 || o.support_cell==0)
 }
 owner_state_restore :: proc(world: b2.WorldId,player: ^Player,o: Owner_State) -> bool {
  if !owner_state_valid(o) { return false }
- radius:=player.blast_radius
+ radius:=player.blast_radius;tuning:=player.tuning
  // Recreate only the prediction body: stale contact manifolds/warm starts may
  // not survive an authoritative rewind. The server never calls this helper.
  if player.active && b2.Body_IsValid(player.body) { b2.DestroyBody(player.body) }
  player^=player_create(world,radius)
+ player.tuning=tuning
  b2.Body_SetTransform(player.body,to_b2(o.position),b2.MakeRot(0))
  b2.Body_SetLinearVelocity(player.body,to_b2(o.velocity))
  player.grounded=o.grounded;player.coyote=o.coyote;player.buffered_jump=o.buffered_jump

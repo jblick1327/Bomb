@@ -5,6 +5,7 @@ import "core:sync"
 import "core:math"
 import "core:strings"
 import "core:fmt"
+import json "core:encoding/json"
 import b2 "vendor:box2d"
 
 @(test)
@@ -207,8 +208,10 @@ impact_scale_roundtrips_zero_and_old_snapshots_default_to_one :: proc(t: ^testin
 	data,ok:=encode_snapshot(&s); defer delete(data); testing.expect(t,ok)
 	r,decoded:=decode_snapshot(data); defer scene_destroy(&r)
 	testing.expect(t,decoded && r.materials[0].impact_scale==0)
-	old,allocated:=strings.replace_all(string(data),"\"impact_scale\": 0.00000000,",""); defer { if allocated { delete(old) } }
-	legacy,legacy_ok:=decode_snapshot(transmute([]byte)old); defer scene_destroy(&legacy)
+ wire:Snapshot;testing.expect(t,json.unmarshal(data,&wire)==nil);defer destroy_decoded_snapshot(&wire)
+ wire.materials[0].impact_scale=nil
+ old,old_ok:=exact_json_encode(wire);defer delete(old);testing.expect(t,old_ok)
+	legacy,legacy_ok:=decode_snapshot(old); defer scene_destroy(&legacy)
 	testing.expect(t,legacy_ok && legacy.materials[0].impact_scale==1)
 	s.materials[0].impact_scale=1.6
 	stone,stone_ok:=encode_snapshot(&s); defer delete(stone); testing.expect(t,stone_ok)

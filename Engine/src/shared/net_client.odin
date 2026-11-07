@@ -87,6 +87,7 @@ Net_Client :: struct {
  real_is_host: bool,real_host_left: bool,
  real_has_settings: bool,real_settings: Sandbox_Settings,
  real_protocol: u32,real_build: string,real_host_token: string,
+ has_expected_manifest:bool,expected_manifest:[32]u8,
  real_reason: string,
  control_serial: u64, control_kind: u8, control_ok: bool, control_reason: string,
  rep: Replica, // Presented topology, advanced only at the presentation clock.

@@ -35,11 +35,13 @@ collision_history_topology :: proc(h:^Collision_History,tick:u64,revision:u64=0)
 collision_topology_copy :: proc(source:^Scene,effective:u64) -> ^Collision_Topology {
  out:=new(Collision_Topology);out.scene=new_scene(0);s:=&out.scene
  s.epoch=source.epoch;s.structure_revision=source.structure_revision;s.anchor_y=source.anchor_y;out.effective_tick=effective
+ s.level_policy=source.level_policy
+ s.gameplay_manifest=source.gameplay_manifest;s.config_hash=source.config_hash
  append(&s.materials,..source.materials[:]);for &m in s.materials { m.name="" }
  out.bytes=size_of(Collision_Topology)+len(s.materials)*size_of(Material)
  for original in source.subdivisions {
   if !original.live { continue }
-  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,frame=original.frame,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points)}
+  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,frame=original.frame,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points),provenance=original.provenance}
   s.sub_rows[sub.id]=len(s.subdivisions);append(&s.subdivisions,sub)
   out.bytes+=size_of(Subdivision)+len(sub.outline.points)*size_of(Vec2)+32
  }

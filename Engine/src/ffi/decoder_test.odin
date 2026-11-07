@@ -8,6 +8,7 @@ empty_baseline :: proc(tick,revision:u64) -> []u8 {
  w:nc.Writer;nc.writer_init(&w)
  nc.write_u8(&w,u8(core.Repl_Kind.Baseline));nc.write_varint(&w,tick);nc.write_u8(&w,core.REPL_CANON_VERSION)
  nc.write_varint(&w,1);nc.write_varint(&w,revision);nc.write_f32(&w,0)
+ empty:core.Scene;core.repl_write_catalog(&w,&empty)
  for _ in 0..<4 { nc.write_varint(&w,0) }
  return w.data[:]
 }

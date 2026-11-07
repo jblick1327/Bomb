@@ -20,12 +20,13 @@ Bomb_Rain :: struct {
 bomb_drop_delay :: proc(rain: ^Bomb_Rain) -> f32 {
 	return rand.float32_range(BOMB_DROP_MIN,BOMB_DROP_MAX,rand.default_random_generator(&rain.random))
 }
+ bomb_drop_delay_config :: proc(rain:^Bomb_Rain,config:Gameplay_Config) -> f32 { return rand.float32_range(config.bomb_drop_min,config.bomb_drop_max,rand.default_random_generator(&rain.random)) }
 
-bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8) {
+bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8,config:Gameplay_Config=DEFAULT_GAMEPLAY_CONFIG) {
 	// Reset the independent stream after rebuilding the physics world.
 	// A separate stream leaves procedural destruction seeds independent of drops.
 	rain.random=rand.create(u64(seed)+0x626f6d62)
-	rain.until_drop=bomb_drop_delay(rain)
+	rain.until_drop=bomb_drop_delay_config(rain,config)
 }
 
 bomb_rain_clear :: proc(w: ^World) {
@@ -45,7 +46,7 @@ world_bomb_spawn :: proc(game: ^World,position: Vec2) {
 	shape.material.restitution=0.05
 	_ = b2.CreateCircleShape(body,shape,b2.Circle{radius=BOMB_RADIUS})
 	game.next_bomb_id+=1
-	bomb:=Bomb{id=game.next_bomb_id,body=body,fuse=BOMB_FUSE}
+	bomb:=Bomb{id=game.next_bomb_id,body=body,fuse=scene_gameplay_config(&game.scene).bomb_fuse}
 	bomb.pose=read_body_state(body).pose
 	append(&game.bombs,bomb)
 }
@@ -71,9 +72,11 @@ bomb_rain_before_step :: proc(game: ^World,dt: f32) {
 	rain:=&game.rain
 	rain.until_drop-=dt
 	if rain.until_drop<=0 {
-		x:=rand.float32_range(-7,8,rand.default_random_generator(&rain.random))
-		world_bomb_spawn(game,{x,BOMB_SKY_HEIGHT})
-		rain.until_drop+=bomb_drop_delay(rain)
+  lo,hi,height:=f32(-7),f32(8),BOMB_SKY_HEIGHT
+  if game.scene.level_policy.active { limits:=game.scene.level_policy.bombs;lo=limits.spawn_x.x;hi=limits.spawn_x.y;height=limits.spawn_height }
+		x:=rand.float32_range(lo,hi,rand.default_random_generator(&rain.random))
+		world_bomb_spawn(game,{x,height})
+  if game.scene.level_policy.active { rain.until_drop+=bomb_drop_delay_config(rain,game.scene.level_policy.config) }else{rain.until_drop+=bomb_drop_delay(rain)}
 	}
 }
 
@@ -90,7 +93,9 @@ bomb_rain_after_step :: proc(game: ^World,dt: f32,events: ^Tick_Events) {
 		position:=from_b2(b2.Body_GetPosition(bomb.body))
 		explode:=bomb.landed && bomb.fuse<=0.000001
 		if explode { append(&positions,position) }
-		if explode || position.y < -3 || position.x < -9 || position.x > 10 {
+  outside:=position.y < -3 || position.x < -9 || position.x > 10
+  if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.bombs.cleanup_bounds,position) }
+		if explode || outside {
 			b2.DestroyBody(bomb.body)
 		} else { game.bombs[bomb_count]=bomb; bomb_count+=1 }
 	}

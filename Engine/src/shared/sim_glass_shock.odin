@@ -181,7 +181,7 @@ shock_apply :: proc(s: ^Scene,shock: ^Shock_Transaction,affected: ^map[u64]bool,
  for id,cell in shock.cells { if cell.reached && is_live_subdivision(s,id) { for link in s.subdivisions[s.sub_rows[id]].incident_links { links[link]=true } } }
  for id in links { if s.connections[s.conn_rows[id]].live { append(&ids,id) } }; sort_ids(ids[:])
  for id in ids {
-  c:=s.connections[s.conn_rows[id]]; if c.mortar { continue }; a,a_ok:=shock.cells[c.a]; b,b_ok:=shock.cells[c.b]
+  c:=s.connections[s.conn_rows[id]]; if c.mortar||!connection_damage_allowed(s,c) { continue }; a,a_ok:=shock.cells[c.a]; b,b_ok:=shock.cells[c.b]
   if !a_ok || !b_ok || !a.reached || !b.reached || a.group!=b.group { continue }
   left,right:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
   if !left.live || !right.live || left.material!=right.material || s.materials[left.material].shock_loss<=0 { continue }

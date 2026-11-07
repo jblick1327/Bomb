@@ -184,9 +184,7 @@ physics_sync_structure :: proc(s: ^Scene) {
  s.physics.synced=true; s.physics.synced_revision=s.structure_revision
  clear(&s.pending_regions)
  anchored:=make(map[u64]bool); defer delete(anchored)
- if s.anchor_y>-1e30 {
-  for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { anchored[p.id]=true } }
- }
+ for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { anchored[p.id]=true } }
  ids: [dynamic]u64; defer delete(ids)
  for p in s.pieces { if p.live { append(&ids,p.id) } }; sort_ids(ids[:])
  for id in ids {
@@ -209,7 +207,8 @@ physics_sync_structure :: proc(s: ^Scene) {
  for id in ids {
   sub:=s.subdivisions[s.sub_rows[id]]
   rigid:=s.materials[sub.material].flexibility==0
-  kind:=b2.BodyType.dynamicBody; if anchored[sub.owner] { kind=.staticBody }
+  pinned:=anchored[sub.owner];if sub.provenance.motion!=.Legacy { pinned=sub.provenance.pinned }
+  kind:=b2.BodyType.dynamicBody; if pinned { kind=.staticBody }
   if rigid {
    if sub.body==b2.nullBodyId {
     body:=s.pieces[s.piece_rows[sub.owner]].body

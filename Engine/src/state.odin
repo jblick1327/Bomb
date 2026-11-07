@@ -27,6 +27,9 @@ Wire_Connection :: struct {
  overload_ticks: union { u8 } `json:"overload_ticks,omitempty"`, // legacy: accepted on load, ignored, never written
 }
 Snapshot :: struct {
+ provenance_version:int,
+ level_json:string,
+ source_parts:[dynamic]Source_Part_Anchors,
 	version: int,
 	next_id: u64,
 	revision: u64,
@@ -99,7 +102,7 @@ validate_scene :: proc(s: ^Scene) -> (bool,string) {
 
 // A shallow read view. Geometry and memberships remain owned by the scene.
 read_state :: proc(s: ^Scene) -> Snapshot {
-	out := Snapshot{version=2,next_id=s.next_id,revision=s.revision,minimum_width=s.minimum_width}
+	out := Snapshot{version=3,provenance_version=1,next_id=s.next_id,revision=s.revision,minimum_width=s.minimum_width,level_json=s.level_json,source_parts=s.source_parts}
 	for m in s.materials {
 		wire := Wire_Material{impact_scale=m.impact_scale,name=m.name,subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate}
   if transmute(u32)m.blast_resistance!=0 { wire.blast_resistance=m.blast_resistance }
@@ -136,6 +139,14 @@ release_state_view :: proc(snapshot: ^Snapshot) {
 encode_snapshot :: proc(s: ^Scene) -> ([]byte,bool) {
 	view := read_state(s)
 	defer release_state_view(&view)
+ if view.version==3 {
+  legacy:=s.level_json==""&&len(s.source_parts)==0
+  for sub in s.subdivisions { if sub.provenance.motion!=.Legacy { legacy=false;break } }
+  // Legacy standalone Scene captures retain their original decimal formatting;
+  // the World path already uses exact floats. Authored v4 scenes use exact data.
+  if legacy { bytes,err:=json.marshal(view,{pretty=true});return bytes,err==nil }
+  return exact_json_encode(view,true)
+ }
 	wire:=Legacy_Scene_Wire{version=view.version,next_id=view.next_id,revision=view.revision,minimum_width=view.minimum_width,materials=view.materials,connections=view.connections,pieces=view.pieces}
  defer delete(wire.subdivisions)
  for sub in view.subdivisions { item:=Snapshot_Cell{id=sub.id,owner=sub.owner,material=sub.material,seed=sub.seed,outline=sub.outline,rest_center=sub.rest_center,pose=sub.pose,live=sub.live};if sub.frame!=0 { item.frame=sub.frame };append(&wire.subdivisions,item) }
@@ -143,6 +154,7 @@ encode_snapshot :: proc(s: ^Scene) -> ([]byte,bool) {
 	return data,err == nil
 }
 destroy_decoded_snapshot :: proc(snapshot: ^Snapshot) {
+ delete(snapshot.level_json);for part in snapshot.source_parts { delete(part.segments) };delete(snapshot.source_parts)
 	for m in snapshot.materials { delete(m.name) }
 	for c in snapshot.connections { delete(c.glue) }
  for sub in snapshot.subdivisions { delete(sub.outline.points) }
@@ -156,7 +168,8 @@ decode_snapshot :: proc(data: []byte) -> (Scene,bool) {
  return decode_scene_state(&wire)
 }
 decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
-	if (wire.version != 1 && wire.version != 2) || !finite(wire.minimum_width) || wire.minimum_width < 0 { return {},false }
+	if (wire.version != 1 && wire.version != 2 && wire.version!=3) || !finite(wire.minimum_width) || wire.minimum_width < 0 { return {},false }
+ if wire.version==3&&wire.provenance_version!=1 { return {},false }
 	s := new_scene(wire.minimum_width)
 	s.next_id = wire.next_id
 	s.revision = wire.revision
@@ -164,6 +177,7 @@ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
 	defer delete(seen)
 	ok := false
 	defer { if !ok { scene_destroy(&s) } }
+ if wire.version==3&&!scene_restore_catalog_data(&s,wire.level_json,wire.source_parts[:]) { return {},false }
 	for m in wire.materials {
 		if !finite(m.subdivision_strength) || !finite(m.connection_strength) || m.subdivision_strength < 0 || m.connection_strength < 0 || !finite(m.flexibility) || m.flexibility < 0 || m.generation_count < 1 || !finite(m.aspect_ratio) || m.aspect_ratio <= 0 { return {},false }
 		impact_scale:=f32(1)
@@ -197,6 +211,10 @@ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
 		s.piece_rows[p.id]=len(s.pieces); append(&s.pieces,copy)
 	}
 	for &sub in wire.subdivisions {
+  if wire.version<3 { sub.provenance={} }else{
+   _,valid:=cell_policy_decode(sub.provenance.source_identity,sub.provenance.source_part_id,cell_policy_flags(sub.provenance));if !valid { return {},false }
+   if sub.provenance.motion!=.Legacy&&cell_pinned(&s,sub)!=sub.provenance.pinned { return {},false }
+  }
 		if sub.id == 0 || sub.id > s.next_id || seen[sub.id] || !sub.live { return {},false }
 		seen[sub.id] = true
 		if len(sub.outline.points)<3 { return {},false }

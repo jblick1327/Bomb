@@ -256,4 +256,5 @@ __declspec(dllimport) unsigned int __cdecl bom_client_set_prediction(unsigned lo
 __declspec(dllimport) unsigned int __cdecl bom_client_clear_intent(unsigned long long handle);
 __declspec(dllimport) unsigned int __cdecl bom_client_reset_prediction_metrics(unsigned long long handle);
 __declspec(dllimport) unsigned int __cdecl bom_client_next_request_result(unsigned long long handle, unsigned long long after_request_id, BomRequestResult* result);
+__declspec(dllimport) unsigned int __cdecl bom_client_expect_gameplay_manifest(unsigned long long handle, unsigned char* hash, unsigned int length);
 #endif

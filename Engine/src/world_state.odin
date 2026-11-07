@@ -59,9 +59,10 @@ restore_body_state :: proc(body: b2.BodyId,state: Wire_Body) {
 // epoch is the replication epoch the loaded world starts in; callers pass the
 // previous world's epoch plus one so replicas know to take a new Baseline.
 decode_world_snapshot :: proc(data: []byte,epoch: u32 = 0) -> (World,bool) {
- header: struct { version: int }
+ header: struct { version: int, minimum_width:union{f32} }
  if json.unmarshal(data,&header)!=nil { return {},false }
- if header.version==1 || header.version==2 {
+ _,scene_header:=header.minimum_width.(f32)
+ if header.version==1 || header.version==2 || header.version==3&&scene_header {
   scene,ok:=decode_snapshot(data); if !ok { return {},false }
   scene.epoch=epoch
   w:=World{scene=scene,settings=DEFAULT_SANDBOX_SETTINGS}

@@ -5,9 +5,9 @@ import nc "../netcode"
 import fmt "core:fmt"
 import strings "core:strings"
 
-GAME_PROTOCOL_VERSION :: u32(4)
+GAME_PROTOCOL_VERSION :: u32(5)
 
-GAME_BUILD_ID :: "BOM-scheduled-input-2026-11-06"
+GAME_BUILD_ID :: "BOM-level-catalog-2026-11-07"
 
 NET_APP_HELLO :: u8(0xC2)
 
@@ -19,17 +19,19 @@ NET_APP_HOST_LEFT :: u8(0xC5)
 
 NET_APP_MAX_REASON :: 256
 
-net_app_write_hello :: proc(w: ^nc.Writer, version: u32, build, token: string) {
+net_app_write_hello :: proc(w: ^nc.Writer, version: u32, build, token: string,expected:[]u8=nil) {
  nc.write_u8(w, NET_APP_HELLO)
  nc.write_u32(w, version)
  nc.write_string(w, build)
  nc.write_string(w, token)
+ if version==GAME_PROTOCOL_VERSION { nc.write_bool(w,len(expected)==32);if len(expected)==32 {nc.write_raw(w,expected)} }
 }
 
 net_app_client_send_hello :: proc(c: ^Net_Client) {
  if !c.real_gate || c.real_hello_sent || c.nc_client.state!=.Connected { return }
  w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
- net_app_write_hello(&w,c.real_protocol,c.real_build,c.real_host_token)
+ expected:[]u8;if c.has_expected_manifest {expected=c.expected_manifest[:]}
+ net_app_write_hello(&w,c.real_protocol,c.real_build,c.real_host_token,expected)
  if nc.client_send_reliable(&c.nc_client,w.data[:]) { c.real_hello_sent=true }
 }
 

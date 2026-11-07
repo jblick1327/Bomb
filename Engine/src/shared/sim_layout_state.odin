@@ -17,6 +17,8 @@ Wire_Layout :: struct {
 }
 
 decode_layout :: proc(data: []byte) -> (layout: Layout,seed: u8,ok: bool,problem: string) {
+ header:struct{version:int};if json.unmarshal(data,&header)!=nil { return {},0,false,"Invalid layout JSON" }
+ if header.version==4 { return decode_unity_layout(data) }
 	wire:=Wire_Layout{}
 	defer {
 		delete(wire.kind);delete(wire.glue)

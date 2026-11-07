@@ -1,6 +1,11 @@
 package main
 
 import shared "shared"
+Source_Part_Anchors :: shared.Source_Part_Anchors
+scene_restore_catalog_data :: shared.scene_restore_catalog_data
+cell_policy_decode :: shared.cell_policy_decode
+cell_policy_flags :: shared.cell_policy_flags
+cell_pinned :: shared.cell_pinned
 
 // Migration aliases: both frontends use one native client implementation.
 Applied_Struct :: shared.Applied_Struct

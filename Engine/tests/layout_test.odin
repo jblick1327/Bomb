@@ -53,7 +53,7 @@ layout_rejections_are_atomic_and_report_first_problem :: proc(t: ^testing.T) {
 	world_before,ok2:=encode_world_snapshot(&g.world); defer delete(world_before); testing.expect(t,ok2)
 	cases:=[12]string{
 		`{"kind":"wrong","version":1,"next_identity":1}`,
-		`{"kind":"bom-layout","version":4,"next_identity":1}`,
+		`{"kind":"bom-layout","version":5,"next_identity":1}`,
 		`{"kind":"bom-layout","version":1,"next_identity":2,"objects":[{"identity":1,"material":"iron"}]}`,
 		`{"kind":"bom-layout","version":1,"next_identity":2,"objects":[{"identity":0,"material":"wood"}]}`,
 		`{"kind":"bom-layout","version":1,"next_identity":3,"objects":[{"identity":1,"material":"wood","lo":{"x":0,"y":0},"hi":{"x":1,"y":1}},{"identity":1,"material":"glass"}]}`,

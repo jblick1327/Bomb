@@ -13,12 +13,13 @@ Physics :: struct {
 }
 
 piece_anchored :: proc(s: ^Scene,piece_id: u64,anchor_y: f32) -> bool {
- if !(anchor_y>-1e30) { return false }
  row,ok:=s.piece_rows[piece_id]; if !ok { return false }
  for id in s.pieces[row].subdivisions {
   srow,found:=s.sub_rows[id]; if !found { continue }
   sub:=s.subdivisions[srow]
   if !sub.live { continue }
+  if sub.provenance.motion!=.Legacy { if sub.provenance.pinned { return true };continue }
+  if !(anchor_y>-1e30) { continue }
   for a,i in sub.outline.points {
    b:=sub.outline.points[(i+1)%len(sub.outline.points)]
    if math.abs(a.y-anchor_y)<0.00001 && math.abs(b.y-anchor_y)<0.00001 && math.abs(a.x-b.x)>0.00001 { return true }

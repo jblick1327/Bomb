@@ -212,6 +212,7 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		row, ok := s.sub_rows[id]
 		if !ok || !s.subdivisions[row].live { continue }
 		parent := s.subdivisions[row]
+  if creation_size==0&&!failures.administrative&&!cell_damage_allowed(parent) { continue }
   if !refine_only && s.materials[parent.material].name=="wood" { cover_wood_failures+=1 }
   if direct { shock_mark_direct(shock,id) }
 		seed := parent.seed
@@ -246,6 +247,7 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
    when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[7]+=1 } }
 			child_row := s.sub_rows[child]
    s.subdivisions[child_row].frame=parent.frame
+   cell_inherit_provenance(s,child,parent)
    shock_inherit(shock,id,child)
    if active_cover!=nil { active_cover.owners[child]=active_cover.owners[id]; if flag,ok:=active_cover.shadow[id]; ok { active_cover.shadow[child]=flag } }
 			// Parent context plus child ordinal is independent of other branches'
@@ -270,6 +272,7 @@ stage_failures :: proc(s: ^Scene, failures: Failures, affected: ^map[u64]bool, r
 		row, ok := s.conn_rows[id]
 		if ok && s.connections[row].live {
 			c := s.connections[row]
+   if creation_size==0&&!failures.administrative&&!connection_damage_allowed(s,c) { continue }
    if c.mortar { path:=string("blast");if failures.impact { path="force" };seam_diagnostic_death(s,c,path);s.connections[row].live=false; continue }
 			affected[s.subdivisions[s.sub_rows[c.a]].owner] = true
 			affected[s.subdivisions[s.sub_rows[c.b]].owner] = true

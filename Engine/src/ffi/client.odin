@@ -35,6 +35,7 @@ Client_Slot :: struct {
  connection_generation,sample_sequence,event_sequence,ack_event_id: u64,
  input_generation: u64,
  prediction_disabled: bool,
+ has_expected_manifest:bool,expected_manifest:[32]u8,
  has_held_timestamp:bool,
  last_held_timestamp:f64,
  cached_epoch,input_epoch,journal_epoch: u32, cached_revision,canonical_hash,stall_count: u64,
@@ -151,6 +152,7 @@ bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
  if info.token_length>0 { s.token=strings.clone(string(info.token[:info.token_length])) }
  core.net_client_init(&s.client,nc.random_salt(),0)
  s.client.real_gate=true;s.client.real_host_token=s.token;s.client.verify=true
+ s.client.has_expected_manifest=s.has_expected_manifest;s.client.expected_manifest=s.expected_manifest
  s.client.prediction_enabled=!s.prediction_disabled
  s.connection_generation+=1;s.live=true;s.last_connection_state=u32(nc.Client_State.Connecting)
  return OK

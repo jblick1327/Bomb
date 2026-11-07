@@ -23,6 +23,7 @@ Level_Glue :: struct { a,b:Level_Part_Key }
 Level_Layout :: struct {
  kind:string, version:int, seed:u64, next_identity:u64,
  level_id,gameplay_config_id,catalog_id:string,
+ gameplay_config:Gameplay_Config,
  simulation_bounds,kill_bounds,camera_bounds,aim_bounds,fragment_cull_bounds:Level_Bounds,
  spawns:[dynamic]Vec2,
  bombs:Level_Bomb_Settings,
@@ -77,6 +78,7 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
  if level.kind!="bom-layout"||level.version!=4 { return "Not a version 4 bom-layout" }
  if len(level.level_id)<1||len(level.level_id)>128||len(level.gameplay_config_id)<1||len(level.gameplay_config_id)>128||len(level.catalog_id)<1||len(level.catalog_id)>128 { return "Level/config/catalog identifiers require 1..128 bytes" }
  if level.seed>255 { return "Seed must be between 0 and 255" }
+ if !gameplay_config_valid(level.gameplay_config) { return "Invalid versioned gameplay configuration" }
  for bounds in ([6]Level_Bounds{level.simulation_bounds,level.kill_bounds,level.camera_bounds,level.aim_bounds,level.fragment_cull_bounds,level.bombs.cleanup_bounds}) { if !level_bounds_valid(bounds) { return "Invalid level bounds" } }
  if len(level.spawns)!=4 { return "Exactly four explicit spawn points are required" }
  for spawn in level.spawns { if !level_bounds_contains(level.simulation_bounds,spawn)||!level_bounds_contains(level.kill_bounds,spawn) { return "Spawn outside simulation/kill bounds" } }
@@ -94,7 +96,7 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
 
  sources:=make(map[u64]bool);defer delete(sources)
  parts:=make(map[Level_Part_Key]bool);defer delete(parts)
- maximum:u64;count:=0
+ maximum:u64;count:=0;construction_budget:=f64(0)
  for source in level.sources {
   if source.identity==0||source.identity>=SOURCE_RESERVED_START||sources[source.identity] { return "Source identity is zero, duplicate or reserved" };sources[source.identity]=true;maximum=max(maximum,source.identity)
   if len(source.asset_key)<1||len(source.asset_key)>256||len(source.visual_hash)!=64||len(source.cap_key)>256 { return "Invalid visual catalog binding" }
@@ -109,6 +111,9 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
    key:=Level_Part_Key{source.identity,part.part_id};if part.part_id==0||part.part_id==max(u64)||parts[key] { return "Part identity is zero, duplicate or exhausted" };parts[key]=true
    known:=false;for slot in 0..<palette_count(&palette) { if layout_material(&palette,Slot(slot)).name==part.material { known=true;break } };if !known { return "Unknown physics material" }
    if problem:=level_polygon_problem(part.outline[:],level.simulation_bounds);problem!="" { return problem }
+   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30};for p in part.outline { lo={min(lo.x,p.x),min(lo.y,p.y)};hi={max(hi.x,p.x),max(hi.y,p.y)} }
+   construction_budget+=math.ceil(f64(hi.x-lo.x)/.1)*math.ceil(f64(hi.y-lo.y)/.1)*f64(len(part.outline)-2)
+   if construction_budget>100000 { return "Proxy construction budget exceeds 100000 conservative grid-triangle units; split/simplify the authored level" }
    if len(part.anchors)>128 { return "Too many anchor segments" }
    for anchor in part.anchors {
     if !valid_vec(anchor.a)||!valid_vec(anchor.b)||vlen(vsub(anchor.b,anchor.a))<.001 { return "Invalid anchor segment" }
@@ -138,7 +143,11 @@ decode_level_layout :: proc(data:[]u8) -> (level:Level_Layout,ok:bool,problem:st
  arena:mem.Arena;mem.arena_init(&arena,storage)
  wire:Level_Layout
  if json.unmarshal(data,&wire,allocator=mem.arena_allocator(&arena))!=nil { return {},false,"Invalid version 4 layout JSON" }
+ if wire.gameplay_config.version==0&&wire.gameplay_config_id=="bom-default-v1" { wire.gameplay_config=DEFAULT_GAMEPLAY_CONFIG }
  if reason:=level_layout_problem(&wire);reason!="" { return {},false,reason }
+ canonical,err:=json.marshal(wire);defer delete(canonical)
+ if err!=nil||len(canonical)>NET_APP_MAX_LAYOUT { return {},false,"Canonical level catalog exceeds the 200000-byte upload bound" }
  if json.unmarshal(data,&level)!=nil { destroy_level_layout(&level);return {},false,"Cannot retain validated level layout" }
+ if level.gameplay_config.version==0 { level.gameplay_config=wire.gameplay_config }
  return level,true,""
 }

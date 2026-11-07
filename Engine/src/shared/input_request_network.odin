@@ -54,7 +54,9 @@ net_request_server_dispatch :: proc(ns:^Net_Server,index:int,data:[]u8) {
    if !r.ok || r.pos!=len(q.payload) || !finite(point.x) || !finite(point.y) { result.status=.Rejected;result.reason=2 }
    else {
     recent:=0;for tick in c.blast_ticks { if ns.tick+1-tick<NET_BLAST_RATE_TICKS { recent+=1 } }
-    if point.x<YARD_LEFT || point.x>YARD_RIGHT || point.y<=YARD_FLOOR_BOTTOM || point.y>NET_YARD_CEILING { result.status=.Rejected;result.reason=3;c.stats.rejected_outside+=1 }
+    outside:=point.x<YARD_LEFT || point.x>YARD_RIGHT || point.y<=YARD_FLOOR_BOTTOM || point.y>NET_YARD_CEILING
+    if ns.game.world.scene.level_policy.active { outside=!level_bounds_contains(ns.game.world.scene.level_policy.aim,point) }
+    if outside { result.status=.Rejected;result.reason=3;c.stats.rejected_outside+=1 }
     else if recent>=NET_BLAST_RATE_COUNT { result.status=.Rejected;result.reason=4;c.stats.rejected_rate+=1 }
     else if !sandbox_valid_aim(&ns.game.world.scene,point) { result.status=.Rejected;result.reason=5;c.stats.rejected_solid+=1 }
     else {

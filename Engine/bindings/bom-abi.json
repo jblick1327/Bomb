@@ -1155,7 +1155,24 @@
           "*BomRequestResult"
         ]
       ]
+    ],
+    "bom_client_expect_gameplay_manifest": [
+      "u32",
+      [
+        [
+          "handle",
+          "u64"
+        ],
+        [
+          "hash",
+          "[]u8"
+        ],
+        [
+          "length",
+          "u32"
+        ]
+      ]
     ]
   },
-  "abi_minor": 2
+  "abi_minor": 3
 }

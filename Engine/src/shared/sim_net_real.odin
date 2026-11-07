@@ -142,6 +142,10 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
 }
 
 net_real_cli_server :: proc(args: []string) -> bool {
+ if len(args)>0&&args[0]=="--validate-layout" {
+  if len(args)!=4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json");return false}
+  return level_validate_cli(args[1],args[3])
+ }
  port:=NET_REAL_PORT
  layout:=""
  seconds:=f64(0)

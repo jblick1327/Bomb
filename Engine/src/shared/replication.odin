@@ -5,7 +5,7 @@ import nc "../netcode"
 import slice "core:slice"
 import strings "core:strings"
 
-REPL_CANON_VERSION :: u8(2)
+REPL_CANON_VERSION :: u8(3)
 
 REPL_PART_LIMIT :: 200_000 // Messages above this are split; the reliable limit is 255 KB.
 
@@ -37,17 +37,20 @@ repl_read_material :: proc(r: ^nc.Reader) -> Material {
 
 repl_write_cell :: proc(w: ^nc.Writer,sub: Subdivision) {
  nc.write_varint(w,sub.id); nc.write_varint(w,sub.owner); nc.write_varint(w,u64(sub.material))
+ nc.write_u64(w,sub.provenance.source_identity);nc.write_u64(w,sub.provenance.source_part_id);nc.write_u32(w,cell_policy_flags(sub.provenance))
  nc.write_f32(w,sub.frame)
  nc.write_varint(w,u64(len(sub.outline.points)))
  for p in sub.outline.points { nc.write_f32(w,p.x); nc.write_f32(w,p.y) }
  nc.write_f32(w,sub.rest_center.x); nc.write_f32(w,sub.rest_center.y)
 }
 
-Repl_Cell :: struct { id,owner: u64, material: int, frame: f32, outline: []Vec2, rest_center: Vec2 }
+Repl_Cell :: struct { id,owner: u64, material: int, frame: f32, outline: []Vec2, rest_center: Vec2, provenance:Cell_Provenance }
 
 repl_read_cell :: proc(r: ^nc.Reader) -> Repl_Cell {
  c:Repl_Cell
  c.id=nc.read_varint(r); c.owner=nc.read_varint(r); c.material=int(nc.read_varint(r))
+ source,part:=nc.read_u64(r),nc.read_u64(r);flags:=nc.read_u32(r)
+ policy,valid:=cell_policy_decode(source,part,flags);if !valid { nc.reader_fail(r);return c };c.provenance=policy
  c.frame=nc.read_f32(r)
  count:=nc.read_varint(r)
  if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r))/8 { nc.reader_fail(r); return c }
@@ -131,6 +134,7 @@ canonical_encode_into :: proc(w: ^nc.Writer,s: ^Scene,x: ^Repl_Scratch) {
  repl_collect_ids(s,x)
  nc.write_u8(w,REPL_CANON_VERSION)
  nc.write_varint(w,u64(s.epoch)); nc.write_varint(w,s.structure_revision); nc.write_f32(w,s.anchor_y)
+ repl_write_catalog(w,s)
  repl_write_body(w,s,x)
 }
 
@@ -348,7 +352,7 @@ replica_add_material :: proc(rep: ^Replica,m: Material) {
 
 replica_add_cell :: proc(rep: ^Replica,c: Repl_Cell) {
  s:=&rep.scene
- sub:=Subdivision{id=c.id,owner=c.owner,material=c.material,frame=c.frame,outline=make_polygon(c.outline),rest_center=c.rest_center,live=true}
+ sub:=Subdivision{id=c.id,owner=c.owner,material=c.material,frame=c.frame,outline=make_polygon(c.outline),rest_center=c.rest_center,live=true,provenance=c.provenance}
  sub.pose=Pose{position=c.rest_center}
  s.sub_rows[sub.id]=len(s.subdivisions); append(&s.subdivisions,sub)
  s.next_id=max(s.next_id,sub.id)
@@ -455,6 +459,7 @@ replica_apply_baseline :: proc(rep: ^Replica,r: ^nc.Reader) -> string {
  rep.scene=new_scene(0)
  s:=&rep.scene
  s.epoch=u32(epoch); s.structure_revision=revision; s.anchor_y=anchor_y
+ if reason:=repl_read_catalog(r,s);reason!="" { return reason }
  count:=nc.read_varint(r)
  if count>1024 { return "too many baseline materials" }
  for _ in 0..<count { m:=repl_read_material(r);if !r.ok || !repl_valid_material(m) { return "invalid baseline material" };replica_add_material(rep,m) }

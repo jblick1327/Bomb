@@ -5,6 +5,7 @@ import "core:sync"
 import "core:math"
 import "core:fmt"
 import "core:strings"
+import json "core:encoding/json"
 
 @(test)
 mortar_seam_seed_invariance :: proc(t: ^testing.T) {
@@ -87,7 +88,9 @@ mortar_seam_damage_snapshot_field :: proc(t: ^testing.T) {
  // Zero damage is omitted.
  for &c in g.world.scene.connections { c.damage=0 }
  plain,pok:=encode_world_snapshot(&g.world); defer delete(plain); testing.expect(t,pok)
- testing.expect(t,!strings.contains(string(plain),"damage"))
+ wire:World_Snapshot;testing.expect(t,json.unmarshal(plain,&wire)==nil)
+ defer {destroy_decoded_snapshot(&wire.scene);delete(wire.players);delete(wire.bombs)}
+ for connection in wire.scene.connections { _,present:=connection.damage.(f32);testing.expect(t,!present,"Zero seam damage must be omitted independently of cell damage policy metadata") }
  // A legacy overload counter is accepted and ignored.
  legacy,_:=strings.replace(string(plain),"\"mortar\": true","\"mortar\": true,\n\t\t\t\t\"overload_ticks\": 2",1); defer delete(legacy)
  testing.expect(t,legacy!=string(plain))
