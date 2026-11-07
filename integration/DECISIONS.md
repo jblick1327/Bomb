@@ -22,3 +22,8 @@
 - M5: bump game protocol to 4/build BOM-scheduled-input-2026-11-06 for scheduled commands, exact owner state, reliable request envelopes/results and u64 event IDs. Keep canonical 2 and transport BOM1 unchanged. Legacy latest-value input remains only in non-application diagnostic fixtures; real authorized sessions use the scheduled path.
 - M5: both native and ABI physics fixtures run serially because Box2D world creation and ABI ownership are process-scoped. The fast suite now includes these tests.
 - M5: preserve fixed elapsed time in the reference frontend instead of dropping fractional time, and send a disconnect before destroying its client. Full world-report coverage caught both issues; no missing reports are accepted as matching.
+
+- M5 complete: native prediction and conservative fallback live in the shared package. ABI 1.2 adds owner/prediction/result/intent controls without changing existing strides. Visual correction only offsets actor children.
+- Profile frame timing uses high-resolution waitable timers and measured cadence, with no fake catchup frames and no relaxed response bounds. Preserve the initial failing profiles.
+- A locally queued blast retains its original age; expired/focus/epoch/stall-cleared intent has an ordered local terminal result. Request-result flag 4 means local terminal; status 9 means cleared.
+- Freeze a separate demo server path before M6 changes the development wire format.

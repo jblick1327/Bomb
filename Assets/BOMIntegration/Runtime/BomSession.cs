@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Bom.Native;
 
@@ -10,6 +11,10 @@ namespace Bom.Unity {
 public sealed class BomSession : IDisposable {
  public ulong Handle { get; private set; }
  public BomSample Sample;
+ public BomOwnerState Owner;
+ public BomPredictionStats Prediction;
+ public readonly List<BomRequestResult> RequestResults=new List<BomRequestResult>();
+ ulong requestCursor,requestGeneration;
  public BomCell[] Cells=Array.Empty<BomCell>();
  public BomVertex[] Vertices=Array.Empty<BomVertex>();
  public BomPose[] Poses=Array.Empty<BomPose>();
@@ -18,7 +23,7 @@ public sealed class BomSession : IDisposable {
  public static double Now => (double)Stopwatch.GetTimestamp()/Stopwatch.Frequency;
  public static void Check(uint result) { if(result!=0)throw new InvalidOperationException("Native client status "+result); }
  public static void VerifyLayouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult)};
   for(uint i=0;i<types.Length;i++) {
    Type t=types[i];if(Marshal.SizeOf(t)!=BomNative.bom_debug_layout(i,0))throw new InvalidOperationException(t.Name+" size differs");
    var fields=t.GetFields(BindingFlags.Instance|BindingFlags.Public);uint alignment=1;
@@ -62,6 +67,11 @@ public sealed class BomSession : IDisposable {
    // Clear pointer fields: managed users receive only the owned copies above.
    sample.cells=sample.vertices=sample.poses=sample.events=sample.error_text=IntPtr.Zero;Sample=sample;
   } finally {Check(BomNative.bom_client_release_sample(Handle,sample.sample_sequence));}
+  Owner=new BomOwnerState{struct_size=(uint)Marshal.SizeOf<BomOwnerState>(),version=1};Check(BomNative.bom_client_get_owner_state(Handle,ref Owner));
+  Prediction=new BomPredictionStats{struct_size=(uint)Marshal.SizeOf<BomPredictionStats>(),version=1};Check(BomNative.bom_client_get_prediction_stats(Handle,ref Prediction));
+  if(requestGeneration!=Sample.connection_generation){requestGeneration=Sample.connection_generation;requestCursor=0;}
+  RequestResults.Clear();
+  for(int i=0;i<1024;i++){var result=new BomRequestResult{struct_size=(uint)Marshal.SizeOf<BomRequestResult>(),version=1};Check(BomNative.bom_client_next_request_result(Handle,requestCursor,ref result));if((result.flags&1)==0)break;RequestResults.Add(result);requestCursor=result.request_id;}
   accept(this);Check(BomNative.bom_client_ack_sample(Handle,sample.sample_sequence));
  }
  public void Dispose(){if(Handle==0)return;Check(BomNative.bom_client_destroy(Handle));Handle=0;}

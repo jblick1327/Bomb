@@ -164,6 +164,72 @@ namespace Bom.Native {
  public float bomb_radius;
  public uint reserved;
 }
+[StructLayout(LayoutKind.Sequential)] public struct BomOwnerState {
+ public uint struct_size;
+ public uint version;
+ public uint flags;
+ public uint support_kind;
+ public ulong connection_incarnation;
+ public ulong input_generation;
+ public ulong state_tick;
+ public ulong topology_revision;
+ public ulong finalized_through_tick;
+ public ulong last_applied_sequence;
+ public ulong last_jump_edge;
+ public ulong teleport_serial;
+ public ulong support_cell;
+ public uint epoch;
+ public uint missing_held_ticks;
+ public float position_x;
+ public float position_y;
+ public float velocity_x;
+ public float velocity_y;
+ public float support_velocity_x;
+ public float support_velocity_y;
+ public float coyote;
+ public float buffered_jump;
+ public float held_move;
+ public uint reserved;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomPredictionStats {
+ public uint struct_size;
+ public uint version;
+ public uint status;
+ public uint reason;
+ public ulong input_generation;
+ public ulong owner_tick;
+ public ulong predicted_tick;
+ public ulong finalized_through_tick;
+ public ulong last_applied_sequence;
+ public double rtt_seconds;
+ public double positive_jitter_p95_seconds;
+ public double clock_error_ticks;
+ public uint lead_ticks;
+ public uint pending_commands;
+ public ulong correction_count;
+ public ulong snap_count;
+ public ulong conservative_transitions;
+ public ulong recoveries;
+ public ulong reset_count;
+ public float correction_p95;
+ public float correction_p99;
+ public float correction_max;
+ public float visual_offset_x;
+ public float visual_offset_y;
+ public float reserved;
+ public double conservative_seconds;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRequestResult {
+ public uint struct_size;
+ public uint version;
+ public uint flags;
+ public uint kind;
+ public ulong request_id;
+ public ulong effect_tick;
+ public ulong event_id;
+ public uint status;
+ public uint reason;
+}
 public static class BomNative {
  public const uint AbiVersion = 1;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
@@ -187,5 +253,11 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_request_host_command(ulong handle, ref BomHostCommand command, ref ulong command_id);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_command_result(ulong handle, ref BomCommandResult result);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_actor_shape_info(ref BomActorShapeInfo info);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_owner_state(ulong handle, ref BomOwnerState state);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_prediction_stats(ulong handle, ref BomPredictionStats stats);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_prediction(ulong handle, uint enabled);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_clear_intent(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_reset_prediction_metrics(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_next_request_result(ulong handle, ulong after_request_id, ref BomRequestResult result);
 }
 }
