@@ -1,0 +1,18 @@
+{
+  "status": "in_progress",
+  "passed": [
+    "Unity exact IDs above 2^53: duplicate, reopen, part duplication, prefab property apply, copied level namespace",
+    "Unreadable mesh data read without importer changes; affine mirrored winding/normals/UV test",
+    "Native v4 decoder: exact IDs, column-major matrix, concave area, compound empty hole, malformed data/geometry rejection"
+  ],
+  "shared_tests": 38,
+  "ffi_tests": 15,
+  "not_yet_implemented": [
+    "Application loading of layout v4",
+    "Cell provenance through canonical/persistence/late join",
+    "Actual motion/damage policies and configurable bounds",
+    "Reliable catalog/gameplay manifest handshake",
+    "Exported yard and standalone visual registry"
+  ],
+  "fixture_note": "Part-only duplicate fixture creates a child part, rather than cloning the source component and thus a separate part namespace."
+}

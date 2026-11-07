@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([ValidateSet('Mono','IL2CPP','Editor')][string]$Backend='Mono',[ValidateRange(1,3600)][int]$Seconds=24,[double]$TimeScale=1,[switch]$SingleUnity,[switch]$SkipBuild,[string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json'))
+param([ValidateSet('Mono','IL2CPP','Editor')][string]$Backend='Mono',[ValidateRange(1,3600)][int]$Seconds=24,[double]$TimeScale=1,[switch]$SingleUnity,[switch]$PredictionOff,[switch]$SkipBuild,[string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json'))
 $ErrorActionPreference='Stop'
 $integration=Split-Path -Parent $PSScriptRoot;$unityRoot=Split-Path -Parent $integration
 $config=Get-Content -LiteralPath $ConfigPath -Raw|ConvertFrom-Json
@@ -19,6 +19,7 @@ $hostOutput=Join-Path $config.OdinRoot 'build/interop-unity'
 if($LASTEXITCODE -ne 0){throw 'Native test-host build failed.'}
 Copy-Item -LiteralPath (Join-Path $config.OdinRoot 'build/bomcore.dll') -Destination (Join-Path $hostOutput 'bomcore.dll') -Force
 $arguments=@((Join-Path $PSScriptRoot 'Run-UnityLive.py'),'--config',$ConfigPath,'--host-runner',(Join-Path $hostOutput 'Interop.dll'),'--seconds',"$Seconds",'--time-scale',"$TimeScale")
+if($PredictionOff){$arguments+='--prediction-off'}
 if($Backend -eq 'Editor'){$arguments+='--editor'}else{
  $output=Join-Path $integration "build/$Backend";New-Item -ItemType Directory -Path $output -Force|Out-Null
  if(!$SkipBuild){

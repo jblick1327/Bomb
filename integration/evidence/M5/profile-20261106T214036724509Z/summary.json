@@ -1,0 +1,61 @@
+{
+  "status": "failed",
+  "profile": {
+    "config": "work/integration-stage/local.config.json",
+    "seconds": 30,
+    "rtt_ms": 200.0,
+    "jitter_ms": 30.0,
+    "loss": 0.05,
+    "fps": 144,
+    "prediction_off": false,
+    "seed": 57292
+  },
+  "exit_codes": {
+    "profile": 3762504530,
+    "server": 0
+  },
+  "failure": "",
+  "relay_errors": [],
+  "relay": {
+    "received": 4633,
+    "forwarded": 4395,
+    "dropped": 238,
+    "peak_queued": 21,
+    "max_packet": 1043
+  },
+  "result": null,
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "9b9da61b42a56f3e29603dc5cca89cee0818be58",
+    "source_dirty": true,
+    "source_sha256": "c62bd31964873081a3949cad1965aab1d4c393059fcef18607eed4bd058dda2d",
+    "build_tag": 892483696845157128,
+    "dll_sha256": "e4cc6deb9c58ed7c528f3b65c145e01f2c2a4dcba630f0ae8b31f5ed6cb69d46",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "51060",
+      "--seconds",
+      "90",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "51061",
+      "30"
+    ]
+  },
+  "scope": "Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement."
+}

@@ -1,0 +1,65 @@
+BOM staging server listening on 127.0.0.1:55883 only; tick=60Hz
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=1076 tick=29 queued=yes
+HELLO OK client=0 role=player
+HASH REPORT client=0 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=32 result=match
+CONNECT client=1
+CONNECT client=2
+HASH EXPECT client=1 connection=1 epoch=3 revision=1076 tick=52 queued=yes
+HELLO OK client=1 role=HOST
+HASH EXPECT client=2 connection=1 epoch=3 revision=1076 tick=52 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=1 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=56 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=1076 hash=3264990100643165924 tick=56 result=match
+COMMAND OK client=1 op=3 epoch=3
+COMMAND OK client=1 op=1 epoch=4
+HASH EXPECT client=0 connection=1 epoch=4 revision=1076 tick=351 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1076 tick=351 queued=yes
+HASH EXPECT client=2 connection=1 epoch=4 revision=1076 tick=351 queued=yes
+HASH REPORT client=1 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=354 result=match
+HASH REPORT client=2 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=354 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=1076 hash=7194916091094006787 tick=354 result=match
+LAYOUT OK client=1 epoch=5 objects=4
+HASH EXPECT client=0 connection=1 epoch=5 revision=1076 tick=472 queued=yes
+HASH EXPECT client=1 connection=1 epoch=5 revision=1076 tick=472 queued=yes
+HASH EXPECT client=2 connection=1 epoch=5 revision=1076 tick=472 queued=yes
+HASH REPORT client=2 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=474 result=match
+HASH REPORT client=1 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=475 result=match
+HASH REPORT client=0 connection=1 epoch=5 revision=1076 hash=9039584614717797454 tick=476 result=match
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=530
+CONNECT client=2
+HASH EXPECT client=2 connection=2 epoch=5 revision=1076 tick=533 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=2 connection=2 epoch=5 revision=1076 hash=9039584614717797454 tick=536 result=match
+SERVER time=10s tick=600 active=3 overruns=0 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976845109 RTT=17ms tx=138 kbit/s
+INPUT client=0 incarnation=1 generation=3 finalized=600 applied_sequence=121 accepted=125 duplicates=366 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976845110 RTT=12ms tx=134 kbit/s
+INPUT client=1 incarnation=2 generation=4 finalized=600 applied_sequence=121 accepted=125 duplicates=366 conflicts=0 late=0 starved=4 neutralized=4
+  client=2 addr=139637976845113 RTT=9ms tx=27 kbit/s
+INPUT client=2 incarnation=4 generation=1 finalized=600 applied_sequence=59 accepted=63 duplicates=182 conflicts=0 late=0 starved=4 neutralized=4
+SERVER time=20s tick=1200 active=3 overruns=0 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976845109 RTT=25ms tx=75 kbit/s
+INPUT client=0 incarnation=1 generation=3 finalized=1200 applied_sequence=721 accepted=725 duplicates=2166 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976845110 RTT=31ms tx=75 kbit/s
+INPUT client=1 incarnation=2 generation=4 finalized=1200 applied_sequence=721 accepted=725 duplicates=2166 conflicts=0 late=0 starved=4 neutralized=4
+  client=2 addr=139637976845113 RTT=20ms tx=75 kbit/s
+INPUT client=2 incarnation=4 generation=1 finalized=1200 applied_sequence=659 accepted=663 duplicates=1982 conflicts=0 late=0 starved=4 neutralized=4
+SERVER time=30s tick=1800 active=3 overruns=0 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976845109 RTT=16ms tx=76 kbit/s
+INPUT client=0 incarnation=1 generation=3 finalized=1800 applied_sequence=1321 accepted=1325 duplicates=3966 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976845110 RTT=14ms tx=76 kbit/s
+INPUT client=1 incarnation=2 generation=4 finalized=1800 applied_sequence=1321 accepted=1325 duplicates=3966 conflicts=0 late=0 starved=4 neutralized=4
+  client=2 addr=139637976845113 RTT=9ms tx=76 kbit/s
+INPUT client=2 incarnation=4 generation=1 finalized=1800 applied_sequence=1259 accepted=1263 duplicates=3782 conflicts=0 late=0 starved=4 neutralized=4
+DISCONNECT client=0 reason=Client_Disconnect
+HASH CLOSED client=0 connection=1 tick=1946
+DISCONNECT client=1 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=1 connection=1 tick=2151
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=2 tick=2151
+SERVER time=40s tick=2400 active=0 overruns=0 hashes=10 mismatches=0 unrecorded=0
+SERVER host-left shutdown
+SERVER final hashes=10 mismatches=0 unrecorded=0

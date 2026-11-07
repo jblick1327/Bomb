@@ -1,0 +1,108 @@
+{
+  "status": "failed",
+  "profile": {
+    "config": "work/integration-stage/local.config.json",
+    "seconds": 600,
+    "rtt_ms": 200.0,
+    "jitter_ms": 30.0,
+    "loss": 0.05,
+    "fps": 144,
+    "prediction_off": false,
+    "seed": 57292,
+    "unity_player": null
+  },
+  "exit_codes": {
+    "profile": 3762504530,
+    "server": 0
+  },
+  "failure": "",
+  "relay_errors": [],
+  "relay": {
+    "received": 93735,
+    "forwarded": 89045,
+    "dropped": 4690,
+    "peak_queued": 22,
+    "max_packet": 1043
+  },
+  "result": {
+    "status": "failed",
+    "failures": [
+      "native presentation response budget"
+    ],
+    "seconds": 600,
+    "fps": 144,
+    "prediction": true,
+    "warmupSeconds": 21.459092400036752,
+    "frames": 86403,
+    "predictedFrames": 86403,
+    "fallbackFrames": 0,
+    "inputResponseSamples": 300,
+    "inputResponseExpired": 0,
+    "inputToPresentationP95Ms": 31.72859991900623,
+    "inputResponseBudgetMs": 25.611111111111114,
+    "stats": {
+      "struct_size": 160,
+      "version": 1,
+      "status": 1,
+      "reason": 0,
+      "input_generation": 1,
+      "owner_tick": 37295,
+      "predicted_tick": 37313,
+      "finalized_through_tick": 37295,
+      "last_applied_sequence": 37201,
+      "rtt_seconds": 0.2373103243801667,
+      "positive_jitter_p95_seconds": 0.023011504476454475,
+      "clock_error_ticks": -0.6267719921685053,
+      "lead_ticks": 11,
+      "pending_commands": 18,
+      "correction_count": 18511,
+      "snap_count": 0,
+      "conservative_transitions": 0,
+      "recoveries": 0,
+      "reset_count": 0,
+      "correction_p95": 0.001,
+      "correction_p99": 0.002,
+      "correction_max": 0.2642475,
+      "visual_offset_x": -3.3310778e-07,
+      "visual_offset_y": 3.299925e-07,
+      "reserved": 0,
+      "conservative_seconds": 0
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "d706c8a38f17b149f25028d9c38771fb0455604b",
+    "source_dirty": false,
+    "source_sha256": "fa7447553a57d709416376a587ece31472609e8cd92c65466a31b4940dd253a7",
+    "build_tag": 1127945502384815472,
+    "dll_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "native_plugin_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+  "server_sha256": "1740cc5ac821f8d6509d0ce3b2dea240bf04ff0154b3d65c8e6bba7c20e883f0",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "59458",
+      "--seconds",
+      "660",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "59459",
+      "600"
+    ]
+  },
+  "scope": "Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement."
+}

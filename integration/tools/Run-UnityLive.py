@@ -2,7 +2,7 @@
 import argparse,datetime,hashlib,json,os,pathlib,re,secrets,socket,subprocess,sys,time
 
 p=argparse.ArgumentParser()
-p.add_argument('--seconds',type=int,default=24);p.add_argument('--capture',action='store_true');p.add_argument('--config');p.add_argument('--player');p.add_argument('--editor',action='store_true');p.add_argument('--two-unity',action='store_true');p.add_argument('--host-runner');p.add_argument('--time-scale',type=float,default=1)
+p.add_argument('--seconds',type=int,default=24);p.add_argument('--capture',action='store_true');p.add_argument('--config');p.add_argument('--player');p.add_argument('--editor',action='store_true');p.add_argument('--two-unity',action='store_true');p.add_argument('--host-runner');p.add_argument('--time-scale',type=float,default=1);p.add_argument('--prediction-off',action='store_true')
 a=p.parse_args()
 if not 1<=a.seconds<=3600:raise SystemExit('seconds must be 1..3600')
 if a.capture and (a.two_unity or a.editor):raise SystemExit('capture is a separate single-player gate')
@@ -11,8 +11,8 @@ if (w/'integration-stage/tools').is_dir():sys.path.insert(0,str(w/'integration-s
 from hash_coverage import analyze
 config=json.loads(pathlib.Path(a.config).read_text(encoding='utf-8-sig')) if a.config else {}
 r=pathlib.Path(config.get('OdinRoot',w/'odin-source/BOM'))
-player=pathlib.Path(a.player or config.get('UnitySlicePlayer',w/'unity-slice-player/BombNativeSlice.exe'))
-host=pathlib.Path(a.host_runner or config.get('UnityHostRunner',r/'build/interop-unity/Interop.dll'))
+player=pathlib.Path(a.player or config.get('UnitySlicePlayer',w/'unity-slice-player/BombNativeSlice.exe')).resolve()
+host=pathlib.Path(a.host_runner or config.get('UnityHostRunner',r/'build/interop-unity/Interop.dll')).resolve()
 evidence=pathlib.Path(a.config).resolve().parent/'evidence/M4' if a.config else w
 out=evidence/('unity-live-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
 if a.editor:a.seconds=max(a.seconds,100)
@@ -28,7 +28,9 @@ commands={
  'observer':[str(r/'build/BOM.exe'),'--bot-client',f'127.0.0.1:{port}','--seconds',str(a.seconds)]}
 if a.capture:commands['unity']+=['--bom-capture',str(out/'scene.png')]
 if a.editor:commands['unity']=[config['UnityEditor'],'-batchmode','-projectPath',config['UnityValidationProject'],'-executeMethod','BomEditorLifecycle.Run','--bom-port',str(port),'-logFile',str(out/'unity.log')]
-if a.two_unity:commands['unity-late']=commands['unity'][:-1]+[str(out/'unity-late.log')]
+if a.prediction_off and not a.editor:commands['unity']+=['--bom-prediction-off']
+if a.two_unity:
+ commands['unity-late']=list(commands['unity']);commands['unity-late'][commands['unity-late'].index('-logFile')+1]=str(out/'unity-late.log')
 startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
 processes={};streams={};codes={};failure=''
 def read(path):return path.read_text(errors='replace') if path.exists() else ''

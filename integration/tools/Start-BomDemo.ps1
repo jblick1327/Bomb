@@ -3,7 +3,7 @@ param([switch]$Play,[ValidateRange(1,65535)][int]$Port=32000,[string]$ConfigPath
 $ErrorActionPreference='Stop'
 if(!$Play){throw 'Use -Play to open the interactive Unity native-client demo.'}
 $config=Get-Content -LiteralPath $ConfigPath -Raw|ConvertFrom-Json
-$server=Join-Path $config.OdinRoot 'build/BOM-server.exe';$player=$config.UnitySlicePlayer
+$server=if($config.PSObject.Properties.Name -contains 'ServerExecutable'){$config.ServerExecutable}else{Join-Path $config.OdinRoot 'build/BOM-server.exe'};$player=$config.UnitySlicePlayer
 if(!(Test-Path -LiteralPath $server) -or !(Test-Path -LiteralPath $player)){throw 'Build the native server and Unity Mono slice before starting the demo.'}
 $logs=Join-Path (Split-Path -Parent $PSScriptRoot) ('evidence/local/demo-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ'))
 New-Item -ItemType Directory -Path $logs -Force|Out-Null

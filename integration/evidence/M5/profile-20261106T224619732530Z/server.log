@@ -1,0 +1,28 @@
+BOM staging server listening on 127.0.0.1:52396 only; tick=60Hz
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=820 tick=37 queued=yes
+HELLO OK client=0 role=HOST
+HASH REPORT client=0 connection=1 epoch=3 revision=820 hash=14504810693751389909 tick=105 result=match
+SERVER time=10s tick=600 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=225ms tx=70 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=600 applied_sequence=448 accepted=415 duplicates=1005 conflicts=0 late=120 starved=41 neutralized=38
+SERVER time=20s tick=1200 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=208ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=1200 applied_sequence=1048 accepted=1014 duplicates=2475 conflicts=0 late=331 starved=41 neutralized=38
+SERVER time=30s tick=1800 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=211ms tx=73 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=1800 applied_sequence=1648 accepted=1612 duplicates=3932 conflicts=0 late=536 starved=41 neutralized=38
+SERVER time=40s tick=2400 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=206ms tx=73 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=2400 applied_sequence=2248 accepted=2215 duplicates=5378 conflicts=0 late=727 starved=41 neutralized=38
+SERVER time=50s tick=3000 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=215ms tx=74 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=3000 applied_sequence=2848 accepted=2814 duplicates=6905 conflicts=0 late=901 starved=41 neutralized=38
+SERVER time=60s tick=3600 active=1 overruns=0 hashes=1 mismatches=0 unrecorded=0
+  client=0 addr=139637976845485 RTT=215ms tx=73 kbit/s
+INPUT client=0 incarnation=1 generation=2 finalized=3600 applied_sequence=3448 accepted=3413 duplicates=8390 conflicts=0 late=1073 starved=41 neutralized=38
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=3796
+SERVER host-left shutdown
+SERVER final hashes=1 mismatches=0 unrecorded=0

@@ -65,7 +65,7 @@
     },
     {
       "id": "M5",
-      "status": "in_progress",
+      "status": "passed",
       "dependencies": [
         "M4"
       ],
@@ -77,11 +77,14 @@
     },
     {
       "id": "M6",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         "M5"
       ],
-      "evidence": [],
+      "evidence": [
+        "contracts/level-layout-v4.md",
+        "evidence/M6/foundation.json"
+      ],
       "blocking_reasons": []
     },
     {

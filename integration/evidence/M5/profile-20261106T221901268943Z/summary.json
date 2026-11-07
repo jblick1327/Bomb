@@ -1,0 +1,99 @@
+{
+  "status": "passed",
+  "profile": {
+    "config": "work/integration-stage/local.config.json",
+    "seconds": 30,
+    "rtt_ms": 100.0,
+    "jitter_ms": 0,
+    "loss": 0,
+    "fps": 60,
+    "prediction_off": false,
+    "seed": 57291,
+    "unity_player": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-prediction-player\\BombNativeSlice.exe"
+  },
+  "exit_codes": {
+    "profile": 0,
+    "server": 0
+  },
+  "failure": "",
+  "relay_errors": [],
+  "relay": {
+    "received": 6277,
+    "forwarded": 6277,
+    "dropped": 0,
+    "peak_queued": 18,
+    "max_packet": 1044
+  },
+  "result": {
+    "status": "passed",
+    "measurement": "actual URP end-camera callback after native actor transform",
+    "seconds": 30.0,
+    "warmupSeconds": 21.2906636,
+    "actualRenderFps": 59.96666666666667,
+    "inputToPresentationP95Ms": 21.487000000000478,
+    "inputResponseBudgetMs": 35.333333333333336,
+    "fps": 60,
+    "frames": 1799,
+    "predictedFrames": 1799,
+    "fallbackFrames": 0,
+    "inputResponseSamples": 15,
+    "inputResponseExpired": 0,
+    "stats": {
+      "status": 1,
+      "reason": 0,
+      "correction_count": 1686,
+      "snap_count": 0,
+      "correction_p95": 0.0010000000474974513,
+      "correction_p99": 0.0020000000949949026,
+      "correction_max": 0.005460239946842194,
+      "conservative_seconds": 0.0
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "d706c8a38f17b149f25028d9c38771fb0455604b",
+    "source_dirty": false,
+    "source_sha256": "fa7447553a57d709416376a587ece31472609e8cd92c65466a31b4940dd253a7",
+    "build_tag": 1127945502384815472,
+    "dll_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "native_plugin_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+  "server_sha256": "1740cc5ac821f8d6509d0ce3b2dea240bf04ff0154b3d65c8e6bba7c20e883f0",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "61157",
+      "--seconds",
+      "90",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-prediction-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "--bom-port",
+      "61158",
+      "--bom-profile-seconds",
+      "30",
+      "--bom-profile-fps",
+      "60",
+      "--bom-profile-out",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M5\\profile-20261106T221901268943Z\\rendered-frame.png",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M5\\profile-20261106T221901268943Z\\unity-profile.log"
+    ]
+  },
+  "scope": "Real UDP and actual Unity URP rendered-pose measurement, with a saved frame."
+}

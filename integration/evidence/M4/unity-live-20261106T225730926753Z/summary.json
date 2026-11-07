@@ -1,0 +1,88 @@
+{
+  "status": "failed",
+  "seconds_after_readiness": 30,
+  "capture_only": false,
+  "two_unity": true,
+  "time_scale": 0.0,
+  "failure": "native test host exited during Unity startup",
+  "exit_codes": {
+    "server": 1,
+    "host": 1,
+    "unity": 1
+  },
+  "hash_checks": null,
+  "hash_mismatches": null,
+  "hash_coverage": "hash-coverage.json",
+  "unity_native_tag": null,
+  "unity_plugin_sha256": "7e9c7d1e0979cf22f29bfeb06afd233867217effb5ea39b30e447c14b195af79",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "62448",
+      "--seconds",
+      "210",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "work\\odin-source\\BOM\\build\\interop-unity\\Interop.dll",
+      "62448",
+      "40",
+      "15",
+      "single"
+    ],
+    "unity": [
+      "work\\unity-prediction-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "62448",
+      "--bom-smoke-seconds",
+      "30",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T225730926753Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T225730926753Z\\unity.log",
+      "--bom-prediction-off"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:62448",
+      "--seconds",
+      "30"
+    ],
+    "unity-late": [
+      "work\\unity-prediction-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "62448",
+      "--bom-smoke-seconds",
+      "30",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T225730926753Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T225730926753Z\\unity-late.log",
+      "--bom-prediction-off"
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "duration_seconds": 35,
+  "exit_codes": {
+    "native-clients": 0,
+    "observer": 0,
+    "server": 0
+  },
+  "hash_checks": 10,
+  "hash_mismatches": 0,
+  "unrecorded_hashes": 0,
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "55883",
+      "--seconds",
+      "41",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:55883",
+      "--seconds",
+      "32"
+    ],
+    "native-clients": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "55883",
+      "35"
+    ]
+  },
+  "loaded_native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "2e3e1f92b808d3bcb61229d227ac0e3d968ed5fd",
+    "source_dirty": true,
+    "source_sha256": "a3f724f79b815870984e1a38af73d5ce36de522afd74646977232278279ec789",
+    "build_tag": 738434549582140807,
+    "dll_sha256": "462f6e492d6e5f61a532fe7fd50a92536c7891c36248a42ed236391c8b590c6e",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "scope": "Real DLL clients and shared-core Odin reference observer. Remaining M3 timing/lifetime gates and Unity gates remain separately tracked."
+}

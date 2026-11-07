@@ -1,0 +1,15 @@
+NATIVE ID tag=892483696845157128 protocol=4 canonical=2 compiler=dev-2026-05:ea5175d
+PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles
+PREDICTION mode=Warming reason=Uninitialized tick=0
+PREDICTION mode=Predicting reason=None tick=106
+PROFILE READY
+PROFILE progress=8.65 {"struct_size":160,"version":1,"status":1,"reason":0,"input_generation":1,"owner_tick":609,"predicted_tick":625,"finalized_through_tick":609,"last_applied_sequence":516,"rtt_seconds":0.21272183664436403,"positive_jitter_p95_seconds":0.026972415011150844,"clock_error_ticks":0,"lead_ticks":10,"pending_commands":16,"correction_count":263,"snap_count":0,"conservative_transitions":0,"recoveries":0,"reset_count":1,"correction_p95":0.001,"correction_p99":0.001,"correction_max":0.0012924531,"visual_offset_x":-1.5077398E-05,"visual_offset_y":-5.497596E-09,"reserved":0,"conservative_seconds":0}
+PROFILE progress=18.65 {"struct_size":160,"version":1,"status":1,"reason":0,"input_generation":1,"owner_tick":1208,"predicted_tick":1225,"finalized_through_tick":1208,"last_applied_sequence":1115,"rtt_seconds":0.24203264871816105,"positive_jitter_p95_seconds":0.02065034230757809,"clock_error_ticks":0,"lead_ticks":11,"pending_commands":17,"correction_count":575,"snap_count":0,"conservative_transitions":0,"recoveries":0,"reset_count":1,"correction_p95":0.001,"correction_p99":0.049,"correction_max":0.06814875,"visual_offset_x":-0.00012339835,"visual_offset_y":-2.6453212E-05,"reserved":0,"conservative_seconds":0}
+PREDICTION mode=Warming reason=Uninitialized tick=1453
+PREDICTION mode=Conservative reason=Missing_Command tick=1456
+PREDICTION mode=Predicting reason=None tick=1476
+PROFILE progress=28.66 {"struct_size":160,"version":1,"status":1,"reason":0,"input_generation":2,"owner_tick":1810,"predicted_tick":1830,"finalized_through_tick":1810,"last_applied_sequence":353,"rtt_seconds":0.23996422520027497,"positive_jitter_p95_seconds":0.013351220733188271,"clock_error_ticks":-0.9790360122580579,"lead_ticks":10,"pending_commands":20,"correction_count":869,"snap_count":0,"conservative_transitions":1,"recoveries":1,"reset_count":2,"correction_p95":0.001,"correction_p99":0.017,"correction_max":0.06814875,"visual_offset_x":2.482018E-08,"visual_offset_y":3.986535E-08,"reserved":0,"conservative_seconds":0.01666666666666572}
+Unhandled exception. System.Exception: native presentation response budget
+   at PredictionProfile.Check(Boolean value, String text) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\PredictionProfile.cs:line 7
+   at PredictionProfile.Run(UInt32 port, Double seconds) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\PredictionProfile.cs:line 55
+   at Program.Main(String[] args) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\Program.cs:line 91

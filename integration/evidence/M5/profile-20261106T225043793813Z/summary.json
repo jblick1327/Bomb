@@ -1,0 +1,64 @@
+{
+  "status": "failed",
+  "profile": {
+    "config": "work/integration-stage/local.config.json",
+    "seconds": 40,
+    "rtt_ms": 200.0,
+    "jitter_ms": 30.0,
+    "loss": 0.05,
+    "fps": 144,
+    "prediction_off": false,
+    "seed": 57292,
+    "unity_player": null
+  },
+  "exit_codes": {
+    "profile": 3762504530,
+    "server": 1
+  },
+  "failure": "Command '['C:\\\\Users\\\\rober\\\\Documents\\\\Codex\\\\2026-11-05\\\\hi\\\\work\\\\odin-source\\\\BOM\\\\build\\\\BOM-server.exe', '--port', '52524', '--seconds', '100', '--layout', 'C:\\\\Users\\\\rober\\\\Documents\\\\Codex\\\\2026-11-05\\\\hi\\\\work\\\\integration-stage\\\\fixtures\\\\M5\\\\static-layout.json', '--host-token', 'jknxcA1fGqErqyo8pEDJ51LSHs_Oe4Dd']' timed out after 25 seconds",
+  "relay_errors": [],
+  "relay": {
+    "received": 0,
+    "forwarded": 0,
+    "dropped": 0,
+    "peak_queued": 0,
+    "max_packet": 0
+  },
+  "result": null,
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "d706c8a38f17b149f25028d9c38771fb0455604b",
+    "source_dirty": false,
+    "source_sha256": "fa7447553a57d709416376a587ece31472609e8cd92c65466a31b4940dd253a7",
+    "build_tag": 1127945502384815472,
+    "dll_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "native_plugin_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+  "server_sha256": "1740cc5ac821f8d6509d0ce3b2dea240bf04ff0154b3d65c8e6bba7c20e883f0",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "52524",
+      "--seconds",
+      "100",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "52525",
+      "40"
+    ]
+  },
+  "scope": "Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement."
+}

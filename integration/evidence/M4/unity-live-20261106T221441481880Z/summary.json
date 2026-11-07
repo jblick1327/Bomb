@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "seconds_after_readiness": 30,
+  "capture_only": false,
+  "two_unity": true,
+  "time_scale": 0.0,
+  "failure": "",
+  "exit_codes": {
+    "unity": 0,
+    "unity-late": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "hash_checks": 76,
+  "hash_mismatches": 0,
+  "hash_coverage": "hash-coverage.json",
+  "unity_native_tag": "1127945502384815472",
+  "unity_plugin_sha256": "3df04818a82ec5d833fb9e2c6315d2e40b86cf3c5570a667f19d9a51b64e39a4",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "65204",
+      "--seconds",
+      "210",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-unity\\Interop.dll",
+      "65204",
+      "40",
+      "15",
+      "single"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-prediction-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "65204",
+      "--bom-smoke-seconds",
+      "30",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T221441481880Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T221441481880Z\\unity.log"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:65204",
+      "--seconds",
+      "30"
+    ],
+    "unity-late": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-prediction-player\\BombNativeSlice.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "65204",
+      "--bom-smoke-seconds",
+      "30",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T221441481880Z\\start.signal",
+      "--bom-time-scale",
+      "0.0",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M4\\unity-live-20261106T221441481880Z\\unity-late.log"
+    ]
+  }
+}

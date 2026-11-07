@@ -1,0 +1,103 @@
+{
+  "status": "failed",
+  "profile": {
+    "config": "work/integration-stage/local.config.json",
+    "seconds": 30,
+    "rtt_ms": 100.0,
+    "jitter_ms": 0,
+    "loss": 0,
+    "fps": 60,
+    "prediction_off": false,
+    "seed": 57291
+  },
+  "exit_codes": {
+    "profile": 0,
+    "server": 0
+  },
+  "failure": "",
+  "relay_errors": [
+    "[WinError 10054] An existing connection was forcibly closed by the remote host"
+  ],
+  "relay": {
+    "received": 3920,
+    "forwarded": 3917,
+    "dropped": 0,
+    "peak_queued": 17,
+    "max_packet": 1043
+  },
+  "result": {
+    "status": "passed",
+    "seconds": 30,
+    "fps": 60,
+    "prediction": true,
+    "frames": 1801,
+    "predictedFrames": 1801,
+    "fallbackFrames": 0,
+    "inputResponseSamples": 15,
+    "inputResponseExpired": 0,
+    "inputToPresentationP95Ms": 31.731799943372607,
+    "inputResponseBudgetMs": 35.333333333333336,
+    "stats": {
+      "struct_size": 160,
+      "version": 1,
+      "status": 1,
+      "reason": 0,
+      "input_generation": 1,
+      "owner_tick": 1852,
+      "predicted_tick": 1864,
+      "finalized_through_tick": 1852,
+      "last_applied_sequence": 1801,
+      "rtt_seconds": 0.15690199826612125,
+      "positive_jitter_p95_seconds": 0.004882334200267971,
+      "clock_error_ticks": 0.2692379959236857,
+      "lead_ticks": 7,
+      "pending_commands": 12,
+      "correction_count": 1333,
+      "snap_count": 0,
+      "conservative_transitions": 1,
+      "recoveries": 1,
+      "reset_count": 1,
+      "correction_p95": 0.001,
+      "correction_p99": 0.001,
+      "correction_max": 0.022706041,
+      "visual_offset_x": -3.1486213e-11,
+      "visual_offset_y": -2.6518997e-11,
+      "reserved": 0,
+      "conservative_seconds": 0.050000000000000155
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 2,
+    "source_commit": "9b9da61b42a56f3e29603dc5cca89cee0818be58",
+    "source_dirty": true,
+    "source_sha256": "c62bd31964873081a3949cad1965aab1d4c393059fcef18607eed4bd058dda2d",
+    "build_tag": 892483696845157128,
+    "dll_sha256": "e4cc6deb9c58ed7c528f3b65c145e01f2c2a4dcba630f0ae8b31f5ed6cb69d46",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 4,
+    "canonical_version": 2,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "55842",
+      "--seconds",
+      "90",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "55843",
+      "30"
+    ]
+  },
+  "scope": "Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement."
+}
