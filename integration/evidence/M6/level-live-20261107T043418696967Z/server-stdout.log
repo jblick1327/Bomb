@@ -1,0 +1,28 @@
+BOM staging server listening on 127.0.0.1:50317 only; tick=60Hz
+CONNECT client=0
+CONNECT client=1
+HASH EXPECT client=1 connection=1 epoch=3 revision=27714 tick=0 queued=yes
+HELLO OK client=1 role=player
+HASH EXPECT client=1 connection=1 epoch=3 revision=27715 tick=4 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27722 tick=7 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27739 tick=23 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27769 tick=55 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27811 tick=57 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27819 tick=75 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=27714 hash=10036075581539579695 tick=82 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27715 hash=7830150431895234126 tick=87 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27722 hash=881836572319987162 tick=87 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27739 hash=16180682416844196972 tick=87 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27769 hash=11381317455176622474 tick=87 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27811 hash=4467419664246839031 tick=87 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27819 hash=13934763368507612906 tick=87 result=match
+HASH EXPECT client=1 connection=1 epoch=3 revision=27826 tick=88 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=27833 tick=111 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=27826 hash=4398492829515206849 tick=120 result=match
+HASH EXPECT client=1 connection=1 epoch=3 revision=27841 tick=121 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=27833 hash=2624677160479361907 tick=128 result=match
+HASH EXPECT client=1 connection=1 epoch=3 revision=27849 tick=129 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=27841 hash=14005751548398588452 tick=136 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=27849 hash=11013603964126314059 tick=144 result=match
+HASH EXPECT client=1 connection=1 epoch=3 revision=27856 tick=172 queued=yes
+HASH REPORT client=1 connection=1 epoch=3 revision=27856 hash=5092853340913742079 tick=187 result=match

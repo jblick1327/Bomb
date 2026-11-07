@@ -1,0 +1,5379 @@
+{
+    "objects": [
+        {
+            "path": "Arena",
+            "mesh": "",
+            "component_data": "ArenaLayout:{\"width\":36.0,\"height\":60.0,\"depth\":8.0,\"groundFraction\":0.5,\"wallThickness\":0.6000000238418579,\"boundsSource\":{\"instanceID\":57646},\"levelBoundsCollider\":{\"instanceID\":57566},\"deriveBoundsFromSource\":true,\"boundsPadding\":0.0}\n",
+            "position": {
+                "x": 0.0,
+                "y": -24.360000610351564,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Arena/Level Bounds",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": -24.360000610351564,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": -18.0,
+                "y": -25.360000610351564,
+                "z": -4.0
+            },
+            "collider_max": {
+                "x": 18.0,
+                "y": 34.63999938964844,
+                "z": 4.0
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": true
+        },
+        {
+            "path": "Arena/Bottom Boundary",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": -26.260000228881837,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 37.20000076293945,
+                "y": 0.6000000238418579,
+                "z": 8.0
+            },
+            "render_min": {
+                "x": -18.600000381469728,
+                "y": -26.559999465942384,
+                "z": -4.0
+            },
+            "render_max": {
+                "x": 18.600000381469728,
+                "y": -25.96000099182129,
+                "z": 4.0
+            },
+            "collider_min": {
+                "x": -18.600000381469728,
+                "y": -26.559999465942384,
+                "z": -4.0
+            },
+            "collider_max": {
+                "x": 18.600000381469728,
+                "y": -25.96000099182129,
+                "z": 4.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Arena/Level Background",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -0.09848999977111817,
+                "y": -25.959999084472658,
+                "z": -2.246730089187622
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Arena/Left Wall",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -18.299999237060548,
+                "y": 4.6399993896484379,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": -18.599998474121095,
+                "y": -25.360000610351564,
+                "z": -4.0
+            },
+            "collider_max": {
+                "x": -18.0,
+                "y": 34.63999938964844,
+                "z": 4.0
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Arena/Right Wall",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 18.299999237060548,
+                "y": 4.6399993896484379,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 18.0,
+                "y": -25.360000610351564,
+                "z": -4.0
+            },
+            "collider_max": {
+                "x": 18.599998474121095,
+                "y": 34.63999938964844,
+                "z": 4.0
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Arena/Back Wall",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": 4.6399993896484379,
+                "z": 4.150000095367432
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 36.0,
+                "y": 60.0,
+                "z": 0.30000001192092898
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": -18.0,
+                "y": -25.360000610351564,
+                "z": 4.0
+            },
+            "collider_max": {
+                "x": 18.0,
+                "y": 34.63999938964844,
+                "z": 4.300000190734863
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Player",
+            "mesh": "",
+            "component_data": "ArenaPlayerController:{\"playerNumber\":1,\"moveSpeed\":7.5,\"jumpHeight\":3.25,\"gravity\":-25.0,\"coyoteTime\":0.125,\"jumpBufferTime\":0.10000000149011612}\n",
+            "position": {
+                "x": 11.5,
+                "y": 11.0,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 11.050000190734864,
+                "y": 10.199999809265137,
+                "z": -1.4500000476837159
+            },
+            "collider_max": {
+                "x": 11.949999809265137,
+                "y": 11.800000190734864,
+                "z": -0.550000011920929
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.000000238418579,
+                "y": 1.0,
+                "z": 1.000000238418579
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/BézierCurve",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 289.7181396484375,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 161.50469970703126,
+                "y": 100.0000228881836,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": 10.053017616271973,
+                "y": 9.930004119873047,
+                "z": -2.5847928524017336
+            },
+            "render_max": {
+                "x": 12.888463020324707,
+                "y": 12.573858261108399,
+                "z": 0.5011484622955322
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00000762939453,
+                "z": 99.99999237060547
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.500256538391114,
+                "y": 10.666642189025879,
+                "z": -1.0503654479980469
+            },
+            "euler": {
+                "x": 4.968995094299316,
+                "y": 222.99191284179688,
+                "z": 8.863258361816407
+            },
+            "scale": {
+                "x": 100.00000762939453,
+                "y": 99.99999237060547,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.525690078735352,
+                "y": 11.118448257446289,
+                "z": -1.1293531656265259
+            },
+            "euler": {
+                "x": 14.646492004394532,
+                "y": 248.32504272460938,
+                "z": 4.484250068664551
+            },
+            "scale": {
+                "x": 100.00003814697266,
+                "y": 99.99998474121094,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.439582824707032,
+                "y": 11.522841453552246,
+                "z": -1.1988496780395508
+            },
+            "euler": {
+                "x": 19.45020866394043,
+                "y": 291.44940185546877,
+                "z": 353.24481201171877
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.268120765686036,
+                "y": 12.12925910949707,
+                "z": -1.0496376752853394
+            },
+            "euler": {
+                "x": 19.45020866394043,
+                "y": 291.44940185546877,
+                "z": 353.24481201171877
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.783037185668946,
+                "y": 11.476062774658204,
+                "z": -1.0601800680160523
+            },
+            "euler": {
+                "x": 341.4317321777344,
+                "y": 257.78363037109377,
+                "z": 335.7937316894531
+            },
+            "scale": {
+                "x": 100.00004577636719,
+                "y": 100.00001525878906,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.851099967956543,
+                "y": 11.77463150024414,
+                "z": -0.9005712270736694
+            },
+            "euler": {
+                "x": 13.549007415771485,
+                "y": 249.1375274658203,
+                "z": 339.5767517089844
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00001525878906,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.766708374023438,
+                "y": 12.008025169372559,
+                "z": -0.8370681405067444
+            },
+            "euler": {
+                "x": 13.549007415771485,
+                "y": 249.1375274658203,
+                "z": 339.5767517089844
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00001525878906,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.191658973693848,
+                "y": 11.282492637634278,
+                "z": -1.292563557624817
+            },
+            "euler": {
+                "x": 75.0287857055664,
+                "y": 357.34014892578127,
+                "z": 104.39727783203125
+            },
+            "scale": {
+                "x": 100.00003051757813,
+                "y": 100.0,
+                "z": 99.99999237060547
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 10.8613862991333,
+                "y": 11.260311126708985,
+                "z": -1.390945315361023
+            },
+            "euler": {
+                "x": 350.5080261230469,
+                "y": 0.03233586251735687,
+                "z": 125.23629760742188
+            },
+            "scale": {
+                "x": 100.0000228881836,
+                "y": 99.99999237060547,
+                "z": 100.00003814697266
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 10.652158737182618,
+                "y": 11.114532470703125,
+                "z": -1.3664532899856568
+            },
+            "euler": {
+                "x": 350.5080261230469,
+                "y": 0.03233586251735687,
+                "z": 125.23629760742188
+            },
+            "scale": {
+                "x": 100.0000228881836,
+                "y": 99.99999237060547,
+                "z": 100.00003814697266
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.704693794250489,
+                "y": 10.809347152709961,
+                "z": -0.8915882706642151
+            },
+            "euler": {
+                "x": 350.0513610839844,
+                "y": 39.03438186645508,
+                "z": 151.52784729003907
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 99.99989318847656
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.628458023071289,
+                "y": 10.5690279006958,
+                "z": -0.7755109667778015
+            },
+            "euler": {
+                "x": 350.0447998046875,
+                "y": 38.313697814941409,
+                "z": 81.580078125
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00003051757813,
+                "z": 99.9998779296875
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.39200496673584,
+                "y": 10.612092971801758,
+                "z": -0.598313570022583
+            },
+            "euler": {
+                "x": 350.0447998046875,
+                "y": 38.313697814941409,
+                "z": 81.580078125
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00003051757813,
+                "z": 99.9998779296875
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.319169998168946,
+                "y": 10.868678092956543,
+                "z": -1.2105209827423096
+            },
+            "euler": {
+                "x": 355.7542724609375,
+                "y": 55.93602752685547,
+                "z": 227.592529296875
+            },
+            "scale": {
+                "x": 100.00003814697266,
+                "y": 100.00005340576172,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.444270133972168,
+                "y": 10.683737754821778,
+                "z": -1.3710312843322755
+            },
+            "euler": {
+                "x": 0.08841341733932495,
+                "y": 54.311279296875,
+                "z": 220.1332550048828
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00009155273438,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 11.556673049926758,
+                "y": 10.454614639282227,
+                "z": -1.5281280279159547
+            },
+            "euler": {
+                "x": 0.08841341733932495,
+                "y": 54.311279296875,
+                "z": 220.1332550048828
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00009155273438,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)",
+            "mesh": "",
+            "component_data": "ArenaPlayerController:{\"playerNumber\":1,\"moveSpeed\":7.5,\"jumpHeight\":3.25,\"gravity\":-25.0,\"coyoteTime\":0.125,\"jumpBufferTime\":0.10000000149011612}\n",
+            "position": {
+                "x": -11.5,
+                "y": 11.0,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": -11.949999809265137,
+                "y": 10.199999809265137,
+                "z": -1.4500000476837159
+            },
+            "collider_max": {
+                "x": -11.050000190734864,
+                "y": 11.800000190734864,
+                "z": -0.550000011920929
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.000000238418579,
+                "y": 1.0,
+                "z": 1.000000238418579
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/BézierCurve",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 289.7181396484375,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 161.50469970703126,
+                "y": 100.0000228881836,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": -12.946982383728028,
+                "y": 9.930004119873047,
+                "z": -2.5847928524017336
+            },
+            "render_max": {
+                "x": -10.111536979675293,
+                "y": 12.573858261108399,
+                "z": 0.5011484622955322
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.5,
+                "y": 10.199999809265137,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00000762939453,
+                "z": 99.99999237060547
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.499743461608887,
+                "y": 10.666642189025879,
+                "z": -1.0503654479980469
+            },
+            "euler": {
+                "x": 4.968995094299316,
+                "y": 222.99191284179688,
+                "z": 8.863258361816407
+            },
+            "scale": {
+                "x": 100.00000762939453,
+                "y": 99.99999237060547,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.474309921264649,
+                "y": 11.118448257446289,
+                "z": -1.1293531656265259
+            },
+            "euler": {
+                "x": 14.646492004394532,
+                "y": 248.32504272460938,
+                "z": 4.484250068664551
+            },
+            "scale": {
+                "x": 100.00003814697266,
+                "y": 99.99998474121094,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.560417175292969,
+                "y": 11.522841453552246,
+                "z": -1.1988496780395508
+            },
+            "euler": {
+                "x": 19.45020866394043,
+                "y": 291.44940185546877,
+                "z": 353.24481201171877
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.731879234313965,
+                "y": 12.12925910949707,
+                "z": -1.0496376752853394
+            },
+            "euler": {
+                "x": 19.45020866394043,
+                "y": 291.44940185546877,
+                "z": 353.24481201171877
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 100.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.216962814331055,
+                "y": 11.476062774658204,
+                "z": -1.0601800680160523
+            },
+            "euler": {
+                "x": 341.4317321777344,
+                "y": 257.78363037109377,
+                "z": 335.7937316894531
+            },
+            "scale": {
+                "x": 100.00004577636719,
+                "y": 100.00001525878906,
+                "z": 100.00001525878906
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.148900032043457,
+                "y": 11.77463150024414,
+                "z": -0.9005712270736694
+            },
+            "euler": {
+                "x": 13.549007415771485,
+                "y": 249.1375274658203,
+                "z": 339.5767517089844
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00001525878906,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.233291625976563,
+                "y": 12.008025169372559,
+                "z": -0.8370681405067444
+            },
+            "euler": {
+                "x": 13.549007415771485,
+                "y": 249.1375274658203,
+                "z": 339.5767517089844
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00001525878906,
+                "z": 100.0000228881836
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.808341026306153,
+                "y": 11.282492637634278,
+                "z": -1.292563557624817
+            },
+            "euler": {
+                "x": 75.0287857055664,
+                "y": 357.34014892578127,
+                "z": 104.39727783203125
+            },
+            "scale": {
+                "x": 100.00003051757813,
+                "y": 100.0,
+                "z": 99.99999237060547
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -12.1386137008667,
+                "y": 11.260311126708985,
+                "z": -1.390945315361023
+            },
+            "euler": {
+                "x": 350.5080261230469,
+                "y": 0.03233586251735687,
+                "z": 125.23629760742188
+            },
+            "scale": {
+                "x": 100.0000228881836,
+                "y": 99.99999237060547,
+                "z": 100.00003814697266
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -12.347841262817383,
+                "y": 11.114532470703125,
+                "z": -1.3664532899856568
+            },
+            "euler": {
+                "x": 350.5080261230469,
+                "y": 0.03233586251735687,
+                "z": 125.23629760742188
+            },
+            "scale": {
+                "x": 100.0000228881836,
+                "y": 99.99999237060547,
+                "z": 100.00003814697266
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.295306205749512,
+                "y": 10.809347152709961,
+                "z": -0.8915882706642151
+            },
+            "euler": {
+                "x": 350.0513610839844,
+                "y": 39.03438186645508,
+                "z": 151.52784729003907
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 99.99989318847656
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.371541976928711,
+                "y": 10.5690279006958,
+                "z": -0.7755109667778015
+            },
+            "euler": {
+                "x": 350.0447998046875,
+                "y": 38.313697814941409,
+                "z": 81.580078125
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00003051757813,
+                "z": 99.9998779296875
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.60799503326416,
+                "y": 10.612092971801758,
+                "z": -0.598313570022583
+            },
+            "euler": {
+                "x": 350.0447998046875,
+                "y": 38.313697814941409,
+                "z": 81.580078125
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.00003051757813,
+                "z": 99.9998779296875
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.680830001831055,
+                "y": 10.868678092956543,
+                "z": -1.2105209827423096
+            },
+            "euler": {
+                "x": 355.7542724609375,
+                "y": 55.93602752685547,
+                "z": 227.592529296875
+            },
+            "scale": {
+                "x": 100.00003814697266,
+                "y": 100.00005340576172,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.555729866027832,
+                "y": 10.683737754821778,
+                "z": -1.3710312843322755
+            },
+            "euler": {
+                "x": 0.08841341733932495,
+                "y": 54.311279296875,
+                "z": 220.1332550048828
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00009155273438,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -11.443326950073243,
+                "y": 10.454614639282227,
+                "z": -1.5281280279159547
+            },
+            "euler": {
+                "x": 0.08841341733932495,
+                "y": 54.311279296875,
+                "z": 220.1332550048828
+            },
+            "scale": {
+                "x": 100.00006103515625,
+                "y": 100.00009155273438,
+                "z": 100.00016784667969
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Main Camera Solo",
+            "mesh": "",
+            "component_data": "ArenaCamera:{\"tilt\":10.0,\"padding\":0.5,\"followSmoothing\":12.0,\"followDeadZone\":0.25,\"followViewportHeight\":16.0,\"followSmoothTime\":0.11999999731779099,\"playerEdgeMargin\":0.5,\"followPlayer\":false,\"layout\":{\"instanceID\":57310},\"player\":{\"instanceID\":57278}}\n",
+            "position": {
+                "x": 0.0,
+                "y": 9.849444389343262,
+                "z": -29.544231414794923
+            },
+            "euler": {
+                "x": 9.999999046325684,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Main Camera Multiplayer",
+            "mesh": "",
+            "component_data": "ArenaCamera:{\"tilt\":10.0,\"padding\":0.5,\"followSmoothing\":12.0,\"followDeadZone\":3.0299999713897707,\"followViewportHeight\":19.200000762939454,\"followSmoothTime\":0.11999999731779099,\"playerEdgeMargin\":0.5,\"followPlayer\":false,\"layout\":{\"instanceID\":0},\"player\":{\"instanceID\":0}}\n",
+            "position": {
+                "x": 0.0,
+                "y": 15.0,
+                "z": -30.544231414794923
+            },
+            "euler": {
+                "x": 8.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Directional Light",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -0.75,
+                "y": 1.2599999904632569,
+                "z": 1.2999999523162842
+            },
+            "euler": {
+                "x": 87.50009155273438,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0000001192092896,
+                "z": 1.0000001192092896
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Bomb System",
+            "mesh": "",
+            "component_data": "BombDropper:{\"craterShape\":0,\"craterRadius\":1.600000023841858,\"craterShapeScale\":{\"x\":1.0,\"y\":1.0},\"craterSegments\":40,\"craterRotation\":0.0,\"lethalRadius\":2.200000047683716,\"innerDestructionRadius\":1.25,\"outerShatterRadius\":2.200000047683716,\"shatterImpulse\":4.0,\"rubblePieces\":4,\"rubblePieceSize\":0.3499999940395355,\"rubbleImpulse\":2.5,\"enableCrater\":true,\"enableRubble\":true,\"enableSpawning\":false,\"minimumDropInterval\":2.0,\"maximumDropInterval\":5.0,\"fastestDropInterval\":0.75,\"timeToFastestRate\":60.0,\"bombRadius\":0.5,\"spawnEdgePadding\":0.75,\"dropHeightAboveArena\":2.0,\"fallAcceleration\":8.0,\"bombLifetime\":15.0,\"bombMaterial\":{\"instanceID\":57216},\"blastMaterial\":{\"instanceID\":55092},\"yardGrassMaterial\":{\"instanceID\":56528},\"yardDirtMaterial\":{\"instanceID\":56896},\"blastDuration\":0.3499999940395355,\"showSizePreviews\":false,\"layout\":{\"instanceID\":57310},\"session\":{\"instanceID\":0},\"ground\":{\"instanceID\":0},\"gameplayGround\":{\"instanceID\":0},\"gameplayGroundCollider\":{\"instanceID\":0},\"player\":{\"instanceID\":57278},\"upperBoundary\":{\"instanceID\":0}}\nArenaSession:{\"layout\":{\"instanceID\":57310},\"player1\":{\"instanceID\":57278},\"player2\":{\"instanceID\":0},\"bombs\":{\"instanceID\":57340},\"playerSpawnSpacing\":2.0,\"winnerText\":{\"instanceID\":0}}\n",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "YardLevel",
+            "mesh": "",
+            "component_data": "DestructibleMultiMesh:{}\n",
+            "position": {
+                "x": 0.0,
+                "y": -10.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "YardLevel/Grass_Mesh",
+            "mesh": "Assets/Game/Geometry/YardLevel.fbx#Grass_Mesh",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": 5.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2050.0,
+                "y": 549.9998779296875,
+                "z": 99.99998474121094
+            },
+            "render_min": {
+                "x": -20.5,
+                "y": 3.999999523162842,
+                "z": -5.499999046325684
+            },
+            "render_max": {
+                "x": 20.5,
+                "y": 6.000000476837158,
+                "z": 5.499999046325684
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "YardLevel/Ground_Mesh",
+            "mesh": "Assets/Game/Geometry/YardLevel.fbx#Ground_Mesh",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": -10.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 270.019775390625,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2000.0,
+                "y": 499.99993896484377,
+                "z": 1499.999755859375
+            },
+            "render_min": {
+                "x": -20.0,
+                "y": -25.0,
+                "z": -5.000001430511475
+            },
+            "render_max": {
+                "x": 20.0,
+                "y": 4.999999046325684,
+                "z": 5.000001430511475
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "YardLevel/Light",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -4.076245307922363,
+                "y": -4.096138000488281,
+                "z": -1.0054539442062379
+            },
+            "euler": {
+                "x": 52.62430953979492,
+                "y": 68.91423797607422,
+                "z": 174.78375244140626
+            },
+            "scale": {
+                "x": 100.00001525878906,
+                "y": 100.0,
+                "z": 99.99999237060547
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Arena UI",
+            "mesh": "",
+            "component_data": "ArenaHudDocument:{\"session\":{\"instanceID\":0},\"styleSheet\":{\"instanceID\":57070}}\n",
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Rock (1)",
+            "mesh": "Assets/Game/Geometry/Rock.fbx#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.5000001192092896,
+                "y": 0.5000001192092896,
+                "z": 0.5000001192092896
+            },
+            "render_min": {
+                "x": 5.998647689819336,
+                "y": 5.926517486572266,
+                "z": -1.9050099849700928
+            },
+            "render_max": {
+                "x": 8.23717975616455,
+                "y": 7.073339462280273,
+                "z": 0.2420969009399414
+            },
+            "collider_min": {
+                "x": 7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "collider_max": {
+                "x": 7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Rock (4)",
+            "mesh": "Assets/Game/Geometry/Rock.fbx#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 270.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.5000001192092896,
+                "y": 0.5000001192092896,
+                "z": 0.5000001192092896
+            },
+            "render_min": {
+                "x": -8.001352310180664,
+                "y": 5.926517486572266,
+                "z": -1.9050099849700928
+            },
+            "render_max": {
+                "x": -5.762820243835449,
+                "y": 7.073339462280273,
+                "z": 0.2420969009399414
+            },
+            "collider_min": {
+                "x": -7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "collider_max": {
+                "x": -7.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Rock (2)",
+            "mesh": "Assets/Game/Geometry/Rock.fbx#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 164.99996948242188,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.5000002384185791,
+                "y": 0.5000001192092896,
+                "z": 0.5000001192092896
+            },
+            "render_min": {
+                "x": 14.480019569396973,
+                "y": 5.926517963409424,
+                "z": -2.288710594177246
+            },
+            "render_max": {
+                "x": 17.13334083557129,
+                "y": 7.073338985443115,
+                "z": 0.42925816774368288
+            },
+            "collider_min": {
+                "x": 16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "collider_max": {
+                "x": 16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Rock (3)",
+            "mesh": "Assets/Game/Geometry/Rock.fbx#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "euler": {
+                "x": 270.0,
+                "y": 74.99998474121094,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.5000000596046448,
+                "y": 0.5000001192092896,
+                "z": 0.5000001192092896
+            },
+            "render_min": {
+                "x": -17.429258346557618,
+                "y": 5.926517486572266,
+                "z": -2.519979476928711
+            },
+            "render_max": {
+                "x": -14.71129035949707,
+                "y": 7.073339462280273,
+                "z": 0.13334178924560548
+            },
+            "collider_min": {
+                "x": -16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "collider_max": {
+                "x": -16.0,
+                "y": 6.5,
+                "z": -1.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Terrain",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -500.0,
+                "y": 0.0,
+                "z": 3.9000000953674318
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": -500.0,
+                "y": 0.0,
+                "z": 3.9000244140625
+            },
+            "collider_max": {
+                "x": 500.0,
+                "y": 7.178172588348389,
+                "z": 1003.9000244140625
+            },
+            "renderer": false,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -16.899999618530275,
+                "y": 3.4647998809814455,
+                "z": 53.400001525878909
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -33.88175964355469,
+                "y": -4.699999809265137,
+                "z": 45.24522399902344
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -36.374534606933597,
+                "y": -6.757723808288574,
+                "z": 43.41350555419922
+            },
+            "render_max": {
+                "x": -9.18772029876709,
+                "y": 15.424532890319825,
+                "z": 56.909393310546878
+            },
+            "collider_min": {
+                "x": -33.88175964355469,
+                "y": -4.699999809265137,
+                "z": 45.24522399902344
+            },
+            "collider_max": {
+                "x": -33.88175964355469,
+                "y": -4.699999809265137,
+                "z": 45.24522399902344
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (3)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -32.40010452270508,
+                "y": -4.699999809265137,
+                "z": 45.8491325378418
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -34.892879486083987,
+                "y": -6.757723808288574,
+                "z": 44.01741409301758
+            },
+            "render_max": {
+                "x": -7.7060651779174809,
+                "y": 15.424532890319825,
+                "z": 57.513301849365237
+            },
+            "collider_min": {
+                "x": -32.40010452270508,
+                "y": -4.699999809265137,
+                "z": 45.8491325378418
+            },
+            "collider_max": {
+                "x": -32.40010452270508,
+                "y": -4.699999809265137,
+                "z": 45.8491325378418
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (4)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -8.702919006347657,
+                "y": -4.699999809265137,
+                "z": 55.50788116455078
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -11.195694923400879,
+                "y": -6.757723808288574,
+                "z": 53.67616271972656
+            },
+            "render_max": {
+                "x": 15.991120338439942,
+                "y": 15.424532890319825,
+                "z": 67.17205047607422
+            },
+            "collider_min": {
+                "x": -8.702919006347657,
+                "y": -4.699999809265137,
+                "z": 55.50788116455078
+            },
+            "collider_max": {
+                "x": -8.702919006347657,
+                "y": -4.699999809265137,
+                "z": 55.50788116455078
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (1)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -10.082708358764649,
+                "y": -4.699999809265137,
+                "z": 54.945491790771487
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -12.575483322143555,
+                "y": -6.757723808288574,
+                "z": 53.113773345947269
+            },
+            "render_max": {
+                "x": 14.611331939697266,
+                "y": 15.424532890319825,
+                "z": 66.60965728759766
+            },
+            "collider_min": {
+                "x": -10.082708358764649,
+                "y": -4.699999809265137,
+                "z": 54.945491790771487
+            },
+            "collider_max": {
+                "x": -10.082708358764649,
+                "y": -4.699999809265137,
+                "z": 54.945491790771487
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (5)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": 14.364566802978516,
+                "y": -4.699999809265137,
+                "z": 64.90996551513672
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": 11.871790885925293,
+                "y": -6.757723808288574,
+                "z": 63.078243255615237
+            },
+            "render_max": {
+                "x": 39.0586051940918,
+                "y": 15.424532890319825,
+                "z": 76.57412719726563
+            },
+            "collider_min": {
+                "x": 14.364566802978516,
+                "y": -4.699999809265137,
+                "z": 64.90996551513672
+            },
+            "collider_max": {
+                "x": 14.364566802978516,
+                "y": -4.699999809265137,
+                "z": 64.90996551513672
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (2)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": 12.975517272949219,
+                "y": -4.699999809265137,
+                "z": 64.34380340576172
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": 10.482741355895996,
+                "y": -6.757723808288574,
+                "z": 62.512081146240237
+            },
+            "render_max": {
+                "x": 37.6695556640625,
+                "y": 15.424532890319825,
+                "z": 76.00796508789063
+            },
+            "collider_min": {
+                "x": 12.975517272949219,
+                "y": -4.699999809265137,
+                "z": 64.34380340576172
+            },
+            "collider_max": {
+                "x": 12.975517272949219,
+                "y": -4.699999809265137,
+                "z": 64.34380340576172
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (6)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -33.88175964355469,
+                "y": 6.464799880981445,
+                "z": 45.24522399902344
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -36.374534606933597,
+                "y": 4.407075881958008,
+                "z": 43.41350555419922
+            },
+            "render_max": {
+                "x": -9.18772029876709,
+                "y": 26.589332580566408,
+                "z": 56.909393310546878
+            },
+            "collider_min": {
+                "x": -33.88175964355469,
+                "y": 6.464799880981445,
+                "z": 45.24522399902344
+            },
+            "collider_max": {
+                "x": -33.88175964355469,
+                "y": 6.464799880981445,
+                "z": 45.24522399902344
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (7)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -32.40010452270508,
+                "y": 6.464799880981445,
+                "z": 45.8491325378418
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -34.892879486083987,
+                "y": 4.407075881958008,
+                "z": 44.01741409301758
+            },
+            "render_max": {
+                "x": -7.7060651779174809,
+                "y": 26.589332580566408,
+                "z": 57.513301849365237
+            },
+            "collider_min": {
+                "x": -32.40010452270508,
+                "y": 6.464799880981445,
+                "z": 45.8491325378418
+            },
+            "collider_max": {
+                "x": -32.40010452270508,
+                "y": 6.464799880981445,
+                "z": 45.8491325378418
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (8)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -8.702919006347657,
+                "y": 6.464799880981445,
+                "z": 55.50788116455078
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -11.195694923400879,
+                "y": 4.407075881958008,
+                "z": 53.67616271972656
+            },
+            "render_max": {
+                "x": 15.991120338439942,
+                "y": 26.589332580566408,
+                "z": 67.17205047607422
+            },
+            "collider_min": {
+                "x": -8.702919006347657,
+                "y": 6.464799880981445,
+                "z": 55.50788116455078
+            },
+            "collider_max": {
+                "x": -8.702919006347657,
+                "y": 6.464799880981445,
+                "z": 55.50788116455078
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (9)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": -10.082708358764649,
+                "y": 6.464799880981445,
+                "z": 54.945491790771487
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": -12.575483322143555,
+                "y": 4.407075881958008,
+                "z": 53.113773345947269
+            },
+            "render_max": {
+                "x": 14.611331939697266,
+                "y": 26.589332580566408,
+                "z": 66.60965728759766
+            },
+            "collider_min": {
+                "x": -10.082708358764649,
+                "y": 6.464799880981445,
+                "z": 54.945491790771487
+            },
+            "collider_max": {
+                "x": -10.082708358764649,
+                "y": 6.464799880981445,
+                "z": 54.945491790771487
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (10)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": 14.364566802978516,
+                "y": 6.464799880981445,
+                "z": 64.90996551513672
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": 11.871790885925293,
+                "y": 4.407075881958008,
+                "z": 63.078243255615237
+            },
+            "render_max": {
+                "x": 39.0586051940918,
+                "y": 26.589332580566408,
+                "z": 76.57412719726563
+            },
+            "collider_min": {
+                "x": 14.364566802978516,
+                "y": 6.464799880981445,
+                "z": 64.90996551513672
+            },
+            "collider_max": {
+                "x": 14.364566802978516,
+                "y": 6.464799880981445,
+                "z": 64.90996551513672
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (11)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Village/Sources/Meshes/Modular/Fence/PT_Modular_Fence_Wood_01.fbx#PT_Modular_Fence_Wood_01",
+            "component_data": "",
+            "position": {
+                "x": 12.975517272949219,
+                "y": 6.464799880981445,
+                "z": 64.34380340576172
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 337.82464599609377,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.763998985290528,
+                "y": 12.763999938964844,
+                "z": 12.763998985290528
+            },
+            "render_min": {
+                "x": 10.482741355895996,
+                "y": 4.407075881958008,
+                "z": 62.512081146240237
+            },
+            "render_max": {
+                "x": 37.6695556640625,
+                "y": 26.589332580566408,
+                "z": 76.00796508789063
+            },
+            "collider_min": {
+                "x": 12.975517272949219,
+                "y": 6.464799880981445,
+                "z": 64.34380340576172
+            },
+            "collider_max": {
+                "x": 12.975517272949219,
+                "y": 6.464799880981445,
+                "z": 64.34380340576172
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 4.001150131225586,
+                "y": 10.4341402053833,
+                "z": 4.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 19.201148986816408,
+                "y": -5.3658599853515629,
+                "z": 49.869998931884769
+            },
+            "euler": {
+                "x": 10.550703048706055,
+                "y": 102.53536224365235,
+                "z": 39.63754653930664
+            },
+            "scale": {
+                "x": 59.66989517211914,
+                "y": 59.669891357421878,
+                "z": 59.66988754272461
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD0",
+            "component_data": "",
+            "position": {
+                "x": 19.201148986816408,
+                "y": -5.3658599853515629,
+                "z": 49.869998931884769
+            },
+            "euler": {
+                "x": 10.550703048706055,
+                "y": 102.53536224365235,
+                "z": 39.63754653930664
+            },
+            "scale": {
+                "x": 59.66989517211914,
+                "y": 59.669891357421878,
+                "z": 59.66988754272461
+            },
+            "render_min": {
+                "x": 12.842571258544922,
+                "y": -11.257810592651368,
+                "z": 43.057525634765628
+            },
+            "render_max": {
+                "x": 29.921886444091798,
+                "y": 11.008892059326172,
+                "z": 65.69212341308594
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD1",
+            "component_data": "",
+            "position": {
+                "x": 19.201148986816408,
+                "y": -5.3658599853515629,
+                "z": 49.869998931884769
+            },
+            "euler": {
+                "x": 10.550703048706055,
+                "y": 102.53536224365235,
+                "z": 39.63754653930664
+            },
+            "scale": {
+                "x": 59.66989517211914,
+                "y": 59.669891357421878,
+                "z": 59.66988754272461
+            },
+            "render_min": {
+                "x": 12.876675605773926,
+                "y": -11.209738731384278,
+                "z": 43.08708190917969
+            },
+            "render_max": {
+                "x": 29.874282836914064,
+                "y": 11.004097938537598,
+                "z": 65.66842651367188
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD2",
+            "component_data": "",
+            "position": {
+                "x": 19.201148986816408,
+                "y": -5.3658599853515629,
+                "z": 49.869998931884769
+            },
+            "euler": {
+                "x": 10.550703048706055,
+                "y": 102.53536224365235,
+                "z": 39.63754653930664
+            },
+            "scale": {
+                "x": 59.66989517211914,
+                "y": 59.669891357421878,
+                "z": 59.66988754272461
+            },
+            "render_min": {
+                "x": 12.877342224121094,
+                "y": -11.161968231201172,
+                "z": 43.15252685546875
+            },
+            "render_max": {
+                "x": 29.623920440673829,
+                "y": 10.996208190917969,
+                "z": 65.66842651367188
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 14.771149635314942,
+                "y": 0.5441389083862305,
+                "z": 47.04770278930664
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 62.232059478759769
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD0",
+            "component_data": "",
+            "position": {
+                "x": 14.771149635314942,
+                "y": 0.5441389083862305,
+                "z": 47.04770278930664
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 62.232059478759769
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 9.350483894348145,
+                "y": -1.7312979698181153,
+                "z": 44.928462982177737
+            },
+            "render_max": {
+                "x": 15.795821189880371,
+                "y": 4.884622097015381,
+                "z": 49.282344818115237
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD1",
+            "component_data": "",
+            "position": {
+                "x": 14.771149635314942,
+                "y": 0.5441389083862305,
+                "z": 47.04770278930664
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 62.232059478759769
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 9.35412311553955,
+                "y": -1.7193104028701783,
+                "z": 44.93724060058594
+            },
+            "render_max": {
+                "x": 15.786181449890137,
+                "y": 4.884622097015381,
+                "z": 49.266151428222659
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD2",
+            "component_data": "",
+            "position": {
+                "x": 14.771149635314942,
+                "y": 0.5441389083862305,
+                "z": 47.04770278930664
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 62.232059478759769
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 9.35412311553955,
+                "y": -1.7193105220794678,
+                "z": 44.93724060058594
+            },
+            "render_max": {
+                "x": 15.78421688079834,
+                "y": 4.880890846252441,
+                "z": 49.1787109375
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Mushrooms/PT_Caesars_Mushroom_01.fbx#PT_Caesars_Mushroom_01",
+            "component_data": "",
+            "position": {
+                "x": -13.218849182128907,
+                "y": 2.644139289855957,
+                "z": 29.700000762939454
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 343.9620056152344
+            },
+            "scale": {
+                "x": 12.817999839782715,
+                "y": 12.817999839782715,
+                "z": 12.817999839782715
+            },
+            "render_min": {
+                "x": -15.370925903320313,
+                "y": 1.8391444683074952,
+                "z": 27.479694366455079
+            },
+            "render_max": {
+                "x": -10.241287231445313,
+                "y": 6.545137405395508,
+                "z": 32.018985748291019
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Fruit_Tree_01_stump",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Trees/PT_Fruit_Tree_01_stump.fbx#PT_Fruit_Tree_01_stump",
+            "component_data": "",
+            "position": {
+                "x": -19.3681583404541,
+                "y": 4.144139289855957,
+                "z": 28.700000762939454
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 12.97700023651123,
+                "y": 12.97700023651123,
+                "z": 12.97700023651123
+            },
+            "render_min": {
+                "x": -27.835613250732423,
+                "y": 0.352602481842041,
+                "z": 21.781356811523439
+            },
+            "render_max": {
+                "x": -11.77267837524414,
+                "y": 12.240264892578125,
+                "z": 34.2863883972168
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (1)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Mushrooms/PT_Caesars_Mushroom_01.fbx#PT_Caesars_Mushroom_01",
+            "component_data": "",
+            "position": {
+                "x": -16.528850555419923,
+                "y": 6.304139137268066,
+                "z": 25.559999465942384
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 336.6925048828125
+            },
+            "scale": {
+                "x": 7.627995014190674,
+                "y": 11.053142547607422,
+                "z": 11.053143501281739
+            },
+            "render_min": {
+                "x": -17.795156478881837,
+                "y": 5.624332427978516,
+                "z": 23.645397186279298
+            },
+            "render_max": {
+                "x": -14.203407287597657,
+                "y": 9.535587310791016,
+                "z": 27.5596923828125
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -13.788848876953125,
+                "y": -0.40586090087890627,
+                "z": 36.79999923706055
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.5584001541137699,
+                "y": 7.5584001541137699,
+                "z": 7.5584001541137699
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD0",
+            "component_data": "",
+            "position": {
+                "x": -13.788848876953125,
+                "y": -0.40586090087890627,
+                "z": 36.79999923706055
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.5584001541137699,
+                "y": 7.5584001541137699,
+                "z": 7.5584001541137699
+            },
+            "render_min": {
+                "x": -20.137815475463868,
+                "y": -1.2121076583862305,
+                "z": 29.85409927368164
+            },
+            "render_max": {
+                "x": -6.750346660614014,
+                "y": 11.886366844177246,
+                "z": 43.91739273071289
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD1",
+            "component_data": "",
+            "position": {
+                "x": -13.788848876953125,
+                "y": -0.40586090087890627,
+                "z": 36.79999923706055
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.5584001541137699,
+                "y": 7.5584001541137699,
+                "z": 7.5584001541137699
+            },
+            "render_min": {
+                "x": -20.137815475463868,
+                "y": -1.2121076583862305,
+                "z": 29.85409927368164
+            },
+            "render_max": {
+                "x": -6.750347137451172,
+                "y": 11.886366844177246,
+                "z": 43.91739273071289
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD2",
+            "component_data": "",
+            "position": {
+                "x": -13.788848876953125,
+                "y": -0.40586090087890627,
+                "z": 36.79999923706055
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 7.5584001541137699,
+                "y": 7.5584001541137699,
+                "z": 7.5584001541137699
+            },
+            "render_min": {
+                "x": -19.89588165283203,
+                "y": -1.2121076583862305,
+                "z": 29.854101181030275
+            },
+            "render_max": {
+                "x": -6.750347137451172,
+                "y": 11.886366844177246,
+                "z": 43.50417709350586
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -9.028850555419922,
+                "y": -4.05586051940918,
+                "z": 34.20000076293945
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.8234968185424809,
+                "y": 6.8234968185424809,
+                "z": 6.8234968185424809
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD0",
+            "component_data": "",
+            "position": {
+                "x": -9.028850555419922,
+                "y": -4.05586051940918,
+                "z": 34.20000076293945
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.8234968185424809,
+                "y": 6.8234968185424809,
+                "z": 6.8234968185424809
+            },
+            "render_min": {
+                "x": -14.760507583618164,
+                "y": -4.783715724945068,
+                "z": 27.9294490814209
+            },
+            "render_max": {
+                "x": -2.674701690673828,
+                "y": 7.04119348526001,
+                "z": 40.6253662109375
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD1",
+            "component_data": "",
+            "position": {
+                "x": -9.028850555419922,
+                "y": -4.05586051940918,
+                "z": 34.20000076293945
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.8234968185424809,
+                "y": 6.8234968185424809,
+                "z": 6.8234968185424809
+            },
+            "render_min": {
+                "x": -14.760507583618164,
+                "y": -4.783715724945068,
+                "z": 27.9294490814209
+            },
+            "render_max": {
+                "x": -2.6747021675109865,
+                "y": 7.04119348526001,
+                "z": 40.6253662109375
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Shrubs/PT_Generic_Shrub_01_green.fbx#PT_Generic_Shrub_01_green_LOD2",
+            "component_data": "",
+            "position": {
+                "x": -9.028850555419922,
+                "y": -4.05586051940918,
+                "z": 34.20000076293945
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.8234968185424809,
+                "y": 6.8234968185424809,
+                "z": 6.8234968185424809
+            },
+            "render_min": {
+                "x": -14.542096138000489,
+                "y": -4.783715724945068,
+                "z": 27.92945098876953
+            },
+            "render_max": {
+                "x": -2.6747026443481447,
+                "y": 7.04119348526001,
+                "z": 40.25232696533203
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 14.411149978637696,
+                "y": 0.4441394805908203,
+                "z": 51.560001373291019
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.928915500640869,
+                "y": 4.928915500640869,
+                "z": 4.928915500640869
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Flowers/PT_Poppy_02.fbx#PT_Poppy_02_LOD0",
+            "component_data": "",
+            "position": {
+                "x": 14.411149978637696,
+                "y": 0.4441394805908203,
+                "z": 51.560001373291019
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.928915500640869,
+                "y": 4.928915500640869,
+                "z": 4.928915500640869
+            },
+            "render_min": {
+                "x": 12.77983570098877,
+                "y": 0.09194755554199219,
+                "z": 50.02082061767578
+            },
+            "render_max": {
+                "x": 15.893357276916504,
+                "y": 4.129137992858887,
+                "z": 52.686767578125
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Flowers/PT_Poppy_02.fbx#PT_Poppy_02_LOD1",
+            "component_data": "",
+            "position": {
+                "x": 14.411149978637696,
+                "y": 0.4441394805908203,
+                "z": 51.560001373291019
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.928915500640869,
+                "y": 4.928915500640869,
+                "z": 4.928915500640869
+            },
+            "render_min": {
+                "x": 12.77983570098877,
+                "y": -0.06698894500732422,
+                "z": 50.02082061767578
+            },
+            "render_max": {
+                "x": 15.893357276916504,
+                "y": 4.129137992858887,
+                "z": 52.686767578125
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Flowers/PT_Poppy_02.fbx#PT_Poppy_02_LOD2",
+            "component_data": "",
+            "position": {
+                "x": 14.411149978637696,
+                "y": 0.4441394805908203,
+                "z": 51.560001373291019
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.928915500640869,
+                "y": 4.928915500640869,
+                "z": 4.928915500640869
+            },
+            "render_min": {
+                "x": 12.77983570098877,
+                "y": -0.06698894500732422,
+                "z": 50.020816802978519
+            },
+            "render_max": {
+                "x": 15.893357276916504,
+                "y": 4.129137992858887,
+                "z": 52.7419319152832
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": -3.8688507080078127,
+                "y": 1.6641387939453126,
+                "z": 50.099998474121097
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.6977173089981079
+            },
+            "scale": {
+                "x": 4.982192039489746,
+                "y": 4.982192039489746,
+                "z": 4.9821929931640629
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_River_Rock_Pile_02.fbx#PT_River_Rock_Pile_02_LOD0",
+            "component_data": "",
+            "position": {
+                "x": -3.8688507080078127,
+                "y": 1.6641387939453126,
+                "z": 50.099998474121097
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.6977173089981079
+            },
+            "scale": {
+                "x": 4.982192039489746,
+                "y": 4.982192039489746,
+                "z": 4.9821929931640629
+            },
+            "render_min": {
+                "x": -6.039691925048828,
+                "y": 1.5974998474121094,
+                "z": 47.47235107421875
+            },
+            "render_max": {
+                "x": -1.9383621215820313,
+                "y": 2.6205501556396486,
+                "z": 52.692665100097659
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_River_Rock_Pile_02.fbx#PT_River_Rock_Pile_02_LOD1",
+            "component_data": "",
+            "position": {
+                "x": -3.8688507080078127,
+                "y": 1.6641387939453126,
+                "z": 50.099998474121097
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.6977173089981079
+            },
+            "scale": {
+                "x": 4.982192039489746,
+                "y": 4.982192039489746,
+                "z": 4.9821929931640629
+            },
+            "render_min": {
+                "x": -6.039691925048828,
+                "y": 1.6004284620285035,
+                "z": 47.493507385253909
+            },
+            "render_max": {
+                "x": -1.9463841915130616,
+                "y": 2.620452880859375,
+                "z": 52.659202575683597
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_River_Rock_Pile_02.fbx#PT_River_Rock_Pile_02_LOD2",
+            "component_data": "",
+            "position": {
+                "x": -3.8688507080078127,
+                "y": 1.6641387939453126,
+                "z": 50.099998474121097
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.6977173089981079
+            },
+            "scale": {
+                "x": 4.982192039489746,
+                "y": 4.982192039489746,
+                "z": 4.9821929931640629
+            },
+            "render_min": {
+                "x": -6.039691925048828,
+                "y": 1.6004284620285035,
+                "z": 47.499542236328128
+            },
+            "render_max": {
+                "x": -1.9463841915130616,
+                "y": 2.620452880859375,
+                "z": 52.659202575683597
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 7.594923973083496,
+                "y": -1.1458606719970704,
+                "z": 16.35036849975586
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD0",
+            "component_data": "",
+            "position": {
+                "x": 7.594923973083496,
+                "y": -1.1458606719970704,
+                "z": 16.35036849975586
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 4.9652862548828129,
+                "y": -1.0355842113494874,
+                "z": 14.231130599975586
+            },
+            "render_max": {
+                "x": 10.003745079040528,
+                "y": 3.5957090854644777,
+                "z": 18.585012435913087
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD1",
+            "component_data": "",
+            "position": {
+                "x": 7.594923973083496,
+                "y": -1.1458606719970704,
+                "z": 16.35036849975586
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 4.973097801208496,
+                "y": -1.0246894359588624,
+                "z": 14.239906311035157
+            },
+            "render_max": {
+                "x": 10.003745079040528,
+                "y": 3.5957090854644777,
+                "z": 18.568817138671876
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD2",
+            "component_data": "",
+            "position": {
+                "x": 7.594923973083496,
+                "y": -1.1458606719970704,
+                "z": 16.35036849975586
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 4.973097324371338,
+                "y": -1.0246894359588624,
+                "z": 14.239908218383789
+            },
+            "render_max": {
+                "x": 9.999528884887696,
+                "y": 3.5957090854644777,
+                "z": 18.481374740600587
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)",
+            "mesh": "",
+            "component_data": "",
+            "position": {
+                "x": 2.1511499881744386,
+                "y": -1.0058612823486329,
+                "z": 20.15999984741211
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 56.596012115478519,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "render_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": false,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD0",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD0",
+            "component_data": "",
+            "position": {
+                "x": 2.1511499881744386,
+                "y": -1.0058612823486329,
+                "z": 20.15999984741211
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 56.596012115478519,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": -1.0657281875610352,
+                "y": -0.8955848217010498,
+                "z": 16.982370376586915
+            },
+            "render_max": {
+                "x": 5.342801094055176,
+                "y": 3.735708475112915,
+                "z": 23.58550453186035
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD1",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD1",
+            "component_data": "",
+            "position": {
+                "x": 2.1511499881744386,
+                "y": -1.0058612823486329,
+                "z": 20.15999984741211
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 56.596012115478519,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": -1.054100751876831,
+                "y": -0.8846900463104248,
+                "z": 16.987201690673829
+            },
+            "render_max": {
+                "x": 5.329281806945801,
+                "y": 3.735708475112915,
+                "z": 23.570068359375
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD2",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Rocks/PT_Generic_Rock_01.fbx#PT_Generic_Rock_01_LOD2",
+            "component_data": "",
+            "position": {
+                "x": 2.1511499881744386,
+                "y": -1.0058612823486329,
+                "z": 20.15999984741211
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 56.596012115478519,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 20.0,
+                "y": 20.0,
+                "z": 20.0
+            },
+            "render_min": {
+                "x": -1.054100513458252,
+                "y": -0.8846900463104248,
+                "z": 16.99072265625
+            },
+            "render_max": {
+                "x": 5.25396203994751,
+                "y": 3.735708475112915,
+                "z": 23.521926879882814
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (2)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Mushrooms/PT_Caesars_Mushroom_01.fbx#PT_Caesars_Mushroom_01",
+            "component_data": "",
+            "position": {
+                "x": 5.381149768829346,
+                "y": 2.6841392517089845,
+                "z": 19.3700008392334
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.7829999923706059,
+                "y": 4.7829999923706059,
+                "z": 4.7829999923706059
+            },
+            "render_min": {
+                "x": 4.570343017578125,
+                "y": 2.598020553588867,
+                "z": 18.5414981842041
+            },
+            "render_max": {
+                "x": 6.168824195861816,
+                "y": 3.965658664703369,
+                "z": 20.235322952270509
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (3)",
+            "mesh": "Assets/Polytope Studio/Lowpoly_Environments/Sources/Meshes/Mushrooms/PT_Caesars_Mushroom_01.fbx#PT_Caesars_Mushroom_01",
+            "component_data": "",
+            "position": {
+                "x": 6.891149997711182,
+                "y": 2.6841392517089845,
+                "z": 19.3700008392334
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 347.0949401855469
+            },
+            "scale": {
+                "x": 6.812427520751953,
+                "y": 6.812427520751953,
+                "z": 6.812426567077637
+            },
+            "render_min": {
+                "x": 5.738093376159668,
+                "y": 2.3140206336975099,
+                "z": 18.189966201782228
+            },
+            "render_max": {
+                "x": 8.392346382141114,
+                "y": 4.721219539642334,
+                "z": 20.602479934692384
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "renderer": true,
+            "collider": false,
+            "trigger": false
+        },
+        {
+            "path": "Cube",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -4.0,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": -4.5,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": -3.5,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": -4.5,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": -3.5,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (6)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -2.0,
+                "y": 10.75,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": -2.5,
+                "y": 9.5,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": -1.5,
+                "y": 12.0,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": -2.5,
+                "y": 9.5,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": -1.5,
+                "y": 12.0,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (7)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 2.0,
+                "y": 10.75,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": 1.5,
+                "y": 9.5,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": 2.5,
+                "y": 12.0,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": 1.5,
+                "y": 9.5,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": 2.5,
+                "y": 12.0,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (2)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 0.0,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 10.0,
+                "y": 1.0,
+                "z": 4.0
+            },
+            "render_min": {
+                "x": -5.0,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "render_max": {
+                "x": 5.0,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "collider_min": {
+                "x": -5.0,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "collider_max": {
+                "x": 5.0,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (8)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 0.0,
+                "y": 12.5,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 8.0,
+                "y": 1.0,
+                "z": 4.0
+            },
+            "render_min": {
+                "x": -4.0,
+                "y": 12.0,
+                "z": -2.0
+            },
+            "render_max": {
+                "x": 4.0,
+                "y": 13.0,
+                "z": 2.0
+            },
+            "collider_min": {
+                "x": -4.0,
+                "y": 12.0,
+                "z": -2.0
+            },
+            "collider_max": {
+                "x": 4.0,
+                "y": 13.0,
+                "z": 2.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (1)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 4.0,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": 3.5,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": 4.5,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": 3.5,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": 4.5,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (5)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 13.5,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": 13.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": 14.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": 13.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": 14.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (11)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -13.5,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": -14.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": -13.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": -14.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": -13.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (10)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -11.5,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.0,
+                "y": 1.0,
+                "z": 4.0
+            },
+            "render_min": {
+                "x": -14.5,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "render_max": {
+                "x": -8.5,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "collider_min": {
+                "x": -14.5,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "collider_max": {
+                "x": -8.5,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (9)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": -9.5,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": -10.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": -9.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": -10.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": -9.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (4)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 11.5,
+                "y": 9.0,
+                "z": 0.0
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 6.0,
+                "y": 1.0,
+                "z": 4.0
+            },
+            "render_min": {
+                "x": 8.5,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "render_max": {
+                "x": 14.5,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "collider_min": {
+                "x": 8.5,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "collider_max": {
+                "x": 14.5,
+                "y": 9.5,
+                "z": 2.0
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (3)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "DestructibleObject:{\"behavior\":1}\n",
+            "position": {
+                "x": 9.5,
+                "y": 7.25,
+                "z": 1.409999966621399
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 2.5,
+                "z": 0.699999988079071
+            },
+            "render_min": {
+                "x": 9.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "render_max": {
+                "x": 10.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "collider_min": {
+                "x": 9.0,
+                "y": 6.0,
+                "z": 1.059999942779541
+            },
+            "collider_max": {
+                "x": 10.0,
+                "y": 8.5,
+                "z": 1.7599999904632569
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        },
+        {
+            "path": "Cube (12)",
+            "mesh": "Library/unity default resources#Cube",
+            "component_data": "",
+            "position": {
+                "x": 0.0,
+                "y": -19.299999237060548,
+                "z": 6.5
+            },
+            "euler": {
+                "x": 0.0,
+                "y": 90.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.000000238418579,
+                "y": 39.61000061035156,
+                "z": 187.9100341796875
+            },
+            "render_min": {
+                "x": -93.95500946044922,
+                "y": -39.10499954223633,
+                "z": 5.999988555908203
+            },
+            "render_max": {
+                "x": 93.95500946044922,
+                "y": 0.5050010681152344,
+                "z": 7.000011444091797
+            },
+            "collider_min": {
+                "x": 0.0,
+                "y": -19.299999237060548,
+                "z": 6.5
+            },
+            "collider_max": {
+                "x": 0.0,
+                "y": -19.299999237060548,
+                "z": 6.5
+            },
+            "renderer": true,
+            "collider": true,
+            "trigger": false
+        }
+    ]
+}

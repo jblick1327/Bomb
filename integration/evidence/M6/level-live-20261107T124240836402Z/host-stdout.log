@@ -1,0 +1,38 @@
+NATIVE ID tag=627139425882187314 protocol=5 canonical=3 compiler=dev-2026-05:ea5175d
+PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles
+PREDICTION mode=Warming reason=Uninitialized tick=0
+LEVEL HOST READY cells=4619 sources=16 epoch=3 revision=27740
+PREDICTION mode=Conservative reason=Missing_Command tick=89
+LEVEL HOST START
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=100
+PREDICTION mode=Warming reason=Uninitialized tick=309
+PREDICTION mode=Conservative reason=Missing_Command tick=320
+LEVEL progress=3.8 cells=4624 prediction=2 reason=7 pending=5
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=333
+LEVEL REQUEST kind=1 status=1 id=1 effect=397 reason=0
+PREDICTION mode=Warming reason=Uninitialized tick=425
+PREDICTION mode=Conservative reason=Missing_Command tick=474
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=481
+PREDICTION mode=Warming reason=Uninitialized tick=484
+PREDICTION mode=Conservative reason=Missing_Command tick=498
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=507
+LEVEL LATE JOIN READY
+PREDICTION mode=Warming reason=Uninitialized tick=630
+PREDICTION mode=Conservative reason=Missing_Command tick=640
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=652
+LEVEL progress=13.8 cells=4623 prediction=2 reason=2 pending=40
+LEVEL REQUEST kind=198 status=1 id=2 effect=893 reason=0
+PREDICTION mode=Warming reason=Uninitialized tick=898
+PREDICTION mode=Conservative reason=Missing_Command tick=970
+PREDICTION mode=Predicting reason=None tick=977
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1040
+PREDICTION mode=Predicting reason=None tick=1047
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1149
+PREDICTION mode=Predicting reason=None tick=1153
+LEVEL progress=23.8 cells=4619 prediction=1 reason=0 pending=6
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1820
+PREDICTION mode=Predicting reason=None tick=1824
+LEVEL progress=33.8 cells=4591 prediction=1 reason=0 pending=5
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=2132
+PREDICTION mode=Predicting reason=None tick=2134
+LEVEL_RESULT {"status":"passed","samples":2302,"maxCells":4665,"epochs":2,"revisions":60,"events":7,"actionAccepted":true,"resetAccepted":true,"predicted":1288,"conservative":940,"conservativeReasons":{"7":22,"2":918}}

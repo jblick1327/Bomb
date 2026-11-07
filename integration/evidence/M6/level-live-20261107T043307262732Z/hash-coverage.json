@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "expected_unique": 356,
+  "matching_unique": 353,
+  "missing_steady": 0,
+  "missing_tail": 3,
+  "missing_reports": [
+    {
+      "client": 2,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27714,
+      "sent_tick": 900,
+      "classification": "disconnect-tail"
+    },
+    {
+      "client": 2,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27715,
+      "sent_tick": 903,
+      "classification": "disconnect-tail"
+    },
+    {
+      "client": 2,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27722,
+      "sent_tick": 906,
+      "classification": "disconnect-tail"
+    }
+  ],
+  "bad_reports": [],
+  "unexpected_reports": [],
+  "per_client_connection": {
+    "1:1": {
+      "matched": 19,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "0:1": {
+      "matched": 97,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:1": {
+      "matched": 15,
+      "missing_steady": 0,
+      "missing_tail": 3
+    },
+    "3:1": {
+      "matched": 79,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "1:2": {
+      "matched": 79,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:2": {
+      "matched": 64,
+      "missing_steady": 0,
+      "missing_tail": 0
+    }
+  },
+  "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+}

@@ -1,18 +1,42 @@
 {
-  "status": "in_progress",
+  "status": "passed",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 3,
+    "source_commit": "f98dd0104fc51bb44206669f9660e3d433762dbb",
+    "source_dirty": false,
+    "source_sha256": "8b40bfc3059a632215f308d3975a46c8e6d4b976e874136903d18682c2b16392",
+    "build_tag": 627139425882187314,
+    "dll_sha256": "310208eeebcaabe04a1e6b56b5bb927a810607212828b47ce5e7a1e7fdb83918",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 5,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
   "passed": [
-    "Unity exact IDs above 2^53: duplicate, reopen, part duplication, prefab property apply, copied level namespace",
-    "Unreadable mesh data read without importer changes; affine mirrored winding/normals/UV test",
-    "Native v4 decoder: exact IDs, column-major matrix, concave area, compound empty hole, malformed data/geometry rejection"
+    "Layout v4 application loading and bounded actual native geometry construction",
+    "Six motion/damage combinations in real physics and destruction paths, geometric anchored inheritance",
+    "Canonical provenance and reliable atomic catalog, manifest admission and legacy persistence compatibility",
+    "Current Editor identity/reopen/duplicate/inactive/prefab/copied-level checks",
+    "Native validated exported yard: 16 active sources, 17 parts, 4615 initial cells, 10999 fixtures",
+    "Standalone direct-reference registry and normal mixed-client fracture/late-join/reset/reconnect on final f98dd01 build",
+    "Full native regression: 220 game, 27 transport, 51 shared, 18 ffi tests",
+    "Final independent C and managed ABI/lifecycle checks"
   ],
-  "shared_tests": 38,
-  "ffi_tests": 15,
-  "not_yet_implemented": [
-    "Application loading of layout v4",
-    "Cell provenance through canonical/persistence/late join",
-    "Actual motion/damage policies and configurable bounds",
-    "Reliable catalog/gameplay manifest handshake",
-    "Exported yard and standalone visual registry"
+  "remaining_M6": [],
+  "final_normal_live": "level-live-20261107T124121633353Z/summary.json",
+  "failed_attempts_preserved": true,
+  "fixture_notes": [
+    "The original -12,7.25 blast became solid after beams fell; the final diagnostic blast is -19.5,6.8 outside the side wall beside terrain, verified clear in the real world. No aim rule was relaxed.",
+    "The fourth small export-fixture spawn was moved to -3,.565 to clear the explicit cube capsule overlap.",
+    "The inactive-duplicate fixture now queries inactive sources on reopen.",
+    "An observer finishes one second before host teardown to avoid mistaking the expected host-left shutdown for an observer failure."
   ],
-  "fixture_note": "Part-only duplicate fixture creates a child part, rather than cloning the source component and thus a separate part namespace."
+  "presentation_notes": [
+    "Tier 1 terrain is batched by rigid/cell pose and material, with immutable per-cell geometry cached at rest-center coordinates and translated to current piece reference pivots.",
+    "Cell arrays are copied once per native topology transaction; poses/events are always copied before release.",
+    "Dynamic yard prediction includes explicit conservative intervals and occasional gross correction snaps; this is not the passing M5 static-profile latency claim. Dynamic correction hardening remains M9 work."
+  ],
+  "final_summary": "summary.json"
 }

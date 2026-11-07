@@ -18,6 +18,6 @@ namespace Bom.Unity {
 public sealed class BomVisualRegistry:ScriptableObject {
  public string LevelId="",GameplayManifestHash="",CatalogHash="";
  public BomVisualEntry[] Entries=Array.Empty<BomVisualEntry>();
- public bool TryFind(string key,string hash,out BomVisualEntry result){foreach(var entry in Entries)if(entry.AssetKey==key&&entry.ContentHash==hash){result=entry;return true;}result=null;return false;}
+ public bool TryFind(string key,string hash,out BomVisualEntry result){foreach(var entry in Entries)if(entry.AssetKey==key&&entry.ContentHash==hash&&entry.Groups.Length>0){bool valid=true;foreach(var group in entry.Groups)if(group.Mesh==null)valid=false;if(valid){result=entry;return true;}}result=null;return false;}
 }
 }

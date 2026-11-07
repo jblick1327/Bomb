@@ -1,0 +1,24 @@
+[INFO ] --- [2026-11-07 03:31:09] Starting test runner with 1 thread.
+[INFO ] --- [2026-11-07 03:31:09] The random seed sent to every test is: 355182138858022. Set with -define:ODIN_TEST_RANDOM_SEED=n.
+[INFO ] --- [2026-11-07 03:31:09] Memory tracking is enabled. Tests will log their memory usage if there's an issue.
+[INFO ] --- [2026-11-07 03:31:09] < Final Mem/ Total Mem> <  Peak Mem> (#Free/Alloc) :: [package.test_name]
+PREDICTION mode=Conservative reason=Bomb_Contact_Uncertain tick=0
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Conservative reason=Wrong_Revision tick=2
+PREDICTION mode=Predicting reason=None tick=5
+[INFO ] --- [2026-11-07 03:31:09] [prediction_contact_test.odin:48:moving_rotating_support_replay_has_real_contacts_and_bounded_error()] moving/rotating support: contact_ticks=99 replay_comparisons=174 max_position_error=0.023087
+PREDICTION mode=Conservative reason=Wrong_Revision tick=0
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Disabled reason=None tick=5
+[INFO ] --- [2026-11-07 03:31:09] [prediction_static_test.odin:53:static_prediction_replays_shared_run_jump_without_sandbox_respawn()] static shared-kernel replay comparisons=231 max_position_error=0.000000
+
+Finished 47 tests in 248.5718ms. All tests were successful.
+
+[INFO ] --- [2026-11-07 03:31:10] Starting test runner with 1 thread.
+[INFO ] --- [2026-11-07 03:31:10] The random seed sent to every test is: 355184953212366. Set with -define:ODIN_TEST_RANDOM_SEED=n.
+[INFO ] --- [2026-11-07 03:31:10] Memory tracking is enabled. Tests will log their memory usage if there's an issue.
+[INFO ] --- [2026-11-07 03:31:10] < Final Mem/ Total Mem> <  Peak Mem> (#Free/Alloc) :: [package.test_name]
+
+Finished 17 tests in 23.608ms. All tests were successful.
+

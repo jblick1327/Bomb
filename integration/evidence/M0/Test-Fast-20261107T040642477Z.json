@@ -1,0 +1,22 @@
+{
+  "task": "Test",
+  "suite": "Fast",
+  "started_utc": "20261107T040642477Z",
+  "exit_code": 1,
+  "status": "failed",
+  "checks": [
+    {
+      "log": "Test-20261107T040642477Z.log",
+      "command": "scripts/bom.ps1 Test",
+      "exit_code": 0
+    },
+    {
+      "log": "NetTest-20261107T040642477Z.log",
+      "command": "scripts/bom.ps1 NetTest",
+      "exit_code": 0
+    }
+  ],
+  "errors": [
+    "ffi client-core tests failed with exit 1"
+  ]
+}

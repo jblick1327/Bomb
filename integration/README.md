@@ -23,3 +23,13 @@ Unity validation uses a separate project copy named in `UnityValidationProject`;
 The live launch tool waits for usable Unity snapshots before starting the timed scenario. It uses one native host handle, two Unity players and one Odin observer within the original four-client server limit. Hash coverage lists expected/reported revisions per connection; a missing report is never counted as a match. Generated local builds and logs live under ignored build/local directories; milestone evidence and source patches are committed.
 
 For an interactive demo, `Start-BomDemo.ps1 -Play` opens the configured standalone player and a local native server. A/D or arrows move, Space jumps and left-click requests a blast. Close the player to stop the demo. Current diagnostics default to sandbox with native prediction enabled; --bom-prediction-off selects ordinary interpolation. Authored yard export, source-art clipping and elimination remain in progress or pending.
+
+The authored yard is `Assets/BOMIntegration/NetworkYard.unity`. Export creates explicit native gameplay proxies, a validated layout, a preprocessing/classification report, and a runtime registry with direct mesh/material references. Runtime gameplay geometry comes from the native server. The current required source-art clipping stage is still pending.
+
+```powershell
+./integration/tools/Test-UnityYard.ps1 -Backend Mono
+./integration/tools/Test-UnityYard.ps1 -Backend Mono -SkipBuild -MissingArt
+./integration/tools/Test-UnityYard.ps1 -Backend Mono -SkipBuild -RejectManifest
+```
+
+These yard gates use the current native source build (protocol 5), not the frozen protocol-4 demo. They keep raw failed attempts and actual rendered captures under evidence/M6. The expected gameplay fingerprint comes from the native export report, and the live test checks that the standalone plugin matches its native build identity.

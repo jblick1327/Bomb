@@ -1,0 +1,23 @@
+[INFO ] --- [2026-11-07 04:08:04] Starting test runner with 1 thread.
+[INFO ] --- [2026-11-07 04:08:04] The random seed sent to every test is: 361136120589304. Set with -define:ODIN_TEST_RANDOM_SEED=n.
+[INFO ] --- [2026-11-07 04:08:04] Memory tracking is enabled. Tests will log their memory usage if there's an issue.
+[INFO ] --- [2026-11-07 04:08:04] < Final Mem/ Total Mem> <  Peak Mem> (#Free/Alloc) :: [package.test_name]
+PREDICTION mode=Conservative reason=Bomb_Contact_Uncertain tick=0
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Conservative reason=Wrong_Revision tick=2
+PREDICTION mode=Predicting reason=None tick=5
+[INFO ] --- [2026-11-07 04:08:04] [prediction_contact_test.odin:48:moving_rotating_support_replay_has_real_contacts_and_bounded_error()] moving/rotating support: contact_ticks=99 replay_comparisons=174 max_position_error=0.023087
+PREDICTION mode=Conservative reason=Wrong_Revision tick=0
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Predicting reason=None tick=5
+PREDICTION mode=Disabled reason=None tick=5
+[INFO ] --- [2026-11-07 04:08:04] [prediction_static_test.odin:53:static_prediction_replays_shared_run_jump_without_sandbox_respawn()] static shared-kernel replay comparisons=231 max_position_error=0.000000
+
+Finished 50 tests in 293.1355ms. All tests were successful.
+
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/src/ffi/catalog_test.odin(19:16) Error: Cannot compare expression. Mismatched types 'u32' and 'u64'. 
+	... ct(test,sample.catalog_revision==catalog.revision&&sample.catal ... 
+	            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^ 
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/src/ffi/client.odin(334:123) Error: Cannot assign value 'u64(scene.epoch)' of type 'u64' to 'u32' in assignment 
+	... e.catalog_revision=u64(scene.epoch);sample.catalog_hash=hash[0]} 
+	                       ^~~~~~~~~~~~~~~^ 

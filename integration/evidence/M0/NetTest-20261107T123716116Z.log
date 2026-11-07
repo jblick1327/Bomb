@@ -1,0 +1,51 @@
+[INFO ] --- [2026-11-07 12:38:33] Starting test runner with 16 threads. Set with -define:ODIN_TEST_THREADS=n.
+[INFO ] --- [2026-11-07 12:38:33] The random seed sent to every test is: 369643015834733. Set with -define:ODIN_TEST_RANDOM_SEED=n.
+[INFO ] --- [2026-11-07 12:38:33] Memory tracking is enabled. Tests will log their memory usage when complete.
+[INFO ] --- [2026-11-07 12:38:33] < Final Mem/ Total Mem> <  Peak Mem> (#Free/Alloc) :: [package.test_name]
+[INFO ] --- [2026-11-07 12:38:33] <        0B/       32B> <       24B> (    2/    2) :: netcode.test_codec_known_bytes
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   2.93KiB> <   2.48KiB> (    7/    7) :: netcode.test_codec_round_trip
+[INFO ] --- [2026-11-07 12:38:33] <        0B/      131B> <       83B> (    6/    6) :: netcode.test_codec_truncated_and_oversized
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 116.63KiB> < 116.63KiB> (   11/   11) :: netcode.test_duplicate_connect_is_idempotent
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 254.58KiB> < 251.16KiB> (   33/   33) :: netcode.test_duplicate_packets_ignored
+[INFO ] --- [2026-11-07 12:38:33] <        0B/      192B> <       24B> (   12/   12) :: netcode.test_header_round_trip
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 620.23KiB> < 619.08KiB> (   17/   17) :: netcode.test_endpoint_send_limits
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 245.88KiB> < 232.20KiB> (  146/  146) :: netcode.test_client_connect_timeout
+[INFO ] --- [2026-11-07 12:38:33] [connection_test.odin:131:test_four_clients_and_server_full()] connections: 4 clients accepted (indices distinct), 5th rejected with "server full"
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 119.66KiB> < 119.47KiB> (   26/   26) :: netcode.test_receive_window_and_garbage
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   1.38MiB> <   1.03MiB> (  307/  307) :: netcode.test_disconnect_packet_frees_slot_immediately
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   1.17MiB> <   1.03MiB> (  341/  341) :: netcode.test_four_clients_and_server_full
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 570.20KiB> < 233.83KiB> ( 1008/ 1008) :: netcode.test_keepalive_rate
+[INFO ] --- [2026-11-07 12:38:33] <        0B/ 129.71KiB> < 129.59KiB> (   19/   19) :: netcode.test_unreliable_budget_drops
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   1.28MiB> < 933.94KiB> (  334/  334) :: netcode.test_reconnect_with_new_salt
+[INFO ] --- [2026-11-07 12:38:33] [connection_test.odin:186:test_silent_client_times_out()] timeout: silent client removed 5.000 s after the last packet (limit 5.0 +/- 0.1)
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   1.65MiB> < 933.42KiB> ( 1456/ 1456) :: netcode.test_silent_client_times_out
+[INFO ] --- [2026-11-07 12:38:33] <        0B/        0B> <        0B> (    0/    0) :: netcode.test_seq_greater_wraps
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   2.18MiB> <1001.57KiB> ( 1459/ 1459) :: netcode.test_reliable_boundaries_lossless
+[INFO ] --- [2026-11-07 12:38:33] <        0B/   3.03MiB> < 640.86KiB> ( 4058/ 4058) :: netcode.test_sequence_wraparound_in_flight
+[INFO ] --- [2026-11-07 12:38:33] [endpoint_test.odin:426:test_receive_fuzz_no_panic()] receive fuzz: 10000 random/mutated datagrams into endpoint, server and client without a panic
+[INFO ] --- [2026-11-07 12:38:33] <        0B/  31.81MiB> < 839.95KiB> ( 1442/ 1442) :: netcode.test_receive_fuzz_no_panic
+[INFO ] --- [2026-11-07 12:38:34] [codec_test.odin:326:test_codec_fuzz_reads()] fuzz: 10000 random buffers, every read proc, no panic or out-of-bounds read
+[INFO ] --- [2026-11-07 12:38:34] <        0B/        0B> <        0B> (    0/    0) :: netcode.test_codec_fuzz_reads
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:119:test_reliable_more_than_window()] window test: 3000 messages (> 1024 window) delivered in 2.28 simulated s, window drops 0
+[INFO ] --- [2026-11-07 12:38:34] <        0B/   2.63MiB> < 795.13KiB> (31677/31677) :: netcode.test_reliable_more_than_window
+[INFO ] --- [2026-11-07 12:38:34] [codec_test.odin:356:test_quantize_position()] quantize_pos: 1,000,000 samples over +/-1000 m, worst error 0.000488 m (limit 0.000488)
+[INFO ] --- [2026-11-07 12:38:34] <        0B/        0B> <        0B> (    0/    0) :: netcode.test_quantize_position
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:238:test_packet_size_never_exceeds_max()] packet size: 5417 packets written, largest 1200 bytes (MAX_PACKET 1200), asserted on every write
+[INFO ] --- [2026-11-07 12:38:34] <        0B/  21.99MiB> < 311.91KiB> (43112/43112) :: netcode.test_packet_size_never_exceeds_max
+[INFO ] --- [2026-11-07 12:38:34] [codec_test.odin:402:test_quantize_angle()] quantize_angle: 1,100,000 samples, worst error 4.816e-05 rad (limit pi/65536 = 4.794e-05)
+[INFO ] --- [2026-11-07 12:38:34] <        0B/        0B> <        0B> (    0/    0) :: netcode.test_quantize_angle
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:182:test_unreliable_delivery_fraction()] unreliable: sent 20000, delivered 15996 unique (79.98%, expected 80% +/- 3), duplicate deliveries 0, link duplicates absorbed 399
+[INFO ] --- [2026-11-07 12:38:34] <        0B/  27.78MiB> < 254.09KiB> (168358/168358) :: netcode.test_unreliable_delivery_fraction
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:86:test_reliable_stress_both_directions()] reliable stress: 2 x 1000 messages, 19686209 payload bytes total (9.6 KB avg per message)
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:87:test_reliable_stress_both_directions()]   completed in 33.94 simulated s (a<-b 1000, b<-a 1000 delivered, 0 duplicates, 0 reordered)
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:88:test_reliable_stress_both_directions()]   overhead ratio (wire bytes sent / payload bytes): 1.335   [26290840 wire bytes in 26582 packets]
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:89:test_reliable_stress_both_directions()]   fragment resends: 6260 (a 3103, b 3157)   final RTT estimate a 199 ms, b 171 ms
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:90:test_reliable_stress_both_directions()]   link a->b: sent 13255 dropped 2680 duplicated 558 reordered 1136 | b->a: sent 13327 dropped 2712 duplicated 538 reordered 1098
+[INFO ] --- [2026-11-07 12:38:34] [sim_test.odin:91:test_reliable_stress_both_directions()]   largest packet 1200 bytes (limit 1200); receiver rejected duplicates a 538, b 558
+[INFO ] --- [2026-11-07 12:38:34] <        0B/ 149.63MiB> <  19.70MiB> (126272/126272) :: netcode.test_reliable_stress_both_directions
+[INFO ] --- [2026-11-07 12:38:38] [socket_test.odin:243:test_real_sockets_smoke()] sockets: both directions complete in 4.41 s wall time (limit 10): reliable 200+200 delivered in order and byte-identical, unreliable 1000/1000 to client and 1000/1000 to server, 0 duplicates
+[INFO ] --- [2026-11-07 12:38:38] [socket_test.odin:244:test_real_sockets_smoke()]   client endpoint: packets sent 2203, resends 0, rtt 0.0 ms
+[INFO ] --- [2026-11-07 12:38:38] <        0B/  25.26MiB> <   4.15MiB> (26418/26418) :: netcode.test_real_sockets_smoke
+
+Finished 27 tests in 4.6749914s. All tests were successful.
+

@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "failure": "",
+  "exit_codes": {
+    "unity": 3,
+    "server": 0
+  },
+  "known_wrong_manifest": "0000000000000000000000000000000000000000000000000000000000000001",
+  "no_presented_snapshot": true,
+  "no_player_admitted": true,
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "62242",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M6\\yard-export\\yard.json",
+      "--seconds",
+      "45"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-yard-player\\BombNetworkYard.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "--bom-port",
+      "62242",
+      "--bom-smoke-seconds",
+      "25",
+      "--bom-expected-manifest",
+      "0000000000000000000000000000000000000000000000000000000000000001",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M6\\manifest-reject-20261107T043609069924Z\\unity.log"
+    ]
+  }
+}

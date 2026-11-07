@@ -5,8 +5,11 @@ namespace Bom.Unity {
 [Serializable]public struct BomBounds2 {public Vector2 Minimum,Maximum;public BomBounds2(Vector2 minimum,Vector2 maximum){Minimum=minimum;Maximum=maximum;}}
 [Serializable]public sealed class BomIdentityRecord {public string ObjectGlobalId,IdentityDecimal;}
 [Serializable]public sealed class BomGlueAuthoring {public BomPhysicsPart A,B;}
+[Serializable]public sealed class BomOverlapAuthoring {public BomPhysicsPart A,B;[TextArea]public string Reason="";}
+[Serializable]public sealed class BomCustomMaterial {public string Name="",Base="stone";public Color32 Color=new Color32(131,145,152,255);public float Toughness=1,BlastResistance=3,StripThickness=.2f,ShockLoss=4,Flexibility=.5f;}
 [DisallowMultipleComponent]public sealed class BomLevelAuthoring:MonoBehaviour {
  public string LevelId="";
+ [HideInInspector]public int YardBuilderVersion;
  public string NextIdentityDecimal="1";
  [HideInInspector]public string StoredSceneGuid="",StoredRootGlobalId="";
  [HideInInspector]public List<BomIdentityRecord> IdentityRegistry=new List<BomIdentityRecord>();
@@ -22,6 +25,8 @@ namespace Bom.Unity {
  public float BombSpawnHeight=7.3f;
  public BomBounds2 BombCleanupBounds=new BomBounds2(new Vector2(-9,-3),new Vector2(10,20));
  public List<BomGlueAuthoring> Glue=new List<BomGlueAuthoring>();
+ public List<BomOverlapAuthoring> AllowedOverlaps=new List<BomOverlapAuthoring>();
+ public List<BomCustomMaterial> Materials=new List<BomCustomMaterial>();
  public BomVisualRegistry VisualRegistry;
 }
 }

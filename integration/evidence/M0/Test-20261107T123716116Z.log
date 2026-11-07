@@ -1,0 +1,265 @@
+C:/Users/rober/Documents/Codex/2026-11-05/hi/work/odin-source/BOM/build/package-aeecc23961f848a6b08cd627f77b52db/net_soak.odin(158:2) Warning: Declaration of 'clients' may cause a stack overflow due to its type '[4]Net_Client' having a size of 446400 bytes 
+	clients:[nc.MAX_CLIENTS]Net_Client 
+	^ 
+[INFO ] --- [2026-11-07 12:37:21] Starting test runner with 16 threads. Set with -define:ODIN_TEST_THREADS=n.
+[INFO ] --- [2026-11-07 12:37:21] The random seed sent to every test is: 369447147294157. Set with -define:ODIN_TEST_RANDOM_SEED=n.
+[INFO ] --- [2026-11-07 12:37:21] Memory tracking is enabled. Tests will log their memory usage if there's an issue.
+[INFO ] --- [2026-11-07 12:37:21] < Final Mem/ Total Mem> <  Peak Mem> (#Free/Alloc) :: [package.test_name]
+Snapshot decimal round-trip: max vertex 0.000000007 position 0.000000835 velocity 0.000001686
+E damage radii: floor=3.0 glass=3.8 small=0.0 mismatches=0
+Original blast tick=20 protected=17 surviving=17 right_post_max_movement=0.002852410 right_post_now=0.000316681
+Original blast tick=120 protected=17 surviving=17 right_post_max_movement=0.002852410 right_post_now=0.000315038
+Original blast far_connection=938 first_break_tick=0 peak_damage=0.004790209
+Original blast far_connection=941 first_break_tick=0 peak_damage=0.079148076
+Original blast far_connection=945 first_break_tick=0 peak_damage=0.115109190
+Original blast far_connection=946 first_break_tick=0 peak_damage=0.115109190
+Original blast far_connection=947 first_break_tick=0 peak_damage=0.115109190
+Original blast far_connection=948 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=949 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=950 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=951 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=952 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=953 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=954 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=955 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=956 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=957 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=958 first_break_tick=0 peak_damage=0.000000000
+Original blast far_connection=959 first_break_tick=0 peak_damage=0.000000000
+Original blast SEAM_TOUGHNESS=0.4 entries=23
+B snapped shared edge: before gap=0.019999981 after=0.0; snap bits=0x40e66666,0xc0b33333
+Layout byte roundtrips: 7 files verified; six v1 and one v2 upgrade to v3
+Force rule drop-1x1-from-3m piece=14 material=stone mass=1.500000000
+Force rule drop-1x1-from-3m piece=28 material=stone mass=0.599999905
+Force rule drop-1x1-from-3m piece=29 material=stone mass=1.000000000
+Force rule drop-1x1-from-3m piece=844 material=stone mass=50.999992371
+Force rule drop-1x1-from-3m links=2 live_after_300=0 first_break_tick=48 peak_r=0.733450890 peak_tick=1 longest_run_r_ge_1=0
+Glass commit check: blast=1 impact_batch=1
+Demo regression blast=false ticks=600 initial=23 surviving=23 max_vertex_displacement=0.000939717
+Glass Dijkstra: loads=22/18/14/10/6; disconnected far cells unreached
+Glass one-wave check: children=20; inherited loads=22/18; extra velocities=0
+Cache check 1: build=0 tick=0 explode=0 total600=0 load=0 ensure_calls
+C layout round trip: float/identity/seed mismatches=0; World bytes identical= true
+Material compatibility: 25 fixture/preset byte comparisons passed
+Legacy v3 continuity-manual-S.json: 266812 bytes, v4 compatible=true, v4 exact roundtrip=true
+Glass check 2 tick=25 pieces=56 largest_fraction=0.11295225
+Glass check 1 radius=3 pieces=55 largest_fraction=0.72769040 shard_medians=[0.02706629, 0.03988999, 7.1794896] bands=[17, 37, 1]
+Glass check 1 radius=4 pieces=192 largest_fraction=0.02727782 shard_medians=[0, 0.0260818, 0.028041482] bands=[0, 98, 94]
+Material v2: exact layout/World roundtrip; nine rejection cases atomic
+B exact editor_place: mismatching endpoints=0
+Mortar C1 idle: regions=277 links=605 pieces=5 mortar=6 changed_count_ticks=0
+Mortar A1/A2 facing=1 floor=6 expected_floor=6 seam_load=25 max_cell_load=24.504902
+E: revision_delta=0 regions_delta=0 live=true max_impact_load=52.450008
+C rejection checks: rejected=12/12 unchanged=12/12
+Drop Glass: h=0.3657 threshold=0.5224 closing=2.6133 load=13.0667 intact=true floor_intact=true
+Drop Glass: h=0.6792 threshold=0.5224 closing=3.5933 load=17.9667 intact=false floor_intact=true
+Drop Stone: h=0.6836 threshold=0.9766 closing=3.5933 load=28.7466 intact=true floor_intact=true
+Drop Stone: h=1.2695 threshold=0.9766 closing=5.0633 load=40.5067 intact=false floor_intact=true
+Drop Wood: h=1.1200 threshold=1.6000 closing=4.7367 load=23.6833 intact=true floor_intact=true
+Drop Wood: h=2.0800 threshold=1.6000 closing=6.3700 load=31.8500 intact=false floor_intact=true
+Force rule tip-block-3x piece=14 material=stone mass=1.500000000
+Force rule tip-block-3x piece=28 material=stone mass=0.599999905
+Force rule tip-block-3x piece=46 material=stone mass=1.799999952
+Force rule tip-block-3x piece=860 material=stone mass=50.999992371
+Force rule tip-block-3x links=2 live_after_30=0 first_break_tick=14 peak_r=3.822822809 peak_tick=3 longest_run_r_ge_1=13
+Fuzz: 10000 buffers through frame/input/event decode, 1717 accepted, no panic
+Glass material: exact shock_loss bits/re-encoding; legacy=0; negative rejected
+PREDICTION mode=Warming reason=Uninitialized tick=0
+PREDICTION mode=Warming reason=Uninitialized tick=0
+Mortar calibration beam_end=2.4 seam_first_id=832 need=141.148117065 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=833 need=160.772048950 length=0.400000006
+Mortar calibration beam_end=4.4 seam_first_id=846 need=469.834472656 length=0.400000006
+Mortar calibration beam_end=4.4 seam_first_id=847 need=487.811828613 length=0.400000006
+Mortar B beam_end=2.4 initial=3 broken=0 first_break=0 below_y1_tick=0 final_lowest=2.095316887
+Mortar B beam_end=4.4 initial=3 broken=2 first_break=39 below_y1_tick=73 final_lowest=0.299081445
+Mortar ranges preset=1 objects_including_floor=5 valid
+Mortar ranges preset=2 objects_including_floor=9 valid
+Mortar ranges preset=3 objects_including_floor=6 valid
+Mortar ranges preset=4 objects_including_floor=6 valid
+Mortar ranges preset=5 objects_including_floor=5 valid
+Wood toughness 1/2 lost area: [0.9600749, 4.7683716e-07]
+Wood thickness .2/.4, 6x0.8, layout seed42 identity1: maximum built=[0.19617306, 0.2836345] cells=[28, 20]
+Glass shock 4/2 largest fraction=[0.7276905, 0.020877145]
+Stone resistance 3/6 wood lost=[0.121395946, 1.1920929e-07]
+Rubber flexibility .5/.25 sag=[0.25251317, 0.068254709] max_speed=[0, 0]
+Mortar calibration beam_end=2.4 seam_first_id=883 need=141.130966187 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=884 need=160.762557983 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=894 need=141.138305664 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=895 need=160.751480103 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=820 need=141.155960083 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=821 need=160.835449219 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=845 need=141.132324219 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=846 need=160.771102905 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=844 need=141.138610840 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=845 need=160.764648438 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=869 need=141.139633179 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=870 need=160.778808594 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=913 need=141.147491455 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=914 need=160.824600220 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=780 need=141.138946533 length=0.400000006
+Mortar calibration beam_end=2.4 seam_first_id=781 need=160.759841919 length=0.400000006
+Mortar seam seed max/min=1.000522375
+Mortar A6 pane_B=100->100
+NETSOAK ticks=1680 (flush 180) table_agreement checked=5870 mismatches=0 skipped=9; epoch changes=1
+== client 0 (local)
+STRUCTURE applied=92 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=0 (awake bodies among them=0)
+RENDER ERROR all     samples=246173 position p50=0.00160 p99=0.00260 max=0.07416 m; angle p50=0.00040 p99=0.00080 max=0.00757 rad
+RENDER ERROR players samples=6688 position p50=0.00160 p99=0.00260 max=0.07416 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=1798 position p50=0.00140 p99=0.00260 max=0.00274 m; angle p50=0.00010 p99=0.00080 max=0.00077 rad
+DELAY final=2 changes=0 histogram(ticks:count) 2:1679
+CLOCK snaps=2 adjusted_ticks=1672 saturated_at_5pct=0 mean_adjust=0.00116 max_abs_adjust=0.0396
+LATE structure/events arriving after the clock passed their tick: structure=0 events=0 max_lateness=0.00 ticks; explosions played=25 rejected events=0 resets=2
+FRAMES complete=1671 parts=1701 duplicate_parts=0 wrong_epoch=8 undecodable=0 malformed=0 lost(declared)=0
+ENTRIES sent=116859 (players/bombs 6903) gone ids sent=281 parts=1709; mean 5.31 bytes per entry incl. headers; input messages mean 10.9 max 18 bytes
+FRAME BYTES per tick p50=265 p99=1198 max=1343; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=224.5 kbit/s peak 1s=664.2 kbit/s; frame payload only avg=177.4 peak=495.6 kbit/s
+BUDGET saturated_ticks=0/1679 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1063 p99=0.4761 max=0.5749
+INPUTS jumps pressed=10 applied=10; blasts issued=4 applied=4 rejected=0 (outside=0 rate=0 solid=0) duplicates=0 dropped_by_client=0 inputs=1678 stale=0
+LINK s2c sent=1827 dropped=0 duplicated=0 reordered=0; c2s sent=1680 dropped=0
+== client 1 (remote)
+STRUCTURE applied=91 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=3 (awake bodies among them=3)
+RENDER ERROR all     samples=245587 position p50=0.00150 p99=0.00260 max=0.13513 m; angle p50=0.00040 p99=0.00080 max=0.10536 rad
+RENDER ERROR players samples=6628 position p50=0.00150 p99=0.00260 max=0.13513 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=1802 position p50=0.00120 p99=0.00240 max=0.00314 m; angle p50=0.00010 p99=0.00070 max=0.01958 rad
+DELAY final=4 changes=12 histogram(ticks:count) 2:323 4:1264 5:79 7:8
+CLOCK snaps=2 adjusted_ticks=1655 saturated_at_5pct=14 mean_adjust=-0.00162 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=1 events=0 max_lateness=7.10 ticks; explosions played=25 rejected events=0 resets=2
+FRAMES complete=1619 parts=1809 duplicate_parts=0 wrong_epoch=19 undecodable=0 malformed=0 lost(declared)=34
+ENTRIES sent=145149 (players/bombs 7501) gone ids sent=1370 parts=1868; mean 5.64 bytes per entry incl. headers; input messages mean 11.0 max 19 bytes
+FRAME BYTES per tick p50=345 p99=1521 max=1729; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=283.8 kbit/s peak 1s=837.6 kbit/s; frame payload only avg=233.8 peak=667.5 kbit/s
+BUDGET saturated_ticks=0/1677 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1156 p99=0.5344 max=0.7324
+INPUTS jumps pressed=8 applied=8; blasts issued=4 applied=4 rejected=0 (outside=0 rate=0 solid=0) duplicates=0 dropped_by_client=0 inputs=1635 stale=38
+LINK s2c sent=1996 dropped=37 duplicated=17 reordered=38; c2s sent=1675 dropped=36
+== client 2 (remote)
+STRUCTURE applied=92 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=3 (awake bodies among them=3)
+RENDER ERROR all     samples=244955 position p50=0.00150 p99=0.00260 max=0.21886 m; angle p50=0.00040 p99=0.00110 max=0.32045 rad
+RENDER ERROR players samples=6596 position p50=0.00150 p99=0.00250 max=0.21886 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=1799 position p50=0.00130 p99=0.00260 max=0.04745 m; angle p50=0.00010 p99=0.00080 max=0.08654 rad
+DELAY final=2 changes=12 histogram(ticks:count) 2:342 3:60 4:1273
+CLOCK snaps=2 adjusted_ticks=1659 saturated_at_5pct=7 mean_adjust=-0.00008 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=2 events=1 max_lateness=7.15 ticks; explosions played=25 rejected events=1 resets=2
+FRAMES complete=1612 parts=1804 duplicate_parts=0 wrong_epoch=27 undecodable=0 malformed=0 lost(declared)=34
+ENTRIES sent=145443 (players/bombs 7489) gone ids sent=1358 parts=1870; mean 5.64 bytes per entry incl. headers; input messages mean 11.0 max 18 bytes
+FRAME BYTES per tick p50=346 p99=1521 max=1729; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=283.1 kbit/s peak 1s=836.7 kbit/s; frame payload only avg=234.3 peak=665.9 kbit/s
+BUDGET saturated_ticks=0/1677 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1135 p99=0.5245 max=0.6924
+INPUTS jumps pressed=10 applied=10; blasts issued=4 applied=3 rejected=1 (outside=0 rate=0 solid=1) duplicates=0 dropped_by_client=0 inputs=1641 stale=36
+LINK s2c sent=1986 dropped=36 duplicated=20 reordered=36; c2s sent=1676 dropped=31
+== client 3 (remote)
+STRUCTURE applied=92 hash_mismatches=0 unrecorded=0 final_equal=true final_revision_equal=true errors=0
+FINAL POSES entities differing from the server's quantized state=3 (awake bodies among them=3)
+RENDER ERROR all     samples=244597 position p50=0.00150 p99=0.00260 max=0.21961 m; angle p50=0.00040 p99=0.00080 max=0.20405 rad
+RENDER ERROR players samples=6588 position p50=0.00150 p99=0.00250 max=0.21961 m; angle p50=0.00010 p99=0.00010 max=0.00000 rad
+RENDER ERROR bombs   samples=1799 position p50=0.00130 p99=0.00250 max=0.00619 m; angle p50=0.00010 p99=0.00070 max=0.00456 rad
+DELAY final=4 changes=5 histogram(ticks:count) 2:115 4:1559
+CLOCK snaps=2 adjusted_ticks=1656 saturated_at_5pct=6 mean_adjust=-0.00128 max_abs_adjust=0.0500
+LATE structure/events arriving after the clock passed their tick: structure=6 events=1 max_lateness=8.14 ticks; explosions played=25 rejected events=0 resets=2
+FRAMES complete=1607 parts=1799 duplicate_parts=0 wrong_epoch=29 undecodable=0 malformed=0 lost(declared)=37
+ENTRIES sent=145367 (players/bombs 7499) gone ids sent=1367 parts=1870; mean 5.64 bytes per entry incl. headers; input messages mean 11.0 max 18 bytes
+FRAME BYTES per tick p50=347 p99=1524 max=1729; parts per frame max=2
+UPLOAD (server->client, all packets incl. headers and structure) avg=283.5 kbit/s peak 1s=834.9 kbit/s; frame payload only avg=234.3 peak=665.2 kbit/s
+BUDGET saturated_ticks=0/1677 (0.0000) max_staleness=0 ticks p99_staleness=0
+FRAME BUILD ms p50=0.1126 p99=0.5215 max=0.6198
+INPUTS jumps pressed=8 applied=8; blasts issued=3 applied=3 rejected=0 (outside=0 rate=0 solid=0) duplicates=0 dropped_by_client=0 inputs=1640 stale=42
+LINK s2c sent=1992 dropped=41 duplicated=15 reordered=39; c2s sent=1675 dropped=31
+WORLD TICK ms (world_tick alone) p50=0.3545 p99=2.4758 max=20.1214
+SERVER TICK ms (receive, inputs, world_tick, structure, 4 frame builds, packets) p50=0.9521 p99=6.6335 max=22.5529; reliable structure bytes sent=508024; explosions emitted=25
+D decode Materials: valid=true objects=4
+D decode Tower: valid=true objects=8
+D decode Glass house: valid=true objects=5
+D decode Rubber pad: valid=true objects=5
+D decode Bridge: valid=true objects=4
+D Materials / soak_yard: byte mismatches=0
+D settle Materials: regions=235->235 links=512->512 max_piece_angle_deg=1.820673 max_local_cell_angle_deg=40.115913 bad_count_ticks=0 first_bad_tick=0
+D tick600 Materials: rubber_cells=20 max_rubber_cell_rotation_relative_to_piece_deg=4.585706 (informational)
+D settle Tower: regions=195->195 links=434->434 max_piece_angle_deg=0.056996 max_local_cell_angle_deg=0.056996 bad_count_ticks=0 first_bad_tick=0
+D tick600 Tower: rubber_cells=0 max_rubber_cell_rotation_relative_to_piece_deg=0.000000 (informational)
+D settle Glass house: regions=187->187 links=432->432 max_piece_angle_deg=0.151994 max_local_cell_angle_deg=0.612521 bad_count_ticks=0 first_bad_tick=0
+D tick600 Glass house: rubber_cells=4 max_rubber_cell_rotation_relative_to_piece_deg=0.012435 (informational)
+D settle Rubber pad: regions=186->186 links=426->426 max_piece_angle_deg=0.676613 max_local_cell_angle_deg=9.079434 bad_count_ticks=0 first_bad_tick=0
+D tick600 Rubber pad: rubber_cells=26 max_rubber_cell_rotation_relative_to_piece_deg=9.492951 (informational)
+D settle Bridge: regions=277->277 links=605->605 max_piece_angle_deg=0.001662 max_local_cell_angle_deg=0.001662 bad_count_ticks=0 first_bad_tick=0
+D tick600 Bridge: rubber_cells=0 max_rubber_cell_rotation_relative_to_piece_deg=0.000000 (informational)
+Pre-split Glass: crack size1 0.5250 / size0.5 0.5250
+Pre-split Stone: crack size1 0.9500 / size0.5 0.9500
+Pre-split Wood: crack size1 1.6250 / size0.5 1.6250
+Replication unit soak: ticks=7300 deltas=269 blasts=79 largest_message=31646 join_verified=3700
+Cache check 3: stage=0 live=235 cached=235 stale=0
+Cache check 3: stage=1 live=224 cached=224 stale=0
+Cache check 3: stage=2 live=195 cached=195 stale=0
+Cache check 3: stage=3 live=237 cached=237 stale=0
+Cache check 3 teardown: Odin bytes=0 Box2D delta=0
+Rigid rest-frame maximum error 0.00000067 units
+Rigid Stone 2.4x1.2: split rebound 0.00283933 / single 0.00095540; rest error 0.00000048 / 0.00000026; regions 11 / 1; mean tick 0.017415 / 0.016820 ms; max 0.041100 / 0.036600 ms
+Rigid Stone 0.7x3.7: split rebound 0.00773668 / single 0.00089622; rest error 0.00000072 / 0.00000031; regions 7 / 1; mean tick 0.016974 / 0.014723 ms; max 0.028600 / 0.025800 ms
+Rubber band cache: split_pieces=2 stale_bands=0 teardown_Odin_bytes=0
+Large Baseline: 503839 bytes, parts=3 largest=200004, applied atomically
+Glue append revision: 6 -> 7, Delta applied, samples=20
+Hub checks 1/2: degrees=10 invalid_rest=0 flipped_world=0
+Hub checks 1/2: degrees=30 invalid_rest=0 flipped_world=0
+Rubber band A narrow-gap supplement: cross-gap weight references=0 checked_bite_points=1
+Cache check 2: mode=0 remaining_notice_seconds=0.0
+Cache check 2: mode=1 remaining_notice_seconds=0.0
+Cache check 2: mode=2 remaining_notice_seconds=0.0
+Cache check 2: unexpired notices=0/3
+Legacy glue cantilever, mortar cantilevers and Bridge: 10 exact World captures
+Mortar revised A3 pieces=2 mortared_cells_retained=1/1 broken_bonds=2
+Mortar A3 re-created support welds surviving60=2/2
+Mortar A3 held_max_drop=0.003247023
+Mortar A3/A4/A5 initial=5 surviving=5 new_wood_owners=2 snapshot_equal=true
+Snap gap=0.2 final_distance=0.000000000 unchanged=false
+Snap gap=0.4 final_distance=0.399999976 unchanged=true
+Render structure equivalence: 1530 cell comparisons, 0 mismatches
+Cantilever glued=true max600=0.000554381 members=2
+Glue blast tick=600 broken=2/2
+Cantilever glued=false max600=2.100053787 members=0
+Glue inheritance before=0.299999952 deleted=0.000000000 after=0.299999952 members=3 parent_split=true
+Glue deleted endpoint id=25 before=0.299999952 deleted=0.149999976 after=0.149999976
+Glue lean 60 length=0.450000
+Glue lean 30 length=0.350000
+Glue flush=1.000000 rotated=1.000000 gap0.0005=1.000000
+Rubber band B: off-hull film segments=0 top-edge spans=1
+Near-contact gap=.0005 L=1.000000 snapshot_exact=true invalid_samples/frame_rejected=7/7
+Wedge Wood cells=8 area=1.000000000 minimum_width=0.108137794
+Wedge Glass cells=11 area=1.000000000 minimum_width=0.184323192
+Wedge Rubber cells=9 area=1.000000000 minimum_width=0.178885430
+Wedge Stone cells=5 area=1.000000000 minimum_width=0.224902689
+Rubber band A: cross-gap weight references=0 checked_bite_points=7
+COMMAND OK client=0 op=2 epoch=3
+COMMAND OK client=0 op=3 epoch=3
+Hub check 3: stage=0 vertex_fan_cells=0 live_rubber_cells=24
+LAYOUT OK client=0 epoch=4 objects=8
+Hub check 3: stage=1 vertex_fan_cells=0 live_rubber_cells=0
+COMMAND OK client=0 op=1 epoch=5
+Budget test: saturated ticks=0 of 1500, frames over one part=41, max staleness=0 ticks, entities off=0
+Wood bond check: peeled=1 expected=1
+Wood check 1: cells=29 short=0 thick=0 oversize=0
+Wood check 3: along-grain seams=26 with_fewer_than_two_displaced_vertices=0
+Wood check 5: premature_cross_cuts=0 finished_cell_children=0
+B tick240 airborne=1 landed=1
+B float mismatches=0 bombs_before=2 bombs_after=2 bytes_identical=true
+Blasted rotated/wedge/glue World exact=true bytes=263733
+Frame Wood built=11/11 error=0.000000000 blast cells=5/5 lost=1.815526128/1.815526247
+Frame Glass built=26/26 error=0.000000000 blast cells=21/21 lost=0.657942176/0.657942176
+Frame Rubber built=8/8 error=0.000000000 blast cells=4/4 lost=0.639999986/0.639999866
+Frame Stone built=5/5 error=0.000000000 blast cells=13/13 lost=1.126118302/1.126118422
+Shape rejection 0 accepted=false notice=Objects must touch to glue unchanged=true
+Shape rejection 1 accepted=false notice=Glue references a missing identity unchanged=true
+Shape rejection 2 accepted=false notice=Duplicate glue unchanged=true
+Shape rejection 3 accepted=false notice=Angle must be between 0 and 360 unchanged=true
+Shape rejection 4 accepted=false notice=Overlaps an object unchanged=true
+Glue demo lockstep: deltas=4 mismatches=0
+Rigid off-centre blast: angular velocity -1.250813 / expected -1.250813
+Wood derived bonds: mismatches=0 jagged_connections=30 posed_vertices_checked=137
+A frame mutation violations: 0
+A: shared=22 mismatches=0 max_turn_deg=2.632007 max_deviation=0.043578 snapshot_identical=true
+
+Finished 220 tests in 1m11.3414283s. All tests were successful.
+

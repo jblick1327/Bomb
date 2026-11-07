@@ -1,0 +1,629 @@
+{
+    "objects": [
+        {
+            "path": "Arena",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Arena/Level Bounds",
+            "classification": "bounds metadata",
+            "reason": "Original trigger supplies conceptual kill extent; bounds do not create a solid"
+        },
+        {
+            "path": "Arena/Bottom Boundary",
+            "classification": "native physics source",
+            "reason": "Explicit XY boundary from the original gameplay wall collider; no collider is retained at runtime motion=Fixed damage=Indestructible"
+        },
+        {
+            "path": "Arena/Level Background",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Arena/Left Wall",
+            "classification": "native physics source",
+            "reason": "Explicit XY boundary from the original gameplay wall collider; no collider is retained at runtime motion=Fixed damage=Indestructible"
+        },
+        {
+            "path": "Arena/Right Wall",
+            "classification": "native physics source",
+            "reason": "Explicit XY boundary from the original gameplay wall collider; no collider is retained at runtime motion=Fixed damage=Indestructible"
+        },
+        {
+            "path": "Arena/Back Wall",
+            "classification": "legacy depth constraint",
+            "reason": "Native physics is XY; a Z fence must not fill the entire arena with a solid"
+        },
+        {
+            "path": "Player",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/BézierCurve",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/BézierCurve",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.002/Bone.002_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.L/Bone.006.L/Bone.006.L_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.001/Bone.003.R/Bone.006.R/Bone.006.R_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.L/Bone.005.L/Bone.005.L_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Player (1)/ClaymateRun/Rob/Bone/Bone.004.R/Bone.005.R/Bone.005.R_end",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Main Camera Solo",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Main Camera Multiplayer",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Directional Light",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Bomb System",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "YardLevel",
+            "classification": "native physics source",
+            "reason": "Explicit layered XY proxies: earth follows the authored ground rectangle; grass uses y=5..6 to remove the original art's overlapping y=4..5 layer. This is a listed proxy approximation, not an inferred collision mesh. motion=Anchored damage=Destructible"
+        },
+        {
+            "path": "YardLevel/Grass_Mesh",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "YardLevel/Ground_Mesh",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "YardLevel/Light",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Arena UI",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Rock (1)",
+            "classification": "inactive authoring/art reference",
+            "reason": "Inactive reference rock in the original yard: retained as art/authoring reference and excluded from native gameplay by default"
+        },
+        {
+            "path": "Rock (4)",
+            "classification": "inactive authoring/art reference",
+            "reason": "Inactive reference rock in the original yard: retained as art/authoring reference and excluded from native gameplay by default"
+        },
+        {
+            "path": "Rock (2)",
+            "classification": "inactive authoring/art reference",
+            "reason": "Inactive reference rock in the original yard: retained as art/authoring reference and excluded from native gameplay by default"
+        },
+        {
+            "path": "Rock (3)",
+            "classification": "inactive authoring/art reference",
+            "reason": "Inactive reference rock in the original yard: retained as art/authoring reference and excluded from native gameplay by default"
+        },
+        {
+            "path": "Terrain",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (3)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (4)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (1)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (5)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (2)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (6)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (7)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (8)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (9)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (10)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Fence/PT_Modular_Fence_Wood_01 (11)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (1)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Fruit_Tree_01_stump",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (1)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green/PT_Generic_Shrub_01_green_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Shrub_01_green (1)/PT_Generic_Shrub_01_green_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Poppy_02/PT_Poppy_02_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_River_Rock_Pile_02/PT_River_Rock_Pile_02_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (2)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD0",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD1",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Generic_Rock_01 (3)/PT_Generic_Rock_01_LOD2",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (2)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Yard Decore/PT_Caesars_Mushroom_01 (3)",
+            "classification": "decorative",
+            "reason": "Not opted into native gameplay; distant art/colliders do not imply XY solidity"
+        },
+        {
+            "path": "Cube",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (6)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (7)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (2)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (8)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (1)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (5)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (11)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (10)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (9)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (4)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (3)",
+            "classification": "native physics source",
+            "reason": "Explicit box proxy exactly matches the axis-aligned placeholder cube in XY; depth remains visual. motion=Dynamic damage=Destructible"
+        },
+        {
+            "path": "Cube (12)",
+            "classification": "decorative background",
+            "reason": "187.91-wide slab lies at visual depth z=6..7, beyond the gameplay plane; no automatic XY solidity"
+        }
+    ]
+}

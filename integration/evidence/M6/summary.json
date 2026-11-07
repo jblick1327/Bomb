@@ -1,0 +1,179 @@
+{
+  "status": "passed",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 3,
+    "source_commit": "f98dd0104fc51bb44206669f9660e3d433762dbb",
+    "source_dirty": false,
+    "source_sha256": "8b40bfc3059a632215f308d3975a46c8e6d4b976e874136903d18682c2b16392",
+    "build_tag": 627139425882187314,
+    "dll_sha256": "310208eeebcaabe04a1e6b56b5bb927a810607212828b47ce5e7a1e7fdb83918",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 5,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "initial_yard": {
+    "sources": 16,
+    "parts": 17,
+    "cells": 4615,
+    "fixtures": 10999
+  },
+  "normal": "level-live-20261107T124121633353Z/summary.json",
+  "missing_art": "level-live-20261107T124240836402Z/summary.json",
+  "wrong_manifest": "manifest-reject-20261107T124347996049Z/summary.json",
+  "normal_hash_coverage": {
+    "status": "passed",
+    "expected_unique": 117,
+    "matching_unique": 114,
+    "missing_steady": 0,
+    "missing_tail": 3,
+    "missing_reports": [
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27714,
+        "sent_tick": 909,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27715,
+        "sent_tick": 912,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27722,
+        "sent_tick": 915,
+        "classification": "disconnect-tail"
+      }
+    ],
+    "bad_reports": [],
+    "unexpected_reports": [],
+    "per_client_connection": {
+      "1:1": {
+        "matched": 27,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "0:1": {
+        "matched": 40,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:1": {
+        "matched": 8,
+        "missing_steady": 0,
+        "missing_tail": 3
+      },
+      "1:2": {
+        "matched": 14,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:1": {
+        "matched": 14,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:2": {
+        "matched": 11,
+        "missing_steady": 0,
+        "missing_tail": 0
+      }
+    },
+    "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+  },
+  "missing_art_hash_coverage": {
+    "status": "passed",
+    "expected_unique": 222,
+    "matching_unique": 219,
+    "missing_steady": 0,
+    "missing_tail": 3,
+    "missing_reports": [
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27714,
+        "sent_tick": 893,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27715,
+        "sent_tick": 896,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 2,
+        "connection": 1,
+        "epoch": 4,
+        "revision": 27722,
+        "sent_tick": 899,
+        "classification": "disconnect-tail"
+      }
+    ],
+    "bad_reports": [],
+    "unexpected_reports": [],
+    "per_client_connection": {
+      "1:1": {
+        "matched": 80,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "0:1": {
+        "matched": 94,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:1": {
+        "matched": 11,
+        "missing_steady": 0,
+        "missing_tail": 3
+      },
+      "3:1": {
+        "matched": 15,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:2": {
+        "matched": 14,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:2": {
+        "matched": 5,
+        "missing_steady": 0,
+        "missing_tail": 0
+      }
+    },
+    "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+  },
+  "fast_regression": "../M0/Test-Fast-20261107T123716116Z.json",
+  "final_abi": "../M3/real-interop-20261107T124009953Z.json",
+  "editor_validation_log": "M6-yard-batched-gate-build2.log",
+  "final_player_build_log": "M6-yard-reconnect-build.log",
+  "visual_qa": "Viewed actual URP primary-fractured, primary-reset and missing-art late-joined captures; visible cells and fragments, no leftover original player models.",
+  "fixture_notes": [
+    "The original -12,7.25 blast became solid after beams fell; the final diagnostic blast is -19.5,6.8 outside the side wall beside terrain, verified clear in the real world. No aim rule was relaxed.",
+    "The fourth small export-fixture spawn was moved to -3,.565 to clear the explicit cube capsule overlap.",
+    "The inactive-duplicate fixture now queries inactive sources on reopen.",
+    "An observer finishes one second before host teardown to avoid mistaking the expected host-left shutdown for an observer failure."
+  ],
+  "remaining_project_work": [
+    "M7 source-mesh fracture rendering, caps, visibility and bounded asynchronous work",
+    "M8 elimination, original art/animation/HUD/menu integration",
+    "M9 dynamic-yard correction hardening, independent review, performance, current Mono/IL2CPP packaging and 30-minute soak"
+  ],
+  "original_content_check": "../M0/Test-Content-20261107T124618188Z.json"
+}

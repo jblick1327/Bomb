@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 public static class BomGeometryValidation {
  static void Check(bool value,string message){if(!value)throw new InvalidOperationException(message);}
  public static void Run(){
+  var depthMesh=BomExtrusion.Build(new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up},2.4f,default,-3.7f);try{Check(Mathf.Abs(depthMesh.bounds.min.z+4.9f)<.00001f&&Mathf.Abs(depthMesh.bounds.max.z+2.5f)<.00001f,"World-rest fallback depth interval differs");}finally{UnityEngine.Object.DestroyImmediate(depthMesh);}
   Vector2[] outline={new Vector2(0,0),new Vector2(3,0),new Vector2(3,1),new Vector2(1,1),new Vector2(1,3),new Vector2(0,3)};
   for(int winding=0;winding<2;winding++) {
    var mesh=BomExtrusion.Build(outline,0.6f,new Vector2(8,2));try {

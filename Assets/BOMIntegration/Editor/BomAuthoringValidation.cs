@@ -20,14 +20,15 @@ public static class BomAuthoringValidation {
   ulong sourceId=source.Identity,partId=part.PartId;string levelId=level.LevelId;
   Check(sourceId==9007199254741001UL&&partId==9007199254742001UL,"Authoring IDs were rounded or replaced");
   var duplicate=UnityEngine.Object.Instantiate(source,level.transform);duplicate.name="Duplicate";
+  duplicate.gameObject.SetActive(false);
   BomAuthoringIdentity.Assign(level);
   Check(source.Identity==sourceId&&duplicate.Identity!=sourceId&&duplicate.Identity>sourceId,"Duplicate source did not receive a fresh ID");
   var duplicatePart=new GameObject("Duplicate part").AddComponent<BomPhysicsPart>();duplicatePart.transform.SetParent(source.transform);duplicatePart.PartIdDecimal=part.PartIdDecimal;
   BomAuthoringIdentity.Assign(level);Check(part.PartId==partId&&duplicatePart.PartId!=partId,"Duplicate part did not receive a fresh ID");
   ulong duplicateId=duplicate.Identity;EditorSceneManager.SaveScene(scene,path);
   scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Single);level=UnityEngine.Object.FindFirstObjectByType<BomLevelAuthoring>();BomAuthoringIdentity.Assign(level);
-  var sources=level.GetComponentsInChildren<BomAssetInstance>();
-  Check(level.LevelId==levelId&&sources[0].Identity==sourceId&&sources[1].Identity==duplicateId,"Reopen changed source/level identity");
+  var sources=level.GetComponentsInChildren<BomAssetInstance>(true);
+  Check(sources.Length==2&&level.LevelId==levelId&&sources[0].Identity==sourceId&&sources[1].Identity==duplicateId,"Reopen changed source/level identity");
   string prefabPath=directory+"/IdentityTemplate.prefab";
   var prefab=PrefabUtility.SaveAsPrefabAsset(sources[0].gameObject,prefabPath);BomAuthoringIdentity.NormalizeTemplate(prefab);
   Check(prefab.GetComponent<BomAssetInstance>().Identity==0,"Prefab template has a live source ID");
