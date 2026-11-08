@@ -24,6 +24,7 @@ net_host_trim_players :: proc(ns: ^Net_Server) {
 
 net_host_apply_layout :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
  if !ns.clients[index].active || !ns.clients[index].is_host { return "host only" }
+ if net_rebuild_pending(ns) {return "world rebuild already in progress"}
  if len(data)<2 || len(data)-1>NET_APP_MAX_LAYOUT || data[0]!=NET_APP_LAYOUT_UPLOAD { return "invalid layout upload size" }
  layout,seed,ok,problem:=decode_layout(data[1:])
  if !ok { return problem }
@@ -38,10 +39,12 @@ net_host_apply_layout :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
 
 net_host_apply_command :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
  if !ns.clients[index].active || !ns.clients[index].is_host { return "host only" }
+ if net_rebuild_pending(ns) {return "world rebuild already in progress"}
  if len(data)<2 || data[0]!=NET_APP_HOST_COMMAND { return "invalid host command" }
  switch data[1] {
  case NET_HOST_RESET:
   if len(data)!=2 { return "invalid reset command" }
+  if ns.async_rebuild {return net_rebuild_begin(ns)}
   headless_game_reset(&ns.game)
   net_host_trim_players(ns)
  case NET_HOST_MODE:

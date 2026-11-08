@@ -48,6 +48,9 @@ Net_Server_Client :: struct {
 }
 
 Net_Server :: struct {
+ async_rebuild:bool,
+ rebuild,rebuild_cleanup:^Net_Rebuild_Job,
+ rebuild_test_gate:^b32,
  next_incarnation: u64,
  next_event_id: u64,
  game: Headless_Game,
@@ -98,6 +101,7 @@ net_client_state_clear :: proc(c: ^Net_Server_Client) {
 }
 
 net_server_destroy :: proc(ns: ^Net_Server) {
+ net_rebuild_destroy(ns)
  for &c in ns.clients {
   if c.requests!=nil { free(c.requests);c.requests=nil }
   net_client_state_clear(&c)
@@ -330,6 +334,7 @@ net_server_reset_frames :: proc(ns: ^Net_Server) {
 }
 
 net_server_tick :: proc(ns: ^Net_Server,now: f64) {
+ if ns.async_rebuild {net_rebuild_poll(ns)}
  started:=time.tick_now()
  w:=&ns.game.world
  events:=nc.server_take_events(&ns.srv); defer nc.server_events_free(&events)

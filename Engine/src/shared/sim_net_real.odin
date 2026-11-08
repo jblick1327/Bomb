@@ -81,7 +81,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
  defer nc.socket_close(&sock)
  ns,ok:=net_real_create_server(layout)
  if !ok { return false }
- ns.real_gate=true
+ ns.real_gate=true;ns.async_rebuild=true
  ns.real_host_token=host_token
  defer net_server_destroy(&ns)
  fmt.printf("BOM staging server listening on 127.0.0.1:%d only; tick=60Hz\n",port)
