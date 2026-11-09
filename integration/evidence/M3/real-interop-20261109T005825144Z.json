@@ -1,0 +1,39 @@
+{
+  "scope": "Real DLL ABI/lifecycle and optional UDP run; remaining M3 gates are tracked separately",
+  "status": "failed",
+  "exit_code": 1,
+  "commands": [
+    {
+      "program": "python",
+      "log": "generate-c-caller-20261109T005825144Z.log",
+      "arguments": [
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\scripts\\generate-interop-caller.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "program": "cl.exe",
+      "log": "c-build-20261109T005825144Z.log",
+      "arguments": [
+        "/nologo",
+        "/W4",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\tests\\interop\\layout_test.c",
+        "/FoC:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\layout-test.obj",
+        "/FeC:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\layout-test.exe",
+        "/link",
+        "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\bomcore.lib",
+        "kernel32.lib"
+      ],
+      "exit_code": 0
+    },
+    {
+      "program": "layout-test.exe",
+      "log": "c-abi-lifetime-overflow-20261109T005825144Z.log",
+      "arguments": [],
+      "exit_code": -1073741792
+    }
+  ],
+  "errors": [
+    "c-abi-lifetime-overflow exited with -1073741792"
+  ]
+}

@@ -11,6 +11,11 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  public Material Material;
  public Camera View;
  public GameObject PlayerPrefab,BombPrefab;
+ public GameObject BlastPrefab;
+ public int ExplosionVisuals {get;private set;}
+ public int RunningPresentationFrames {get;private set;}
+ public bool DrivenByRoundScenario {get;set;}
+ public void VerifyRepeatedEventPresentation(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"--bom-round-test")<0)throw new InvalidOperationException("Repeated-event check requires the executable test mode");int before=ExplosionVisuals;Accept(session);if(ExplosionVisuals!=before)throw new InvalidOperationException("A repeated native event spawned duplicate effects");}
  public uint Port=32000;
  public string Address="127.0.0.1";
  public bool Prediction=true;
@@ -43,7 +48,18 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  float smokeMove=float.NaN;
  double reconnectSeconds=8;double smokeElapsed;float traveled,jumpRise;Vector2 lastLocal;bool hasLocal;ulong metricGeneration;uint metricEpoch;
  int snapshots,events,predictedFrames,conservativeFrames;string failure="",identity="";
- public void Close() {sourcePresentation?.Clear();cellGeometry.Clear();session?.Dispose();session=null;generation=0;epoch=0;lastEvent=0;acceptedTopology=0;}
+ public bool ConnectOnEnable=true,InputBlocked,DiagnosticOverlay=true;
+ public string ConnectionError=>failure;
+ public bool ConnectionRequested {get;private set;}
+ string connectionToken="";
+ public void Close() {ConnectionRequested=false;sourcePresentation?.Clear();cellGeometry.Clear();session?.Dispose();session=null;generation=0;epoch=0;lastEvent=0;acceptedTopology=0;}
+ public void ConnectTo(string address,uint port,string token,bool spectator=false){
+  if(session==null)throw new InvalidOperationException("Native client is unavailable");
+  if(ConnectionRequested)Disconnect();Address=address;Port=port;connectionToken=token;failure="";
+  BomSession.Check(BomNative.bom_client_set_join_options(session.Handle,spectator?1u:0u));Connect();
+ }
+ public void Disconnect(){if(session==null)return;BomSession.Check(BomNative.bom_client_disconnect(session.Handle));ConnectionRequested=false;sourcePresentation?.Clear();cellGeometry.Clear();ClearScene();generation=0;epoch=0;lastEvent=0;acceptedTopology=0;session.Round=default;}
+ public void Reconnect(){if(session==null)return;if(ConnectionRequested)Disconnect();Connect();}
  void OnEnable() {
   try {
    Application.runInBackground=true;start=BomSession.Now;inputOffset=start-InputState.currentTime;
@@ -62,29 +78,30 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    session=new BomSession();BomSession.Check(BomNative.bom_client_set_prediction(session.Handle,Prediction?1u:0u));
    if(Array.IndexOf(args,"--bom-no-visual-registry")>=0)VisualRegistry=null;
    string expected=Arg("--bom-expected-manifest",VisualRegistry!=null?VisualRegistry.GameplayManifestHash:"");
-   if(VisualRegistry!=null&&string.IsNullOrEmpty(expected))throw new InvalidOperationException("Visual registry has no finalized native gameplay manifest");if(!string.IsNullOrEmpty(expected))session.ExpectGameplayManifest(expected);sourcePresentation=new BomSourcePresentation(VisualRegistry,Material,Array.IndexOf(args,"--bom-tier1")<0);Connect();
+   if(VisualRegistry!=null&&string.IsNullOrEmpty(expected))throw new InvalidOperationException("Visual registry has no finalized native gameplay manifest");if(!string.IsNullOrEmpty(expected))session.ExpectGameplayManifest(expected);sourcePresentation=new BomSourcePresentation(VisualRegistry,Material,Array.IndexOf(args,"--bom-tier1")<0);connectionToken=Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"";if(ConnectOnEnable||Array.IndexOf(args,"--bom-auto-connect")>=0)Connect();
    shapeInfo=new BomActorShapeInfo{struct_size=(uint)System.Runtime.InteropServices.Marshal.SizeOf<BomActorShapeInfo>(),version=1};BomSession.Check(BomNative.bom_actor_shape_info(ref shapeInfo));
    var build=new BomBuildInfo{struct_size=(uint)System.Runtime.InteropServices.Marshal.SizeOf<BomBuildInfo>(),version=1};BomSession.Check(BomNative.bom_build_info(ref build));identity="Native "+build.source_build_tag+" / protocol "+build.game_protocol;
-   Debug.Log("BOM UNITY ABI PASS: twenty layouts, offsets, alignment; "+identity);
+   Debug.Log("BOM UNITY ABI PASS: 23 layouts, offsets, alignment; "+identity);
    move=new InputAction("Move",InputActionType.Value);move.AddCompositeBinding("1DAxis").With("Negative","<Keyboard>/a").With("Positive","<Keyboard>/d");move.AddCompositeBinding("1DAxis").With("Negative","<Keyboard>/leftArrow").With("Positive","<Keyboard>/rightArrow");
    jump=new InputAction("Jump",InputActionType.Button,"<Keyboard>/space");jump.performed+=c=>SendInput(()=>BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle,c.time+inputOffset)));
    blast=new InputAction("Blast",InputActionType.Button,"<Mouse>/leftButton");blast.performed+=c=>SendInput(()=>{
+    var permissions=new BomStats{struct_size=(uint)System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),version=1};BomSession.Check(BomNative.bom_client_get_stats(session.Handle,ref permissions));if((permissions.flags&4)==0||session.Round.mode==1)return;
     if(View==null||Mouse.current==null)return;var ray=View.ScreenPointToRay(Mouse.current.position.ReadValue());if(new Plane(Vector3.forward,Vector3.zero).Raycast(ray,out float distance)){Vector3 point=ray.GetPoint(distance);BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle,c.time+inputOffset,point.x,point.y));}
    });
    move.Enable();jump.Enable();blast.Enable();
   } catch(Exception e){Fail(e);}
  }
- void SendInput(Action send){if(session==null)return;try{send();}catch(Exception error){Fail(error);}}
+ void SendInput(Action send){if(session==null||!ConnectionRequested||InputBlocked||DrivenByRoundScenario)return;try{send();}catch(Exception error){Fail(error);}}
  void OnMove(InputAction.CallbackContext context)=>SendInput(()=>BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,context.time+inputOffset,context.ReadValue<float>())));
- void Connect(){var octets=Address.Split('.');if(octets.Length!=4)throw new ArgumentException("Enter a numeric IPv4 address");uint ip=0;foreach(string octet in octets)ip=(ip<<8)|byte.Parse(octet);session.Connect(ip,Port,Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"");}
+ void Connect(){var octets=Address.Split('.');if(octets.Length!=4)throw new ArgumentException("Enter a numeric IPv4 address");uint ip=0;foreach(string octet in octets)ip=(ip<<8)|byte.Parse(octet);session.Connect(ip,Port,connectionToken);ConnectionRequested=true;}
  void Update() {
-  if(session==null)return;
+  if(session==null||!ConnectionRequested)return;
   try {
    double now=BomSession.Now,elapsed=now-start;
    if(smoke&&!smokeActive){if(File.Exists(smokeStartFile)&&(!levelSmoke||(session.Sample.flags&6)==6)){smokeActive=true;start=now;elapsed=0;hasLocal=false;Debug.Log("BOM UNITY SYNCHRONIZED START");}else if(elapsed>180)throw new TimeoutException("Live test start signal or usable baseline did not arrive");}
    smokeElapsed=elapsed;
    if(smoke&&smokeActive){float requested=(elapsed%4<2?1:-1)*(levelSmoke?.2f:1);BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,requested));smokeMove=requested;if(elapsed>3&&!blasted){BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle,now,levelSmoke?-12:-6.4f,levelSmoke?7.25f:2.3f));BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle,now));blasted=true;}}
-   else if(!smoke&&!AutomatedProfile){BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,Application.isFocused?move.ReadValue<float>():0));}
+   else if(!smoke&&!AutomatedProfile&&!DrivenByRoundScenario){BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,Application.isFocused&&!InputBlocked?move.ReadValue<float>():0));}
    session.Poll(now,Accept);sourcePresentation?.Pump(session);
    if(fallbackEpoch!=session.Sample.epoch||fallbackConnection!=session.Sample.connection_generation){reportedVisualFallbacks.Clear();reportedRegistryMatches.Clear();fallbackEpoch=session.Sample.epoch;fallbackConnection=session.Sample.connection_generation;}
    foreach(var source in session.Sources.Values){
@@ -99,7 +116,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    if(smoke && smokeActive && (elapsed>=smokeSeconds||!string.IsNullOrEmpty(smokeStopFile)&&File.Exists(smokeStopFile))){bool passed=snapshots>1&&events>0&&reconnected&&session.Sample.input_count>60&&traveled>0.25f&&jumpRise>0.03f&&(!Prediction||predictedFrames>0);Debug.Log("BOM UNITY LIVE "+(passed?"PASS":"FAIL")+" snapshots="+snapshots+" events="+events+" epoch="+epoch+" generation="+generation+" inputs="+session.Sample.input_count+" traveled="+traveled+" jumpRise="+jumpRise+" predicted_frames="+predictedFrames+" conservative_frames="+conservativeFrames);Application.Quit(passed?0:2);Close();}
   } catch(Exception e){Fail(e);}
  }
- void Fail(Exception error){failure=error.ToString();Debug.LogError(failure);Close();ClearScene();if(smoke||AutomatedProfile)Application.Quit(3);}
+ void Fail(Exception error){failure=error.Message;Debug.LogError(error);if(smoke||AutomatedProfile){Close();ClearScene();Application.Quit(3);}else{try{Disconnect();}catch{Close();ClearScene();}}}
  void OnApplicationFocus(bool focused){if(!focused)SendInput(()=>BomSession.Check(BomNative.bom_client_clear_intent(session.Handle)));}
  void OnDisable(){move?.Dispose();jump?.Dispose();blast?.Dispose();move=jump=blast=null;Close();ClearScene();sourcePresentation?.Dispose();sourcePresentation=null;}
  void OnApplicationQuit(){Close();}
@@ -169,15 +186,19 @@ public sealed class BomClientBehaviour : MonoBehaviour {
     }body=actor.transform;
    }
    Vector2 correction=pose.kind==2&&pose.id==s.local_player_id&&s.owner_prediction_status==1?new Vector2(client.Prediction.visual_offset_x,client.Prediction.visual_offset_y):Vector2.zero;
-   if(body.TryGetComponent<BomActorView>(out var actorView))actorView.Apply(pose,correction);else body.SetPositionAndRotation(new Vector3(pose.x,pose.y,0),BomUnityCoordinates.Rotation(pose.angle));
+   if(body.TryGetComponent<BomActorView>(out var actorView)){actorView.Apply(pose,correction);if(pose.kind==2&&actorView.Running)RunningPresentationFrames++;}else body.SetPositionAndRotation(new Vector3(pose.x,pose.y,0),BomUnityCoordinates.Rotation(pose.angle));
    if(smoke&&smokeActive&&pose.kind==2&&pose.id==s.local_player_id){
     if(hasLocal&&metricGeneration==s.connection_generation&&metricEpoch==s.epoch){traveled+=Mathf.Abs(pose.x-lastLocal.x);if(smokeElapsed>=3&&smokeElapsed<=5)jumpRise+=Mathf.Max(0,pose.y-lastLocal.y);}
     lastLocal=new Vector2(pose.x,pose.y);hasLocal=true;metricGeneration=s.connection_generation;metricEpoch=s.epoch;
    }
   }
   var gone=new List<(uint,ulong)>();foreach(var pair in actors)if(!seen.Contains(pair.Key))gone.Add(pair.Key);foreach(var key in gone){var filter=actors[key].GetComponent<MeshFilter>();if(meshes.Remove(filter.sharedMesh))Destroy(filter.sharedMesh);Destroy(actors[key]);actors.Remove(key);}
-  for(int i=0;i<s.event_count;i++){var e=client.Events[i];if(e.tick>s.presentation_tick+0.00001)throw new InvalidOperationException("Native event is ahead of presentation");if(e.id<=lastEvent)continue;lastEvent=e.id;events++;if(e.radius>0){var effect=new GameObject("Native explosion "+e.id);effect.transform.SetParent(terrain.transform,false);effect.AddComponent<BomExplosionView>().Show(Material,new Vector3(e.x,e.y,-0.5f),e.radius);}Debug.Log("BOM UNITY EVENT id="+e.id+" tick="+e.tick+" presentation="+s.presentation_tick);}
+  for(int i=0;i<s.event_count;i++){var e=client.Events[i];if(e.tick>s.presentation_tick+0.00001)throw new InvalidOperationException("Native event is ahead of presentation");if(e.id<=lastEvent)continue;lastEvent=e.id;events++;if(e.radius>0){
+   float front=-.5f;foreach(var source in client.Sources.Values)front=Mathf.Min(front,source.Binding.depth_lo-.1f);var center=new Vector3(e.x,e.y,front);
+   if(BlastPrefab!=null){var effect=Instantiate(BlastPrefab,terrain.transform);effect.name="Native blast "+e.id;effect.GetComponent<BomLegacyBlastView>().Show(center,client.Round.mode==1?client.Round.lethal_radius:e.radius);}
+   else{var effect=new GameObject("Native explosion "+e.id);effect.transform.SetParent(terrain.transform,false);effect.AddComponent<BomExplosionView>().Show(Material,center,e.radius);}ExplosionVisuals++;
+  }Debug.Log("BOM UNITY EVENT id="+e.id+" tick="+e.tick+" presentation="+s.presentation_tick);}
  }
- void OnGUI(){string movement=session==null?"":session.Prediction.status==1?"Predicted movement":session.Prediction.status==2?"Server view (collision history unavailable)":session.Prediction.status==0?"Prediction off":"Synchronizing movement";GUI.Box(new Rect(12,12,700,106),"BOM native client — A/D move · Space jump · Click blast\n"+identity+"\n"+(session!=null?"Epoch "+epoch+" · revision "+revision+" · events "+events+" "+session.Error:failure)+"\n"+movement);}
+ void OnGUI(){if(!DiagnosticOverlay)return;string movement=session==null?"":session.Prediction.status==1?"Predicted movement":session.Prediction.status==2?"Server view (collision history unavailable)":session.Prediction.status==0?"Prediction off":"Synchronizing movement";GUI.Box(new Rect(12,12,700,106),"BOM native client — A/D move · Space jump · Click blast\n"+identity+"\n"+(session!=null?"Epoch "+epoch+" · revision "+revision+" · events "+events+" "+session.Error:failure)+"\n"+movement);}
 }
 }

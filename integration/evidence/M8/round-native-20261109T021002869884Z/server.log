@@ -1,0 +1,73 @@
+BOM staging server listening on 127.0.0.1:62604 only; tick=60Hz
+CONNECT client=0
+CONNECT client=1
+CONNECT client=2
+HASH EXPECT client=0 connection=1 epoch=3 revision=1076 tick=12 queued=yes
+HELLO OK client=0 role=HOST
+HASH EXPECT client=1 connection=1 epoch=3 revision=1076 tick=12 queued=yes
+HELLO OK client=1 role=player
+HASH EXPECT client=2 connection=1 epoch=3 revision=1076 tick=12 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=0 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=17 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=17 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=17 result=match
+REBUILD START epoch=4 tick=107
+REBUILD COMMIT epoch=4 tick=108 build_ms=12.594
+HASH EXPECT client=0 connection=1 epoch=4 revision=1076 tick=109 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1076 tick=109 queued=yes
+HASH EXPECT client=2 connection=1 epoch=4 revision=1076 tick=109 queued=yes
+HASH REPORT client=1 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=111 result=match
+HASH REPORT client=2 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=111 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=112 result=match
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=1 tick=114
+CONNECT client=1
+HASH EXPECT client=1 connection=2 epoch=4 revision=1076 tick=117 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=2 epoch=4 revision=1076 hash=1792344409300294048 tick=122 result=match
+CONNECT client=3
+HASH EXPECT client=3 connection=1 epoch=4 revision=1076 tick=306 queued=yes
+HELLO OK client=3 role=player
+HASH REPORT client=3 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=311 result=match
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=2 tick=484
+ROUND id=1 state=Finished tick=485 winner=1 draw=false reason=Forfeit
+CONNECT client=1
+HASH EXPECT client=1 connection=3 epoch=4 revision=1076 tick=488 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=3 epoch=4 revision=1076 hash=1792344409300294048 tick=493 result=match
+REBUILD START epoch=5 tick=494
+REBUILD COMMIT epoch=5 tick=495 build_ms=22.737
+HASH EXPECT client=0 connection=1 epoch=5 revision=1076 tick=496 queued=yes
+HASH EXPECT client=1 connection=3 epoch=5 revision=1076 tick=496 queued=yes
+HASH EXPECT client=2 connection=1 epoch=5 revision=1076 tick=496 queued=yes
+HASH EXPECT client=3 connection=1 epoch=5 revision=1076 tick=496 queued=yes
+HASH REPORT client=3 connection=1 epoch=5 revision=1076 hash=408768896605605161 tick=499 result=match
+HASH REPORT client=0 connection=1 epoch=5 revision=1076 hash=408768896605605161 tick=499 result=match
+HASH REPORT client=2 connection=1 epoch=5 revision=1076 hash=408768896605605161 tick=499 result=match
+HASH REPORT client=1 connection=3 epoch=5 revision=1076 hash=408768896605605161 tick=500 result=match
+SERVER time=10s tick=600 active=4 overruns=0 hashes=13 mismatches=0 unrecorded=0
+  client=0 addr=139637976855693 RTT=17ms tx=154 kbit/s
+INPUT client=0 incarnation=1 generation=4 finalized=600 applied_sequence=97 accepted=100 duplicates=291 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976855694 RTT=18ms tx=50 kbit/s
+INPUT client=1 incarnation=6 generation=3 finalized=500 applied_sequence=0 accepted=32 duplicates=93 conflicts=266 late=0 starved=0 neutralized=0
+  client=2 addr=139637976855695 RTT=16ms tx=101 kbit/s
+INPUT client=2 incarnation=3 generation=4 finalized=499 applied_sequence=0 accepted=32 duplicates=95 conflicts=266 late=0 starved=0 neutralized=0
+  client=3 addr=139637976855696 RTT=13ms tx=71 kbit/s
+INPUT client=3 incarnation=5 generation=2 finalized=600 applied_sequence=97 accepted=100 duplicates=293 conflicts=0 late=0 starved=4 neutralized=4
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=3 tick=861
+ROUND id=2 state=Finished tick=905 winner=0 draw=true reason=Elimination
+HASH EXPECT client=0 connection=1 epoch=5 revision=1311 tick=905 queued=yes
+HASH EXPECT client=2 connection=1 epoch=5 revision=1311 tick=905 queued=yes
+HASH EXPECT client=3 connection=1 epoch=5 revision=1311 tick=905 queued=yes
+DISCONNECT client=3 reason=Client_Disconnect
+HASH CLOSED client=3 connection=1 tick=907
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=907
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=907
+SERVER time=20s tick=1200 active=0 overruns=0 hashes=13 mismatches=0 unrecorded=0
+SERVER host-left shutdown
+SERVER final hashes=13 mismatches=0 unrecorded=0

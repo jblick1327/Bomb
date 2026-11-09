@@ -1,0 +1,57 @@
+{
+    "level_id": "bom-elimination-draw-fixture-v1",
+    "layout": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M8\\round-draw\\draw.json",
+    "native_report": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M8\\round-draw\\draw.json.native-report.json",
+    "inventory": [
+        {
+            "object_path": "Main Camera",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Directional Light",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Native simultaneous-death fixture",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Fixed floor",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254750001"
+        }
+    ],
+    "visual_geometry": [
+        {
+            "source_identity": "9007199254750001",
+            "object_path": "",
+            "asset_key": "round-fixture/fixed-floor",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": -5.0,
+                "y": -1.0,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 5.0,
+                "y": 0.0,
+                "z": 0.5
+            }
+        }
+    ]
+}

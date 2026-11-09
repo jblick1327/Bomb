@@ -1,0 +1,40 @@
+{
+  "status": "failed",
+  "exit_codes": {
+    "native-clients": 3762504530,
+    "server": 0
+  },
+  "errors": [],
+  "scope": "Real UDP Odin server and four native C ABI client handles; Unity menu/art and two-Unity M8 gate still required.",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "62604",
+      "--seconds",
+      "68",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "native-clients": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop\\Interop.dll",
+      "62604",
+      "60"
+    ]
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "abce348837eea558bd2d0747c5ce80353624e04b",
+    "source_dirty": false,
+    "source_sha256": "02e68a508fd2566028f7609c7b69fd10d690c46d4bfe2e8fe7933d61eeaa9160",
+    "build_tag": 13062906958390630,
+    "dll_sha256": "b39a2023e3c50d5e0d1b3dd7a5e13db01307c426d7f76e5f69fd77e3c2f2d978",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 6,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  }
+}

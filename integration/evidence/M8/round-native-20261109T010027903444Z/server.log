@@ -1,0 +1,44 @@
+BOM staging server listening on 127.0.0.1:60299 only; tick=60Hz
+CONNECT client=0
+CONNECT client=1
+CONNECT client=2
+HASH EXPECT client=0 connection=1 epoch=3 revision=1076 tick=20 queued=yes
+HELLO OK client=0 role=HOST
+HASH EXPECT client=1 connection=1 epoch=3 revision=1076 tick=20 queued=yes
+HELLO OK client=1 role=player
+HASH EXPECT client=2 connection=1 epoch=3 revision=1076 tick=20 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=0 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=25 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=26 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=1076 hash=11438753866494198671 tick=27 result=match
+REBUILD START epoch=4 tick=31
+REBUILD COMMIT epoch=4 tick=34 build_ms=47.804
+HASH EXPECT client=0 connection=1 epoch=4 revision=1076 tick=35 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=1076 tick=35 queued=yes
+HASH EXPECT client=2 connection=1 epoch=4 revision=1076 tick=35 queued=yes
+HASH REPORT client=0 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=40 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=41 result=match
+HASH REPORT client=2 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=42 result=match
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=1 tick=45
+CONNECT client=1
+HASH EXPECT client=1 connection=2 epoch=4 revision=1076 tick=50 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=2 epoch=4 revision=1076 hash=1792344409300294048 tick=55 result=match
+CONNECT client=3
+HASH EXPECT client=3 connection=1 epoch=4 revision=1076 tick=240 queued=yes
+HELLO OK client=3 role=player
+HASH REPORT client=3 connection=1 epoch=4 revision=1076 hash=1792344409300294048 tick=245 result=match
+DISCONNECT client=3 reason=Client_Disconnect
+HASH CLOSED client=3 connection=1 tick=425
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=425
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=2 tick=425
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=425
+ROUND id=1 state=Finished tick=426 winner=0 draw=true reason=Forfeit
+SERVER time=10s tick=600 active=0 overruns=0 hashes=8 mismatches=0 unrecorded=0
+SERVER host-left shutdown
+SERVER final hashes=8 mismatches=0 unrecorded=0

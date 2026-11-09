@@ -1,0 +1,62 @@
+{
+  "status": "passed",
+  "milestone": "M8",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "57c05fd8f9de669e4c8410399c4667a4b75c45af",
+    "source_dirty": false,
+    "source_sha256": "c3915f5c1840827bee57312922e7a49cc8e5296e50401886068de320c43c7f70",
+    "build_tag": 880759347385468967,
+    "dll_sha256": "a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 6,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "runtime_sha256": "82933f616aa8884e4929372fb453b9d4d7c905e32df18d29e245040933fb51e5",
+  "checks": {
+    "original_game_tests": 220,
+    "shared_tests": 74,
+    "ffi_tests": 19,
+    "independent_C_and_managed_layouts": 23,
+    "native_exports": 31,
+    "protected_original_Unity_files": 605
+  },
+  "live_gates": {
+    "preserved yard forfeit": {
+      "summary": "evidence/M8/unity-rounds-20261109T223630957937Z/summary.json",
+      "hash_matching": 43,
+      "hash_expected": 43,
+      "exit_codes": {
+        "primary": 0,
+        "guest": 0,
+        "host": 0,
+        "observer": 0,
+        "server": 0
+      }
+    },
+    "same-tick falling-bomb draw": {
+      "summary": "evidence/M8/unity-rounds-20261109T223834841432Z/summary.json",
+      "hash_matching": 16,
+      "hash_expected": 16,
+      "exit_codes": {
+        "primary": 0,
+        "guest": 0,
+        "host": 0,
+        "observer": 0,
+        "server": 0
+      }
+    }
+  },
+  "manual_visual_review": "Reviewed final menu, actual yard/Claymate composition and original HUD draw result; screenshots are real camera and UI Toolkit render targets, not the hidden Windows backbuffer.",
+  "rules": "Native-only death/round/award authority; stable two-player admission; nonhost sandbox blast rejection; capsule lethality; same-tick draw; one-time session XP; reconnect is a spectator during play.",
+  "presentation": "Derived Claymate and native-sized bomb/fuse; original BombBlastVisual invoked as a read-only animation; original HUD UXML/USS. Original audio clip inventory is zero.",
+  "limits": [
+    "M8 presentation/round gates disable prediction; dynamic-yard prediction and performance remain M9 requirements",
+    "Current IL2CPP, comprehensive hardening and 30-minute real-process soak remain required",
+    "Session totals are in-memory, with 128 bounded session records; no account persistence"
+  ],
+  "historical_failures": "Earlier failed runs are retained, including schedule-readiness, short reconnect deadline, hidden-window capture and participant-selection race reproductions."
+}

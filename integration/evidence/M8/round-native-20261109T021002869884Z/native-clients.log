@@ -1,0 +1,51 @@
+NATIVE ID tag=13062906958390630 protocol=6 canonical=3 compiler=dev-2026-05:ea5175d
+PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles
+ROUND SNAPSHOT id=0 epoch=3 state=Waiting tick=13 winner=0 draw=false
+ROUND SNAPSHOT id=0 epoch=3 state=Waiting tick=13 winner=0 draw=false
+ROUND SNAPSHOT id=0 epoch=3 state=Waiting tick=13 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=109 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=109 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=109 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+PREDICTION mode=Disabled reason=None tick=0
+PREDICTION mode=Disabled reason=None tick=0
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=113 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=113 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=113 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=115 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=115 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=118 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=123 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=123 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=123 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Playing tick=303 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Playing tick=303 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Playing tick=303 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Playing tick=307 winner=0 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Finished tick=485 winner=1 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Finished tick=485 winner=1 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Finished tick=485 winner=1 draw=false
+ROUND SNAPSHOT id=1 epoch=4 state=Finished tick=489 winner=1 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Waiting tick=496 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Waiting tick=496 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Waiting tick=496 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Waiting tick=496 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+PREDICTION mode=Disabled reason=None tick=0
+PREDICTION mode=Disabled reason=None tick=0
+PREDICTION mode=Disabled reason=None tick=0
+ROUND SNAPSHOT id=2 epoch=5 state=Countdown tick=500 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Countdown tick=500 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Countdown tick=500 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Countdown tick=500 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Playing tick=680 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Playing tick=680 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Playing tick=680 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Playing tick=680 winner=0 draw=false
+ROUND SNAPSHOT id=2 epoch=5 state=Finished tick=905 winner=0 draw=true
+ROUND SNAPSHOT id=2 epoch=5 state=Finished tick=905 winner=0 draw=true
+ROUND SNAPSHOT id=2 epoch=5 state=Finished tick=905 winner=0 draw=true
+Unhandled exception. System.Exception: exactly two server wins
+   at RoundProfile.Need(Boolean value, String text) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\RoundProfile.cs:line 8
+   at RoundProfile.Run(UInt32 port, Double seconds) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\RoundProfile.cs:line 53
+   at Program.Main(String[] args) in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\odin-source\BOM\tests\interop\Program.cs:line 91

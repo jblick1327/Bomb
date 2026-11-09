@@ -341,9 +341,56 @@ namespace Bom.Native {
  public IntPtr bindings;
  public BomLevelInfo level;
 }
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundPlayer {
+ public ulong session_id;
+ public ulong generation;
+ public uint slot;
+ public uint alive;
+ public uint death;
+ public uint reserved;
+ public ulong death_tick;
+ public ulong alive_ticks;
+ public ulong bombs_faced;
+ public ulong xp_gained;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundConnection {
+ public ulong session_id;
+ public ulong generation;
+ public ulong total_xp;
+ public ulong wins;
+ public ulong level;
+ public ulong xp_in_level;
+ public ulong xp_to_next;
+ public uint flags;
+ public uint reserved;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundInfo {
+ public uint struct_size;
+ public uint version;
+ public uint epoch;
+ public uint rules_version;
+ public ulong tick;
+ public ulong round_id;
+ public ulong countdown_tick;
+ public ulong start_tick;
+ public ulong end_tick;
+ public ulong bombs_spawned;
+ public ulong winner;
+ public ulong local_session_id;
+ public uint mode;
+ public uint state;
+ public uint draw;
+ public uint reason;
+ public float lethal_radius;
+ public uint flags;
+ public IntPtr players;
+ public uint player_count;
+ public uint connection_count;
+ public IntPtr connections;
+}
 public static class BomNative {
  public const uint AbiVersion = 1;
- public const uint AbiMinorVersion = 3;
+ public const uint AbiMinorVersion = 4;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern ulong bom_build_tag();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_create(ref BomCreateInfo info, ref ulong handle);
@@ -373,5 +420,7 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_next_request_result(ulong handle, ulong after_request_id, ref BomRequestResult result);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_expect_gameplay_manifest(ulong handle, IntPtr hash, uint length);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_acquire_catalog(ulong handle, ulong sample_sequence, ref BomCatalogInfo catalog);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_round(ulong handle, ulong sample_sequence, ref BomRoundInfo info);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_join_options(ulong handle, uint flags);
 }
 }

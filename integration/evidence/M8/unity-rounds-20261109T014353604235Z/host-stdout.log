@@ -1,0 +1,27 @@
+NATIVE ID tag=870455318900952455 protocol=6 canonical=3 compiler=dev-2026-05:ea5175d
+PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles
+ROUND SNAPSHOT id=0 epoch=3 state=Waiting tick=16 winner=0 draw=false
+ROUND HOST round=0 state=0 tick=16 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=385 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+ROUND HOST round=1 state=0 tick=385 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=399 winner=0 draw=false
+ROUND HOST round=1 state=1 tick=399 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Waiting tick=409 winner=0 draw=false
+ROUND HOST round=1 state=0 tick=409 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Countdown tick=475 winner=0 draw=false
+ROUND HOST round=1 state=1 tick=475 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Playing tick=655 winner=0 draw=false
+ROUND HOST round=1 state=2 tick=655 winner=0 draw=0
+ROUND SNAPSHOT id=1 epoch=4 state=Finished tick=871 winner=0 draw=true
+ROUND HOST round=1 state=3 tick=871 winner=0 draw=1
+ROUND SNAPSHOT id=2 epoch=5 state=Waiting tick=951 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+ROUND HOST round=2 state=0 tick=951 winner=0 draw=0
+ROUND SNAPSHOT id=2 epoch=5 state=Countdown tick=952 winner=0 draw=false
+ROUND HOST round=2 state=1 tick=952 winner=0 draw=0
+ROUND SNAPSHOT id=2 epoch=5 state=Playing tick=1132 winner=0 draw=false
+ROUND HOST round=2 state=2 tick=1132 winner=0 draw=0
+ROUND SNAPSHOT id=2 epoch=5 state=Finished tick=1348 winner=0 draw=true
+ROUND HOST round=2 state=3 tick=1348 winner=0 draw=1
+PASS two Unity rounds host observer round=2 winner=0 interrupted_countdown=1 authorized_restart=1
