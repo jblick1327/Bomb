@@ -1,0 +1,1426 @@
+Mono path[0] = 'C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-source-player/BombSourceFixtures_Data/Managed'
+Mono config path = 'C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-source-player/MonoBleedingEdge/etc'
+Found 2 interfaces on host : 0) 192.168.56.1 1) 192.168.2.29
+Player connection [23652]  Target information:
+
+Player connection [23652]  * "[IP] 192.168.56.1 [Port] 55001 [Flags] 2 [Guid] 4206381093 [EditorId] 1149806383 [Version] 1048832 [Id] WindowsPlayer(2,MSI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Bomb" 
+
+Player connection [23652]  * "[IP] 192.168.2.29 [Port] 55001 [Flags] 2 [Guid] 4206381093 [EditorId] 1149806383 [Version] 1048832 [Id] WindowsPlayer(2,MSI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Bomb" 
+
+Player connection [23652] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.2.14f1 (589824c1fc31)
+[Subsystems] Discovering subsystems at path C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-source-player/BombSourceFixtures_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a2)
+    Vendor:   NVIDIA
+    VRAM:     3962 MB
+    Driver:   32.0.16.1656
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.370 seconds
+- Finished resetting the current domain, in  0.003 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+UnloadTime: 0.660000 ms
+BOM UNITY AUTHORITY PASS: no enabled legacy gameplay, local rigidbodies or character controllers; timeScale=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:60)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE ART ON
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:.ctor (Bom.Unity.BomVisualRegistry,UnityEngine.Material,bool) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:32)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:65)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY ABI PASS: twenty layouts, offsets, alignment; Native 76167014329335018 / protocol 5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:68)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=0
+BOM REGISTRY MATCH source=9007199254746001 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746002 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746003 groups=1 mesh_vertices=36 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746004 groups=2 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746005 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746006 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746007 groups=1 mesh_vertices=4 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746008 groups=1 mesh_vertices=191 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY SNAPSHOT generation=1 epoch=3 revision=1059 cells=193 hash=2447220409843671073 terrain_batches=51 geometry_cache_bytes=539856
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+RenderGraph is now enabled.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.Rendering.Universal.UniversalRenderPipeline:.ctor (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset) (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/UniversalRenderPipeline.cs:273)
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset:CreatePipeline () (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/Data/UniversalRenderPipelineAsset.cs:800)
+UnityEngine.Rendering.RenderPipelineAsset:InternalCreatePipeline () (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineAsset.cs:15)
+UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:172)
+UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:146)
+UnityEngine.Camera:SubmitRenderRequestsInternal (object)
+UnityEngine.Camera:SubmitRenderRequest<UnityEngine.Rendering.RenderPipeline/StandardRequest> (UnityEngine.Rendering.RenderPipeline/StandardRequest) (at C:/build/output/unity/unity/Runtime/Export/Camera/Camera.bindings.cs:404)
+UnityEngine.Rendering.RenderPipeline:SubmitRenderRequest<UnityEngine.Rendering.RenderPipeline/StandardRequest> (UnityEngine.Camera,UnityEngine.Rendering.RenderPipeline/StandardRequest) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipeline.cs:96)
+Bom.Unity.BomLevelCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomLevelCapture.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Camera Main Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+UnityEngine.Rendering.DebugUI/CameraSelector:get_cameras () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugUI.Fields.cs:578)
+UnityEngine.Rendering.DebugUI/CameraSelector:<.ctor>b__0_0 () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugUI.Fields.cs:542)
+UnityEngine.Rendering.DebugDisplaySettingsVolume/SettingsPanel:.ctor (UnityEngine.Rendering.DebugDisplaySettingsVolume) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:701)
+UnityEngine.Rendering.DebugDisplaySettingsVolume:CreatePanel () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:763)
+UnityEngine.Rendering.DebugDisplaySettingsUI/<>c__DisplayClass3_0:<RegisterDebug>b__0 (UnityEngine.Rendering.IDebugDisplaySettingsData) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsUI.cs:47)
+UnityEngine.Rendering.DebugDisplaySettings`1<UnityEngine.Rendering.Universal.UniversalRenderPipelineDebugDisplaySettings>:ForEach (System.Action`1<UnityEngine.Rendering.IDebugDisplaySettingsData>) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettings.cs:132)
+UnityEngine.Rendering.DebugDisplaySettingsUI:RegisterDebug (UnityEngine.Rendering.IDebugDisplaySettings) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsUI.cs:66)
+UnityEngine.Rendering.Universal.UniversalRenderPipeline:.ctor (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset) (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/UniversalRenderPipeline.cs:281)
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset:CreatePipeline () (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/Data/UniversalRenderPipelineAsset.cs:800)
+UnityEngine.Rendering.RenderPipelineAsset:InternalCreatePipeline () (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineAsset.cs:15)
+UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:172)
+UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:146)
+UnityEngine.Camera:SubmitRenderRequestsInternal (object)
+UnityEngine.Camera:SubmitRenderRequest<UnityEngine.Rendering.RenderPipeline/StandardRequest> (UnityEngine.Rendering.RenderPipeline/StandardRequest) (at C:/build/output/unity/unity/Runtime/Export/Camera/Camera.bindings.cs:404)
+UnityEngine.Rendering.RenderPipeline:SubmitRenderRequest<UnityEngine.Rendering.RenderPipeline/StandardRequest> (UnityEngine.Camera,UnityEngine.Rendering.RenderPipeline/StandardRequest) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipeline.cs:96)
+Bom.Unity.BomLevelCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomLevelCapture.cs:17)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+BOM LEVEL FRAME joined epoch=3 revision=1059 path=C:\Users\rober\Documents\Codex\2026-11-05\hi\work\integration-stage\evidence\M7\source-live-20261107T205921258594Z\late-joined.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomLevelCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomLevelCapture.cs:18)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY SYNCHRONIZED START
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:84)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=861
+PREDICTION mode=Predicting reason=None tick=868
+BOM UNITY SNAPSHOT generation=1 epoch=3 revision=1218 cells=213 hash=8686946729127770309 terrain_batches=61 geometry_cache_bytes=561456
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=1 tick=851 presentation=851.89484184
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746001 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM LEVEL FRAME fractured epoch=3 revision=1218 path=C:\Users\rober\Documents\Codex\2026-11-05\hi\work\integration-stage\evidence\M7\source-live-20261107T205921258594Z\late-fractured.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomLevelCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomLevelCapture.cs:18)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=868
+BOM SOURCE PRESENTATION source=9007199254746001 mode=intact cells=51 batches=1 epoch=3 revision=1218 cpu_cache=88560 gpu_reserved=6912
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746002 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746008 triangles=96 bytes=72844
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746003 triangles=20 bytes=23152
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746004 triangles=24 bytes=25888
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746005 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=874
+PREDICTION mode=Predicting reason=None tick=881
+BOM SOURCE PREPARED source=9007199254746006 triangles=12 bytes=20432
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FALLBACK source=9007199254746007 asset=source-fixture/Declared open surface reason=open or nonmanifold welded edge
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Bom.Unity.BomSourcePresentation:Warn (Bom.Unity.BomSourcePresentation/Source,string) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:56)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+BOM SOURCE PRESENTATION source=9007199254746008 mode=fragments cells=12 batches=12 epoch=3 revision=1218 cpu_cache=3966332 gpu_reserved=706176
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746004 mode=fragments cells=12 batches=2 epoch=3 revision=1218 cpu_cache=5687420 gpu_reserved=2235456
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746002 mode=fragments cells=41 batches=19 epoch=3 revision=1218 cpu_cache=5687420 gpu_reserved=2282112
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FRAME fractured epoch=3 revision=1218
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourceCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourceCapture.cs:20)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=967
+PREDICTION mode=Conservative reason=Missing_Command tick=976
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=986
+BOM UNITY SNAPSHOT generation=1 epoch=3 revision=1382 cells=209 hash=1852017021551295367 terrain_batches=64 geometry_cache_bytes=546048
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=2 tick=972 presentation=972.1845252032
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=989
+PREDICTION mode=Conservative reason=Missing_Command tick=990
+BOM SOURCE PRESENTATION source=9007199254746003 mode=fragments cells=29 batches=7 epoch=3 revision=1382 cpu_cache=6433340 gpu_reserved=3924288
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1001
+BOM SOURCE PRESENTATION source=9007199254746005 mode=fragments cells=38 batches=13 epoch=3 revision=1382 cpu_cache=6530108 gpu_reserved=3963456
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746008 mode=fragments cells=12 batches=12 epoch=3 revision=1382 cpu_cache=6530108 gpu_reserved=4542912
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746006 mode=fragments cells=16 batches=14 epoch=3 revision=1382 cpu_cache=6530108 gpu_reserved=4639104
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY REQUEST id=1 kind=1 status=1 effect_tick=1039 event_id=6 reason=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:95)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=3 tick=1039 presentation=1039.57016681009
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=0
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=758 cells=201 hash=15991736772647884685 terrain_batches=9 geometry_cache_bytes=593712
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746004 triangles=24 bytes=25888
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746005 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746001 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746002 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746003 groups=1 mesh_vertices=36 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746004 groups=2 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746005 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746006 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746007 groups=1 mesh_vertices=4 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746008 groups=1 mesh_vertices=191 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM LEVEL FRAME reset epoch=4 revision=758 path=C:\Users\rober\Documents\Codex\2026-11-05\hi\work\integration-stage\evidence\M7\source-live-20261107T205921258594Z\late-reset.png
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomLevelCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomLevelCapture.cs:18)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746005 mode=intact cells=18 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4646016
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746006 triangles=12 bytes=20432
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746006 mode=intact cells=23 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4652928
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FALLBACK source=9007199254746007 asset=source-fixture/Declared open surface reason=open or nonmanifold welded edge
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Bom.Unity.BomSourcePresentation:Warn (Bom.Unity.BomSourcePresentation/Source,string) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:56)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=1102
+BOM SOURCE PREPARED source=9007199254746008 triangles=96 bytes=72844
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746008 mode=intact cells=5 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4708224
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746001 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746001 mode=intact cells=51 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4708224
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1113
+BOM SOURCE PREPARED source=9007199254746002 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746002 mode=intact cells=53 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4715136
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FRAME reset epoch=4 revision=758
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourceCapture:LateUpdate () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourceCapture.cs:20)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=1113
+BOM SOURCE PREPARED source=9007199254746003 triangles=20 bytes=23152
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746003 mode=intact cells=29 batches=1 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746004 mode=fragments cells=12 batches=2 epoch=4 revision=758 cpu_cache=6530108 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=1117
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1129
+PREDICTION mode=Predicting reason=None tick=1215
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1215
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=837 cells=198 hash=1163433912550171580 terrain_batches=26 geometry_cache_bytes=576096
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=4 tick=1205 presentation=1205.00328021748
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746002 mode=intact cells=53 batches=1 epoch=4 revision=837 cpu_cache=6530108 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FALLBACK source=9007199254746006 asset=source-fixture/Mirrored solid reason=open source contour away from prism corner point=(-6.15, 7.28, -0.40) plane=(-6.15, 7.28)/(-5.39, 7.33) distances=0.003132303/0.7564594
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Bom.Unity.BomSourcePresentation:Warn (Bom.Unity.BomSourcePresentation/Source,string) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:56)
+Bom.Unity.BomSourcePresentation:PrepareCells (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:68)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:115)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+PREDICTION mode=Warming reason=Uninitialized tick=0
+BOM REGISTRY MATCH source=9007199254746001 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746002 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746003 groups=1 mesh_vertices=36 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746004 groups=2 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746005 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746006 groups=1 mesh_vertices=24 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746007 groups=1 mesh_vertices=4 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM REGISTRY MATCH source=9007199254746008 groups=1 mesh_vertices=191 native_gameplay=efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:92)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY SNAPSHOT generation=2 epoch=4 revision=837 cells=198 hash=1163433912550171580 terrain_batches=26 geometry_cache_bytes=576096
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746004 triangles=24 bytes=25888
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746005 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746005 mode=intact cells=18 batches=1 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746006 triangles=12 bytes=20432
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FALLBACK source=9007199254746007 asset=source-fixture/Declared open surface reason=open or nonmanifold welded edge
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Bom.Unity.BomSourcePresentation:Warn (Bom.Unity.BomSourcePresentation/Source,string) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:56)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+BOM SOURCE PREPARED source=9007199254746008 triangles=96 bytes=72844
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746008 mode=intact cells=5 batches=1 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE FALLBACK source=9007199254746006 asset=source-fixture/Mirrored solid reason=open source contour away from prism corner point=(-6.15, 7.28, -0.40) plane=(-6.15, 7.28)/(-5.39, 7.33) distances=0.003132303/0.7564594
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+Bom.Unity.BomSourcePresentation:Warn (Bom.Unity.BomSourcePresentation/Source,string) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:56)
+Bom.Unity.BomSourcePresentation:PrepareCells (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:68)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:115)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+BOM SOURCE PREPARED source=9007199254746001 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746001 mode=intact cells=51 batches=1 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746002 triangles=12 bytes=19760
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746002 mode=intact cells=53 batches=1 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PREPARED source=9007199254746003 triangles=20 bytes=23152
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Prepare (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:62)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:114)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746003 mode=intact cells=29 batches=1 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=1350
+BOM SOURCE PRESENTATION source=9007199254746004 mode=fragments cells=12 batches=2 epoch=4 revision=837 cpu_cache=6711548 gpu_reserved=4726656
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Predicting reason=None tick=1357
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1359
+PREDICTION mode=Predicting reason=None tick=1362
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1445
+PREDICTION mode=Warming reason=Uninitialized tick=1454
+BOM UNITY SNAPSHOT generation=2 epoch=4 revision=896 cells=199 hash=2276055220764227267 terrain_batches=36 geometry_cache_bytes=571488
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=5 tick=1448 presentation=1450.00266
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Missing_Command tick=1457
+PREDICTION mode=Predicting reason=None tick=1466
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1653
+PREDICTION mode=Predicting reason=None tick=1660
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1671
+PREDICTION mode=Predicting reason=None tick=1673
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1688
+PREDICTION mode=Predicting reason=None tick=1690
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1716
+PREDICTION mode=Predicting reason=None tick=1718
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1807
+PREDICTION mode=Predicting reason=None tick=1809
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=1834
+PREDICTION mode=Predicting reason=None tick=1837
+BOM UNITY SNAPSHOT generation=2 epoch=4 revision=1041 cells=196 hash=16918446268445069998 terrain_batches=59 geometry_cache_bytes=540432
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=6 tick=1829 presentation=1829.184302
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=1837
+PREDICTION mode=Conservative reason=Missing_Command tick=1839
+PREDICTION mode=Predicting reason=None tick=1846
+BOM SOURCE PRESENTATION source=9007199254746004 mode=fragments cells=11 batches=11 epoch=4 revision=1041 cpu_cache=7159676 gpu_reserved=5071104
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746005 mode=fragments cells=16 batches=15 epoch=4 revision=1041 cpu_cache=7197692 gpu_reserved=5655744
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Conservative reason=Dynamic_History_Required tick=2221
+BOM UNITY SNAPSHOT generation=2 epoch=4 revision=1267 cells=197 hash=17401931544256569219 terrain_batches=85 geometry_cache_bytes=510624
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:157)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY EVENT id=7 tick=2216 presentation=2216
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:Accept (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:179)
+Bom.Unity.BomSession:Poll (double,System.Action`1<Bom.Unity.BomSession>) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSession.cs:111)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE PRESENTATION source=9007199254746003 mode=intact cells=29 batches=1 epoch=4 revision=1267 cpu_cache=7197692 gpu_reserved=5655744
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+PREDICTION mode=Warming reason=Uninitialized tick=2222
+PREDICTION mode=Conservative reason=Missing_Command tick=2227
+PREDICTION mode=Predicting reason=None tick=2234
+BOM SOURCE PRESENTATION source=9007199254746002 mode=fragments cells=54 batches=32 epoch=4 revision=1267 cpu_cache=8222396 gpu_reserved=7216704
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:Commit (Bom.Unity.BomSourcePresentation/Source) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:107)
+Bom.Unity.BomSourcePresentation:Pump (Bom.Unity.BomSession) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:118)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:88)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+System.InvalidOperationException: Native client status 7: host left
+  at Bom.Unity.BomSession.Poll (System.Double now, System.Action`1[T] accept) [0x000a1] in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\unity-baseline\Assets\BOMIntegration\Runtime\BomSession.cs:90 
+  at Bom.Unity.BomClientBehaviour.Update () [0x00203] in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\unity-baseline\Assets\BOMIntegration\Runtime\BomClientBehaviour.cs:88 
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+Bom.Unity.BomClientBehaviour:Fail (System.Exception) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:102)
+Bom.Unity.BomClientBehaviour:Update () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:100)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+abort_threads: Failed aborting id: 0000000000007EE8, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 000000000000019C, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000002BB0, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005D24, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000007EE8, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000002BB0, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005D24, mono_thread_manage will ignore it
+
+PlayerConnection::Cleanup##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1794085204937,"processId":3948,"allocatedMemory":580425,"memoryLabels":[{"Default":136},{"Manager":534227},{"VertexData":480},{"VFX":-104},{"GfxDevice":360},{"Serialization":520},{"JobScheduler":32768},{"String":490},{"DynamicArray":1792},{"HashMap":3584},{"PoolAlloc":288},{"CloudService":144},{"WebRequest":3516},{"VR":1864},{"Video":144},{"Subsystems":96},{"CoreBusinessMetrics":120}]}

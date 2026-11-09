@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &52034104
+--- !u!1 &163220526
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,141 +127,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 52034105}
-  - component: {fileID: 52034106}
-  m_Layer: 0
-  m_Name: Duplicate part
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &52034105
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 52034104}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1982090088}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &52034106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 52034104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 9007199254742002
-  MaterialKey: stone
-  Shape: 0
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline: []
-  Anchors: []
-  WorldRestCoordinates: 0
-  ApproximationNote: 
---- !u!1 &793899611
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 793899612}
-  - component: {fileID: 793899614}
-  - component: {fileID: 793899613}
-  m_Layer: 0
-  m_Name: Duplicate
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &793899612
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793899611}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1754580691}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &793899613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793899611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 9007199254742001
-  MaterialKey: stone
-  Shape: 0
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline: []
-  Anchors: []
-  WorldRestCoordinates: 0
-  ApproximationNote: 
---- !u!114 &793899614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793899611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
-  identityDecimal: 9007199254741002
-  NextPartIdDecimal: 9007199254742002
-  PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-793899613-0
-    IdentityDecimal: 9007199254742001
-  AssetKey: 
-  VisualGroup: {fileID: 0}
-  Motion: 2
-  Damage: 0
-  FallbackDepth: {x: -0.3, y: 0.3}
-  CapMaterial: {fileID: 0}
-  OriginalObjectPath: 
-  ApproximationNote: 
-  IncludeInExport: 1
---- !u!1 &1754580689
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1754580691}
-  - component: {fileID: 1754580690}
+  - component: {fileID: 163220528}
+  - component: {fileID: 163220527}
   m_Layer: 0
   m_Name: Identity fixture
   m_TagString: Untagged
@@ -269,29 +136,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1754580690
+--- !u!114 &163220527
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754580689}
+  m_GameObject: {fileID: 163220526}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2045cc867e364e64c9f8b74b274949a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
-  LevelId: 2d438ca237bd4fa2be172205cb576de1
+  LevelId: 7e6fef7117804ef29c470f278b75861f
   YardBuilderVersion: 0
   NextIdentityDecimal: 9007199254741004
   StoredSceneGuid: a3f85370dc653124b94a5f3f8d7d7311
-  StoredRootGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-1754580690-0
+  StoredRootGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-163220527-0
   IdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-1982090090-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-270574912-0
     IdentityDecimal: 9007199254741001
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-793899614-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-929150750-0
     IdentityDecimal: 9007199254741002
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-7530416035430781463-2120163470
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-7530416035430781463-573517928
     IdentityDecimal: 9007199254741003
   Seed: 42
   GameplayConfigId: bom-default-v1
@@ -324,25 +191,25 @@ MonoBehaviour:
   AllowedOverlaps: []
   Materials: []
   VisualRegistry: {fileID: 0}
---- !u!4 &1754580691
+--- !u!4 &163220528
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754580689}
+  m_GameObject: {fileID: 163220526}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1982090088}
-  - {fileID: 793899612}
-  - {fileID: 2120163471}
+  - {fileID: 270574910}
+  - {fileID: 929150748}
+  - {fileID: 573517929}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1982090087
+--- !u!1 &270574909
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -350,9 +217,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1982090088}
-  - component: {fileID: 1982090090}
-  - component: {fileID: 1982090089}
+  - component: {fileID: 270574910}
+  - component: {fileID: 270574912}
+  - component: {fileID: 270574911}
   m_Layer: 0
   m_Name: Source
   m_TagString: Untagged
@@ -360,29 +227,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1982090088
+--- !u!4 &270574910
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1982090087}
+  m_GameObject: {fileID: 270574909}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 52034105}
-  m_Father: {fileID: 1754580691}
+  - {fileID: 512727584}
+  m_Father: {fileID: 163220528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1982090089
+--- !u!114 &270574911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1982090087}
+  m_GameObject: {fileID: 270574909}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -397,13 +264,13 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 0
   ApproximationNote: 
---- !u!114 &1982090090
+--- !u!114 &270574912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1982090087}
+  m_GameObject: {fileID: 270574909}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
@@ -412,9 +279,9 @@ MonoBehaviour:
   identityDecimal: 9007199254741001
   NextPartIdDecimal: 9007199254742003
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-1982090089-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-270574911-0
     IdentityDecimal: 9007199254742001
-  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-52034106-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-512727585-0
     IdentityDecimal: 9007199254742002
   AssetKey: 
   VisualGroup: {fileID: 0}
@@ -425,13 +292,66 @@ MonoBehaviour:
   OriginalObjectPath: 
   ApproximationNote: 
   IncludeInExport: 1
---- !u!1001 &2120163470
+--- !u!1 &512727583
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 512727584}
+  - component: {fileID: 512727585}
+  m_Layer: 0
+  m_Name: Duplicate part
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &512727584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512727583}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 270574910}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &512727585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512727583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 9007199254742002
+  MaterialKey: stone
+  Shape: 0
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 0
+  ApproximationNote: 
+--- !u!1001 &573517928
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1754580691}
+    m_TransformParent: {fileID: 163220528}
     m_Modifications:
     - target: {fileID: 3877190311217220033, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -491,11 +411,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7530416035430781463, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
       propertyPath: PartIdentityRegistry.Array.data[0].ObjectGlobalId
-      value: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-4841009582310956917-2120163470
+      value: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-4841009582310956917-573517928
       objectReference: {fileID: 0}
     - target: {fileID: 7530416035430781463, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
       propertyPath: PartIdentityRegistry.Array.data[1].ObjectGlobalId
-      value: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-802904428957079317-2120163470
+      value: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-802904428957079317-573517928
       objectReference: {fileID: 0}
     - target: {fileID: 7530416035430781463, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
       propertyPath: PartIdentityRegistry.Array.data[0].IdentityDecimal
@@ -510,13 +430,93 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
---- !u!4 &2120163471 stripped
+--- !u!4 &573517929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3877190311217220033, guid: 279d9cbc7b1e36b44b116a3128c74af2, type: 3}
-  m_PrefabInstance: {fileID: 2120163470}
+  m_PrefabInstance: {fileID: 573517928}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &929150747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 929150748}
+  - component: {fileID: 929150750}
+  - component: {fileID: 929150749}
+  m_Layer: 0
+  m_Name: Duplicate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &929150748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929150747}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 163220528}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &929150749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929150747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 9007199254742001
+  MaterialKey: stone
+  Shape: 0
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 0
+  ApproximationNote: 
+--- !u!114 &929150750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929150747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
+  identityDecimal: 9007199254741002
+  NextPartIdDecimal: 9007199254742002
+  PartIdentityRegistry:
+  - ObjectGlobalId: GlobalObjectId_V1-2-a3f85370dc653124b94a5f3f8d7d7311-929150749-0
+    IdentityDecimal: 9007199254742001
+  AssetKey: 
+  VisualGroup: {fileID: 0}
+  Motion: 2
+  Damage: 0
+  FallbackDepth: {x: -0.3, y: 0.3}
+  CapMaterial: {fileID: 0}
+  OriginalObjectPath: 
+  ApproximationNote: 
+  IncludeInExport: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1754580691}
+  - {fileID: 163220528}

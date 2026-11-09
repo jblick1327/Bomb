@@ -1,0 +1,336 @@
+{
+  "milestone": "M7",
+  "status": "passed",
+  "completed_utc": "2026-11-09T00:32:20.647094+00:00",
+  "scope": "Source-mesh fracture correctness, genuine standalone rendering and lifetime gates. M8 and M9 remain required.",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 3,
+    "source_commit": "cfead83e709ed7f44df1f836279b1f0ebe1ec0db",
+    "source_dirty": false,
+    "source_sha256": "1d2cceb8701a10dda5600f6206726f69f97e4b422f507b153d2fa0051e91d265",
+    "build_tag": 131392651101577485,
+    "dll_sha256": "9f524aac7eb7f773f168595ef99142f356696144a1aac11bad8477683473df97",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 5,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "runtime_assembly_sha256": "628d0fea308f775674c37cfb56f5be5749accf2c19dda1192ec72d79c3bc4166",
+  "real_runs": {
+    "yard": {
+      "path": "source-yard-live-20261109T001254908995Z",
+      "status": "passed",
+      "exit_codes": {
+        "host": 0,
+        "unity": 0,
+        "unity-late": 0,
+        "observer": 0,
+        "server": 0
+      },
+      "hash_coverage": {
+        "status": "passed",
+        "expected_unique": 166,
+        "matching_unique": 162,
+        "missing_steady": 0,
+        "missing_tail": 4,
+        "missing_reports": [
+          {
+            "client": 1,
+            "connection": 1,
+            "epoch": 3,
+            "revision": 28078,
+            "sent_tick": 6546,
+            "classification": "disconnect-tail"
+          },
+          {
+            "client": 1,
+            "connection": 1,
+            "epoch": 3,
+            "revision": 28080,
+            "sent_tick": 6547,
+            "classification": "disconnect-tail"
+          },
+          {
+            "client": 1,
+            "connection": 1,
+            "epoch": 3,
+            "revision": 28081,
+            "sent_tick": 6548,
+            "classification": "disconnect-tail"
+          },
+          {
+            "client": 2,
+            "connection": 1,
+            "epoch": 3,
+            "revision": 28704,
+            "sent_tick": 7152,
+            "classification": "disconnect-tail"
+          }
+        ],
+        "bad_reports": [],
+        "unexpected_reports": [],
+        "per_client_connection": {
+          "0:1": {
+            "matched": 62,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "1:1": {
+            "matched": 9,
+            "missing_steady": 0,
+            "missing_tail": 3
+          },
+          "1:2": {
+            "matched": 42,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "2:1": {
+            "matched": 23,
+            "missing_steady": 0,
+            "missing_tail": 1
+          },
+          "2:2": {
+            "matched": 16,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "3:1": {
+            "matched": 10,
+            "missing_steady": 0,
+            "missing_tail": 0
+          }
+        },
+        "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+      }
+    },
+    "tier_comparison": {
+      "path": "source-live-20261109T001750913066Z",
+      "status": "passed",
+      "exit_codes": {
+        "host": 0,
+        "unity": 0,
+        "unity-late": 0,
+        "observer": 0,
+        "server": 0
+      },
+      "hash_coverage": {
+        "status": "passed",
+        "expected_unique": 64,
+        "matching_unique": 64,
+        "missing_steady": 0,
+        "missing_tail": 0,
+        "missing_reports": [],
+        "bad_reports": [],
+        "unexpected_reports": [],
+        "per_client_connection": {
+          "0:1": {
+            "matched": 17,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "1:1": {
+            "matched": 6,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "2:1": {
+            "matched": 7,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "3:1": {
+            "matched": 14,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "1:2": {
+            "matched": 12,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "2:2": {
+            "matched": 8,
+            "missing_steady": 0,
+            "missing_tail": 0
+          }
+        },
+        "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+      }
+    },
+    "blocked_jobs": {
+      "path": "source-live-20261109T001928014385Z",
+      "status": "passed",
+      "exit_codes": {
+        "host": 0,
+        "unity": 0,
+        "unity-late": 0,
+        "observer": 0,
+        "server": 0
+      },
+      "hash_coverage": {
+        "status": "passed",
+        "expected_unique": 62,
+        "matching_unique": 62,
+        "missing_steady": 0,
+        "missing_tail": 0,
+        "missing_reports": [],
+        "bad_reports": [],
+        "unexpected_reports": [],
+        "per_client_connection": {
+          "0:1": {
+            "matched": 16,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "1:1": {
+            "matched": 4,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "2:1": {
+            "matched": 7,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "3:1": {
+            "matched": 14,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "1:2": {
+            "matched": 13,
+            "missing_steady": 0,
+            "missing_tail": 0
+          },
+          "2:2": {
+            "matched": 8,
+            "missing_steady": 0,
+            "missing_tail": 0
+          }
+        },
+        "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+      }
+    }
+  },
+  "gates": {
+    "supported_fixtures_actually_tier2": true,
+    "original_materials_and_eight_uv_channels": true,
+    "closed_caps_holes_normals_and_partial_boundary_visibility": true,
+    "shared_split_flexible_reference_pivots": true,
+    "explicit_open_thin_bad_or_missing_art_fallback": true,
+    "world_rest_depth_unchanged": true,
+    "reset_and_disconnect_during_blocked_jobs_zero_stale_applies": true,
+    "intact_fractured_moving_reset_views_two_angles": true,
+    "native_state_agrees_across_visual_tiers": true,
+    "original_rock_and_layered_yard_audited": true
+  },
+  "stale_worker_results": [
+    [
+      "2",
+      "0",
+      "3",
+      "2"
+    ],
+    [
+      "4",
+      "0",
+      "4",
+      "2"
+    ]
+  ],
+  "native_tests": {
+    "gameplay": 220,
+    "transport": 27,
+    "shared": 54,
+    "ffi": 18,
+    "c_and_dotnet_layouts": 20,
+    "exports": 29,
+    "lifecycle_cycles": 100,
+    "note": "The first restricted transport invocation received no local UDP packets. The permitted retest delivered reliable 200+200 and UDP 1000+1000 with zero duplicates; raw failed evidence is retained."
+  },
+  "geometry_regressions": "The checked-in managed and Unity fixtures include actual source vertices/material slots for six failing native yard cells, jagged/collinear/near-parallel cuts, short-edge unit normals, welded zero-volume folds, hollow/disconnected/concave/mirrored/layered solids, attributes, visibility and worker budgets.",
+  "yard_metrics": {
+    "ready": {
+      "epoch": 3,
+      "revision": 27831,
+      "hash": 6418968721284544082,
+      "intact_sources": 5,
+      "fragment_sources": 9,
+      "fallback_sources": 2,
+      "active_jobs": 0,
+      "pending_jobs": 0,
+      "stale_applies": 0,
+      "stale_drops": 0,
+      "cpu_cache": 68845680,
+      "gpu_reserved": 31417920,
+      "buffers": 0,
+      "max_upload_ms": 8.8051,
+      "max_source_read_ms": 5.9862
+    },
+    "fractured": {
+      "epoch": 3,
+      "revision": 28789,
+      "hash": 12315822354553487111,
+      "intact_sources": 2,
+      "fragment_sources": 11,
+      "fallback_sources": 2,
+      "active_jobs": 0,
+      "pending_jobs": 0,
+      "stale_applies": 0,
+      "stale_drops": 0,
+      "cpu_cache": 75487536,
+      "gpu_reserved": 38498112,
+      "buffers": 0,
+      "max_upload_ms": 8.8051,
+      "max_source_read_ms": 5.9862
+    },
+    "reset": {
+      "epoch": 4,
+      "revision": 27729,
+      "hash": 6267311235668974389,
+      "intact_sources": 11,
+      "fragment_sources": 3,
+      "fallback_sources": 2,
+      "active_jobs": 0,
+      "pending_jobs": 0,
+      "stale_applies": 0,
+      "stale_drops": 0,
+      "cpu_cache": 75961008,
+      "gpu_reserved": 41089536,
+      "buffers": 0,
+      "max_upload_ms": 8.8051,
+      "max_source_read_ms": 5.9862
+    }
+  },
+  "rock": {
+    "asset": "Assets/Game/Geometry/Rock.fbx",
+    "classification": "supported closed solid collection",
+    "cut_result": "Tier 2",
+    "remedy": "Keep the original FBX/importer unchanged. If the audited source is open or nonmanifold, author a closed derived source or declare native extrusion.",
+    "triangles": 96,
+    "candidates": 64,
+    "tier2_geometry": true
+  },
+  "original_content_check": "evidence/M0/Test-Content-20261109T003309466Z.json",
+  "original_files": 605,
+  "server_reset": {
+    "implementation": "One staging worker builds a separate world from immutable layout data; completed epochs publish atomically, with detached serialized cleanup. Existing world simulation/networking continue.",
+    "build_ms": 33448.171,
+    "all_clients_remained_connected": true,
+    "protocol_unchanged": 5
+  },
+  "fixture_adjustments": [
+    "The audit rock uses an explicit 1.6-unit maximum span centered at (-10,7,0); the original model/importer is unchanged.",
+    "New explicit-glue source pair uses separate native bodies joined by mortar, matching Odin rules. Shared-body pivots are tested separately with the production geometry attachment adapter.",
+    "Live harness waits for the dedicated server ready marker before connecting, and for source-ready render captures before the yard scenario."
+  ],
+  "remaining_required_work": [
+    "M8 full network menu/camera/HUD/animation adapters and server-owned elimination rounds/results/XP.",
+    "M9 measured presentation/native performance, pooled views/cache hardening, current IL2CPP, independent review and the final 30-minute real-process soak.",
+    "Individual Unity calls still exceeded the 2 ms scheduling target (yard max upload 8.81 ms/read 5.99 ms); source activation and the 33.45-second rebuild need performance work. Dynamic prediction still uses explicit conservative intervals and requires final hardening."
+  ],
+  "publication_preservation": "All 605 protected original files passed after additive SDK/artifact publication."
+}

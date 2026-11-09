@@ -1,0 +1,149 @@
+{
+  "status": "failed",
+  "failure": "host did not report LEVEL REQUEST kind=1 status=1",
+  "seconds_after_late_readiness": 60,
+  "exit_codes": {
+    "server": 1,
+    "host": 1,
+    "unity": 1
+  },
+  "result": null,
+  "joined_fractured": false,
+  "unity_pass": false,
+  "runtime_registry_verified": false,
+  "required_tier2_fixtures": [
+    {
+      "name": "Closed box",
+      "source_id": "9007199254746002",
+      "expected": "fragments"
+    },
+    {
+      "name": "Closed concave solid",
+      "source_id": "9007199254746003",
+      "expected": "fragments"
+    },
+    {
+      "name": "Disconnected solid group",
+      "source_id": "9007199254746004",
+      "expected": "fragments"
+    },
+    {
+      "name": "Multi material moving solid",
+      "source_id": "9007199254746005",
+      "expected": "fragments"
+    }
+  ],
+  "required_rendered": false,
+  "two_angle_captures": false,
+  "late_tier1": false,
+  "tier1_verified": true,
+  "registry_mode": "bundled direct mesh/material references",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 3,
+    "source_commit": "d6fb982247b453184c4eac353498f03810cd075d",
+    "source_dirty": false,
+    "source_sha256": "10e997ef8b3bceae76e006f72b86a98b4b4a7c59a7ac27406762bf307b48a889",
+    "build_tag": 76167014329335018,
+    "dll_sha256": "436ab7b39f939017013caf82d2e1c9e70a3d50727c12e95968470f84bf19b334",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 5,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "plugin_sha256": "436ab7b39f939017013caf82d2e1c9e70a3d50727c12e95968470f84bf19b334",
+  "server_sha256": "758bb560db3725b559612099b9b5c84525e4237cb6a4529ced13c334ddce621e",
+  "observer_sha256": "059019aea6baaa0838a8054c71f6cc99cb6b0feea46e443779ca1111ff7a7d08",
+  "expected_gameplay_manifest": "efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "57919",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\layout-input.json",
+      "--seconds",
+      "360",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-source\\Interop.dll",
+      "57919",
+      "60"
+    ],
+    "unity": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-source-player\\BombSourceFixtures.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "57919",
+      "--bom-smoke-seconds",
+      "240",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\start.signal",
+      "--bom-smoke-stop-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\stop.signal",
+      "--bom-level-smoke",
+      "--bom-time-scale",
+      "0",
+      "--bom-expected-manifest",
+      "efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f",
+      "--bom-level-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\primary",
+      "--bom-source-failure-dir",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\primary-failures",
+      "--bom-source-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\primary",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\unity.log"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:57919",
+      "--seconds",
+      "59"
+    ],
+    "unity-late": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-source-player\\BombSourceFixtures.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-port",
+      "57919",
+      "--bom-smoke-seconds",
+      "240",
+      "--bom-smoke-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\start.signal",
+      "--bom-smoke-stop-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\stop.signal",
+      "--bom-level-smoke",
+      "--bom-time-scale",
+      "0",
+      "--bom-expected-manifest",
+      "efea87a8f6647519d9f4ad5e36dc6fa2c3a0dfe17b0b9df4f1a8a23f0d76970f",
+      "--bom-level-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\late",
+      "--bom-source-failure-dir",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\late-failures",
+      "--bom-source-capture",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\late",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-live-20261107T204005905622Z\\unity-late.log"
+    ]
+  }
+}

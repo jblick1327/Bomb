@@ -14,10 +14,14 @@ namespace Bom.Unity {
  public Vector2 FallbackDepth;
  public GameObject IntactPrefab;
 }
+[Serializable]public sealed class BomInitialSourceRegion {
+ public string SourceIdentity="";public string[] InitialCellIds=Array.Empty<string>();
+}
 [CreateAssetMenu(menuName="BOM/Visual Registry")]
 public sealed class BomVisualRegistry:ScriptableObject {
  public string LevelId="",GameplayManifestHash="",CatalogHash="";
  public BomVisualEntry[] Entries=Array.Empty<BomVisualEntry>();
+ public BomInitialSourceRegion[] InitialSources=Array.Empty<BomInitialSourceRegion>();
  public bool TryFind(string key,string hash,out BomVisualEntry result){foreach(var entry in Entries)if(entry.AssetKey==key&&entry.ContentHash==hash&&entry.Groups.Length>0){bool valid=true;foreach(var group in entry.Groups)if(group.Mesh==null)valid=false;if(valid){result=entry;return true;}}result=null;return false;}
 }
 }

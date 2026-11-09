@@ -1,0 +1,172 @@
+{
+  "status": "failed",
+  "expected_unique": 132,
+  "matching_unique": 116,
+  "missing_steady": 16,
+  "missing_tail": 0,
+  "missing_reports": [
+    {
+      "client": 0,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27714,
+      "sent_tick": 6633,
+      "classification": "steady-state"
+    },
+    {
+      "client": 1,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27714,
+      "sent_tick": 6633,
+      "classification": "steady-state"
+    },
+    {
+      "client": 2,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27714,
+      "sent_tick": 6633,
+      "classification": "steady-state"
+    },
+    {
+      "client": 3,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27714,
+      "sent_tick": 6633,
+      "classification": "steady-state"
+    },
+    {
+      "client": 0,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27715,
+      "sent_tick": 6636,
+      "classification": "steady-state"
+    },
+    {
+      "client": 1,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27715,
+      "sent_tick": 6636,
+      "classification": "steady-state"
+    },
+    {
+      "client": 2,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27715,
+      "sent_tick": 6636,
+      "classification": "steady-state"
+    },
+    {
+      "client": 3,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27715,
+      "sent_tick": 6636,
+      "classification": "steady-state"
+    },
+    {
+      "client": 0,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27722,
+      "sent_tick": 6639,
+      "classification": "steady-state"
+    },
+    {
+      "client": 1,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27722,
+      "sent_tick": 6639,
+      "classification": "steady-state"
+    },
+    {
+      "client": 2,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27722,
+      "sent_tick": 6639,
+      "classification": "steady-state"
+    },
+    {
+      "client": 3,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27722,
+      "sent_tick": 6639,
+      "classification": "steady-state"
+    },
+    {
+      "client": 0,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27729,
+      "sent_tick": 6729,
+      "classification": "steady-state"
+    },
+    {
+      "client": 1,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27729,
+      "sent_tick": 6729,
+      "classification": "steady-state"
+    },
+    {
+      "client": 2,
+      "connection": 2,
+      "epoch": 4,
+      "revision": 27729,
+      "sent_tick": 6729,
+      "classification": "steady-state"
+    },
+    {
+      "client": 3,
+      "connection": 1,
+      "epoch": 4,
+      "revision": 27729,
+      "sent_tick": 6729,
+      "classification": "steady-state"
+    }
+  ],
+  "bad_reports": [],
+  "unexpected_reports": [],
+  "per_client_connection": {
+    "0:1": {
+      "matched": 54,
+      "missing_steady": 4,
+      "missing_tail": 0
+    },
+    "1:1": {
+      "matched": 42,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "2:1": {
+      "matched": 14,
+      "missing_steady": 0,
+      "missing_tail": 0
+    },
+    "1:2": {
+      "matched": 4,
+      "missing_steady": 4,
+      "missing_tail": 0
+    },
+    "2:2": {
+      "matched": 1,
+      "missing_steady": 4,
+      "missing_tail": 0
+    },
+    "3:1": {
+      "matched": 1,
+      "missing_steady": 4,
+      "missing_tail": 0
+    }
+  },
+  "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+}

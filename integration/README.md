@@ -2,7 +2,7 @@
 
 This branch contains a real native-connected Unity scene at `Assets/BOMIntegration/NativeSlice.unity`. Odin owns gameplay, networking and physics. Unity polls the versioned native API, copies coherent samples, and renders extrusion meshes and actor views. The original scenes, scripts, art and package/settings files remain reference content.
 
-M0-M6 passed. M7 source-mesh fracture rendering is in progress; M8-M9 remain pending. The full integration is not complete. See STATUS.md and evidence/M6/summary.json for the current checkpoint.
+M0-M7 passed. M8 menus/elimination is in progress; M9 remains pending. The full integration is not complete. See STATUS.md and evidence/M6/summary.json for the current checkpoint.
 
 The source roots remain separate. `source-lock.json` records archive/toolchain/native commit identities. The ignored `local.config.json` supplies absolute local paths; use `local.config.example.json` for another machine. Unity stays on 6000.2.14f1 and the supplied Odin May 2026 compiler/vendor setup remains pinned.
 
@@ -33,3 +33,5 @@ The authored yard is `Assets/BOMIntegration/NetworkYard.unity`. Export creates e
 ```
 
 These yard gates use the current native source build (protocol 5), not the frozen protocol-4 demo. They keep raw failed attempts and actual rendered captures under evidence/M6. The expected gameplay fingerprint comes from the native export report, and the live test checks that the standalone plugin matches its native build identity.
+
+Source-mesh checkpoint: `Assets/BOMIntegration/SourceFixtures/SourceFixtures.unity` and `NetworkYard.unity` use the native source registry and bounded managed geometry jobs. `./integration/tools/Test-SourcePresentation.ps1 -Mode All` reproduces M7 builds and live gates in the configured separate validation project. See `contracts/source-mesh-rendering.md` for ownership, fallback, cache limits and measured remaining costs. M7 is a correctness checkpoint, not completion of M8/M9.

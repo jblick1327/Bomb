@@ -1,0 +1,35 @@
+{
+  "milestone": "M7",
+  "status": "in_progress",
+  "updated_utc": "2026-11-07T21:34:16.612397+00:00",
+  "verified_runs": {
+    "normal_two_source_clients": {
+      "path": "source-live-20261107T211124561912Z",
+      "status": "passed"
+    },
+    "final_tier_comparison": {
+      "path": "source-live-20261107T213013453980Z",
+      "status": "passed"
+    },
+    "blocked_worker_reset_and_reconnect": {
+      "path": "source-live-20261107T212205259562Z",
+      "status": "passed"
+    }
+  },
+  "native_prediction_fix_commit": "9907c35",
+  "native_tests": {
+    "shared": 52,
+    "ffi": 18,
+    "status": "passed"
+  },
+  "geometry": "Closed-solid, concave, hollow, layered, disconnected, mirrored, captured native jagged/near-parallel cuts, material/UV channels, cap visibility and shared/split/flexible reference pivots pass .NET and Unity checks.",
+  "outstanding": [
+    "Actual yard source-art standalone audit is running.",
+    "Milestone evidence, repository publication and preservation check remain.",
+    "M8 and M9 remain required."
+  ],
+  "measured_limits": [
+    "Final supported fixture capture measured 7.56 ms maximum individual upload and 9.43 ms maximum source read; scheduling is bounded, but the 2 ms active-frame goal remains M9 performance work.",
+    "Dynamic prediction can still fall back and undergo isolated topology-build stalls; this run does not replace required M9 performance or soak checks."
+  ]
+}

@@ -1,0 +1,314 @@
+{
+    "level_id": "bom-source-fixtures-v1",
+    "layout": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-export\\fixtures.json",
+    "native_report": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\source-export\\fixtures.json.native-report.json",
+    "inventory": [
+        {
+            "object_path": "Main Camera",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Directional Light",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Source fixture authoring",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Floor",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746001"
+        },
+        {
+            "object_path": "Closed box",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746002"
+        },
+        {
+            "object_path": "Closed concave solid",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746003"
+        },
+        {
+            "object_path": "Disconnected solid group",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746004"
+        },
+        {
+            "object_path": "Disconnected solid group/Closed solid 0",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Disconnected solid group/Closed solid 1",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Multi material moving solid",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746005"
+        },
+        {
+            "object_path": "Mirrored solid",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746006"
+        },
+        {
+            "object_path": "Declared open surface",
+            "classification": "physics source",
+            "approximation": "Open decorative surface intentionally uses a closed native rectangle with visible extrusion fallback.",
+            "visual_fallback": "",
+            "source_identity": "9007199254746007"
+        },
+        {
+            "object_path": "Original rock audit",
+            "classification": "physics source",
+            "approximation": "The original Rock.fbx is uniformly scaled to a maximum span of 1.6 units and centered at (-10,7,0), because the initial scale extended beyond the test arena. Its XY proxy is an explicit render-bounds rectangle; the original importer and asset are unchanged.",
+            "visual_fallback": "",
+            "source_identity": "9007199254746008"
+        },
+        {
+            "object_path": "Glued source A",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746009"
+        },
+        {
+            "object_path": "Glued source B",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254746010"
+        }
+    ],
+    "visual_geometry": [
+        {
+            "source_identity": "9007199254746001",
+            "object_path": "Floor",
+            "asset_key": "source-fixture/Floor",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": -12.0,
+                "y": -1.0,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 12.0,
+                "y": 0.0,
+                "z": 0.5
+            }
+        },
+        {
+            "source_identity": "9007199254746002",
+            "object_path": "Closed box",
+            "asset_key": "source-fixture/Closed box",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": -7.5,
+                "y": 0.0,
+                "z": -1.0
+            },
+            "maximum": {
+                "x": -4.5,
+                "y": 3.0,
+                "z": 1.0
+            }
+        },
+        {
+            "source_identity": "9007199254746003",
+            "object_path": "Closed concave solid",
+            "asset_key": "source-fixture/Closed concave solid",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 20,
+            "materials": 2,
+            "minimum": {
+                "x": -1.0,
+                "y": 0.0,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 2.0,
+                "y": 3.0,
+                "z": 0.5
+            }
+        },
+        {
+            "source_identity": "9007199254746004",
+            "object_path": "Disconnected solid group",
+            "asset_key": "source-fixture/Disconnected solid group",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 24,
+            "materials": 4,
+            "minimum": {
+                "x": 4.849999904632568,
+                "y": 4.300000190734863,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 7.150000095367432,
+                "y": 5.699999809265137,
+                "z": 0.5
+            }
+        },
+        {
+            "source_identity": "9007199254746005",
+            "object_path": "Multi material moving solid",
+            "asset_key": "source-fixture/Multi material moving solid",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": 5.0,
+                "y": 0.20000004768371583,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 7.0,
+                "y": 2.200000047683716,
+                "z": 0.5
+            }
+        },
+        {
+            "source_identity": "9007199254746006",
+            "object_path": "Mirrored solid",
+            "asset_key": "source-fixture/Mirrored solid",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": -7.2566328048706059,
+                "y": 5.990854740142822,
+                "z": -0.4000000059604645
+            },
+            "maximum": {
+                "x": -4.7433671951293949,
+                "y": 8.009145736694336,
+                "z": 0.4000000059604645
+            }
+        },
+        {
+            "source_identity": "9007199254746007",
+            "object_path": "Declared open surface",
+            "asset_key": "source-fixture/Declared open surface",
+            "classification": "open or nonmanifold welded edge (0.75, 7.75, 0.00) -> (0.75, 6.25, 0.00) counts=1/0",
+            "expected_fallback": "native extrusion",
+            "remedy": "Author closed visual solids or explicitly separate decorative open surfaces; physics proxies remain independent.",
+            "triangles": 2,
+            "materials": 1,
+            "minimum": {
+                "x": -0.75,
+                "y": 6.25,
+                "z": 0.0
+            },
+            "maximum": {
+                "x": 0.75,
+                "y": 7.75,
+                "z": 0.0
+            }
+        },
+        {
+            "source_identity": "9007199254746008",
+            "object_path": "Original rock audit",
+            "asset_key": "source-fixture/Original rock audit",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 96,
+            "materials": 1,
+            "minimum": {
+                "x": -10.767326354980469,
+                "y": 6.199999809265137,
+                "z": -0.4098476767539978
+            },
+            "maximum": {
+                "x": -9.232673645019532,
+                "y": 7.800000190734863,
+                "z": 0.4098476767539978
+            }
+        },
+        {
+            "source_identity": "9007199254746009",
+            "object_path": "Glued source A",
+            "asset_key": "source-fixture/Glued source A",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": 2.5,
+                "y": 6.0,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 3.5,
+                "y": 7.0,
+                "z": 0.5
+            }
+        },
+        {
+            "source_identity": "9007199254746010",
+            "object_path": "Glued source B",
+            "asset_key": "source-fixture/Glued source B",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 2,
+            "minimum": {
+                "x": 3.5,
+                "y": 6.0,
+                "z": -0.5
+            },
+            "maximum": {
+                "x": 4.5,
+                "y": 7.0,
+                "z": 0.5
+            }
+        }
+    ]
+}

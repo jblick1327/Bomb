@@ -46,7 +46,7 @@ public static class BomAuthoringValidation {
   var original=new Mesh{name="Transform fixture"};
   original.vertices=new[]{new Vector3(0,0,0),new Vector3(1,0,0),new Vector3(0,1,0)};
   original.normals=new[]{Vector3.forward,Vector3.forward,Vector3.forward};
-  original.uv=new[]{Vector2.zero,Vector2.right,Vector2.up};original.subMeshCount=1;original.SetTriangles(new[]{0,1,2},0);
+  original.uv=new[]{Vector2.zero,Vector2.right,Vector2.up};original.SetUVs(7,new System.Collections.Generic.List<Vector4>{Vector4.zero,Vector4.one,new Vector4(2,3,4,5)});original.subMeshCount=1;original.SetTriangles(new[]{0,1,2},0);
   var matrix=Matrix4x4.TRS(new Vector3(7,-2,4),Quaternion.Euler(23,37,-11),new Vector3(-2,3,.4f));
   original.UploadMeshData(true);Mesh baked=null;
   try{
@@ -54,7 +54,7 @@ public static class BomAuthoringValidation {
    var expected=matrix.MultiplyPoint3x4(Vector3.right);Check(Vector3.Distance(baked.vertices[1],expected)<.00001f,"Visual child transform was not baked exactly once");
    var triangles=baked.triangles;var vertices=baked.vertices;Vector3 geometric=Vector3.Cross(vertices[triangles[1]]-vertices[triangles[0]],vertices[triangles[2]]-vertices[triangles[0]]).normalized;
    Check(Vector3.Dot(geometric,baked.normals[0])>.9999f,"Mirrored winding/normal inverse transpose disagree");
-   Check(baked.uv[2]==Vector2.up,"Baking changed exterior UV");
+   Check(baked.uv[2]==Vector2.up,"Baking changed exterior UV");var uv7=new System.Collections.Generic.List<Vector4>();baked.GetUVs(7,uv7);Check(uv7.Count==3&&uv7[2]==new Vector4(2,3,4,5),"Baking lost the fourth component or higher UV channel");
    string hash=BomMeshPreprocessor.ContentHash(baked,Array.Empty<Material>());Check(hash.Length==64&&hash==BomMeshPreprocessor.ContentHash(baked,Array.Empty<Material>()),"Visual hash is unstable");
    bool rejected=false;try{var invalid=BomMeshPreprocessor.Bake(original,Matrix4x4.Scale(new Vector3(0,1,1)),"fixture/singular");UnityEngine.Object.DestroyImmediate(invalid);}catch(InvalidOperationException error){rejected=error.Message.Contains("fixture/singular");}Check(rejected,"Singular transform was not rejected with its object path");
   }finally{if(baked!=null)UnityEngine.Object.DestroyImmediate(baked);UnityEngine.Object.DestroyImmediate(original);}

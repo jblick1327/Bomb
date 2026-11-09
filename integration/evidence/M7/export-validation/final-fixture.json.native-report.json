@@ -1,0 +1,174 @@
+{
+	"status": "passed",
+	"level_id": "editor-export-v4-fixture",
+	"gameplay_manifest_hash": "89566d7cf6c3fab2993fe8d5ee0a620e4c413ba7071a142803a2c3c9c693c05d",
+	"gameplay_config_hash": "3d1c4f66bc71b5308c17a6b219d539efce82437258b41b3e6505d9705e78a853",
+	"catalog_hash": "0baca57cef05cf190113bcc09a30eb9e458ab79ceedc93edcfde0230e7ba507d",
+	"game_protocol": 5,
+	"canonical_version": 3,
+	"source_count": 2,
+	"part_count": 2,
+	"cell_count": 24,
+	"fixture_count": 47,
+	"bounds": {
+		"active": true,
+		"simulation": {
+			"lo": {
+				"x": -8,
+				"y": -3
+			},
+			"hi": {
+				"x": 9,
+				"y": 12
+			}
+		},
+		"kill": {
+			"lo": {
+				"x": -8.5,
+				"y": -3
+			},
+			"hi": {
+				"x": 9.5,
+				"y": 12
+			}
+		},
+		"camera": {
+			"lo": {
+				"x": -9,
+				"y": -4
+			},
+			"hi": {
+				"x": 10,
+				"y": 13
+			}
+		},
+		"aim": {
+			"lo": {
+				"x": -8,
+				"y": -3
+			},
+			"hi": {
+				"x": 9,
+				"y": 12
+			}
+		},
+		"fragment_cull": {
+			"lo": {
+				"x": -20,
+				"y": -5
+			},
+			"hi": {
+				"x": 21,
+				"y": 20
+			}
+		},
+		"spawns": [
+			{
+				"x": -4.5,
+				"y": 0.565
+			},
+			{
+				"x": 4.5,
+				"y": 0.565
+			},
+			{
+				"x": -2,
+				"y": 0.565
+			},
+			{
+				"x": -3,
+				"y": 0.565
+			}
+		],
+		"bombs": {
+			"spawn_x": {
+				"x": -7,
+				"y": 8
+			},
+			"spawn_height": 7.3,
+			"cleanup_bounds": {
+				"lo": {
+					"x": -9,
+					"y": -3
+				},
+				"hi": {
+					"x": 10,
+					"y": 20
+				}
+			}
+		},
+		"config": {
+			"version": 1,
+			"gravity": {
+				"x": 0,
+				"y": -9.8
+			},
+			"player": {
+				"speed": 4,
+				"acceleration": 32,
+				"jump_speed": 6.3,
+				"coyote_time": 0.1,
+				"jump_buffer": 0.1
+			},
+			"bomb_fuse": 1,
+			"bomb_drop_min": 1,
+			"bomb_drop_max": 2.5
+		}
+	},
+	"sources": [
+		{
+			"identity": 9007199254741001,
+			"identity_text": "9007199254741001",
+			"initial_cell_ids": [
+				"35",
+				"36",
+				"37",
+				"38",
+				"39",
+				"40",
+				"41",
+				"11",
+				"42",
+				"13",
+				"70",
+				"71",
+				"16",
+				"72",
+				"26",
+				"27",
+				"28",
+				"29",
+				"30",
+				"31",
+				"32",
+				"33",
+				"34"
+			],
+			"parts": 1,
+			"cells": 23,
+			"pinned_cells": 23,
+			"area": 11.999999791383743,
+			"matrix_probe": [
+				8.4858665,
+				3.3039594,
+				7.3316984
+			]
+		},
+		{
+			"identity": 9007199254741002,
+			"identity_text": "9007199254741002",
+			"initial_cell_ids": [
+				"80"
+			],
+			"parts": 1,
+			"cells": 1,
+			"pinned_cells": 0,
+			"area": 1,
+			"matrix_probe": [
+				0,
+				4,
+				2.5
+			]
+		}
+	]
+}

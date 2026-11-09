@@ -1,0 +1,70 @@
+{
+    "level_id": "editor-export-v4-fixture",
+    "layout": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\unity-export\\fixture.json",
+    "native_report": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M7\\unity-export\\fixture.json.native-report.json",
+    "inventory": [
+        {
+            "object_path": "Export fixture",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Explicit floor",
+            "classification": "physics source",
+            "approximation": "Transform fixture: explicit world-rest floor is deliberately independent of the rotated visual cube.",
+            "visual_fallback": "",
+            "source_identity": "9007199254741001"
+        },
+        {
+            "object_path": "Same asset second instance",
+            "classification": "physics source",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": "9007199254741002"
+        }
+    ],
+    "visual_geometry": [
+        {
+            "source_identity": "9007199254741001",
+            "object_path": "",
+            "asset_key": "fixture/cube",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 5.575289726257324,
+                "y": -3.609175682067871,
+                "z": 2.915440082550049
+            },
+            "maximum": {
+                "x": 8.424710273742676,
+                "y": -0.39082425832748415,
+                "z": 5.084559917449951
+            }
+        },
+        {
+            "source_identity": "9007199254741002",
+            "object_path": "",
+            "asset_key": "fixture/cube",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -1.5,
+                "y": 1.5,
+                "z": -1.0
+            },
+            "maximum": {
+                "x": -0.5,
+                "y": 2.5,
+                "z": 0.0
+            }
+        }
+    ]
+}

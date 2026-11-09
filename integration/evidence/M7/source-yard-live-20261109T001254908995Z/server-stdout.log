@@ -1,0 +1,604 @@
+BOM staging server listening on 127.0.0.1:54796 only; tick=60Hz
+server tick overrun at 0.18s: dropping 27.1ms of accumulated time
+server tick overrun at 0.29s: dropping 26.0ms of accumulated time
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=27722 tick=19 queued=yes
+HELLO OK client=0 role=HOST
+HASH EXPECT client=0 connection=1 epoch=3 revision=27738 tick=72 queued=yes
+server tick overrun at 1.36s: dropping 19.8ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=27745 tick=78 queued=yes
+server tick overrun at 1.53s: dropping 38.4ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=27752 tick=95 queued=yes
+server tick overrun at 1.83s: dropping 49.4ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=27722 hash=9379528511181468544 tick=106 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=27759 tick=112 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=27738 hash=2704162555915052630 tick=112 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=27745 hash=11085412079355266297 tick=112 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=27752 hash=11080261314379294522 tick=112 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=27759 hash=3140792637135063884 tick=130 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=27767 tick=137 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=27781 tick=139 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=27789 tick=140 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=27809 tick=142 queued=yes
+server tick overrun at 2.55s: dropping 24.5ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=27767 hash=16163436287871598243 tick=142 result=match
+server tick overrun at 2.80s: dropping 166.7ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=27781 hash=1920604921292399017 tick=147 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=27789 hash=7055656871826846650 tick=149 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=27809 hash=3869958243214914969 tick=154 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=27831 tick=163 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=27831 hash=6418968721284544082 tick=185 result=match
+SERVER time=10s tick=579 active=1 overruns=7 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=590 kbit/s
+INPUT client=0 incarnation=1 generation=6 finalized=579 applied_sequence=128 accepted=138 duplicates=405 conflicts=0 late=0 starved=10 neutralized=10
+SERVER time=20s tick=1179 active=1 overruns=7 hashes=10 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=29ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=7 finalized=1179 applied_sequence=534 accepted=541 duplicates=1614 conflicts=0 late=0 starved=7 neutralized=7
+CONNECT client=1
+HASH EXPECT client=1 connection=1 epoch=3 revision=27831 tick=1536 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=1 epoch=3 revision=27831 hash=6418968721284544082 tick=1613 result=match
+SERVER time=30s tick=1779 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=8 finalized=1779 applied_sequence=200 accepted=204 duplicates=603 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976842410 RTT=69ms tx=536 kbit/s
+INPUT client=1 incarnation=2 generation=1 finalized=1779 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=164 neutralized=164
+SERVER time=40s tick=2379 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=9 finalized=2379 applied_sequence=403 accepted=406 duplicates=1164 conflicts=0 late=42 starved=3 neutralized=3
+  client=1 addr=139637976842410 RTT=34ms tx=73 kbit/s
+INPUT client=1 incarnation=2 generation=21 finalized=2379 applied_sequence=2 accepted=7 duplicates=12 conflicts=0 late=0 starved=4 neutralized=4
+SERVER time=50s tick=2979 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=10 finalized=2979 applied_sequence=289 accepted=294 duplicates=870 conflicts=0 late=0 starved=4 neutralized=4
+  client=1 addr=139637976842410 RTT=36ms tx=73 kbit/s
+INPUT client=1 incarnation=2 generation=53 finalized=2979 applied_sequence=59 accepted=67 duplicates=192 conflicts=0 late=0 starved=7 neutralized=7
+SERVER time=60s tick=3579 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=10 finalized=3579 applied_sequence=889 accepted=894 duplicates=2669 conflicts=0 late=1 starved=4 neutralized=4
+  client=1 addr=139637976842410 RTT=35ms tx=73 kbit/s
+INPUT client=1 incarnation=2 generation=89 finalized=3579 applied_sequence=56 accepted=61 duplicates=174 conflicts=0 late=0 starved=6 neutralized=6
+SERVER time=70s tick=4179 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=11 finalized=4179 applied_sequence=98 accepted=102 duplicates=293 conflicts=0 late=1 starved=7 neutralized=7
+  client=1 addr=139637976842410 RTT=43ms tx=71 kbit/s
+INPUT client=1 incarnation=2 generation=89 finalized=4179 applied_sequence=656 accepted=661 duplicates=1974 conflicts=0 late=0 starved=6 neutralized=6
+SERVER time=80s tick=4779 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=11 finalized=4779 applied_sequence=698 accepted=702 duplicates=2093 conflicts=0 late=1 starved=7 neutralized=7
+  client=1 addr=139637976842410 RTT=34ms tx=71 kbit/s
+INPUT client=1 incarnation=2 generation=92 finalized=4779 applied_sequence=66 accepted=69 duplicates=193 conflicts=0 late=5 starved=5 neutralized=5
+SERVER time=90s tick=5379 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=11 finalized=5379 applied_sequence=1298 accepted=1302 duplicates=3893 conflicts=0 late=1 starved=7 neutralized=7
+  client=1 addr=139637976842410 RTT=21ms tx=71 kbit/s
+INPUT client=1 incarnation=2 generation=92 finalized=5379 applied_sequence=666 accepted=671 duplicates=1976 conflicts=0 late=20 starved=5 neutralized=5
+SERVER time=100s tick=5979 active=2 overruns=7 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=71 kbit/s
+INPUT client=0 incarnation=1 generation=11 finalized=5979 applied_sequence=1898 accepted=1902 duplicates=5693 conflicts=0 late=1 starved=7 neutralized=7
+  client=1 addr=139637976842410 RTT=17ms tx=71 kbit/s
+INPUT client=1 incarnation=2 generation=92 finalized=5979 applied_sequence=1266 accepted=1270 duplicates=3773 conflicts=0 late=20 starved=5 neutralized=5
+HASH EXPECT client=0 connection=1 epoch=3 revision=28027 tick=6458 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28027 tick=6458 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28051 tick=6459 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28051 tick=6459 queued=yes
+server tick overrun at 108.14s: dropping 69.8ms of accumulated time
+server tick overrun at 108.30s: dropping 73.4ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28027 hash=1284996884582036717 tick=6473 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=28027 hash=1284996884582036717 tick=6473 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=28051 hash=9735673211814278055 tick=6477 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28051 hash=9735673211814278055 tick=6479 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28058 tick=6532 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28058 tick=6532 queued=yes
+server tick overrun at 109.56s: dropping 111.2ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28060 tick=6541 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28060 tick=6541 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28062 tick=6542 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28062 tick=6542 queued=yes
+server tick overrun at 109.67s: dropping 27.1ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=3 revision=28058 hash=16278538287711442019 tick=6542 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28064 tick=6543 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28064 tick=6543 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28066 tick=6544 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28066 tick=6544 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28068 tick=6545 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28068 tick=6545 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28078 tick=6546 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28078 tick=6546 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28080 tick=6547 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28080 tick=6547 queued=yes
+server tick overrun at 109.93s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=3 revision=28060 hash=332269580996064398 tick=6547 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28058 hash=16278538287711442019 tick=6547 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=28062 hash=2650239678331440529 tick=6547 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28060 hash=332269580996064398 tick=6547 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28081 tick=6548 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=28081 tick=6548 queued=yes
+server tick overrun at 110.54s: dropping 166.7ms of accumulated time
+SERVER time=111s tick=6552 active=2 overruns=13 hashes=20 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=574ms tx=90 kbit/s
+INPUT client=0 incarnation=1 generation=17 finalized=6552 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+  client=1 addr=139637976842410 RTT=480ms tx=88 kbit/s
+INPUT client=1 incarnation=2 generation=98 finalized=6552 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+HASH REPORT client=0 connection=1 epoch=3 revision=28062 hash=2650239678331440529 tick=6552 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=28064 hash=6534811050936752397 tick=6552 result=match
+server tick overrun at 110.71s: dropping 87.2ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=3 revision=28066 hash=1632599601904233251 tick=6564 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=28068 hash=11512034420699657386 tick=6564 result=match
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=1 tick=6572
+CONNECT client=1
+HASH EXPECT client=1 connection=2 epoch=3 revision=28081 tick=6578 queued=yes
+HELLO OK client=1 role=player
+server tick overrun at 111.18s: dropping 19.7ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28082 tick=6589 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28082 tick=6589 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28135 tick=6591 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28135 tick=6591 queued=yes
+server tick overrun at 111.36s: dropping 20.6ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28064 hash=6534811050936752397 tick=6594 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28066 hash=1632599601904233251 tick=6594 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28068 hash=11512034420699657386 tick=6594 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28078 hash=8397523495313843030 tick=6594 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28080 hash=9191210624859367901 tick=6594 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28081 hash=1552361384869505465 tick=6594 result=match
+server tick overrun at 111.53s: dropping 86.3ms of accumulated time
+CONNECT client=2
+HASH EXPECT client=0 connection=1 epoch=3 revision=28144 tick=6620 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28144 tick=6620 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=28082 hash=10559901603621778803 tick=6620 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28135 hash=11255409661224766703 tick=6620 result=match
+server tick overrun at 111.99s: dropping 21.5ms of accumulated time
+HASH EXPECT client=2 connection=1 epoch=3 revision=28144 tick=6625 queued=yes
+HELLO OK client=2 role=player
+HASH EXPECT client=0 connection=1 epoch=3 revision=28145 tick=6639 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28145 tick=6639 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28145 tick=6639 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=28144 hash=17751571580607005582 tick=6639 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28158 tick=6640 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28158 tick=6640 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28158 tick=6640 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28159 tick=6642 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28159 tick=6642 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28159 tick=6642 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28160 tick=6643 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28160 tick=6643 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28160 tick=6643 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=28145 hash=11037085767471299847 tick=6644 result=match
+server tick overrun at 112.57s: dropping 179.1ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28158 hash=10526475446991896761 tick=6668 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28161 tick=6672 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28161 tick=6672 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28161 tick=6672 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=28159 hash=13984461175782065253 tick=6672 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28160 hash=17617583909129093234 tick=6672 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28081 hash=1552361384869505465 tick=6672 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28082 hash=10559901603621778803 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28135 hash=11255409661224766703 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28144 hash=17751571580607005582 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28145 hash=11037085767471299847 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28158 hash=10526475446991896761 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28159 hash=13984461175782065253 tick=6682 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28160 hash=17617583909129093234 tick=6682 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28200 tick=6690 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28200 tick=6690 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28200 tick=6690 queued=yes
+HASH REPORT client=1 connection=2 epoch=3 revision=28161 hash=15298267973458413706 tick=6691 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28161 hash=15298267973458413706 tick=6691 result=match
+server tick overrun at 113.40s: dropping 44.3ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28249 tick=6704 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28249 tick=6704 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28249 tick=6704 queued=yes
+HASH REPORT client=1 connection=2 epoch=3 revision=28200 hash=9343116616888971821 tick=6705 result=match
+server tick overrun at 113.66s: dropping 31.8ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28200 hash=9343116616888971821 tick=6710 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28258 tick=6717 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28258 tick=6717 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28258 tick=6717 queued=yes
+HASH REPORT client=1 connection=2 epoch=3 revision=28249 hash=13190943621636501954 tick=6718 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28144 hash=17751571580607005582 tick=6718 result=match
+server tick overrun at 113.97s: dropping 97.1ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28249 hash=13190943621636501954 tick=6723 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28145 hash=11037085767471299847 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28158 hash=10526475446991896761 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28159 hash=13984461175782065253 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28160 hash=17617583909129093234 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28161 hash=15298267973458413706 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28200 hash=9343116616888971821 tick=6730 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28249 hash=13190943621636501954 tick=6730 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28258 hash=17098534318082432246 tick=6736 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28258 hash=17098534318082432246 tick=6738 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28274 tick=6767 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28274 tick=6767 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28274 tick=6767 queued=yes
+server tick overrun at 114.81s: dropping 21.4ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28287 tick=6779 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28287 tick=6779 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28287 tick=6779 queued=yes
+HASH REPORT client=1 connection=2 epoch=3 revision=28274 hash=1184052716940512316 tick=6782 result=match
+server tick overrun at 115.19s: dropping 124.4ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28274 hash=1184052716940512316 tick=6787 result=match
+server tick overrun at 115.37s: dropping 21.0ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28287 hash=9215347853647813191 tick=6797 result=match
+server tick overrun at 115.48s: dropping 25.2ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28287 hash=9215347853647813191 tick=6802 result=match
+server tick overrun at 115.74s: dropping 19.5ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28317 tick=6821 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28317 tick=6821 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28317 tick=6821 queued=yes
+server tick overrun at 115.84s: dropping 24.8ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=3 revision=28258 hash=17098534318082432246 tick=6821 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28274 hash=1184052716940512316 tick=6821 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28287 hash=9215347853647813191 tick=6821 result=match
+server tick overrun at 115.99s: dropping 58.1ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28317 hash=10795715181964352173 tick=6837 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28317 hash=10795715181964352173 tick=6839 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28317 hash=10795715181964352173 tick=6856 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28341 tick=6882 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28341 tick=6882 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28341 tick=6882 queued=yes
+server tick overrun at 117.10s: dropping 77.9ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28341 hash=7229571322000057804 tick=6896 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28341 hash=7229571322000057804 tick=6901 result=match
+server tick overrun at 117.42s: dropping 26.2ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28341 hash=7229571322000057804 tick=6906 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28422 tick=6975 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28422 tick=6975 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28422 tick=6975 queued=yes
+server tick overrun at 118.74s: dropping 67.8ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28422 hash=12715329433792326529 tick=6991 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28422 hash=12715329433792326529 tick=6996 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28422 hash=12715329433792326529 tick=6996 result=match
+server tick overrun at 119.43s: dropping 25.8ms of accumulated time
+server tick overrun at 119.62s: dropping 20.8ms of accumulated time
+server tick overrun at 119.73s: dropping 28.1ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28440 tick=7053 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28440 tick=7053 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28440 tick=7053 queued=yes
+SERVER time=120s tick=7054 active=3 overruns=35 hashes=77 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=97ms tx=150 kbit/s
+INPUT client=0 incarnation=1 generation=52 finalized=7054 applied_sequence=0 accepted=8 duplicates=12 conflicts=0 late=0 starved=10 neutralized=10
+  client=1 addr=139637976842410 RTT=94ms tx=686 kbit/s
+INPUT client=1 incarnation=3 generation=17 finalized=7054 applied_sequence=41 accepted=53 duplicates=147 conflicts=0 late=0 starved=14 neutralized=14
+  client=2 addr=139637976857637 RTT=76ms tx=666 kbit/s
+INPUT client=2 incarnation=4 generation=19 finalized=7054 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+HASH EXPECT client=0 connection=1 epoch=3 revision=28447 tick=7058 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28447 tick=7058 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28447 tick=7058 queued=yes
+server tick overrun at 120.19s: dropping 69.4ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28440 hash=11547150112375411679 tick=7059 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28461 tick=7061 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28461 tick=7061 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28461 tick=7061 queued=yes
+server tick overrun at 120.41s: dropping 138.3ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28447 hash=12706959632271240926 tick=7064 result=match
+server tick overrun at 120.67s: dropping 166.7ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28440 hash=11547150112375411679 tick=7069 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28440 hash=11547150112375411679 tick=7069 result=match
+server tick overrun at 120.78s: dropping 27.2ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28447 hash=12706959632271240926 tick=7078 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28447 hash=12706959632271240926 tick=7083 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28461 hash=5444927960953229913 tick=7083 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28461 hash=5444927960953229913 tick=7083 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28461 hash=5444927960953229913 tick=7083 result=match
+server tick overrun at 121.04s: dropping 18.7ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28469 tick=7090 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28469 tick=7090 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28469 tick=7090 queued=yes
+server tick overrun at 121.18s: dropping 59.1ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28494 tick=7095 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28494 tick=7095 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28494 tick=7095 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28502 tick=7098 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28502 tick=7098 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28502 tick=7098 queued=yes
+server tick overrun at 121.43s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28469 hash=8136068989920161896 tick=7098 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28469 hash=8136068989920161896 tick=7098 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28469 hash=8136068989920161896 tick=7098 result=match
+server tick overrun at 121.88s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28494 hash=10187308227229708391 tick=7103 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28494 hash=10187308227229708391 tick=7103 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28494 hash=10187308227229708391 tick=7106 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28620 tick=7112 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28620 tick=7112 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28620 tick=7112 queued=yes
+server tick overrun at 122.13s: dropping 34.8ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28502 hash=18419946694973928768 tick=7116 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28502 hash=18419946694973928768 tick=7116 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28502 hash=18419946694973928768 tick=7116 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28659 tick=7119 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28659 tick=7119 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28659 tick=7119 queued=yes
+server tick overrun at 122.38s: dropping 166.7ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28620 hash=12491408077043409863 tick=7121 result=match
+server tick overrun at 122.62s: dropping 152.0ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28620 hash=12491408077043409863 tick=7126 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28620 hash=12491408077043409863 tick=7126 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28690 tick=7127 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28690 tick=7127 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28690 tick=7127 queued=yes
+server tick overrun at 122.74s: dropping 42.8ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28659 hash=17141907484552583096 tick=7131 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28659 hash=17141907484552583096 tick=7131 result=match
+server tick overrun at 122.99s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28690 hash=5437983810383560868 tick=7141 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28659 hash=17141907484552583096 tick=7141 result=match
+server tick overrun at 123.24s: dropping 82.9ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28690 hash=5437983810383560868 tick=7146 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=28690 hash=5437983810383560868 tick=7146 result=match
+server tick overrun at 123.40s: dropping 72.6ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28704 tick=7152 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28704 tick=7152 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=28704 tick=7152 queued=yes
+server tick overrun at 123.53s: dropping 42.9ms of accumulated time
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=7156
+server tick overrun at 123.77s: dropping 163.4ms of accumulated time
+CONNECT client=2
+server tick overrun at 123.91s: dropping 57.7ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28704 hash=11587630074551150841 tick=7166 result=match
+HASH EXPECT client=2 connection=2 epoch=3 revision=28704 tick=7166 queued=yes
+HELLO OK client=2 role=player
+HASH REPORT client=1 connection=2 epoch=3 revision=28704 hash=11587630074551150841 tick=7166 result=match
+server tick overrun at 124.02s: dropping 24.0ms of accumulated time
+server tick overrun at 124.21s: dropping 103.3ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=3 revision=28730 tick=7178 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28730 tick=7178 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28730 tick=7178 queued=yes
+HASH EXPECT client=0 connection=1 epoch=3 revision=28737 tick=7180 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28737 tick=7180 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28737 tick=7180 queued=yes
+server tick overrun at 124.33s: dropping 42.8ms of accumulated time
+server tick overrun at 124.61s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28730 hash=15579527388394838712 tick=7186 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28754 tick=7195 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28754 tick=7195 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28754 tick=7195 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=28730 hash=15579527388394838712 tick=7197 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28737 hash=10799894319989403007 tick=7197 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28737 hash=10799894319989403007 tick=7197 result=match
+server tick overrun at 124.91s: dropping 29.9ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=3 revision=28754 hash=11887573430935045440 tick=7224 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28754 hash=11887573430935045440 tick=7224 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28771 tick=7258 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28771 tick=7258 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28771 tick=7258 queued=yes
+HASH REPORT client=2 connection=2 epoch=3 revision=28704 hash=11587630074551150841 tick=7258 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28779 tick=7263 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28779 tick=7263 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28779 tick=7263 queued=yes
+HASH REPORT client=2 connection=2 epoch=3 revision=28730 hash=15579527388394838712 tick=7263 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=28737 hash=10799894319989403007 tick=7263 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=28754 hash=11887573430935045440 tick=7263 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=28789 tick=7265 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28789 tick=7265 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28789 tick=7265 queued=yes
+server tick overrun at 126.06s: dropping 53.5ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28771 hash=11677678655801351088 tick=7268 result=match
+server tick overrun at 126.27s: dropping 120.0ms of accumulated time
+HASH REPORT client=2 connection=2 epoch=3 revision=28771 hash=11677678655801351088 tick=7278 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=28779 hash=2213813404339009111 tick=7282 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=28789 hash=12315822354553487111 tick=7282 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28779 hash=2213813404339009111 tick=7287 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=28789 hash=12315822354553487111 tick=7290 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28771 hash=11677678655801351088 tick=7296 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28779 hash=2213813404339009111 tick=7307 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28789 hash=12315822354553487111 tick=7307 result=match
+SERVER time=130s tick=7496 active=3 overruns=60 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=144 kbit/s
+INPUT client=0 incarnation=1 generation=84 finalized=7496 applied_sequence=19 accepted=26 duplicates=69 conflicts=0 late=0 starved=7 neutralized=7
+  client=1 addr=139637976842410 RTT=25ms tx=128 kbit/s
+INPUT client=1 incarnation=3 generation=41 finalized=7496 applied_sequence=24 accepted=29 duplicates=75 conflicts=0 late=0 starved=8 neutralized=8
+  client=2 addr=139637976857637 RTT=49ms tx=664 kbit/s
+INPUT client=2 incarnation=5 generation=21 finalized=7496 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+SERVER time=140s tick=8097 active=3 overruns=60 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=82 kbit/s
+INPUT client=0 incarnation=1 generation=85 finalized=8097 applied_sequence=556 accepted=562 duplicates=1677 conflicts=0 late=0 starved=6 neutralized=6
+  client=1 addr=139637976842410 RTT=23ms tx=80 kbit/s
+INPUT client=1 incarnation=3 generation=42 finalized=8097 applied_sequence=501 accepted=501 duplicates=118 conflicts=0 late=252 starved=1 neutralized=1
+  client=2 addr=139637976857637 RTT=35ms tx=86 kbit/s
+INPUT client=2 incarnation=5 generation=56 finalized=8097 applied_sequence=95 accepted=98 duplicates=285 conflicts=0 late=2 starved=6 neutralized=6
+SERVER time=150s tick=8697 active=3 overruns=60 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=77 kbit/s
+INPUT client=0 incarnation=1 generation=85 finalized=8697 applied_sequence=1156 accepted=1163 duplicates=3480 conflicts=0 late=0 starved=6 neutralized=6
+  client=1 addr=139637976842410 RTT=25ms tx=76 kbit/s
+INPUT client=1 incarnation=3 generation=43 finalized=8697 applied_sequence=12 accepted=14 duplicates=22 conflicts=0 late=5 starved=2 neutralized=2
+  client=2 addr=139637976857637 RTT=41ms tx=78 kbit/s
+INPUT client=2 incarnation=5 generation=63 finalized=8697 applied_sequence=133 accepted=140 duplicates=413 conflicts=0 late=0 starved=6 neutralized=6
+SERVER time=160s tick=9297 active=3 overruns=60 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=77 kbit/s
+INPUT client=0 incarnation=1 generation=85 finalized=9297 applied_sequence=1756 accepted=1763 duplicates=5280 conflicts=0 late=0 starved=6 neutralized=6
+  client=1 addr=139637976842410 RTT=26ms tx=76 kbit/s
+INPUT client=1 incarnation=3 generation=43 finalized=9297 applied_sequence=612 accepted=614 duplicates=1134 conflicts=0 late=267 starved=2 neutralized=2
+  client=2 addr=139637976857637 RTT=34ms tx=78 kbit/s
+INPUT client=2 incarnation=5 generation=68 finalized=9297 applied_sequence=409 accepted=414 duplicates=1227 conflicts=0 late=8 starved=5 neutralized=5
+server tick overrun at 163.49s: dropping 23.7ms of accumulated time
+server tick overrun at 165.93s: dropping 17.2ms of accumulated time
+server tick overrun at 166.04s: dropping 34.0ms of accumulated time
+SERVER time=170s tick=9893 active=3 overruns=63 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=32ms tx=77 kbit/s
+INPUT client=0 incarnation=1 generation=92 finalized=9893 applied_sequence=92 accepted=102 duplicates=294 conflicts=0 late=0 starved=16 neutralized=16
+  client=1 addr=139637976842410 RTT=25ms tx=75 kbit/s
+INPUT client=1 incarnation=3 generation=44 finalized=9893 applied_sequence=564 accepted=573 duplicates=1712 conflicts=0 late=0 starved=5 neutralized=5
+  client=2 addr=139637976857637 RTT=40ms tx=80 kbit/s
+INPUT client=2 incarnation=5 generation=99 finalized=9893 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=1 neutralized=1
+SERVER time=180s tick=10492 active=3 overruns=63 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=76 kbit/s
+INPUT client=0 incarnation=1 generation=97 finalized=10492 applied_sequence=273 accepted=284 duplicates=843 conflicts=0 late=0 starved=10 neutralized=10
+  client=1 addr=139637976842410 RTT=28ms tx=75 kbit/s
+INPUT client=1 incarnation=3 generation=44 finalized=10492 applied_sequence=1163 accepted=1173 duplicates=3512 conflicts=0 late=0 starved=5 neutralized=5
+  client=2 addr=139637976857637 RTT=39ms tx=80 kbit/s
+INPUT client=2 incarnation=5 generation=138 finalized=10492 applied_sequence=119 accepted=128 duplicates=377 conflicts=0 late=0 starved=10 neutralized=10
+SERVER time=190s tick=11092 active=3 overruns=63 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=35ms tx=76 kbit/s
+INPUT client=0 incarnation=1 generation=99 finalized=11092 applied_sequence=146 accepted=150 duplicates=436 conflicts=0 late=2 starved=6 neutralized=5
+  client=1 addr=139637976842410 RTT=20ms tx=76 kbit/s
+INPUT client=1 incarnation=3 generation=45 finalized=11092 applied_sequence=486 accepted=493 duplicates=1470 conflicts=0 late=0 starved=7 neutralized=7
+  client=2 addr=139637976857637 RTT=41ms tx=77 kbit/s
+INPUT client=2 incarnation=5 generation=149 finalized=11092 applied_sequence=57 accepted=61 duplicates=173 conflicts=0 late=1 starved=5 neutralized=5
+SERVER time=200s tick=11692 active=3 overruns=63 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=46ms tx=76 kbit/s
+INPUT client=0 incarnation=1 generation=99 finalized=11692 applied_sequence=746 accepted=749 duplicates=2227 conflicts=0 late=8 starved=6 neutralized=5
+  client=1 addr=139637976842410 RTT=28ms tx=75 kbit/s
+INPUT client=1 incarnation=3 generation=45 finalized=11692 applied_sequence=1086 accepted=1092 duplicates=3267 conflicts=0 late=0 starved=7 neutralized=7
+  client=2 addr=139637976857637 RTT=38ms tx=76 kbit/s
+INPUT client=2 incarnation=5 generation=150 finalized=11692 applied_sequence=564 accepted=569 duplicates=1699 conflicts=0 late=1 starved=6 neutralized=6
+server tick overrun at 205.08s: dropping 19.9ms of accumulated time
+SERVER time=210s tick=12291 active=3 overruns=64 hashes=125 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=76 kbit/s
+INPUT client=0 incarnation=1 generation=101 finalized=12291 applied_sequence=288 accepted=292 duplicates=864 conflicts=0 late=0 starved=11 neutralized=11
+  client=1 addr=139637976842410 RTT=25ms tx=76 kbit/s
+INPUT client=1 incarnation=3 generation=45 finalized=12291 applied_sequence=1685 accepted=1693 duplicates=5070 conflicts=0 late=0 starved=7 neutralized=7
+  client=2 addr=139637976857637 RTT=23ms tx=76 kbit/s
+INPUT client=2 incarnation=5 generation=150 finalized=12291 applied_sequence=1163 accepted=1168 duplicates=3496 conflicts=0 late=1 starved=6 neutralized=6
+CONNECT client=3
+HASH EXPECT client=3 connection=1 epoch=3 revision=28789 tick=12320 queued=yes
+HELLO OK client=3 role=player
+HASH REPORT client=3 connection=1 epoch=3 revision=28789 hash=12315822354553487111 tick=12402 result=match
+REBUILD START epoch=4 tick=12606
+SERVER time=220s tick=12891 active=4 overruns=64 hashes=126 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=79 kbit/s
+INPUT client=0 incarnation=1 generation=102 finalized=12891 applied_sequence=420 accepted=425 duplicates=1266 conflicts=0 late=0 starved=5 neutralized=5
+  client=1 addr=139637976842410 RTT=29ms tx=78 kbit/s
+INPUT client=1 incarnation=3 generation=46 finalized=12891 applied_sequence=577 accepted=581 duplicates=1736 conflicts=0 late=0 starved=5 neutralized=5
+  client=2 addr=139637976857637 RTT=22ms tx=78 kbit/s
+INPUT client=2 incarnation=5 generation=151 finalized=12891 applied_sequence=587 accepted=592 duplicates=1767 conflicts=0 late=0 starved=5 neutralized=5
+  client=3 addr=139637976858418 RTT=33ms tx=600 kbit/s
+INPUT client=3 incarnation=6 generation=4 finalized=12891 applied_sequence=60 accepted=67 duplicates=192 conflicts=0 late=0 starved=7 neutralized=7
+HASH EXPECT client=0 connection=1 epoch=3 revision=28837 tick=13062 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=28837 tick=13062 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=28837 tick=13062 queued=yes
+HASH EXPECT client=3 connection=1 epoch=3 revision=28837 tick=13062 queued=yes
+server tick overrun at 223.02s: dropping 85.9ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=3 revision=28837 hash=17870560406085238010 tick=13079 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=28837 hash=17870560406085238010 tick=13080 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=28837 hash=17870560406085238010 tick=13080 result=match
+HASH REPORT client=3 connection=1 epoch=3 revision=28837 hash=17870560406085238010 tick=13081 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=29041 tick=13443 queued=yes
+HASH EXPECT client=1 connection=2 epoch=3 revision=29041 tick=13443 queued=yes
+HASH EXPECT client=2 connection=2 epoch=3 revision=29041 tick=13443 queued=yes
+HASH EXPECT client=3 connection=1 epoch=3 revision=29041 tick=13443 queued=yes
+server tick overrun at 229.43s: dropping 68.8ms of accumulated time
+HASH REPORT client=3 connection=1 epoch=3 revision=29041 hash=254012081391488511 tick=13460 result=match
+HASH REPORT client=2 connection=2 epoch=3 revision=29041 hash=254012081391488511 tick=13461 result=match
+HASH REPORT client=1 connection=2 epoch=3 revision=29041 hash=254012081391488511 tick=13461 result=match
+HASH REPORT client=0 connection=1 epoch=3 revision=29041 hash=254012081391488511 tick=13462 result=match
+SERVER time=230s tick=13482 active=4 overruns=66 hashes=134 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=42ms tx=103 kbit/s
+INPUT client=0 incarnation=1 generation=106 finalized=13482 applied_sequence=6 accepted=19 duplicates=48 conflicts=0 late=0 starved=13 neutralized=13
+  client=1 addr=139637976842410 RTT=38ms tx=96 kbit/s
+INPUT client=1 incarnation=3 generation=49 finalized=13482 applied_sequence=16 accepted=19 duplicates=44 conflicts=0 late=3 starved=3 neutralized=3
+  client=2 addr=139637976857637 RTT=28ms tx=96 kbit/s
+INPUT client=2 incarnation=5 generation=154 finalized=13482 applied_sequence=7 accepted=20 duplicates=48 conflicts=0 late=0 starved=12 neutralized=12
+  client=3 addr=139637976858418 RTT=35ms tx=99 kbit/s
+INPUT client=3 incarnation=6 generation=8 finalized=13482 applied_sequence=16 accepted=27 duplicates=72 conflicts=0 late=0 starved=10 neutralized=10
+SERVER time=240s tick=14082 active=4 overruns=66 hashes=134 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=81 kbit/s
+INPUT client=0 incarnation=1 generation=107 finalized=14082 applied_sequence=547 accepted=560 duplicates=1668 conflicts=0 late=0 starved=14 neutralized=14
+  client=1 addr=139637976842410 RTT=28ms tx=80 kbit/s
+INPUT client=1 incarnation=3 generation=49 finalized=14082 applied_sequence=616 accepted=619 duplicates=1638 conflicts=0 late=168 starved=3 neutralized=3
+  client=2 addr=139637976857637 RTT=28ms tx=80 kbit/s
+INPUT client=2 incarnation=5 generation=155 finalized=14082 applied_sequence=584 accepted=587 duplicates=1656 conflicts=0 late=97 starved=4 neutralized=4
+  client=3 addr=139637976858418 RTT=32ms tx=81 kbit/s
+INPUT client=3 incarnation=6 generation=8 finalized=14082 applied_sequence=616 accepted=627 duplicates=1872 conflicts=0 late=0 starved=10 neutralized=10
+REBUILD COMMIT epoch=4 tick=14603 build_ms=33448.171
+HASH EXPECT client=0 connection=1 epoch=4 revision=27714 tick=14604 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=27714 tick=14604 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=27714 tick=14604 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=27714 tick=14604 queued=yes
+HASH EXPECT client=0 connection=1 epoch=4 revision=27715 tick=14607 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=27715 tick=14607 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=27715 tick=14607 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=27715 tick=14607 queued=yes
+server tick overrun at 248.82s: dropping 39.4ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=4 revision=27722 tick=14610 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=27722 tick=14610 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=27722 tick=14610 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=27722 tick=14610 queued=yes
+server tick overrun at 248.93s: dropping 25.6ms of accumulated time
+server tick overrun at 249.04s: dropping 25.5ms of accumulated time
+SERVER time=250s tick=14677 active=4 overruns=69 hashes=134 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=21ms tx=616 kbit/s
+INPUT client=0 incarnation=1 generation=108 finalized=14603 applied_sequence=213 accepted=223 duplicates=662 conflicts=0 late=0 starved=11 neutralized=11
+  client=1 addr=139637976842410 RTT=43ms tx=619 kbit/s
+INPUT client=1 incarnation=3 generation=49 finalized=14603 applied_sequence=1137 accepted=1140 duplicates=3103 conflicts=0 late=266 starved=3 neutralized=3
+  client=2 addr=139637976857637 RTT=31ms tx=608 kbit/s
+INPUT client=2 incarnation=5 generation=155 finalized=14603 applied_sequence=1105 accepted=1108 duplicates=2934 conflicts=0 late=360 starved=4 neutralized=4
+  client=3 addr=139637976858418 RTT=31ms tx=621 kbit/s
+INPUT client=3 incarnation=6 generation=9 finalized=14603 applied_sequence=493 accepted=501 duplicates=1494 conflicts=0 late=0 starved=7 neutralized=7
+HASH REPORT client=2 connection=2 epoch=4 revision=27714 hash=18230339340028511594 tick=14679 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=27714 hash=18230339340028511594 tick=14682 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=27715 hash=6989922183058773673 tick=14682 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=27722 hash=13580078285535577249 tick=14682 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=27715 hash=6989922183058773673 tick=14685 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=27722 hash=13580078285535577249 tick=14685 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=27729 tick=14700 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=27729 tick=14700 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=27729 tick=14700 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=27729 tick=14700 queued=yes
+server tick overrun at 250.60s: dropping 128.1ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=4 revision=27714 hash=18230339340028511594 tick=14711 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=27714 hash=18230339340028511594 tick=14711 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=27729 hash=6267311235668974389 tick=14715 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=27715 hash=6989922183058773673 tick=14719 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=27722 hash=13580078285535577249 tick=14719 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=27729 hash=6267311235668974389 tick=14727 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=27715 hash=6989922183058773673 tick=14729 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=27722 hash=13580078285535577249 tick=14729 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=27729 hash=6267311235668974389 tick=14729 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=27729 hash=6267311235668974389 tick=14735 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=28003 tick=15126 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=28003 tick=15126 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=28003 tick=15126 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=28003 tick=15126 queued=yes
+server tick overrun at 257.77s: dropping 68.6ms of accumulated time
+HASH REPORT client=2 connection=2 epoch=4 revision=28003 hash=2353225574480526459 tick=15141 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=28003 hash=2353225574480526459 tick=15141 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=28003 hash=2353225574480526459 tick=15143 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=28003 hash=2353225574480526459 tick=15143 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=28008 tick=15153 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=28008 tick=15153 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=28008 tick=15153 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=28008 tick=15153 queued=yes
+server tick overrun at 258.24s: dropping 19.2ms of accumulated time
+HASH REPORT client=1 connection=2 epoch=4 revision=28008 hash=14683305072033890412 tick=15166 result=match
+HASH EXPECT client=0 connection=1 epoch=4 revision=28014 tick=15168 queued=yes
+HASH EXPECT client=1 connection=2 epoch=4 revision=28014 tick=15168 queued=yes
+HASH EXPECT client=2 connection=2 epoch=4 revision=28014 tick=15168 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=28014 tick=15168 queued=yes
+HASH REPORT client=3 connection=1 epoch=4 revision=28008 hash=14683305072033890412 tick=15168 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=28008 hash=14683305072033890412 tick=15168 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=28008 hash=14683305072033890412 tick=15168 result=match
+server tick overrun at 258.51s: dropping 17.3ms of accumulated time
+HASH REPORT client=3 connection=1 epoch=4 revision=28014 hash=17693340101618210862 tick=15187 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=28014 hash=17693340101618210862 tick=15190 result=match
+HASH REPORT client=2 connection=2 epoch=4 revision=28014 hash=17693340101618210862 tick=15194 result=match
+HASH REPORT client=1 connection=2 epoch=4 revision=28014 hash=17693340101618210862 tick=15194 result=match
+SERVER time=260s tick=15262 active=4 overruns=73 hashes=162 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=130 kbit/s
+INPUT client=0 incarnation=1 generation=121 finalized=15262 applied_sequence=65 accepted=73 duplicates=207 conflicts=0 late=0 starved=8 neutralized=8
+  client=1 addr=139637976842410 RTT=25ms tx=112 kbit/s
+INPUT client=1 incarnation=3 generation=59 finalized=15262 applied_sequence=56 accepted=67 duplicates=189 conflicts=0 late=0 starved=11 neutralized=11
+  client=2 addr=139637976857637 RTT=21ms tx=111 kbit/s
+INPUT client=2 incarnation=5 generation=165 finalized=15262 applied_sequence=58 accepted=67 duplicates=192 conflicts=0 late=0 starved=9 neutralized=9
+  client=3 addr=139637976858418 RTT=33ms tx=139 kbit/s
+INPUT client=3 incarnation=6 generation=19 finalized=15262 applied_sequence=65 accepted=76 duplicates=216 conflicts=0 late=0 starved=12 neutralized=12
+DISCONNECT client=3 reason=Client_Disconnect
+HASH CLOSED client=3 connection=1 tick=15829
+SERVER time=270s tick=15863 active=3 overruns=73 hashes=162 mismatches=0 unrecorded=0
+  client=0 addr=139637976857599 RTT=31ms tx=93 kbit/s
+INPUT client=0 incarnation=1 generation=122 finalized=15863 applied_sequence=395 accepted=401 duplicates=1194 conflicts=0 late=0 starved=6 neutralized=6
+  client=1 addr=139637976842410 RTT=19ms tx=92 kbit/s
+INPUT client=1 incarnation=3 generation=59 finalized=15863 applied_sequence=657 accepted=667 duplicates=1989 conflicts=0 late=0 starved=11 neutralized=11
+  client=2 addr=139637976857637 RTT=21ms tx=92 kbit/s
+INPUT client=2 incarnation=5 generation=166 finalized=15863 applied_sequence=45 accepted=50 duplicates=141 conflicts=0 late=0 starved=5 neutralized=5
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=15895
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=2 tick=15895
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=2 tick=15896
+SERVER host-left shutdown
+SERVER final hashes=162 mismatches=0 unrecorded=0
