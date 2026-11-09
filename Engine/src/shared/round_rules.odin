@@ -110,11 +110,13 @@ round_prepare_tick :: proc(r:^Round_Controller,tick:u64) {
  }
  candidates:[2]Round_Player;count:=0
  for c,i in r.connections {
-  if c.connected && c.ready && !c.explicit_spectator && count<2 {
+  if c.connected && !c.explicit_spectator && count<2 {
    candidates[count]={session_id=c.session_id,generation=c.generation,slot=i};count+=1
   }
  }
- if count==2 {
+ // Reserve the same first two eligible connections used for Waiting bodies.
+ // A faster-loading extra connection must not steal an occupied player slot.
+ if count==2 && r.connections[candidates[0].slot].ready && r.connections[candidates[1].slot].ready {
   r.players=candidates;r.state=.Countdown;r.countdown_tick=tick
   r.start_tick=round_add_sat(tick,ROUND_COUNTDOWN_TICKS)
  }

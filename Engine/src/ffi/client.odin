@@ -9,8 +9,8 @@ import w "core:sys/windows"
 import nc "../netcode"
 import core "../shared"
 
-// Live shared-native polling bridge. M5 scheduled input is being validated;
-// prediction, provenance and round capabilities have separate milestone gates.
+// Live shared-native polling bridge. Each capability's executed acceptance
+// evidence is recorded separately from the ABI's compatibility version.
 OK :: u32(0)
 INVALID_HANDLE :: u32(1)
 BAD_ARGUMENT :: u32(2)

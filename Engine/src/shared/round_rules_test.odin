@@ -115,3 +115,15 @@ round_sandbox_does_not_run_elimination_rules :: proc(test:^t.T) {
  round_prepare_tick(&r,10);round_finish_tick(&r,10,{.Blast,.Blast,.None,.None},10)
  t.expect(test,r.state==.Waiting && r.sessions[0].total_xp==0 && r.bombs_spawned==0)
 }
+
+@(test)
+round_waiting_keeps_the_first_two_player_slots_while_one_baseline_is_loading :: proc(test:^t.T) {
+ r:=round_test_waiting();round_ready(&r,1,2,false)
+ _=round_connect(&r,2,300,3);round_ready(&r,2,3,true)
+ round_prepare_tick(&r,10);t.expect(test,r.state==.Waiting)
+ round_ready(&r,1,2,true);round_prepare_tick(&r,11)
+ t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==200)
+ round_disconnect(&r,1);round_prepare_tick(&r,12);t.expect(test,r.state==.Waiting)
+ round_prepare_tick(&r,13)
+ t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==300)
+}
