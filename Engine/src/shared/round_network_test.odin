@@ -15,6 +15,16 @@ round_test_server :: proc()->Net_Server {
 }
 
 @(test)
+round_explicit_spectators_have_no_gameplay_body_in_either_mode :: proc(test:^t.T) {
+ ns:=round_test_server();defer net_server_destroy(&ns)
+ net_server_join(&ns,2);t.expect(test,round_server_admit(&ns,2,{},true)=="")
+ round_server_sync_bodies(&ns)
+ t.expect(test,!round_server_can_play(&ns,2) && !ns.game.world.players[2].active && ns.game.world.players[0].active && ns.game.world.players[1].active)
+ ns.rounds.mode=.Elimination;_=round_begin(&ns.rounds);round_server_sync_bodies(&ns)
+ t.expect(test,!ns.game.world.players[2].active && round_snapshot(&ns).connections[2].spectator)
+}
+
+@(test)
 round_server_requires_host_and_stages_mode_until_rebuilt :: proc(test:^t.T) {
  ns:=round_test_server();defer net_server_destroy(&ns)
  command:=[3]u8{NET_APP_HOST_COMMAND,NET_HOST_GAME_MODE,u8(Game_Mode.Elimination)}

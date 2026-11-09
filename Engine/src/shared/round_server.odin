@@ -36,7 +36,7 @@ round_server_admit :: proc(ns:^Net_Server,slot:int,credential:Round_Credentials,
 }
 
 round_server_can_play :: proc(ns:^Net_Server,slot:int)->bool {
- if ns.rounds.mode==.Sandbox {return ns.clients[slot].active}
+ if ns.rounds.mode==.Sandbox {return ns.clients[slot].active && !ns.rounds.connections[slot].explicit_spectator}
  r:=&ns.rounds
  if r.state==.Waiting {
   c:=r.connections[slot]

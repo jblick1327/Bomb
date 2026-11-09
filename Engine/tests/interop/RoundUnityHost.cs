@@ -8,6 +8,7 @@ static class RoundUnityHost {
  public static void Run(uint port,double seconds){
   string folder=Environment.GetEnvironmentVariable("BOM_ROUND_SIGNAL_DIR")??throw new Exception("round signal directory required");
   bool Marked(string role,string stage)=>File.Exists(Path.Combine(folder,role+"-"+stage+".signal"));
+  bool draw=Environment.GetEnvironmentVariable("BOM_ROUND_EXPECT_DRAW")=="1";
   var create=new BomCreateInfo{struct_size=(uint)Marshal.SizeOf<BomCreateInfo>(),version=1};ulong handle=0;Ok(BomNative.bom_client_create(ref create,ref handle),"round host create");
   try{
    Ok(BomNative.bom_client_set_prediction(handle,0),"round host prediction");Ok(BomNative.bom_client_set_join_options(handle,1),"round host spectator");
@@ -27,7 +28,7 @@ static class RoundUnityHost {
     if(mode&&round.mode==1&&first==0)first=round.round_id;
     if(first!=0&&round.round_id==first&&round.state==0&&Marked("guest","interrupted"))interrupted=true;
     if(first!=0&&round.round_id==first&&round.state==3&&Marked("primary","finished-"+first)&&Marked("guest","finished-"+first)&&!restarted){
-     if(!interrupted||round.winner==0||round.draw!=0)throw new Exception("first round did not demonstrate countdown interruption and forfeit");
+     if(!interrupted||(draw?(round.winner!=0||round.draw==0):(round.winner==0||round.draw!=0)))throw new Exception("first round did not demonstrate the required countdown interruption and terminal outcome");
      Ok(BomNative.bom_client_host_command(handle,1,0,0),"host restart");restarted=true;
     }
     if(restarted&&round.round_id==first+1&&round.state==3&&Marked("primary","passed")&&Marked("guest","passed")){
