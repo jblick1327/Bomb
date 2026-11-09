@@ -54,7 +54,7 @@ real_request_dispatch_reset_dedup_and_old_epoch_precondition :: proc(test:^t.T) 
 @(test)
 real_request_dispatch_blast_executes_once_and_reports_effect_identity :: proc(test:^t.T) {
  ns,ok:=net_real_create_server("");t.expect(test,ok);if !ok { return };defer net_server_destroy(&ns)
- ns.real_logging=false;ns.real_gate=true;net_server_join(&ns,0)
+ ns.real_logging=false;ns.real_gate=true;net_server_join(&ns,0);ns.clients[0].is_host=true
  payload:nc.Writer;nc.writer_init(&payload,8);defer nc.writer_destroy(&payload)
  nc.write_f32(&payload,-6.4);nc.write_f32(&payload,2.3)
  w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
@@ -65,4 +65,18 @@ real_request_dispatch_blast_executes_once_and_reports_effect_identity :: proc(te
  net_request_server_dispatch(&ns,0,w.data[:]);t.expect(test,ns.clients[0].stats.blasts_applied==1 && ns.clients[0].requests.entries[id%1024].result==result)
  w.data[len(w.data)-1]~=u8(1);net_request_server_dispatch(&ns,0,w.data[:])
  t.expect(test,ns.clients[0].stats.blasts_applied==1 && ns.clients[0].requests.entries[id%1024].result==result)
+}
+
+@(test)
+real_sandbox_guest_blast_is_terminally_rejected_without_world_mutation :: proc(test:^t.T) {
+ ns,ok:=net_real_create_server("");t.expect(test,ok);if !ok {return};defer net_server_destroy(&ns)
+ ns.real_logging=false;ns.real_gate=true;net_server_join(&ns,0)
+ revision:=ns.game.world.scene.revision;epoch:=ns.game.world.scene.epoch
+ payload:nc.Writer;nc.writer_init(&payload,8);defer nc.writer_destroy(&payload);nc.write_f32(&payload,-6.4);nc.write_f32(&payload,2.3)
+ w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
+ test_request_envelope(&w,ns.clients[0].incarnation,epoch,1,REQUEST_BLAST,payload.data[:],0,30)
+ net_request_server_dispatch(&ns,0,w.data[:]);result:=ns.clients[0].requests.entries[1].result
+ net_request_server_dispatch(&ns,0,w.data[:])
+ t.expect(test,result.status==.Rejected && result.reason==1 && ns.clients[0].requests.entries[1].result==result)
+ t.expect(test,ns.game.world.scene.epoch==epoch && ns.game.world.scene.revision==revision && ns.clients[0].stats.blasts_applied==0 && len(ns.pre_events.explosions)==0)
 }

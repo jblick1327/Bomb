@@ -204,7 +204,7 @@ net_server_blast :: proc(ns: ^Net_Server,index: int,b: Net_Blast) {
  recent:=0
  for t in c.blast_ticks { if ns.tick+1-t<NET_BLAST_RATE_TICKS { recent+=1 } }
  reason:=0
- if ns.rounds.mode==.Elimination {reason=4}
+ if ns.rounds.mode==.Elimination || (ns.real_gate && !c.is_host) {reason=4}
  else if !inside { reason=1 } else if recent>=NET_BLAST_RATE_COUNT { reason=2 } else if !sandbox_valid_aim(&w.scene,point) { reason=3 }
  if reason!=0 {
   c.stats.blasts_rejected+=1

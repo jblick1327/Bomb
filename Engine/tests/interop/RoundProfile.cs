@@ -23,6 +23,7 @@ static class RoundProfile {
   public void Command(uint op,uint mode=0)=>Ok(BomNative.bom_client_host_command(Handle,op,mode,0),"host intent "+op);
   public uint CommandStatus(){var result=new BomCommandResult{struct_size=(uint)Marshal.SizeOf<BomCommandResult>(),version=1};Ok(BomNative.bom_client_get_command_result(Handle,ref result),"command result");return result.status;}
   public BomRoundConnection Profile(ulong id)=>Connections.First(c=>c.session_id==id);
+  public bool Rejected(uint kind,uint reason){ulong cursor=0;for(int i=0;i<10;i++){var result=new BomRequestResult{struct_size=(uint)Marshal.SizeOf<BomRequestResult>(),version=1};Ok(BomNative.bom_client_next_request_result(Handle,cursor,ref result),"authority result");if((result.flags&1)==0)break;cursor=result.request_id;if(result.kind==kind&&result.status==2&&result.reason==reason)return true;}return false;}
   public void Dispose(){if(Handle!=0){Ok(BomNative.bom_client_destroy(Handle),"round destroy");Handle=0;}}
  }
  public static void Run(uint port,double seconds){
@@ -30,7 +31,8 @@ static class RoundProfile {
   host.Token=Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"";host.Connect(port);guest.Connect(port);observer.Connect(port);
   int phase=0;double start=Now,at=start;ulong guestId=0,firstTotal=0,secondTotal=0;bool manualRejected=false,manualSent=false,guestRejected=false;ulong firstRound=0;
   while(Now-start<seconds){double now=Now;foreach(var c in new[]{host,guest,observer,late})c.Poll(now);
-   if(phase==0&&host.Baseline&&guest.Baseline&&observer.Baseline&&guest.Round.local_session_id!=0){guestId=guest.Round.local_session_id;guest.Command(5,1);phase=1;}
+   if(phase==0&&host.Baseline&&guest.Baseline&&observer.Baseline&&guest.Round.local_session_id!=0&&now-start>1.5){guestId=guest.Round.local_session_id;Ok(BomNative.bom_client_enqueue_action(guest.Handle,now,0,3),"sandbox guest blast intent");phase=100;}
+   else if(phase==100&&guest.Rejected(1,1)){guest.Command(5,1);phase=1;}
    else if(phase==1&&guest.CommandStatus()==3){guestRejected=true;host.Command(5,1);phase=2;}
    else if(phase==2&&host.Round.mode==1&&host.Round.state==1){firstRound=host.Round.round_id;guest.Disconnect();phase=3;}
    else if(phase==3&&host.Round.state==0){guest.Connect(port);phase=4;}
