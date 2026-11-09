@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 // The polygon shape used when cutting a crater from the ground.
 public enum CraterShape { Circle, Ellipse, Box }
@@ -66,29 +67,37 @@ public sealed class BombDropper : MonoBehaviour
     private float fallAcceleration = 18f;
     [SerializeField, Min(1f), InspectorName("Maximum lifetime (seconds)")]
     private float bombLifetime = 15f;
-    [Header("Collectible item drops")]
-    [SerializeField] private bool enableItemSpawning = true;
-    [SerializeField, Min(1f), InspectorName("Minimum item interval (seconds)")]
-    private float minimumItemInterval = 12f;
-    [SerializeField, Min(1f), InspectorName("Maximum item interval (seconds)")]
-    private float maximumItemInterval = 20f;
-    [SerializeField, Min(0.05f), InspectorName("Item radius (units)")]
-    private float itemRadius = 0.35f;
-    [SerializeField, Min(0.01f), InspectorName("Item visual scale")]
-    private float itemVisualScale = 0.5f;
-    [SerializeField, Min(1f), InspectorName("Item maximum lifetime (seconds)")]
-    private float itemLifetime = 15f;
-    [SerializeField, Range(0f, 1f), InspectorName("Silver coin chance")]
-    private float silverCoinChance = 0.25f;
-    [SerializeField, Range(0f, 1f), InspectorName("Gold coin chance")]
-    private float goldCoinChance = 0.15f;
-    [SerializeField] private UnityEngine.Object coinVisualPrefab;
-    [SerializeField] private UnityEngine.Object starCoinVisualPrefab;
-    [SerializeField] private UnityEngine.Object timeVisualPrefab;
-    [SerializeField] private UnityEngine.Object speedBoostVisualPrefab;
-    [SerializeField] private UnityEngine.Object shieldVisualPrefab;
-    [SerializeField] private UnityEngine.Object bombVisualPrefab;
-    private float itemWaveTimer;
+
+    [Header("Bomb types")]
+    [Tooltip("Chance that each drop is a timed bomb. 0 = all impact, 1 = all timed.")]
+    [SerializeField, Range(0f, 1f)] private float timedBombChance = 0.5f;
+    [Tooltip("Countdown starts on the timed bomb's first solid impact.")]
+    [SerializeField, Min(0.1f), InspectorName("Timed bomb fuse (seconds)")]
+    private float timedBombFuse = 3f;
+
+    [Header("Impact bomb appearance")]
+    [Tooltip("Drag a model asset or prefab from the Project window here. Its meshes, child objects, and materials are kept.")]
+    [SerializeField] private GameObject impactBombModel;
+    [FormerlySerializedAs("bombMeshRotation"), FormerlySerializedAs("impactBombMeshRotation")]
+    [SerializeField] private Vector3 impactBombModelRotation;
+    [Tooltip("The model is centered and fitted to the bomb diameter, then multiplied by this value. Collision size uses Bomb Radius.")]
+    [FormerlySerializedAs("bombMeshScale"), FormerlySerializedAs("impactBombMeshScale")]
+    [SerializeField, Min(0.01f)] private float impactBombModelScale = 1f;
+
+    [Header("Timed bomb appearance")]
+    [Tooltip("Separate model asset or prefab for timed bombs, including its materials. Leave empty to use the impact bomb model and its rotation/scale settings.")]
+    [SerializeField] private GameObject timedBombModel;
+    [FormerlySerializedAs("timedBombMeshRotation")]
+    [SerializeField] private Vector3 timedBombModelRotation;
+    [FormerlySerializedAs("timedBombMeshScale")]
+    [SerializeField, Min(0.01f)] private float timedBombModelScale = 1f;
+
+    [Header("Explosion size by bomb type")]
+    [Tooltip("Multiplier for crater, player damage, destruction, and blast ring radii. 0.8 is 20% smaller than the base radii above.")]
+    [SerializeField, Min(0.05f)] private float impactExplosionScale = 0.8f;
+    [Tooltip("Multiplier for crater, player damage, destruction, and blast ring radii. 1.3 is 30% larger than the base radii above.")]
+    [SerializeField, Min(0.05f)] private float timedExplosionScale = 1.3f;
+
     [SerializeField] private Material bombMaterial;
     [SerializeField] private Material blastMaterial;
     [SerializeField] private Material yardGrassMaterial;
@@ -97,6 +106,20 @@ public sealed class BombDropper : MonoBehaviour
     private float blastDuration = 0.35f;
     [Tooltip("Draw spawn range, crater outline and lethal radius when selected in the Scene view.")]
     [SerializeField] private bool showSizePreviews;
+
+    [Header("Explosion audio")]
+    [Tooltip("Optional sound played at each explosion. Import an audio file and assign its AudioClip here.")]
+    [SerializeField] private AudioClip explosionClip;
+    [SerializeField, Range(0f, 1f)] private float explosionVolume = 1f;
+    [Tooltip("0 = equal volume everywhere; 1 = positional 3D sound.")]
+    [SerializeField, Range(0f, 1f)] private float explosionSpatialBlend = 1f;
+    [SerializeField, Min(0.01f)] private float explosionMinDistance = 5f;
+    [SerializeField, Min(0.01f)] private float explosionMaxDistance = 50f;
+
+    [Header("Timed bomb countdown audio")]
+    [Tooltip("Optional sound that loops from first impact until detonation. Uses the explosion audio's spatial blend and distance settings.")]
+    [SerializeField] private AudioClip countdownClip;
+    [SerializeField, Range(0f, 1f)] private float countdownVolume = 1f;
 
     [SerializeField] private ArenaLayout layout;
     [SerializeField] private ArenaSession session;
@@ -298,6 +321,13 @@ public sealed class BombDropper : MonoBehaviour
 
     public FallingBomb DropBomb()
     {
+        BombType type = Random.value < Mathf.Clamp01(timedBombChance)
+            ? BombType.Timed : BombType.Impact;
+        return DropBomb(type);
+    }
+
+    public FallingBomb DropBomb(BombType type)
+    {
         if (!CanRun || layout == null) return null;
         ResolveGround();
         float leftEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.min.x : layout.LeftEdge;
@@ -305,20 +335,13 @@ public sealed class BombDropper : MonoBehaviour
         float minX = leftEdge + bombRadius + spawnEdgePadding;
         float maxX = rightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
-        GameObject body = SpawnPrefab(bombVisualPrefab, GetTransientRoot(),
-            layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
-            itemVisualScale, "Falling Bomb");
-        if (body == null)
-        {
-            body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            body.name = "Falling Bomb";
-            body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
-            body.transform.SetParent(GetTransientRoot(), true);
-            body.transform.localScale = Vector3.one * bombRadius * 2f;
-            body.GetComponent<Renderer>().sharedMaterial = bombMaterial;
-        }
-
-        SphereCollider collider = PreparePhysicsCollider(body, bombRadius) as SphereCollider;
+        var body = new GameObject();
+        body.name = type == BombType.Timed ? "Timed Bomb" : "Impact Bomb";
+        body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
+        body.transform.SetParent(GetTransientRoot(), true);
+        var collider = body.AddComponent<SphereCollider>();
+        collider.radius = bombRadius;
+        CreateBombVisual(body.transform, type);
         var rigidbody = body.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
@@ -331,9 +354,62 @@ public sealed class BombDropper : MonoBehaviour
             if (rubbleCollider != null) Physics.IgnoreCollision(collider, rubbleCollider);
         }
 
+        if (type == BombType.Timed) CreateCountdownAudio(body);
+
+        var bomb = body.AddComponent<FallingBomb>();
+        bomb.Initialize(this, fallAcceleration, bombLifetime, type, timedBombFuse);
+        DroppedBombCount++;
+        return bomb;
+    }
+
+    private void CreateBombVisual(Transform bomb, BombType type)
+    {
+        bool hasTimedModel = type == BombType.Timed && timedBombModel != null;
+        GameObject modelPrefab = hasTimedModel ? timedBombModel : impactBombModel;
+        Vector3 modelRotation = hasTimedModel ? timedBombModelRotation : impactBombModelRotation;
+        float modelScale = hasTimedModel ? timedBombModelScale : impactBombModelScale;
+        GameObject visual;
+        if (modelPrefab != null)
+        {
+            // A separate visual hierarchy preserves all material assignments and
+            // child transforms while the bomb root owns gameplay physics.
+            visual = new GameObject("Bomb Model");
+            visual.transform.SetParent(bomb, false);
+            GameObject model = Instantiate(modelPrefab, visual.transform, false);
+            foreach (Collider modelCollider in model.GetComponentsInChildren<Collider>(true))
+                modelCollider.enabled = false;
+            foreach (Rigidbody modelBody in model.GetComponentsInChildren<Rigidbody>(true))
+            {
+                modelBody.isKinematic = true;
+                modelBody.detectCollisions = false;
+                Destroy(modelBody);
+            }
+            foreach (Animator animator in model.GetComponentsInChildren<Animator>(true))
+                animator.applyRootMotion = false;
+
+            if (TryGetModelBounds(visual.transform, out Bounds bounds))
+            {
+                float longestSide = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+                float fitScale = bombRadius * 2f * Mathf.Max(0.01f, modelScale) / Mathf.Max(0.0001f, longestSide);
+                Quaternion rotation = Quaternion.Euler(modelRotation);
+                visual.transform.localScale = Vector3.one * fitScale;
+                visual.transform.localRotation = rotation;
+                visual.transform.localPosition = -(rotation * bounds.center) * fitScale;
+            }
+            return;
+        }
+
+        visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        visual.name = "Bomb Mesh";
+        visual.transform.SetParent(bomb, false);
+        visual.transform.localScale = Vector3.one * bombRadius * 2f;
+        visual.GetComponent<Renderer>().sharedMaterial = bombMaterial;
+        visual.GetComponent<Collider>().enabled = false;
+        Destroy(visual.GetComponent<Collider>());
+
         var fuse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         fuse.name = "Fuse";
-        fuse.transform.SetParent(body.transform, false);
+        fuse.transform.SetParent(visual.transform, false);
         fuse.transform.localPosition = new Vector3(0.12f, 0.52f, 0f);
         fuse.transform.localRotation = Quaternion.Euler(0f, 0f, -20f);
         fuse.transform.localScale = new Vector3(0.1f, 0.15f, 0.1f);
@@ -341,20 +417,86 @@ public sealed class BombDropper : MonoBehaviour
         fuse.GetComponent<Collider>().enabled = false;
         Destroy(fuse.GetComponent<Collider>());
         fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
+    }
 
-        var bomb = body.AddComponent<FallingBomb>();
-        bomb.Initialize(this, fallAcceleration, bombLifetime);
-        DroppedBombCount++;
-        return bomb;
+    private static bool TryGetModelBounds(Transform root, out Bounds bounds)
+    {
+        bounds = default;
+        bool found = false;
+        foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+        {
+            if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
+            Bounds worldBounds = renderer.bounds;
+            // Convert all corners: imported models may have rotated children,
+            // nonuniform scales, multiple meshes, and an off-center pivot.
+            for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+            for (int z = -1; z <= 1; z += 2)
+            {
+                Vector3 corner = worldBounds.center + Vector3.Scale(worldBounds.extents, new Vector3(x, y, z));
+                Vector3 local = root.InverseTransformPoint(corner);
+                if (!found)
+                {
+                    bounds = new Bounds(local, Vector3.zero);
+                    found = true;
+                }
+                else bounds.Encapsulate(local);
+            }
+        }
+        return found;
+    }
+
+    private void CreateCountdownAudio(GameObject bomb)
+    {
+        if (countdownClip == null || countdownVolume <= 0f) return;
+        var source = bomb.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = true;
+        source.clip = countdownClip;
+        source.volume = Mathf.Clamp01(countdownVolume);
+        source.spatialBlend = Mathf.Clamp01(explosionSpatialBlend);
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.dopplerLevel = 0f;
+        source.minDistance = Mathf.Max(0.01f, explosionMinDistance);
+        source.maxDistance = Mathf.Max(source.minDistance + 0.01f, explosionMaxDistance);
+    }
+
+    private void PlayExplosionSound(Vector3 position)
+    {
+        if (explosionClip == null || explosionVolume <= 0f) return;
+        // Independent of the bomb and round effects, so a lethal explosion or
+        // round restart cannot cut the clip off when those objects are cleared.
+        var sound = new GameObject("Explosion Sound");
+        sound.transform.position = position;
+        var source = sound.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.clip = explosionClip;
+        source.volume = Mathf.Clamp01(explosionVolume);
+        source.spatialBlend = Mathf.Clamp01(explosionSpatialBlend);
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = Mathf.Max(0.01f, explosionMinDistance);
+        source.maxDistance = Mathf.Max(source.minDistance + 0.01f, explosionMaxDistance);
+        source.Play();
+        Destroy(sound, explosionClip.length);
     }
 
     public void Explode(Vector2 center)
     {
+        Explode(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
+    }
+
+    public void Explode(Vector3 position, BombType type = BombType.Impact)
+    {
         if (!CanRun) return;
+        Vector2 center = new Vector2(position.x, position.y);
+        float sizeScale = GetExplosionScale(type);
+        float blastLethalRadius = lethalRadius * sizeScale;
+        PlayExplosionSound(position);
         ResolveGround();
         if (enableCrater)
         {
-            Vector2[] outline = CreateCraterOutline(center);
+            Vector2[] outline = CreateCraterOutline(center, sizeScale);
             GameObject grassObject = GameObject.Find("Grass_Mesh");
             DestructibleGround grass = grassObject != null ? grassObject.GetComponent<DestructibleGround>() : null;
             if (ground != null && ground.gameObject != grassObject
@@ -362,29 +504,28 @@ public sealed class BombDropper : MonoBehaviour
                 ground.Carve(outline);
             if (grass != null && BlastOutlineTouchesSurface(outline, grass.GetComponent<Renderer>()))
                 grass.Carve(outline);
-            if (gameplayGround != null) gameplayGround.ApplyCrater(center, craterRadius);
+            if (gameplayGround != null) gameplayGround.ApplyCrater(center, craterRadius * sizeScale);
         }
-        DestroyDebrisInBlast(center);
-        AffectBlastReceivers(center);
-        if (enableRubble) SpawnRubble(center);
+        DestroyDebrisInBlast(center, outerShatterRadius * sizeScale);
+        AffectBlastReceivers(center, sizeScale);
+        if (enableRubble) SpawnRubble(center, sizeScale);
         if (session != null)
         {
             List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
             foreach (ArenaPlayerController target in session.Players)
             {
                 if (target == null || !target.gameObject.activeInHierarchy) continue;
-                if (target.IsInvincible) continue;
-                if (target.DistanceToBody(center) > lethalRadius) continue;
-                hitPlayers.Add(target);
+                if (target.DistanceToBody(center) > blastLethalRadius) continue;
+                session.KillPlayer(target);
+                break; // The first death ends the round.
             }
             session.KillPlayers(hitPlayers);
         }
         else if (player != null && player.gameObject.activeInHierarchy
-                 && !player.IsInvincible
-                 && player.DistanceToBody(center) <= lethalRadius)
+                 && player.DistanceToBody(center) <= blastLethalRadius)
             player.gameObject.SetActive(false);
 
-        ShowBlast(center);
+        ShowBlast(center, blastLethalRadius);
     }
 
     // A 2D outline can carve every XY layer it crosses. Only apply it to a
@@ -403,9 +544,9 @@ public sealed class BombDropper : MonoBehaviour
         return minY <= surfaceY && maxY >= surfaceY;
     }
 
-    private void DestroyDebrisInBlast(Vector2 center)
+    private void DestroyDebrisInBlast(Vector2 center, float radius)
     {
-        DestructibleObject.DestroyFragmentsWithin(center, outerShatterRadius);
+        DestructibleObject.DestroyFragmentsWithin(center, radius);
         foreach (GroundRubble rubble in FindObjectsByType<GroundRubble>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             Collider collider = rubble.GetComponent<Collider>();
@@ -414,13 +555,13 @@ public sealed class BombDropper : MonoBehaviour
             Vector2 closest = new Vector2(
                 Mathf.Clamp(center.x, bounds.min.x, bounds.max.x),
                 Mathf.Clamp(center.y, bounds.min.y, bounds.max.y));
-            if (Vector2.Distance(center, closest) > outerShatterRadius) continue;
+            if (Vector2.Distance(center, closest) > radius) continue;
             rubble.gameObject.SetActive(false);
             Destroy(rubble.gameObject);
         }
     }
 
-    private void ShowBlast(Vector2 center)
+    private void ShowBlast(Vector2 center, float radius)
     {
         var visual = new GameObject("Blast");
         visual.transform.SetParent(GetTransientRoot(), true);
@@ -441,7 +582,7 @@ public sealed class BombDropper : MonoBehaviour
         Vector3 forward = Camera.main != null ? Camera.main.transform.forward : Vector3.forward;
         float frontDistance = ((layout != null ? layout.Depth : 0f) * 0.5f + 0.1f) / Mathf.Max(Mathf.Abs(forward.z), 0.1f);
         visual.transform.position = origin - forward * frontDistance;
-        visual.AddComponent<BombBlastVisual>().Initialize(lethalRadius, blastDuration);
+        visual.AddComponent<BombBlastVisual>().Initialize(radius, blastDuration);
     }
 
     // Resolve both the visual terrain and the collider used for bomb placement and landing.
@@ -555,11 +696,11 @@ public sealed class BombDropper : MonoBehaviour
     }
 
     // Use a broad phase query, then deduplicate receiver components found on overlapping colliders.
-    private void AffectBlastReceivers(Vector2 center)
+    private void AffectBlastReceivers(Vector2 center, float sizeScale)
     {
         Vector3 queryCenter = new Vector3(center.x, center.y, layout != null ? layout.Origin.z : transform.position.z);
         float halfDepth = layout != null ? layout.Depth * 0.5f + 0.5f : 10f;
-        float receiverRadius = Mathf.Max(lethalRadius, outerShatterRadius);
+        float receiverRadius = Mathf.Max(lethalRadius, outerShatterRadius) * sizeScale;
         Collider[] colliders = Physics.OverlapBox(queryCenter, new Vector3(receiverRadius, receiverRadius, halfDepth));
         var receivers = new HashSet<IBlastReceiver>();
         DestructibleMultiMesh[] multiMeshes = FindObjectsByType<DestructibleMultiMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -585,7 +726,7 @@ public sealed class BombDropper : MonoBehaviour
             }
         }
 
-        var blast = new BlastPayload(center, innerDestructionRadius, outerShatterRadius, shatterImpulse);
+        var blast = new BlastPayload(center, innerDestructionRadius * sizeScale, outerShatterRadius * sizeScale, shatterImpulse);
         foreach (IBlastReceiver receiver in receivers)
             receiver.ReceiveBlast(blast);
     }
@@ -602,7 +743,7 @@ public sealed class BombDropper : MonoBehaviour
         return grass && ground;
     }
 
-    private void SpawnRubble(Vector2 center)
+    private void SpawnRubble(Vector2 center, float sizeScale)
     {
         if (rubblePieces <= 0) return;
         Material material = FindTerrainMaterial();
@@ -610,7 +751,7 @@ public sealed class BombDropper : MonoBehaviour
         for (int index = 0; index < rubblePieces; index++)
         {
             float angle = index * Mathf.PI * 2f / rubblePieces + Random.Range(-0.25f, 0.25f);
-            float distance = Random.Range(Mathf.Max(innerDestructionRadius, craterRadius) * 0.8f, outerShatterRadius);
+            float distance = Random.Range(Mathf.Max(innerDestructionRadius, craterRadius) * 0.8f, outerShatterRadius) * sizeScale;
             Vector2 position = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
             Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * 0.6f).normalized;
             Vector2 impulse = direction * Random.Range(rubbleImpulse * 0.7f, rubbleImpulse * 1.3f) + Vector2.up * 0.5f;
@@ -659,7 +800,14 @@ public sealed class BombDropper : MonoBehaviour
     }
 
     // Return a counterclockwise outline in world XY so the terrain clipper can subtract it.
-    public Vector2[] CreateCraterOutline(Vector2 center)
+    public float GetExplosionScale(BombType type)
+    {
+        return Mathf.Max(0.05f, type == BombType.Timed ? timedExplosionScale : impactExplosionScale);
+    }
+
+    public Vector2[] CreateCraterOutline(Vector2 center) => CreateCraterOutline(center, 1f);
+
+    private Vector2[] CreateCraterOutline(Vector2 center, float sizeScale)
     {
         int count = craterShape == CraterShape.Box ? 4 : Mathf.Clamp(craterSegments, 8, 96);
         var outline = new Vector2[count];
@@ -676,7 +824,7 @@ public sealed class BombDropper : MonoBehaviour
                 float angle = i * Mathf.PI * 2f / count;
                 point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
             }
-            outline[i] = center + (Vector2)(rotation * (Vector3)(Vector2.Scale(point, scale) * Mathf.Max(0.05f, craterRadius)));
+            outline[i] = center + (Vector2)(rotation * (Vector3)(Vector2.Scale(point, scale) * Mathf.Max(0.05f, craterRadius) * sizeScale));
         }
         return outline;
     }
@@ -691,17 +839,24 @@ public sealed class BombDropper : MonoBehaviour
         float y = layout.CameraBounds.max.y + dropHeightAboveArena;
         Gizmos.DrawLine(new Vector3(minX, y, origin.z), new Vector3(maxX, y, origin.z));
         Vector2 center = (Vector2)origin + Vector2.up * layout.GroundTop;
-        Vector2[] outline = CreateCraterOutline(center);
-        Gizmos.color = Color.cyan;
+        DrawBlastPreview(center, origin.z, GetExplosionScale(BombType.Impact), Color.cyan, Color.red);
+        DrawBlastPreview(center, origin.z, GetExplosionScale(BombType.Timed), Color.blue, Color.yellow);
+    }
+
+    private void DrawBlastPreview(Vector2 center, float z, float sizeScale, Color craterColor, Color blastColor)
+    {
+        Vector2[] outline = CreateCraterOutline(center, sizeScale);
+        Gizmos.color = craterColor;
         for (int i = 0; i < outline.Length; i++)
-            Gizmos.DrawLine(new Vector3(outline[i].x, outline[i].y, origin.z), new Vector3(outline[(i + 1) % outline.Length].x, outline[(i + 1) % outline.Length].y, origin.z));
-        Gizmos.color = Color.red;
+            Gizmos.DrawLine(new Vector3(outline[i].x, outline[i].y, z), new Vector3(outline[(i + 1) % outline.Length].x, outline[(i + 1) % outline.Length].y, z));
+        Gizmos.color = blastColor;
+        float radius = lethalRadius * sizeScale;
         for (int i = 0; i < 64; i++)
         {
             float a = i * Mathf.PI * 2f / 64f;
             float b = (i + 1) * Mathf.PI * 2f / 64f;
-            Gizmos.DrawLine(new Vector3(center.x + Mathf.Cos(a) * lethalRadius, center.y + Mathf.Sin(a) * lethalRadius, origin.z),
-                new Vector3(center.x + Mathf.Cos(b) * lethalRadius, center.y + Mathf.Sin(b) * lethalRadius, origin.z));
+            Gizmos.DrawLine(new Vector3(center.x + Mathf.Cos(a) * radius, center.y + Mathf.Sin(a) * radius, z),
+                new Vector3(center.x + Mathf.Cos(b) * radius, center.y + Mathf.Sin(b) * radius, z));
         }
     }
 }
