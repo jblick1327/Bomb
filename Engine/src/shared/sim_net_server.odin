@@ -408,7 +408,7 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
  post:Tick_Events
  if ns.rounds.mode==.Sandbox || ns.rounds.state==.Playing {post=world_tick(w,commands,1.0/60.0)}
  round_server_finish(ns,post)
- append(&ns.world_ms,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))
+ net_server_record_timing(&ns.world_ms,ns.tick,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))
  ns.tick+=1
  round_server_broadcast(ns)
  // Structure and events, reliable, to every client.
@@ -450,5 +450,14 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
   }
  }
  nc.server_update(&ns.srv,now)
- append(&ns.tick_ms,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
+ net_server_record_timing(&ns.tick_ms,ns.tick-1,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
+}
+
+// Diagnostics must not grow for the entire lifetime of a dedicated server.
+// Keep the latest 65,536 complete samples in a bounded ring, independently of
+// physics/scheduling. The exported report records the cursor and total count.
+NET_SERVER_TIMING_CAPACITY :: 65536
+net_server_record_timing :: proc(samples:^[dynamic]f64,tick:u64,milliseconds:f64) {
+ if len(samples^)<NET_SERVER_TIMING_CAPACITY {append(samples,milliseconds)}
+ else {samples^[tick%NET_SERVER_TIMING_CAPACITY]=milliseconds}
 }

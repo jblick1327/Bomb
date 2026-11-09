@@ -75,7 +75,7 @@ net_real_create_server :: proc(layout_path: string) -> (ns: Net_Server,ok: bool)
  return ns,true
 }
 
-net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "") -> bool {
+net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "",metrics_path:string="") -> bool {
  sock:nc.Socket
  if !nc.socket_open(&sock,port,{127,0,0,1}) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
  defer nc.socket_close(&sock)
@@ -137,6 +137,12 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
   }
   time.sleep(time.Millisecond)
  }
+ if metrics_path!="" {
+  report:=Net_Real_Metrics{ticks=ns.tick,overruns=u64(overrun_count),hash_checks=u64(ns.real_hash_checks),hash_mismatches=u64(ns.real_hash_mismatch),hash_unrecorded=u64(ns.real_hash_unrecorded),sample_capacity=NET_SERVER_TIMING_CAPACITY,first_sample_index=0,tick_ms=ns.tick_ms[:],world_ms=ns.world_ms[:]}
+  if ns.tick>NET_SERVER_TIMING_CAPACITY {report.first_sample_index=ns.tick%NET_SERVER_TIMING_CAPACITY}
+  bytes,encoded:=exact_json_encode(report,true);defer delete(bytes)
+  if !encoded||os.write_entire_file(metrics_path,bytes)!=nil {fmt.eprintln("Cannot write server metrics:",metrics_path);return false}
+ }
  fmt.printf("SERVER final hashes=%d mismatches=%d unrecorded=%d\n",ns.real_hash_checks,ns.real_hash_mismatch,ns.real_hash_unrecorded)
  return ns.real_hash_mismatch==0 && ns.real_hash_unrecorded==0
 }
@@ -150,6 +156,7 @@ net_real_cli_server :: proc(args: []string) -> bool {
  layout:=""
  seconds:=f64(0)
  host_token:=""
+ metrics_path:=""
  i:=0
  for i<len(args) {
   switch args[i] {
@@ -161,6 +168,8 @@ net_real_cli_server :: proc(args: []string) -> bool {
   case "--seconds":
    if i+1>=len(args) { return false }
    n,ok:=strconv.parse_int(args[i+1]);if !ok || n<1 { return false };seconds=f64(n);i+=2
+  case "--metrics":
+   if i+1>=len(args)||len(args[i+1])==0 {return false};metrics_path=args[i+1];i+=2
   case "--host-token":
    if i+1>=len(args) || len(args[i+1])<16 || len(args[i+1])>NET_APP_MAX_TOKEN {
     fmt.eprintln("--host-token requires a random secret of 16..128 characters");return false
@@ -169,5 +178,11 @@ net_real_cli_server :: proc(args: []string) -> bool {
   case: fmt.eprintln("Unknown --server option:",args[i]);return false
   }
  }
- return net_real_run_server(port,layout,seconds,host_token)
+ return net_real_run_server(port,layout,seconds,host_token,metrics_path)
+}
+
+Net_Real_Metrics :: struct {
+ ticks:u64,overruns:u64,hash_checks:u64,hash_mismatches:u64,hash_unrecorded:u64,
+ sample_capacity:u64,first_sample_index:u64,
+ tick_ms:[]f64,world_ms:[]f64,
 }
