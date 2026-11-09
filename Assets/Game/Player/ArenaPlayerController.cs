@@ -1,18 +1,30 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+using System;
+using UnityEngine.Rendering;
 
 // Handles side-view player movement, jumping, grounding, and blast-distance queries.
 [RequireComponent(typeof(CharacterController))]
 [AddComponentMenu("Arena/Player Controller")]
 public sealed class ArenaPlayerController : MonoBehaviour
 {
+    private const float PlayerLabelHeight = 2.15f;
+    private const float PlayerLabelCameraOffset = 3.5f;
+
     [Header("Player")]
-    [SerializeField, Range(1, 2), Tooltip("Player 1 uses A/D and W or Space. Player 2 uses the arrow keys.")]
+    [SerializeField, Range(1, 4), Tooltip("Player 1 uses A/D and W or Space. Player 2 uses the arrow keys. Joined gamepads control their assigned player.")]
     private int playerNumber = 1;
 
     [Header("Movement")]
     [SerializeField, Min(0f), InspectorName("Move speed (units/s)")]
     private float moveSpeed = 7f;
+    [SerializeField, Min(0.01f), InspectorName("Slow speed multiplier")]
+    private float slowSpeedMultiplier = 0.5f;
+    [SerializeField, Min(0.01f), InspectorName("Boost speed multiplier")]
+    private float boostSpeedMultiplier = 1.5f;
+    [SerializeField, Min(0.1f), InspectorName("Collectible effect duration (seconds)")]
+    private float collectibleEffectDuration = 10f;
 
     [Header("Jump")]
     [SerializeField, Min(0f), InspectorName("Jump height (units)")]
@@ -38,26 +50,43 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private bool wasGrounded;
     private Animator animator;
     private ArenaSession session;
+    private MaterialPropertyBlock characterColorProperties;
+    private TextMeshPro playerLabel;
 
     // Used to remember the player's original scale.
     private Vector3 originalScale;
     private float fixedZPosition;
+    private float speedMultiplier = 1f;
+    private float speedEffectRemaining;
+    private float invincibilityRemaining;
 
     public int PlayerNumber => playerNumber;
+    public int Coins { get; private set; }
+    public bool IsInvincible => invincibilityRemaining > 0f;
+    public event Action<int> CoinsChanged;
 
     private void Awake()
     {
         session = FindFirstObjectByType<ArenaSession>();
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
+        characterColorProperties = new MaterialPropertyBlock();
 
         // Save the player's starting scale.
         originalScale = transform.localScale;
         fixedZPosition = transform.position.z;
+        ApplyCharacterColor();
+    }
+
+    private void Start()
+    {
+        CreatePlayerLabel();
     }
 
     private void Update()
     {
+        UpdateCollectibleEffects();
+
         if (session != null && !session.IsPlaying)
         {
             if (animator != null) animator.SetBool("Running", false);
@@ -98,7 +127,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
         verticalSpeed += gravity * Time.deltaTime;
 
         Vector3 velocity = new Vector3(
-            input * moveSpeed,
+            input * moveSpeed * speedMultiplier,
             verticalSpeed,
             0f
         );
@@ -120,6 +149,110 @@ public sealed class ArenaPlayerController : MonoBehaviour
         }
 
         wasGrounded = grounded;
+    }
+
+    private void LateUpdate()
+    {
+        if (playerLabel == null || Camera.main == null)
+            return;
+
+        Vector3 directionToCamera = -Camera.main.transform.forward;
+        playerLabel.transform.position = transform.position
+            + Vector3.up * PlayerLabelHeight
+            + directionToCamera * PlayerLabelCameraOffset;
+        playerLabel.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, Camera.main.transform.up);
+    }
+
+    private void CreatePlayerLabel()
+    {
+        if (playerLabel != null)
+            return;
+
+        GameObject labelObject = new GameObject("Player Label", typeof(TextMeshPro));
+        labelObject.transform.position = transform.position + Vector3.up * PlayerLabelHeight;
+        playerLabel = labelObject.GetComponent<TextMeshPro>();
+        playerLabel.text = "P" + playerNumber;
+        playerLabel.fontSize = 6f;
+        playerLabel.alignment = TextAlignmentOptions.Center;
+        playerLabel.horizontalAlignment = HorizontalAlignmentOptions.Center;
+        playerLabel.verticalAlignment = VerticalAlignmentOptions.Middle;
+        playerLabel.color = Color.white;
+        playerLabel.outlineWidth = 0.2f;
+        playerLabel.outlineColor = Color.black;
+        playerLabel.sortingOrder = 10;
+
+        MeshRenderer labelRenderer = labelObject.GetComponent<MeshRenderer>();
+        labelRenderer.shadowCastingMode = ShadowCastingMode.Off;
+        labelRenderer.receiveShadows = false;
+        labelRenderer.allowOcclusionWhenDynamic = false;
+        Material labelMaterial = labelRenderer.material;
+        if (labelMaterial.HasProperty("_ZTest"))
+            labelMaterial.SetInt("_ZTest", (int)CompareFunction.Always);
+        if (labelMaterial.HasProperty("_ZWrite"))
+            labelMaterial.SetInt("_ZWrite", 0);
+        labelMaterial.renderQueue = 5000;
+    }
+
+    private void OnDestroy()
+    {
+        if (playerLabel != null)
+            Destroy(playerLabel.gameObject);
+    }
+
+    public void ApplyCollectible(CollectibleItemType itemType)
+    {
+        switch (itemType)
+        {
+            case CollectibleItemType.SilverCoin:
+                AddCoins(10);
+                break;
+            case CollectibleItemType.GoldCoin:
+                AddCoins(50);
+                break;
+            case CollectibleItemType.Invincibility:
+                invincibilityRemaining = collectibleEffectDuration;
+                break;
+            case CollectibleItemType.Slow:
+                speedMultiplier = Mathf.Max(0.01f, slowSpeedMultiplier);
+                speedEffectRemaining = collectibleEffectDuration;
+                break;
+            case CollectibleItemType.SpeedBoost:
+                speedMultiplier = Mathf.Max(0.01f, boostSpeedMultiplier);
+                speedEffectRemaining = collectibleEffectDuration;
+                break;
+        }
+    }
+
+    public void ResetCollectibleEffects()
+    {
+        speedMultiplier = 1f;
+        speedEffectRemaining = 0f;
+        invincibilityRemaining = 0f;
+    }
+
+    public void ResetRoundStats()
+    {
+        Coins = 0;
+        CoinsChanged?.Invoke(Coins);
+    }
+
+    private void AddCoins(int amount)
+    {
+        Coins += amount;
+        CoinsChanged?.Invoke(Coins);
+    }
+
+    private void UpdateCollectibleEffects()
+    {
+        if (invincibilityRemaining > 0f)
+            invincibilityRemaining = Mathf.Max(0f, invincibilityRemaining - Time.deltaTime);
+
+        if (speedEffectRemaining <= 0f)
+            return;
+
+        speedEffectRemaining = Mathf.Max(0f, speedEffectRemaining - Time.deltaTime);
+        if (speedEffectRemaining <= 0f)
+            speedMultiplier = 1f;
     }
 
     private void UpdateFacing(float input)
@@ -152,7 +285,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
         float input = 0f;
         Keyboard keyboard = Keyboard.current;
 
-        if (keyboard != null)
+        if (keyboard != null && MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber))
         {
             if (playerNumber == 1)
             {
@@ -162,7 +295,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
                 if (keyboard.dKey.isPressed)
                     input += 1f;
             }
-            else
+            else if (playerNumber == 2)
             {
                 if (keyboard.leftArrowKey.isPressed)
                     input -= 1f;
@@ -189,14 +322,14 @@ public sealed class ArenaPlayerController : MonoBehaviour
         Keyboard keyboard = Keyboard.current;
         bool keyboardJump = false;
 
-        if (keyboard != null)
+        if (keyboard != null && MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber))
         {
             if (playerNumber == 1)
             {
                 keyboardJump = keyboard.spaceKey.wasPressedThisFrame
                                || keyboard.wKey.wasPressedThisFrame;
             }
-            else
+            else if (playerNumber == 2)
             {
                 keyboardJump = keyboard.upArrowKey.wasPressedThisFrame;
             }
@@ -210,15 +343,34 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private Gamepad GetPlayerGamepad()
     {
-        int gamepadIndex = playerNumber - 1;
-
-        if (Gamepad.all.Count > gamepadIndex)
-            return Gamepad.all[gamepadIndex];
-
-        return null;
+        return MatchMenuUI.GetGamepadForPlayer(playerNumber);
     }
 
-    public void SetPlayerNumber(int number) => playerNumber = Mathf.Clamp(number, 1, 2);
+    public void SetPlayerNumber(int number)
+    {
+        playerNumber = Mathf.Clamp(number, 1, 4);
+        if (playerLabel != null)
+            playerLabel.text = "P" + playerNumber;
+        slowSpeedMultiplier = Mathf.Clamp(slowSpeedMultiplier, 0.01f, 1f);
+        boostSpeedMultiplier = Mathf.Max(1f, boostSpeedMultiplier);
+        collectibleEffectDuration = Mathf.Max(0.1f, collectibleEffectDuration);
+        ApplyCharacterColor();
+    }
+
+    private void ApplyCharacterColor()
+    {
+        if (characterColorProperties == null)
+            characterColorProperties = new MaterialPropertyBlock();
+
+        Color color = MatchMenuUI.GetCharacterColorForPlayer(playerNumber);
+        foreach (Renderer targetRenderer in GetComponentsInChildren<Renderer>(true))
+        {
+            targetRenderer.GetPropertyBlock(characterColorProperties);
+            characterColorProperties.SetColor("_BaseColor", color);
+            characterColorProperties.SetColor("_Color", color);
+            targetRenderer.SetPropertyBlock(characterColorProperties);
+        }
+    }
 
     private void OnEnable()
     {
@@ -235,6 +387,16 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        if (hit.collider.GetComponentInParent<EliminationBound>() != null)
+        {
+            session.KillPlayer(this);
+            return;
+        }
+
+        FallingCollectibleItem collectible = hit.collider.GetComponentInParent<FallingCollectibleItem>();
+        if (collectible != null && collectible.TryCollect(this))
+            return;
+
         Rigidbody body = hit.collider.attachedRigidbody;
         if (body == null || hit.collider.GetComponentInParent<GroundRubble>() == null || body.isKinematic) return;
         Vector3 push = new Vector3(hit.moveDirection.x, 0.15f, 0f);
@@ -244,7 +406,10 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private void OnValidate()
     {
         gravity = Mathf.Min(gravity, -0.1f);
-        playerNumber = Mathf.Clamp(playerNumber, 1, 2);
+        playerNumber = Mathf.Clamp(playerNumber, 1, 4);
+        slowSpeedMultiplier = Mathf.Clamp(slowSpeedMultiplier, 0.01f, 1f);
+        boostSpeedMultiplier = Mathf.Max(1f, boostSpeedMultiplier);
+        collectibleEffectDuration = Mathf.Max(0.1f, collectibleEffectDuration);
     }
 
     // Measure distance to the capsule side in XY, accounting for the capsule end caps.

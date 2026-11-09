@@ -52,6 +52,7 @@ public sealed class BombDropper : MonoBehaviour
     private float dropTimer;
     private float roundElapsedTime;
     public int DroppedBombCount { get; private set; }
+    public int DroppedItemCount { get; private set; }
 
     [SerializeField, Min(0.05f), InspectorName("Bomb radius (units)")]
     private float bombRadius = 0.25f;
@@ -65,7 +66,29 @@ public sealed class BombDropper : MonoBehaviour
     private float fallAcceleration = 18f;
     [SerializeField, Min(1f), InspectorName("Maximum lifetime (seconds)")]
     private float bombLifetime = 15f;
-
+    [Header("Collectible item drops")]
+    [SerializeField] private bool enableItemSpawning = true;
+    [SerializeField, Min(1f), InspectorName("Minimum item interval (seconds)")]
+    private float minimumItemInterval = 12f;
+    [SerializeField, Min(1f), InspectorName("Maximum item interval (seconds)")]
+    private float maximumItemInterval = 20f;
+    [SerializeField, Min(0.05f), InspectorName("Item radius (units)")]
+    private float itemRadius = 0.35f;
+    [SerializeField, Min(0.01f), InspectorName("Item visual scale")]
+    private float itemVisualScale = 0.5f;
+    [SerializeField, Min(1f), InspectorName("Item maximum lifetime (seconds)")]
+    private float itemLifetime = 15f;
+    [SerializeField, Range(0f, 1f), InspectorName("Silver coin chance")]
+    private float silverCoinChance = 0.25f;
+    [SerializeField, Range(0f, 1f), InspectorName("Gold coin chance")]
+    private float goldCoinChance = 0.15f;
+    [SerializeField] private UnityEngine.Object coinVisualPrefab;
+    [SerializeField] private UnityEngine.Object starCoinVisualPrefab;
+    [SerializeField] private UnityEngine.Object timeVisualPrefab;
+    [SerializeField] private UnityEngine.Object speedBoostVisualPrefab;
+    [SerializeField] private UnityEngine.Object shieldVisualPrefab;
+    [SerializeField] private UnityEngine.Object bombVisualPrefab;
+    private float itemWaveTimer;
     [SerializeField] private Material bombMaterial;
     [SerializeField] private Material blastMaterial;
     [SerializeField] private Material yardGrassMaterial;
@@ -103,6 +126,7 @@ public sealed class BombDropper : MonoBehaviour
         if (session == null) session = FindFirstObjectByType<ArenaSession>();
         ResolveGround();
         roundElapsedTime = 0f;
+        ResetItemTimer(true);
         ResetDropTimer();
     }
 
@@ -118,6 +142,16 @@ public sealed class BombDropper : MonoBehaviour
 
         dropTimer -= Time.deltaTime;
         if (dropTimer <= 0f && DropBomb() != null) ResetDropTimer();
+
+        if (enableItemSpawning)
+        {
+            itemWaveTimer -= Time.deltaTime;
+            if (itemWaveTimer <= 0f)
+            {
+                SpawnCollectible();
+                ResetItemTimer(false);
+            }
+        }
     }
 
     private void ResetDropTimer()
@@ -136,7 +170,130 @@ public sealed class BombDropper : MonoBehaviour
     {
         roundElapsedTime = 0f;
         DroppedBombCount = 0;
+        DroppedItemCount = 0;
+        ResetItemTimer(true);
         ResetDropTimer();
+    }
+
+    private void ResetItemTimer(bool initial)
+    {
+        float minimum = Mathf.Max(1f, Mathf.Min(minimumItemInterval, maximumItemInterval));
+        float maximum = Mathf.Max(minimum, maximumItemInterval);
+        itemWaveTimer = initial
+            ? Random.Range(3f, Mathf.Min(8f, minimum))
+            : Random.Range(minimum, maximum);
+    }
+
+    public FallingCollectibleItem SpawnCollectible()
+    {
+        if (!CanRun || layout == null)
+            return null;
+
+        ResolveGround();
+        float leftEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.min.x : layout.LeftEdge;
+        float rightEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.max.x : layout.RightEdge;
+        float minX = leftEdge + itemRadius + spawnEdgePadding;
+        float maxX = rightEdge - itemRadius - spawnEdgePadding;
+        float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
+        CollectibleItemType type = PickCollectibleType();
+        GameObject body = SpawnPrefab(GetItemVisualPrefab(type), GetTransientRoot(),
+            layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
+            itemVisualScale, type + " Collectible");
+        if (body == null)
+        {
+            Debug.LogError($"[BombDropper] No prefab assigned for collectible type {type}.", this);
+            return null;
+        }
+
+        Collider collider = PreparePhysicsCollider(body, itemRadius);
+        Rigidbody rigidbody = body.AddComponent<Rigidbody>();
+        rigidbody.useGravity = false;
+        rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+        rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+        if (upperBoundary != null) Physics.IgnoreCollision(collider, upperBoundary);
+
+        body.AddComponent<CollectibleItemTypeHolder>().Type = type;
+        FallingCollectibleItem item = body.AddComponent<FallingCollectibleItem>();
+        item.Initialize(this, fallAcceleration, itemLifetime);
+        DroppedItemCount++;
+        return item;
+    }
+
+    private UnityEngine.Object GetItemVisualPrefab(CollectibleItemType type)
+    {
+        switch (type)
+        {
+            case CollectibleItemType.SilverCoin: return coinVisualPrefab;
+            case CollectibleItemType.GoldCoin: return starCoinVisualPrefab;
+            case CollectibleItemType.Invincibility: return shieldVisualPrefab;
+            case CollectibleItemType.Slow: return timeVisualPrefab;
+            case CollectibleItemType.SpeedBoost: return speedBoostVisualPrefab;
+            default: return null;
+        }
+    }
+
+    private static Collider PreparePhysicsCollider(GameObject body, float radius)
+    {
+        foreach (Collider existing in body.GetComponentsInChildren<Collider>(true))
+            existing.enabled = false;
+
+        SphereCollider collider = body.GetComponent<SphereCollider>();
+        if (collider == null)
+            collider = body.AddComponent<SphereCollider>();
+        collider.enabled = true;
+        collider.isTrigger = false;
+        collider.radius = radius;
+        return collider;
+    }
+
+    private static GameObject SpawnPrefab(UnityEngine.Object prefab, Transform parent, Vector3 position, float scale, string name)
+    {
+        if (prefab == null)
+        {
+            return null;
+        }
+
+        UnityEngine.Object instantiated = UnityEngine.Object.Instantiate(prefab);
+        GameObject instance = instantiated as GameObject;
+        if (instance == null && instantiated is Component component)
+            instance = component.gameObject;
+        if (instance == null)
+        {
+            Debug.LogError($"[BombDropper] Visual asset '{prefab.name}' did not instantiate as a GameObject.", prefab);
+            Destroy(instantiated);
+            return null;
+        }
+        instance.name = name;
+        instance.transform.SetParent(parent, true);
+        instance.transform.position = position;
+        instance.transform.localScale = Vector3.one * scale;
+        foreach (MonoBehaviour visualScript in instance.GetComponentsInChildren<MonoBehaviour>(true))
+            visualScript.enabled = false;
+        return instance;
+    }
+
+    private CollectibleItemType PickCollectibleType()
+    {
+        float roll = Random.value;
+        if (roll < Mathf.Clamp01(silverCoinChance))
+            return CollectibleItemType.SilverCoin;
+        if (roll < Mathf.Clamp01(silverCoinChance + goldCoinChance))
+            return CollectibleItemType.GoldCoin;
+        return (CollectibleItemType)Random.Range((int)CollectibleItemType.Invincibility,
+            (int)CollectibleItemType.SpeedBoost + 1);
+    }
+
+    private static Material CreateItemMaterial(CollectibleItemType type)
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+        Material material = new Material(shader != null ? shader : Shader.Find("Standard"));
+        material.color = type == CollectibleItemType.SilverCoin ? new Color(0.75f, 0.8f, 0.86f)
+            : type == CollectibleItemType.GoldCoin ? new Color(1f, 0.7f, 0.08f)
+            : type == CollectibleItemType.Invincibility ? new Color(0.25f, 0.85f, 1f)
+            : type == CollectibleItemType.Slow ? new Color(0.35f, 0.2f, 0.8f)
+            : new Color(0.2f, 1f, 0.3f);
+        return material;
     }
 
     public FallingBomb DropBomb()
@@ -148,13 +305,20 @@ public sealed class BombDropper : MonoBehaviour
         float minX = leftEdge + bombRadius + spawnEdgePadding;
         float maxX = rightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
-        var body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        body.name = "Falling Bomb";
-        body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
-        body.transform.SetParent(GetTransientRoot(), true);
-        body.transform.localScale = Vector3.one * bombRadius * 2f;
-        body.GetComponent<Renderer>().sharedMaterial = bombMaterial;
-        var collider = body.GetComponent<SphereCollider>();
+        GameObject body = SpawnPrefab(bombVisualPrefab, GetTransientRoot(),
+            layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
+            itemVisualScale, "Falling Bomb");
+        if (body == null)
+        {
+            body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            body.name = "Falling Bomb";
+            body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
+            body.transform.SetParent(GetTransientRoot(), true);
+            body.transform.localScale = Vector3.one * bombRadius * 2f;
+            body.GetComponent<Renderer>().sharedMaterial = bombMaterial;
+        }
+
+        SphereCollider collider = PreparePhysicsCollider(body, bombRadius) as SphereCollider;
         var rigidbody = body.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
@@ -205,15 +369,18 @@ public sealed class BombDropper : MonoBehaviour
         if (enableRubble) SpawnRubble(center);
         if (session != null)
         {
-            foreach (ArenaPlayerController target in new[] { session.Player1, session.Player2 })
+            List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
+            foreach (ArenaPlayerController target in session.Players)
             {
                 if (target == null || !target.gameObject.activeInHierarchy) continue;
+                if (target.IsInvincible) continue;
                 if (target.DistanceToBody(center) > lethalRadius) continue;
-                session.KillPlayer(target);
-                break; // The first death ends the round.
+                hitPlayers.Add(target);
             }
+            session.KillPlayers(hitPlayers);
         }
         else if (player != null && player.gameObject.activeInHierarchy
+                 && !player.IsInvincible
                  && player.DistanceToBody(center) <= lethalRadius)
             player.gameObject.SetActive(false);
 
@@ -333,10 +500,13 @@ public sealed class BombDropper : MonoBehaviour
             if (legacyCollider != null && legacyCollider.enabled && !legacyCollider.isTrigger)
                 gameplayGroundCollider = legacyCollider;
         }
-        if (gameplayGroundCollider == null && groundResolutionFailureReported == false)
+        if (gameplayGroundCollider == null)
         {
-            groundResolutionFailureReported = true;
-            Debug.LogError("[BombDropper] No gameplay ground resolved. YardLevel requires an enabled MeshCollider on Ground_Mesh or ArenaGameplayGround.", this);
+            if (!groundResolutionFailureReported)
+            {
+                groundResolutionFailureReported = true;
+                Debug.LogWarning("[BombDropper] No dedicated gameplay ground found; using tiled terrain collisions.", this);
+            }
         }
     }
 
@@ -377,6 +547,11 @@ public sealed class BombDropper : MonoBehaviour
         ResolveGround();
         if (gameplayGround != null) return collider == gameplayGround.GameplayCollider;
         return collider == gameplayGroundCollider;
+    }
+
+    public bool IsBelowArena(Vector3 position)
+    {
+        return layout != null && position.y < layout.Origin.y + layout.GroundBottom - itemRadius * 2f;
     }
 
     // Use a broad phase query, then deduplicate receiver components found on overlapping colliders.

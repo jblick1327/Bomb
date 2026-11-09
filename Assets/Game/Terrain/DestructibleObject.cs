@@ -167,6 +167,7 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         var vertices = new List<Vector3>();
         var uvs = new List<Vector2>();
         var submeshTriangles = new List<int>[originalMesh.subMeshCount];
+        var cutWalls = new List<CutWall>();
         for (int s = 0; s < submeshTriangles.Length; s++) submeshTriangles[s] = new List<int>();
         Transform meshTransform = rockFilter != null ? rockFilter.transform : transform;
         for (int submesh = 0; submesh < originalMesh.subMeshCount; submesh++)
@@ -192,6 +193,7 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
                 foreach (List<CutVertex> survivingPiece in pieces)
                 {
                     if (survivingPiece.Count < 3) continue;
+                    AddCutWalls(survivingPiece, submesh, cutWalls);
                     int start = vertices.Count;
                     foreach (CutVertex vertex in survivingPiece)
                     {
@@ -207,8 +209,12 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
                 }
             }
         }
+        AddCutWallGeometry(meshTransform, vertices, uvs, submeshTriangles, cutWalls);
         if (generatedMesh == null) generatedMesh = new Mesh { name = "Carved Destructible Object" };
         generatedMesh.Clear();
+        generatedMesh.indexFormat = vertices.Count > 65535
+            ? UnityEngine.Rendering.IndexFormat.UInt32
+            : UnityEngine.Rendering.IndexFormat.UInt16;
         generatedMesh.SetVertices(vertices);
         generatedMesh.SetUVs(0, uvs);
         generatedMesh.subMeshCount = submeshTriangles.Length;
@@ -228,6 +234,98 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
             meshCollider.sharedMesh = generatedMesh;
         }
         else rockCollider.enabled = false;
+    }
+
+    private void AddCutWalls(List<CutVertex> polygon, int submesh, List<CutWall> cutWalls)
+    {
+        for (int edge = 0; edge < polygon.Count; edge++)
+        {
+            CutVertex a = polygon[edge];
+            CutVertex b = polygon[(edge + 1) % polygon.Count];
+            for (int cutterIndex = 0; cutterIndex < meshCutters.Count; cutterIndex++)
+            {
+                List<Vector2> cutter = meshCutters[cutterIndex];
+                for (int cutterEdge = 0; cutterEdge < cutter.Count; cutterEdge++)
+                {
+                    Vector2 cutterA = cutter[cutterEdge];
+                    Vector2 cutterB = cutter[(cutterEdge + 1) % cutter.Count];
+                    if (!IsOnSegment(a.position, cutterA, cutterB)
+                        || !IsOnSegment(b.position, cutterA, cutterB))
+                        continue;
+
+                    Vector2 start = a.position;
+                    Vector2 end = b.position;
+                    if (Vector2.Dot(end - start, cutterB - cutterA) < 0f)
+                    {
+                        Vector2 swap = start;
+                        start = end;
+                        end = swap;
+                    }
+                    AddUniqueCutWall(new CutWall(start, end, submesh), cutWalls);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static bool IsOnSegment(Vector3 point, Vector2 a, Vector2 b)
+    {
+        Vector2 pointXY = point;
+        Vector2 delta = b - a;
+        float lengthSquared = delta.sqrMagnitude;
+        if (lengthSquared < Epsilon * Epsilon) return false;
+        float parameter = Mathf.Clamp01(Vector2.Dot(pointXY - a, delta) / lengthSquared);
+        Vector2 closest = Vector2.Lerp(a, b, parameter);
+        return (pointXY - closest).sqrMagnitude <= 0.0001f;
+    }
+
+    private static void AddUniqueCutWall(CutWall wall, List<CutWall> cutWalls)
+    {
+        if (wall.start == wall.end) return;
+        foreach (CutWall existing in cutWalls)
+        {
+            bool sameDirection = (existing.start - wall.start).sqrMagnitude <= 0.0001f
+                && (existing.end - wall.end).sqrMagnitude <= 0.0001f;
+            bool reverseDirection = (existing.start - wall.end).sqrMagnitude <= 0.0001f
+                && (existing.end - wall.start).sqrMagnitude <= 0.0001f;
+            if ((sameDirection || reverseDirection) && existing.submesh == wall.submesh) return;
+        }
+        cutWalls.Add(wall);
+    }
+
+    private void AddCutWallGeometry(
+        Transform meshTransform,
+        List<Vector3> vertices,
+        List<Vector2> uvs,
+        List<int>[] submeshTriangles,
+        List<CutWall> cutWalls)
+    {
+        float front = originalBounds.min.z;
+        float back = originalBounds.max.z;
+        float depth = Mathf.Max(Epsilon, back - front);
+        foreach (CutWall wall in cutWalls)
+        {
+            int submesh = Mathf.Clamp(wall.submesh, 0, submeshTriangles.Length - 1);
+            int start = vertices.Count;
+            // The cutter is counterclockwise, so this winding points toward
+            // the removed volume rather than back into the surviving mesh.
+            vertices.Add(meshTransform.InverseTransformPoint(new Vector3(wall.end.x, wall.end.y, front)));
+            vertices.Add(meshTransform.InverseTransformPoint(new Vector3(wall.start.x, wall.start.y, front)));
+            vertices.Add(meshTransform.InverseTransformPoint(new Vector3(wall.start.x, wall.start.y, back)));
+            vertices.Add(meshTransform.InverseTransformPoint(new Vector3(wall.end.x, wall.end.y, back)));
+
+            float length = Vector2.Distance(wall.start, wall.end);
+            uvs.Add(new Vector2(0f, 0f));
+            uvs.Add(new Vector2(length, 0f));
+            uvs.Add(new Vector2(length, depth));
+            uvs.Add(new Vector2(0f, depth));
+            submeshTriangles[submesh].Add(start);
+            submeshTriangles[submesh].Add(start + 1);
+            submeshTriangles[submesh].Add(start + 2);
+            submeshTriangles[submesh].Add(start);
+            submeshTriangles[submesh].Add(start + 2);
+            submeshTriangles[submesh].Add(start + 3);
+        }
     }
 
     private static bool IsTooSmall(Mesh mesh, Transform meshTransform)
@@ -255,6 +353,19 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         public Vector3 position;
         public Vector2 uv;
         public CutVertex(Vector3 position, Vector2 uv) { this.position = position; this.uv = uv; }
+    }
+
+    private readonly struct CutWall
+    {
+        public readonly Vector2 start;
+        public readonly Vector2 end;
+        public readonly int submesh;
+        public CutWall(Vector2 start, Vector2 end, int submesh)
+        {
+            this.start = start;
+            this.end = end;
+            this.submesh = submesh;
+        }
     }
 
     private static void SubtractCutter(List<CutVertex> polygon, List<Vector2> cutter, List<List<CutVertex>> output)

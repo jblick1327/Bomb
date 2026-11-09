@@ -40,6 +40,7 @@ public sealed class FallingBomb : MonoBehaviour
         if (isRubble) return;
         exploded = true;
         Vector3 point = collision.contactCount > 0 ? contact.point : transform.position;
+        GameAudio.PlayBombExplosion(point);
         owner.Explode(new Vector2(point.x, point.y));
         Destroy(gameObject);
     }

@@ -150,10 +150,17 @@ public sealed class ArenaGameplayGround : MonoBehaviour
         }
 
         if (mesh == null) mesh = new Mesh { name = meshName };
+        var uvs = new List<Vector2>(vertices.Count);
+        foreach (Vector3 vertex in vertices)
+        {
+            Vector3 worldVertex = transform.TransformPoint(vertex);
+            uvs.Add(new Vector2(worldVertex.x, worldVertex.y));
+        }
         mesh.Clear();
         mesh.indexFormat = vertices.Count > 65535
             ? UnityEngine.Rendering.IndexFormat.UInt32 : UnityEngine.Rendering.IndexFormat.UInt16;
         mesh.SetVertices(vertices);
+        mesh.SetUVs(0, uvs);
         mesh.SetTriangles(triangles, 0);
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();

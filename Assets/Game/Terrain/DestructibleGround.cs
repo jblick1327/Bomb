@@ -233,6 +233,7 @@ public sealed class DestructibleGround : MonoBehaviour
     private void RebuildMesh()
     {
         var vertices = new List<Vector3>();
+        var uvs = new List<Vector2>();
         var triangles = new List<int>();
         float depth = extrusionDepth > 0f ? extrusionDepth : (useMeshBounds ? meshBoundsDepth : layout.Depth);
         float front = transform.position.z - depth * 0.5f;
@@ -241,8 +242,16 @@ public sealed class DestructibleGround : MonoBehaviour
         foreach (var polygon in pieces)
         {
             int start = vertices.Count;
-            foreach (Vector2 point in polygon) vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, front)));
-            foreach (Vector2 point in polygon) vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, back)));
+            foreach (Vector2 point in polygon)
+            {
+                vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, front)));
+                uvs.Add(point);
+            }
+            foreach (Vector2 point in polygon)
+            {
+                vertices.Add(transform.InverseTransformPoint(new Vector3(point.x, point.y, back)));
+                uvs.Add(point);
+            }
             for (int i = 1; i < polygon.Count - 1; i++)
             {
                 triangles.Add(start); triangles.Add(start + i + 1); triangles.Add(start + i);
@@ -286,6 +295,11 @@ public sealed class DestructibleGround : MonoBehaviour
                     vertices.Add(transform.InverseTransformPoint(new Vector3(b.x, b.y, front)));
                     vertices.Add(transform.InverseTransformPoint(new Vector3(b.x, b.y, back)));
                     vertices.Add(transform.InverseTransformPoint(new Vector3(a.x, a.y, back)));
+                    float length = Vector2.Distance(a, b);
+                    uvs.Add(new Vector2(0f, 0f));
+                    uvs.Add(new Vector2(length, 0f));
+                    uvs.Add(new Vector2(length, depth));
+                    uvs.Add(new Vector2(0f, depth));
                     triangles.Add(edge); triangles.Add(edge + 1); triangles.Add(edge + 2);
                     triangles.Add(edge); triangles.Add(edge + 2); triangles.Add(edge + 3);
                     BoundaryEdgeCount++;
@@ -301,6 +315,7 @@ public sealed class DestructibleGround : MonoBehaviour
         generatedMesh.Clear();
         generatedMesh.indexFormat = vertices.Count > 65535 ? IndexFormat.UInt32 : IndexFormat.UInt16;
         generatedMesh.SetVertices(vertices);
+        generatedMesh.SetUVs(0, uvs);
         generatedMesh.SetTriangles(triangles, 0);
         generatedMesh.RecalculateNormals();
         generatedMesh.RecalculateBounds();

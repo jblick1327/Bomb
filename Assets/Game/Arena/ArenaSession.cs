@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 
 // The two states that control player input and the HUD.
 public enum ArenaRoundState { Playing, Dead }
@@ -11,6 +13,9 @@ public enum ArenaRoundState { Playing, Dead }
 [AddComponentMenu("Arena/Round Session")]
 public sealed class ArenaSession : MonoBehaviour
 {
+    public const int CoinsPerBomb = 10;
+    public const int CoinsPerSecond = 1;
+
     [Header("Scene references")]
     [SerializeField] private ArenaLayout layout;
     [FormerlySerializedAs("player")]
@@ -19,67 +24,142 @@ public sealed class ArenaSession : MonoBehaviour
     [SerializeField, Tooltip("Owns the bombs and effects cleared on death or restart.")]
     private BombDropper bombs;
 
-    [Header("Two Player Settings")]
-    [SerializeField, Tooltip("How far apart the two players spawn from the original player spawn point.")]
+    [Header("Local Multiplayer")]
+    [SerializeField, Tooltip("Spacing between players at the arena spawn point.")]
     private float playerSpawnSpacing = 2f;
+    [SerializeField, Tooltip("Use the first scene player's saved height as the spawn height. Useful for elevated starting platforms.")]
+    private bool useScenePlayerSpawnHeight;
     [SerializeField] private TMP_Text winnerText;
 
     public ArenaRoundState State { get; private set; } = ArenaRoundState.Playing;
     public bool IsPlaying => State == ArenaRoundState.Playing;
     public float TimeSurvived { get; private set; }
     public int BombsDodged => bombs != null ? bombs.DroppedBombCount : 0;
+    public int CoinsCollected { get; private set; }
+    public int BonusCoins { get; private set; }
+    public int TotalCoinsEarned { get; private set; }
     public event Action<ArenaRoundState> StateChanged;
 
     public ArenaPlayerController Player1 => player1;
     public ArenaPlayerController Player2 => player2;
+    public IReadOnlyList<ArenaPlayerController> Players => players;
     public string WinnerMessage { get; private set; } = "";
+    private readonly List<ArenaPlayerController> players = new List<ArenaPlayerController>(4);
+    private float scenePlayerSpawnHeight;
 
     private void Awake()
     {
         if (layout == null) layout = FindFirstObjectByType<ArenaLayout>();
         if (bombs == null) bombs = FindFirstObjectByType<BombDropper>();
-        ArenaPlayerController[] players = FindObjectsByType<ArenaPlayerController>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
-        if (player1 == null && players.Length > 0) player1 = players[0];
-        if (player2 == null || player2 == player1)
+        ArenaPlayerController[] foundPlayers = FindObjectsByType<ArenaPlayerController>(FindObjectsInactive.Include, FindObjectsSortMode.InstanceID);
+        if (IsUsablePlayer(player1)) players.Add(player1);
+        if (IsUsablePlayer(player2) && player2 != player1) players.Add(player2);
+        foreach (ArenaPlayerController candidate in foundPlayers)
         {
-            player2 = null;
-            foreach (ArenaPlayerController candidate in players)
-                if (candidate != player1) { player2 = candidate; break; }
-            if (player2 == null && player1 != null)
-            {
-                player2 = Instantiate(player1, player1.transform.parent);
-                player2.gameObject.name = "Player 2";
-            }
+            if (IsUsablePlayer(candidate) && !players.Contains(candidate))
+                players.Add(candidate);
         }
-        if (player1 != null) player1.SetPlayerNumber(1);
-        if (player2 != null) player2.SetPlayerNumber(2);
+
+        if (players.Count > 0)
+            scenePlayerSpawnHeight = players[0].transform.position.y;
+
+        int desiredPlayerCount = MatchMenuUI.HasConfiguredMatchRoster ? MatchMenuUI.MatchPlayerCount : 2;
+        desiredPlayerCount = Mathf.Clamp(desiredPlayerCount, 1, 4);
+        if (players.Count == 0)
+            Debug.LogError("ArenaSession could not find an enabled arena player.");
+
+        while (players.Count > desiredPlayerCount)
+        {
+            ArenaPlayerController extra = players[players.Count - 1];
+            players.RemoveAt(players.Count - 1);
+            extra.gameObject.SetActive(false);
+        }
+
+        while (players.Count > 0 && players.Count < desiredPlayerCount)
+        {
+            int playerNumber = players.Count + 1;
+            ArenaPlayerController extra = Instantiate(players[0], players[0].transform.parent);
+            extra.gameObject.name = "Player " + playerNumber;
+            players.Add(extra);
+        }
+
+        player1 = players.Count > 0 ? players[0] : null;
+        player2 = players.Count > 1 ? players[1] : null;
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].SetPlayerNumber(i + 1);
+            players[i].gameObject.name = "Player " + (i + 1);
+        }
+    }
+
+    private bool IsUsablePlayer(ArenaPlayerController candidate)
+    {
+        // Players can be saved inactive in the scene; RestartRound activates them after positioning.
+        if (candidate == null || !candidate.enabled)
+            return false;
+        CharacterController controller = candidate.GetComponent<CharacterController>();
+        return controller != null;
     }
 
     private void Start()
     {
-        // The scene's saved transform can become stale when imported terrain bounds change.
-        // Place the capsules against the measured grass surface on every fresh launch.
+        // Spawn from the level layout, with an optional saved height for raised levels.
         RestartRound();
+        GameAudio.PlayWhistle();
     }
 
     private void Update()
     {
-        if (IsPlaying) TimeSurvived += Time.deltaTime;
+        if (IsPlaying)
+            TimeSurvived += Time.deltaTime;
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) RestartRound();
     }
 
     public void KillPlayer(ArenaPlayerController deadPlayer)
     {
-        if (!IsPlaying || deadPlayer == null || (deadPlayer != player1 && deadPlayer != player2)) return;
+        KillPlayers(new[] { deadPlayer });
+    }
+
+    public void KillPlayers(IEnumerable<ArenaPlayerController> deadPlayers)
+    {
+        if (!IsPlaying || deadPlayers == null) return;
+        bool anyPlayerDied = false;
+        foreach (ArenaPlayerController deadPlayer in deadPlayers)
+        {
+            if (deadPlayer == null || !players.Contains(deadPlayer) || !deadPlayer.gameObject.activeSelf)
+                continue;
+            deadPlayer.gameObject.SetActive(false);
+            anyPlayerDied = true;
+        }
+        if (!anyPlayerDied) return;
+
+        ArenaPlayerController winner = null;
+        int aliveCount = 0;
+        foreach (ArenaPlayerController player in players)
+        {
+            if (player != null && player.gameObject.activeSelf)
+            {
+                winner = player;
+                aliveCount++;
+            }
+        }
+        if (aliveCount > 1)
+            return;
 
         State = ArenaRoundState.Dead;
-
-        deadPlayer.gameObject.SetActive(false);
         if (bombs != null) bombs.ClearTransientObjects();
 
-        ArenaPlayerController winner = deadPlayer == player1 ? player2 : player1;
+        WinnerMessage = aliveCount == 1 ? $"Player {winner.PlayerNumber} Wins!" : "Game Over";
+        CoinsCollected = 0;
+        foreach (ArenaPlayerController player in players)
+        {
+            if (player != null)
+                CoinsCollected += player.Coins;
+        }
 
-        WinnerMessage = winner != null ? $"Player {winner.PlayerNumber} Wins!" : "Game Over";
+        BonusCoins = BombsDodged * CoinsPerBomb + Mathf.FloorToInt(TimeSurvived) * CoinsPerSecond;
+        TotalCoinsEarned = CoinsCollected + BonusCoins;
+        MatchMenuUI.AddShopCoins(TotalCoinsEarned);
         if (winnerText != null)
         {
             winnerText.text = WinnerMessage;
@@ -87,6 +167,7 @@ public sealed class ArenaSession : MonoBehaviour
         }
 
         StateChanged?.Invoke(State);
+        GameAudio.PlayWhistle();
     }
 
     public void RestartRound()
@@ -105,11 +186,19 @@ public sealed class ArenaSession : MonoBehaviour
         if (winnerText != null)
             winnerText.gameObject.SetActive(false);
 
-        ResetPlayer(player1, -playerSpawnSpacing * 0.5f);
-        ResetPlayer(player2, playerSpawnSpacing * 0.5f);
+        for (int i = 0; i < players.Count; i++)
+        {
+            float xOffset = (i - (players.Count - 1) * 0.5f) * playerSpawnSpacing;
+            players[i].ResetCollectibleEffects();
+            players[i].ResetRoundStats();
+            ResetPlayer(players[i], xOffset);
+        }
 
         State = ArenaRoundState.Playing;
         TimeSurvived = 0f;
+        CoinsCollected = 0;
+        BonusCoins = 0;
+        TotalCoinsEarned = 0;
         WinnerMessage = "";
 
         Physics.SyncTransforms();
@@ -122,6 +211,7 @@ public sealed class ArenaSession : MonoBehaviour
         player.gameObject.SetActive(false);
 
         CharacterController controller = player.GetComponent<CharacterController>();
+        if (controller == null) return;
         controller.enabled = false;
 
         Vector3 spawn = layout.PlayerSpawn;
@@ -137,6 +227,11 @@ public sealed class ArenaSession : MonoBehaviour
             if (gameplayGround.Raycast(ray, out RaycastHit groundHit, bounds.size.y + 4f))
                 spawn.y = groundHit.point.y + controller.height * 0.5f + controller.skinWidth;
         }
+
+        if (useScenePlayerSpawnHeight)
+            spawn.y = scenePlayerSpawnHeight;
+        else if (SceneManager.GetActiveScene().name == "YardLevel")
+            spawn.y += 0.75f;
 
         player.transform.position = spawn;
         controller.enabled = true;
