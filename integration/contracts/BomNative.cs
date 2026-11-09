@@ -164,8 +164,233 @@ namespace Bom.Native {
  public float bomb_radius;
  public uint reserved;
 }
+[StructLayout(LayoutKind.Sequential)] public struct BomOwnerState {
+ public uint struct_size;
+ public uint version;
+ public uint flags;
+ public uint support_kind;
+ public ulong connection_incarnation;
+ public ulong input_generation;
+ public ulong state_tick;
+ public ulong topology_revision;
+ public ulong finalized_through_tick;
+ public ulong last_applied_sequence;
+ public ulong last_jump_edge;
+ public ulong teleport_serial;
+ public ulong support_cell;
+ public uint epoch;
+ public uint missing_held_ticks;
+ public float position_x;
+ public float position_y;
+ public float velocity_x;
+ public float velocity_y;
+ public float support_velocity_x;
+ public float support_velocity_y;
+ public float coyote;
+ public float buffered_jump;
+ public float held_move;
+ public uint reserved;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomPredictionStats {
+ public uint struct_size;
+ public uint version;
+ public uint status;
+ public uint reason;
+ public ulong input_generation;
+ public ulong owner_tick;
+ public ulong predicted_tick;
+ public ulong finalized_through_tick;
+ public ulong last_applied_sequence;
+ public double rtt_seconds;
+ public double positive_jitter_p95_seconds;
+ public double clock_error_ticks;
+ public uint lead_ticks;
+ public uint pending_commands;
+ public ulong correction_count;
+ public ulong snap_count;
+ public ulong conservative_transitions;
+ public ulong recoveries;
+ public ulong reset_count;
+ public float correction_p95;
+ public float correction_p99;
+ public float correction_max;
+ public float visual_offset_x;
+ public float visual_offset_y;
+ public float reserved;
+ public double conservative_seconds;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRequestResult {
+ public uint struct_size;
+ public uint version;
+ public uint flags;
+ public uint kind;
+ public ulong request_id;
+ public ulong effect_tick;
+ public ulong event_id;
+ public uint status;
+ public uint reason;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomLevelInfo {
+ public uint flags;
+ public uint config_version;
+ public float simulation_lo_x;
+ public float simulation_lo_y;
+ public float simulation_hi_x;
+ public float simulation_hi_y;
+ public float kill_lo_x;
+ public float kill_lo_y;
+ public float kill_hi_x;
+ public float kill_hi_y;
+ public float camera_lo_x;
+ public float camera_lo_y;
+ public float camera_hi_x;
+ public float camera_hi_y;
+ public float aim_lo_x;
+ public float aim_lo_y;
+ public float aim_hi_x;
+ public float aim_hi_y;
+ public float fragment_cull_lo_x;
+ public float fragment_cull_lo_y;
+ public float fragment_cull_hi_x;
+ public float fragment_cull_hi_y;
+ public float bomb_cleanup_lo_x;
+ public float bomb_cleanup_lo_y;
+ public float bomb_cleanup_hi_x;
+ public float bomb_cleanup_hi_y;
+ public float spawn0_x;
+ public float spawn0_y;
+ public float spawn1_x;
+ public float spawn1_y;
+ public float spawn2_x;
+ public float spawn2_y;
+ public float spawn3_x;
+ public float spawn3_y;
+ public float bomb_spawn_lo;
+ public float bomb_spawn_hi;
+ public float bomb_spawn_height;
+ public float gravity_x;
+ public float gravity_y;
+ public float move_speed;
+ public float move_acceleration;
+ public float jump_speed;
+ public float coyote_time;
+ public float jump_buffer;
+ public float bomb_fuse;
+ public float bomb_drop_min;
+ public float bomb_drop_max;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomCellBinding {
+ public ulong cell_id;
+ public ulong source_identity;
+ public ulong source_part_id;
+ public uint policy_flags;
+ public uint reserved;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomSourceBinding {
+ public ulong source_identity;
+ public uint flags;
+ public uint reserved;
+ public ulong visual_hash0;
+ public ulong visual_hash1;
+ public ulong visual_hash2;
+ public ulong visual_hash3;
+ public float m00;
+ public float m10;
+ public float m20;
+ public float m30;
+ public float m01;
+ public float m11;
+ public float m21;
+ public float m31;
+ public float m02;
+ public float m12;
+ public float m22;
+ public float m32;
+ public float m03;
+ public float m13;
+ public float m23;
+ public float m33;
+ public float depth_lo;
+ public float depth_hi;
+ public IntPtr asset_key;
+ public uint asset_key_length;
+ public uint cap_key_length;
+ public IntPtr cap_key;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomCatalogInfo {
+ public uint struct_size;
+ public uint version;
+ public uint epoch;
+ public uint flags;
+ public ulong revision;
+ public ulong catalog_hash0;
+ public ulong catalog_hash1;
+ public ulong catalog_hash2;
+ public ulong catalog_hash3;
+ public ulong gameplay_hash0;
+ public ulong gameplay_hash1;
+ public ulong gameplay_hash2;
+ public ulong gameplay_hash3;
+ public ulong config_hash0;
+ public ulong config_hash1;
+ public ulong config_hash2;
+ public ulong config_hash3;
+ public uint source_count;
+ public uint binding_count;
+ public IntPtr sources;
+ public IntPtr bindings;
+ public BomLevelInfo level;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundPlayer {
+ public ulong session_id;
+ public ulong generation;
+ public uint slot;
+ public uint alive;
+ public uint death;
+ public uint reserved;
+ public ulong death_tick;
+ public ulong alive_ticks;
+ public ulong bombs_faced;
+ public ulong xp_gained;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundConnection {
+ public ulong session_id;
+ public ulong generation;
+ public ulong total_xp;
+ public ulong wins;
+ public ulong level;
+ public ulong xp_in_level;
+ public ulong xp_to_next;
+ public uint flags;
+ public uint reserved;
+}
+[StructLayout(LayoutKind.Sequential)] public struct BomRoundInfo {
+ public uint struct_size;
+ public uint version;
+ public uint epoch;
+ public uint rules_version;
+ public ulong tick;
+ public ulong round_id;
+ public ulong countdown_tick;
+ public ulong start_tick;
+ public ulong end_tick;
+ public ulong bombs_spawned;
+ public ulong winner;
+ public ulong local_session_id;
+ public uint mode;
+ public uint state;
+ public uint draw;
+ public uint reason;
+ public float lethal_radius;
+ public uint flags;
+ public IntPtr players;
+ public uint player_count;
+ public uint connection_count;
+ public IntPtr connections;
+}
 public static class BomNative {
  public const uint AbiVersion = 1;
+ public const uint AbiMinorVersion = 4;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern ulong bom_build_tag();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_create(ref BomCreateInfo info, ref ulong handle);
@@ -187,5 +412,15 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_request_host_command(ulong handle, ref BomHostCommand command, ref ulong command_id);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_command_result(ulong handle, ref BomCommandResult result);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_actor_shape_info(ref BomActorShapeInfo info);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_owner_state(ulong handle, ref BomOwnerState state);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_prediction_stats(ulong handle, ref BomPredictionStats stats);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_prediction(ulong handle, uint enabled);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_clear_intent(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_reset_prediction_metrics(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_next_request_result(ulong handle, ulong after_request_id, ref BomRequestResult result);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_expect_gameplay_manifest(ulong handle, IntPtr hash, uint length);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_acquire_catalog(ulong handle, ulong sample_sequence, ref BomCatalogInfo catalog);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_round(ulong handle, ulong sample_sequence, ref BomRoundInfo info);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_join_options(ulong handle, uint flags);
 }
 }

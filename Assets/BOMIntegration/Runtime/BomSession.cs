@@ -18,6 +18,9 @@ public sealed class BomSession : IDisposable {
  public BomOwnerState Owner;
  public BomPredictionStats Prediction;
  public BomCatalogInfo Catalog;
+ public BomRoundInfo Round;
+ public BomRoundPlayer[] RoundPlayers=Array.Empty<BomRoundPlayer>();
+ public BomRoundConnection[] RoundConnections=Array.Empty<BomRoundConnection>();
  public BomCellBinding[] CellBindings=Array.Empty<BomCellBinding>();
  public readonly Dictionary<ulong,BomSourceState> Sources=new Dictionary<ulong,BomSourceState>();
  ulong catalogConnection,catalogTopologyRevision;uint catalogEpoch;
@@ -31,7 +34,7 @@ public sealed class BomSession : IDisposable {
  public static double Now => (double)Stopwatch.GetTimestamp()/Stopwatch.Frequency;
  public static void Check(uint result) { if(result!=0)throw new InvalidOperationException("Native client status "+result); }
  public static void VerifyLayouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo),typeof(BomRoundPlayer),typeof(BomRoundConnection),typeof(BomRoundInfo)};
   for(uint i=0;i<types.Length;i++) {
    Type t=types[i];if(Marshal.SizeOf(t)!=BomNative.bom_debug_layout(i,0))throw new InvalidOperationException(t.Name+" size differs");
    var fields=t.GetFields(BindingFlags.Instance|BindingFlags.Public);uint alignment=1;
@@ -87,7 +90,7 @@ public sealed class BomSession : IDisposable {
   if(status!=0) {
    var error=new BomError{struct_size=(uint)Marshal.SizeOf<BomError>(),version=1};string reason="";
    if(BomNative.bom_client_last_error(Handle,ref error)==0&&error.message_length>0&&error.message_length<=65536){var text=new byte[error.message_length];Marshal.Copy(error.message,text,0,text.Length);reason=System.Text.Encoding.UTF8.GetString(text);}
-   throw new InvalidOperationException("Native client status "+status+": "+reason);
+   throw new InvalidOperationException(reason=="host left"?"The host left. Start or join a new server.":!string.IsNullOrEmpty(reason)?reason:"Connection interrupted. Reconnect to try again.");
   }
   var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Check(BomNative.bom_client_acquire_sample(Handle,ref sample));
   try {
@@ -98,6 +101,10 @@ public sealed class BomSession : IDisposable {
    }
    Copy(sample.poses,sample.pose_count,ref Poses);Copy(sample.events,sample.event_count,ref Events);
    CopyCatalog(sample);
+   var round=new BomRoundInfo{struct_size=(uint)Marshal.SizeOf<BomRoundInfo>(),version=1};Check(BomNative.bom_client_get_round(Handle,sample.sample_sequence,ref round));
+   if(round.player_count>2||round.connection_count>4)throw new InvalidOperationException("Invalid native round roster");
+   Copy(round.players,round.player_count,ref RoundPlayers);Copy(round.connections,round.connection_count,ref RoundConnections);
+   round.players=round.connections=IntPtr.Zero;Round=round;
    if(sample.error_length>65536)throw new InvalidOperationException("Invalid error length");
    byte[] error=new byte[sample.error_length];if(error.Length>0)Marshal.Copy(sample.error_text,error,0,error.Length);Error=System.Text.Encoding.UTF8.GetString(error);
    // Clear pointer fields: managed users receive only the owned copies above.

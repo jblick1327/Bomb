@@ -1,17 +1,22 @@
 # Integration checkpoint
 
-M0-M7 passed. M8 is in progress; M9 is pending. The full integration is not complete.
+M0–M8 passed. M9 is in progress. The full integration is not complete.
 
-M5 uses native commit 9c6278f01fd9182bb859a33203a53a6984ba07d7, ABI 1.2 / protocol 4 / canonical 2. Both required 600-second static prediction profiles passed, with genuine local stepping on every measured frame and zero snaps or conservative intervals. The 100 ms / 60 FPS run measured p95 native response 17.11 ms and p99 correction 0.002 units; 200 ms / 30 ms jitter / 5% loss at measured 143.92 FPS measured 14.27 ms and 0.002 units. Actual Unity URP response p95 was 21.86 ms against 35.33 ms. Two-Unity Mono prediction on/off scenarios matched all 80/100 expected hashes, at timeScale zero. Moving/rotating contact, fracture-history invalidation and conservative recovery fixtures passed. See evidence/M5/summary.json.
+M8 native checkpoint: 57c05fd8f9de669e4c8410399c4667a4b75c45af; ABI 1.4 / protocol 6 / canonical topology 3.
+Native library SHA-256: a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25. Unity runtime SHA-256: 82933f616aa8884e4929372fb453b9d4d7c905e32df18d29e245040933fb51e5.
+Original game 220, shared core 74 and ABI 19 tests pass; independent C/.NET checks
+cover 23 layouts and 31 exports. Final real UDP and two-Unity yard/draw gates pass.
+The exact final players agree with the Odin observer, retain results over reconnect,
+restart with a new epoch/round, drive Claymate from native movement/jumps and avoid
+duplicated effects. All expected final world hashes matched. See evidence/M8/summary.json.
 
-M0–M4 evidence remains under each milestone directory: original yard/HUD audit and captures; byte-preserving native extraction; independent C/.NET ABI checks; ten-minute real UDP; Mono/IL2CPP live clients; geometry/pivot and Editor lifecycle checks. Original content verification covers 605 protected files. Four package metadata deletions predate this work and remain unstaged.
+Original Unity content: 605 protected files passed the last content check. Four
+URP package metadata deletions predate this task and remain unrelated/unstaged.
+Prior M0–M7 evidence and frozen M5/M6/M7 players/servers remain preserved.
 
-The source roots remain separate. source-lock.json identifies the shipped DLL; source patches reconstruct the native changes from the preserved ZIP import. Historical native evidence dirt is unrelated and must remain unstaged. Do not reset either repository.
-
-M6 acceptance runs now pass on native commit f98dd0104fc51bb44206669f9660e3d433762dbb, ABI 1.3 / protocol 5 / canonical 3. Layout v4 constructs the actual yard with 16 active sources, 17 parts and 4,615 initial cells. Motion/damage policies, provenance, atomic catalogs, versioned configuration, bounds/spawns, source IDs above 2^53, standalone direct-reference registry, missing-art fallback, wrong-manifest rejection, late join/reset/reconnect and final C/.NET ABI checks pass. The full native suite passes 220 game, 27 transport, 51 shared and 18 ffi tests. The published 605-file content check passed in evidence/M0/Test-Content-20261107T124618188Z.json. See evidence/M6/summary.json.
-
-The new yard scene and SDK use protocol 5. The separately preserved M5 interactive demo remains protocol 4. Test-UnityYard.ps1 builds/tests the authored yard; -MissingArt and -RejectManifest reproduce those standalone gates. Test-UnitySlice.ps1 now writes new validation builds under build/validation to protect the frozen M5 demo.
-
-M8 elimination and presentation infrastructure, and M9 hardening/performance/current IL2CPP/final soak remain required. Dynamic yard prediction currently falls back when moving collision history is unavailable and can make gross correction snaps; the passing M5 static profile does not imply dynamic-yard latency/correction acceptance. This remains active hardening work.
-
-M7 passed on native cfead83e709ed7f44df1f836279b1f0ebe1ec0db (ABI 1.3 / protocol 5 / canonical 3), with managed runtime SHA-256 628d0fea308f775674c37cfb56f5be5749accf2c19dda1192ec72d79c3bc4166. Final live yard, visual-tier comparison and blocked-worker reset/reconnect scenarios all exited successfully. Four old managed jobs were discarded and zero stale results applied. All real-yard cubes/terrain used source art; the two artless walls retained their declared extrusion fallback. See evidence/M7/summary.json and contracts/source-mesh-rendering.md.
+M9 next: independent code review; full mixed-client/loss/reset/geometry regression;
+bounded lifetimes and zero stable-path allocation; 500/1000-cell profiling with 200
+moving entities; split costly mesh operations; current Mono/IL2CPP and symbols;
+reproducible wrappers/package; final 30-minute real-process soak with at least ten
+resets. The large original yard and dynamic prediction still have known performance
+costs. Do not treat M8 correctness as passing those remaining performance gates.

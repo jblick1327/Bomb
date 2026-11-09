@@ -27,3 +27,29 @@
 - Profile frame timing uses high-resolution waitable timers and measured cadence, with no fake catchup frames and no relaxed response bounds. Preserve the initial failing profiles.
 - A locally queued blast retains its original age; expired/focus/epoch/stall-cleared intent has an ordered local terminal result. Request-result flag 4 means local terminal; status 9 means cleared.
 - Freeze a separate demo server path before M6 changes the development wire format.
+
+
+- M8: protocol 6 and additive ABI 1.4 carry native spectator/resume admission,
+  persistent round/results snapshots and acquired-sample roster getters. Existing
+  ABI strides and canonical topology 3 are unchanged. Native session credentials
+  remain private to the library; reconnect never resurrects a participant.
+- M8: reserve the first two eligible connected players while loading; only their
+  readiness starts the 180-tick countdown. A regression caught late-player promotion
+  while an earlier participant was still loading. Extra connections stay spectators.
+- M8: real-network sandbox blasts are host-only diagnostics. Sandbox movement,
+  respawn and bomb physics remain unchanged. All same-tick deaths are collected
+  before native winner selection; XP/wins are awarded once per round/session.
+- M8: scale only the derived Claymate visual to the native capsule height. Copy
+  the original bomb/fuse appearance at the native bomb radius. Invoke the preserved
+  presentation-only BombBlastVisual through an unscaled-time adapter and preserve
+  it for IL2CPP; no BombDropper, legacy movement or collider is enabled. The original
+  asset inventory contains zero audio clips, so no replacement sound was invented.
+- M8 draw fixture: one fixed indestructible floor; player spawn x=-0.8/+0.8,
+  y=0.565; bomb range -0.05..0.05 at height 4. These fixture coordinates guarantee
+  that ordinary native falling bombs test both capsules. Native interval, fuse,
+  body, damage and lethal settings are unchanged. See fixtures/round-draw.
+- M8 capture: hidden Windows backbuffers were black. Capture actual URP camera
+  and UI Toolkit targets instead, retain both raw targets and their composite,
+  clear the UI target each frame, and reject black/blank captures. Failed attempts
+  remain evidence. Round/presentation tests disable prediction; M9 still owns
+  dynamic prediction/performance, current IL2CPP and the final soak.

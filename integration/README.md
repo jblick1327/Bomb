@@ -1,37 +1,69 @@
 # BOM integration
 
-This branch contains a real native-connected Unity scene at `Assets/BOMIntegration/NativeSlice.unity`. Odin owns gameplay, networking and physics. Unity polls the versioned native API, copies coherent samples, and renders extrusion meshes and actor views. The original scenes, scripts, art and package/settings files remain reference content.
+M0â€“M8 passed. M9 hardening, performance, current IL2CPP and the final 30-minute
+soak remain in progress. This is a local developer checkpoint, not completion of
+the full integration plan.
 
-M0-M7 passed. M8 menus/elimination is in progress; M9 remains pending. The full integration is not complete. See STATUS.md and evidence/M6/summary.json for the current checkpoint.
+Odin owns physics, destruction, networking, input scheduling, prediction and
+rounds. Unity copies the native C ABI snapshots and supplies input/presentation.
+Original Unity assets, GUIDs, prefabs, scenes and packages remain protected.
 
-The source roots remain separate. `source-lock.json` records archive/toolchain/native commit identities. The ignored `local.config.json` supplies absolute local paths; use `local.config.example.json` for another machine. Unity stays on 6000.2.14f1 and the supplied Odin May 2026 compiler/vendor setup remains pinned.
+## Play the network yard
+
+From the Unity repository, using PowerShell 7:
+
+```powershell
+./integration/tools/Start-BomNetwork.ps1
+```
+
+This starts a local server and two visible Unity windows. The first is the host.
+A/D or arrows move, Space jumps, and Esc opens the connection menu. The host can
+select Elimination and apply it there. Sandbox blast tools are host-only. The
+host can restart a finished round. Closing the host preserves the existing
+five-second server shutdown policy. Use `-Clients 1` or `-Port 47381` if needed.
+
+The standalone menu covers endpoint/port, host key, spectator role, loading,
+rejection, disconnect, reconnect, game mode, host restart and quit. The server
+starts in sandbox. Elimination waits for two validated player baselines, counts
+down 180 server ticks, resolves all deaths on a tick together, and awards session
+XP once. Rejoining during play spectates until a later round. Results survive a
+reconnect; account persistence is outside scope.
+
+The new scene is `Assets/BOMIntegration/NetworkMenu.unity`; the original-art
+network yard is `NetworkYard.unity`. `RoundDraw.unity` is a small explicit fixture
+for same-tick falling-bomb deaths. Claymate/animations, bomb/fuse materials,
+the original blast-ring animation and HUD UXML/USS are reused through read-only
+adapters. The source project contains no audio clips to reuse.
+
+## Reproduce checks
 
 ```powershell
 ./integration/tools/Invoke-BomIntegration.ps1 -Task VerifyEnvironment
 ./integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite Content
-./integration/tools/Invoke-BomIntegration.ps1 -Task Build
 ./integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite Fast
-./integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite NativeInterop -Seconds 600
-./integration/tools/Test-UnitySlice.ps1 -Backend Mono -TimeScale 0
-./integration/tools/Test-UnitySlice.ps1 -Backend IL2CPP
-./integration/tools/Test-UnitySlice.ps1 -Backend Editor
-./integration/tools/Start-BomDemo.ps1 -Play
+./integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite NativeInterop
+./integration/tools/Test-NetworkRounds.ps1 -SkipBuild
+./integration/tools/Test-NetworkRounds.ps1 -Scenario Draw -SkipBuild
 ```
 
-Unity validation uses a separate project copy named in `UnityValidationProject`; it never stops the owner's Editor. Close the dedicated validation Editor before copying a native plugin. `NativeInterop` exercises the real polling client and UDP processes. `NativeProof` retains the small M1 boundary proof separately. `Fast` invokes the existing game and transport regressions. `Content` compares all 605 protected starting files, including metadata GUIDs, packages and settings, while allowing additive integration assets.
+Builds/tests use the separate project in ignored `local.config.json`. Never copy
+a replacement native library into a running Editor: restart the dedicated
+validation Editor between builds, and restart an owner-open Editor before using
+an updated native plugin. No manual Inspector wiring is required.
 
-The live launch tool waits for usable Unity snapshots before starting the timed scenario. It uses one native host handle, two Unity players and one Odin observer within the original four-client server limit. Hash coverage lists expected/reported revisions per connection; a missing report is never counted as a match. Generated local builds and logs live under ignored build/local directories; milestone evidence and source patches are committed.
+The pinned environment is Windows x64, Unity 6000.2.14f1, Odin May 2026 ea5175d,
+MSVC/Windows SDK, .NET 10 and Python 3. See `local.config.example.json` for paths,
+`source-lock.json` for exact inputs/build identities, and `STATUS.md` for next work.
 
-For an interactive demo, `Start-BomDemo.ps1 -Play` opens the configured standalone player and a local native server. A/D or arrows move, Space jumps and left-click requests a blast. Close the player to stop the demo. Current diagnostics default to sandbox with native prediction enabled; --bom-prediction-off selects ordinary interpolation. Authored yard export, source-art clipping and elimination remain in progress or pending.
+Current SDK/players use ABI 1.4, game protocol 6 and canonical topology 3.
+`build/Network-Mono` and `build/M8-native` form one compatible checkpoint. Frozen
+M5, M6 and M7 artifacts retain their original versions; never mix their servers
+and DLLs. The older `Start-BomDemo.ps1` remains the frozen M5 demonstration.
 
-The authored yard is `Assets/BOMIntegration/NetworkYard.unity`. Export creates explicit native gameplay proxies, a validated layout, a preprocessing/classification report, and a runtime registry with direct mesh/material references. Runtime gameplay geometry comes from the native server. The current required source-art clipping stage is still pending.
-
-```powershell
-./integration/tools/Test-UnityYard.ps1 -Backend Mono
-./integration/tools/Test-UnityYard.ps1 -Backend Mono -SkipBuild -MissingArt
-./integration/tools/Test-UnityYard.ps1 -Backend Mono -SkipBuild -RejectManifest
-```
-
-These yard gates use the current native source build (protocol 5), not the frozen protocol-4 demo. They keep raw failed attempts and actual rendered captures under evidence/M6. The expected gameplay fingerprint comes from the native export report, and the live test checks that the standalone plugin matches its native build identity.
-
-Source-mesh checkpoint: `Assets/BOMIntegration/SourceFixtures/SourceFixtures.unity` and `NetworkYard.unity` use the native source registry and bounded managed geometry jobs. `./integration/tools/Test-SourcePresentation.ps1 -Mode All` reproduces M7 builds and live gates in the configured separate validation project. See `contracts/source-mesh-rendering.md` for ownership, fallback, cache limits and measured remaining costs. M7 is a correctness checkpoint, not completion of M8/M9.
+Evidence and failed attempts remain under `evidence/M*`. M8 includes real UDP,
+two-Unity forfeit and simultaneous-draw runs, an independent Odin observer,
+repeated event presentation, native-driven movement/jumps and rendered captures.
+See `contracts/round-rules.md` and `contracts/source-mesh-rendering.md` for rules
+and ownership. M8 presentation tests disable prediction; static prediction was
+validated separately in M5. Dynamic-yard prediction and performance remain M9
+work and are not implied by the round correctness gates.
