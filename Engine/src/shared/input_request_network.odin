@@ -81,6 +81,13 @@ net_request_server_dispatch :: proc(ns:^Net_Server,index:int,data:[]u8) {
    else { reason=net_host_apply_layout(ns,index,q.payload) }
   }
   if reason!="" { result.status=.Rejected;result.reason=ns.clients[index].is_host?u16(2):u16(1) }
+  else if q.kind==NET_APP_HOST_COMMAND && ns.rebuild!=nil {
+   // The request cache remains pending until the completed world is published.
+   // Duplicates cannot start a second job; Pending replays are ignored by peers
+   // until the existing terminal result message arrives through reliable transport.
+   ns.rebuild.request_id=q.id;ns.rebuild.request_incarnation=c.incarnation;ns.rebuild.request_client=index
+   return
+  }
  }
  _=request_cache_finish(c.requests,result);net_request_send_result(ns,index,q.kind,result)
 }

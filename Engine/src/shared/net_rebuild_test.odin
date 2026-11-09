@@ -4,9 +4,10 @@ import t "core:testing"
 import "core:sync"
 import "core:time"
 import b2 "vendor:box2d"
+import nc "../netcode"
 
 net_test_rebuild_server :: proc()->Net_Server {
- context=runtime.default_context()
+ context.allocator=runtime.default_context().allocator
  game:=Headless_Game{world=World{settings=DEFAULT_SANDBOX_SETTINGS},layout=Layout{next_identity=1}}
  world_rebuild_layout(&game.world,&game.layout,false)
  server:Net_Server;net_server_init_world(&server,game,false);server.async_rebuild=true
@@ -17,7 +18,7 @@ net_test_rebuild_server :: proc()->Net_Server {
 background_reset_keeps_old_world_live_and_publishes_one_complete_epoch :: proc(test:^t.T) {
  // Real server jobs use the process heap. Verify Box2D's owned byte counter
  // after joining both workers, in addition to the synchronous allocator suite.
- context=runtime.default_context()
+ context.allocator=runtime.default_context().allocator
  bytes:=b2.GetByteCount();server:=net_test_rebuild_server();live:=true
  defer {if live {net_server_destroy(&server)}}
  gate:b32;server.rebuild_test_gate=&gate
@@ -46,9 +47,52 @@ background_reset_keeps_old_world_live_and_publishes_one_complete_epoch :: proc(t
 
 @(test)
 background_reset_shutdown_cancels_held_work_and_joins_without_leaking_worlds :: proc(test:^t.T) {
- context=runtime.default_context()
+ context.allocator=runtime.default_context().allocator
  bytes:=b2.GetByteCount();server:=net_test_rebuild_server();gate:b32;server.rebuild_test_gate=&gate
  t.expect(test,net_rebuild_begin(&server)=="")
  net_server_destroy(&server)
  t.expect(test,server.rebuild==nil && server.rebuild_cleanup==nil && b2.GetByteCount()==bytes)
+}
+
+@(test)
+background_reset_result_waits_for_publication_and_uses_the_commit_tick :: proc(test:^t.T) {
+ context.allocator=runtime.default_context().allocator
+ server:=net_test_rebuild_server();defer net_server_destroy(&server)
+ gate:b32;server.rebuild_test_gate=&gate
+ net_server_join(&server,1);server.clients[1].is_host=true
+ epoch:=server.game.world.scene.epoch
+ writer:nc.Writer;nc.writer_init(&writer,64);defer nc.writer_destroy(&writer)
+ payload:=[2]u8{NET_APP_HOST_COMMAND,NET_HOST_RESET}
+ test_request_envelope(&writer,server.clients[1].incarnation,epoch,1,NET_APP_HOST_COMMAND,payload[:])
+ net_request_server_dispatch(&server,1,writer.data[:])
+ t.expect(test,server.clients[1].requests.entries[1].result.status==.Pending,"accepted reset must remain pending while the worker is gated")
+ for tick in 0..<12 {net_server_tick(&server,f64(tick)/60)}
+ net_request_server_dispatch(&server,1,writer.data[:])
+ t.expect(test,server.clients[1].requests.entries[1].result.status==.Pending,"duplicate pending request must not finish or start another reset")
+ sync.atomic_store(&gate,true)
+ start:=time.tick_now()
+ for net_rebuild_pending(&server)&&time.duration_seconds(time.tick_since(start))<5 {net_rebuild_poll(&server);time.sleep(time.Millisecond)}
+ result:=server.clients[1].requests.entries[1].result
+ t.expect(test,result.status==.Accepted&&result.effect_tick==13&&server.game.world.scene.epoch==epoch+1,"result must identify the actual publication tick")
+ net_request_server_dispatch(&server,1,writer.data[:])
+ t.expect(test,server.clients[1].requests.entries[1].result==result&&server.rebuild==nil,"terminal duplicate must replay the original result")
+}
+
+@(test)
+background_reset_cannot_complete_a_reused_peer_request_slot :: proc(test:^t.T) {
+ context.allocator=runtime.default_context().allocator
+ server:=net_test_rebuild_server();defer net_server_destroy(&server)
+ gate:b32;server.rebuild_test_gate=&gate
+ net_server_join(&server,1);server.clients[1].is_host=true
+ writer:nc.Writer;nc.writer_init(&writer,64);defer nc.writer_destroy(&writer)
+ payload:=[2]u8{NET_APP_HOST_COMMAND,NET_HOST_RESET}
+ test_request_envelope(&writer,server.clients[1].incarnation,server.game.world.scene.epoch,1,NET_APP_HOST_COMMAND,payload[:])
+ net_request_server_dispatch(&server,1,writer.data[:]);old:=server.clients[1].incarnation
+ net_server_leave(&server,1);net_server_join(&server,1)
+ t.expect(test,server.clients[1].incarnation!=old)
+ state,_:=request_cache_begin(server.clients[1].requests,server.clients[1].incarnation,1,u64(123))
+ t.expect(test,state==.New)
+ sync.atomic_store(&gate,true);start:=time.tick_now()
+ for net_rebuild_pending(&server)&&time.duration_seconds(time.tick_since(start))<5 {net_rebuild_poll(&server);time.sleep(time.Millisecond)}
+ t.expect(test,server.clients[1].requests.entries[1].result.status==.Pending,"old worker must not finish a new peer's equal numeric request ID")
 }
