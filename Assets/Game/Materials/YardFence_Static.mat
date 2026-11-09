@@ -21,20 +21,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: YardFence_Static
-  m_Shader: {fileID: 4800000, guid: 270965b004462ae41bd125bc783c0fa6, type: 3}
-  m_Parent: {fileID: 2100000, guid: f43a7dc4f39c5654a8211b83259e32a9, type: 2}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _GRADIENT_ON
-  - _LOCALWORLDSPACE_ON
-  - _METALICON_ON
-  - _METALLICON_ON
-  - _ONOFF_ON
-  - _SMOOTHNESSON_ON
-  - _SNOW_ON
-  - _TRANSPARENCY_SWITCH_ON
-  - _WORLDOBJECTGRADIENT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -45,9 +33,20 @@ Material:
   m_LockedProperties:
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Surface: 0
+    - _Blend: 0
+    - _AlphaClip: 0
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _Metallic: 0
+    - _Smoothness: 0.3
     - _CUSTOMWIND: 0
     - _Smoothness: 0.5
     m_Colors:
