@@ -23,7 +23,7 @@ import "core:time"
 
 // A real second-process bot reuses the step 2b player, including jump counter,
 // numbered blasts, replica, interpolation, acks and adaptive clock.
-net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false,spectator:bool=false,observe_rounds:u64=0) -> bool {
+net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false,spectator:bool=false,observe_rounds:u64=0,stop_file:string="") -> bool {
  upload_data: []u8
  defer { if upload_data!=nil { delete(upload_data) } }
  if upload_path!="" {
@@ -69,6 +69,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
  last_now:=f64(0)
  accumulator:=f64(0)
  next_report:=f64(10)
+ next_stop_check:=f64(0)
  upload_sent,reset_sent:=false,false
  first_round:=u64(0)
  buf:[nc.MAX_PACKET+64]u8
@@ -78,7 +79,8 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
   if elapsed<0 || elapsed>0.25 || accumulator+elapsed>NET_STEP_DT*4+1e-8 {
    accumulator=0;net_client_clear_intent(&client);client.has_clock=false
   } else { accumulator+=elapsed }
-  if seconds>0 && now>=seconds { break }
+  if seconds>0 && now>=seconds {break}
+  if stop_file!=""&&now>=next_stop_check {next_stop_check=now+.1;if os.exists(stop_file){break}}
   for {
    packet,from,has:=nc.socket_receive(&sock,buf[:])
    if !has { break }
@@ -148,12 +150,15 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
  prediction_off:=false
  spectator:=false
  observe_rounds:=u64(0)
+ stop_file:=""
  i:=1
  for i<len(args) {
   switch args[i] {
   case "--seconds":
    if i+1>=len(args) { return false }
    n,parsed:=strconv.parse_int(args[i+1]);if !parsed || n<1 { return false };seconds=f64(n);i+=2
+  case "--stop-file":
+   if i+1>=len(args)||len(args[i+1])==0 {return false};stop_file=args[i+1];i+=2
   case "--host-token":
    if i+1>=len(args) || len(args[i+1])>NET_APP_MAX_TOKEN { return false }
    host_token=args[i+1];i+=2
@@ -171,5 +176,5 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
   case: fmt.eprintln("Unknown bot option:",args[i]);return false
   }
  }
- return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off,spectator,observe_rounds)
+ return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off,spectator,observe_rounds,stop_file)
 }
