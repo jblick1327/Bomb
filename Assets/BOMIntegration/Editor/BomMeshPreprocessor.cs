@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 
 // Reads source mesh data through the Editor API without changing import settings.
 public static class BomMeshPreprocessor {
- public const int BuilderVersion=1;
+ public const int BuilderVersion=2;
  static bool Finite(float x)=>!float.IsNaN(x)&&!float.IsInfinity(x);
  public static Mesh Bake(Mesh original,Matrix4x4 meshToGroup,string objectPath){
   if(original==null)throw new InvalidOperationException(objectPath+": missing mesh; author an explicit proxy and use extrusion");
@@ -33,7 +33,7 @@ public static class BomMeshPreprocessor {
       data.GetTangents(tangents);var transformed=tangents.ToArray();
       for(int i=0;i<count;i++){var t=transformed[i];Vector3 direction=meshToGroup.MultiplyVector(new Vector3(t.x,t.y,t.z)).normalized;transformed[i]=new Vector4(direction.x,direction.y,direction.z,t.w*(determinant<0?-1:1));}output.tangents=transformed;
      }
-     if(data.HasVertexAttribute(VertexAttribute.TexCoord0))using(var uv=new NativeArray<Vector2>(count,Allocator.Temp)){data.GetUVs(0,uv);output.uv=uv.ToArray();}
+     for(int channel=0;channel<8;channel++)if(data.HasVertexAttribute((VertexAttribute)((int)VertexAttribute.TexCoord0+channel)))using(var uv=new NativeArray<Vector4>(count,Allocator.Temp)){data.GetUVs(channel,uv);output.SetUVs(channel,uv.ToArray());}
      if(data.HasVertexAttribute(VertexAttribute.Color))using(var colors=new NativeArray<Color>(count,Allocator.Temp)){data.GetColors(colors);output.colors=colors.ToArray();}
      output.subMeshCount=data.subMeshCount;long totalIndices=0;
      for(int sub=0;sub<data.subMeshCount;sub++){
@@ -47,6 +47,7 @@ public static class BomMeshPreprocessor {
       }
      }
      if(!data.HasVertexAttribute(VertexAttribute.Normal))output.RecalculateNormals();
+     if(!data.HasVertexAttribute(VertexAttribute.Tangent)&&data.HasVertexAttribute(VertexAttribute.TexCoord0))output.RecalculateTangents();
      output.RecalculateBounds();return output;
     }catch{UnityEngine.Object.DestroyImmediate(output);throw;}
    }
@@ -58,7 +59,7 @@ public static class BomMeshPreprocessor {
    foreach(var p in mesh.vertices){writer.Write(p.x);writer.Write(p.y);writer.Write(p.z);}
    var normals=mesh.normals;writer.Write(normals.Length);foreach(var p in normals){writer.Write(p.x);writer.Write(p.y);writer.Write(p.z);}
    var tangents=mesh.tangents;writer.Write(tangents.Length);foreach(var p in tangents){writer.Write(p.x);writer.Write(p.y);writer.Write(p.z);writer.Write(p.w);}
-   var uv=mesh.uv;writer.Write(uv.Length);foreach(var p in uv){writer.Write(p.x);writer.Write(p.y);}
+   for(int channel=0;channel<8;channel++){var uv=new System.Collections.Generic.List<Vector4>();mesh.GetUVs(channel,uv);writer.Write(uv.Count);foreach(var p in uv){writer.Write(p.x);writer.Write(p.y);writer.Write(p.z);writer.Write(p.w);}}
    var colors=mesh.colors;writer.Write(colors.Length);foreach(var p in colors){writer.Write(p.r);writer.Write(p.g);writer.Write(p.b);writer.Write(p.a);}
    writer.Write(mesh.subMeshCount);for(int sub=0;sub<mesh.subMeshCount;sub++){var indices=mesh.GetIndices(sub);writer.Write(indices.Length);foreach(int index in indices)writer.Write(index);}
    writer.Write(materials.Length);foreach(var material in materials){string path=AssetDatabase.GetAssetPath(material);writer.Write(path);writer.Write(string.IsNullOrEmpty(path)?"missing":AssetDatabase.GetAssetDependencyHash(path).ToString());}

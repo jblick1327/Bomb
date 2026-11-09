@@ -1,0 +1,18 @@
+using System;
+using System.Diagnostics;
+using System.Threading;
+using Bom.Unity;
+public static class BomGeometryJobChecks {
+ static void Check(bool value,string text){if(!value)throw new Exception(text);}
+ static BomClipResult Result(long bytes=128)=>new BomClipResult{Supported=true,Reason="controlled worker data",Bytes=bytes};
+ static void Until(BomGeometryJobs jobs,Func<bool> condition){var timer=Stopwatch.StartNew();while(!condition()){jobs.Pump();if(timer.Elapsed.TotalSeconds>5)throw new TimeoutException("geometry worker did not settle");Thread.Sleep(1);}jobs.Pump();}
+ public static void Run(){
+  using var jobs=new BomGeometryJobs(2,3,512,4096);jobs.Reset(1,1);using var gate=new ManualResetEventSlim();
+  Func<CancellationToken,BomClipResult> old=token=>{gate.Wait();return Result();};
+  for(ulong i=1;i<=3;i++)Check(jobs.RequestBuild(new BomGeometryTicket(1,1,i),"old"+i,256,0,old),"initial pending request");Check(!jobs.RequestBuild(new BomGeometryTicket(1,1,4),"overflow",256,0,old),"pending queue limit must hold");jobs.Pump();Check(jobs.ActiveCount==2&&jobs.PendingCount==1&&jobs.BufferBytes==768,"two active and bounded buffers");
+  jobs.Reset(2,2);Check(jobs.ActiveCount==2&&jobs.PendingCount==0&&jobs.BufferBytes==512,"reset retains owned active buffers until completion");Check(jobs.RequestBuild(new BomGeometryTicket(2,2,10),"current",256,100,token=>Result()),"new generation request");gate.Set();Until(jobs,()=>jobs.ActiveCount==0&&jobs.PendingCount==0);Check(jobs.StaleResults==2&&jobs.CompletedBuilds==1&&jobs.BufferBytes==0,"late old results must be discarded, not applied or cached");int applies=0;while(jobs.TryDequeue(out var completion)){Check(completion.Ticket.Session==2&&completion.Ticket.Epoch==2,"stale apply");applies++;}Check(applies==1&&!jobs.TryGet("old1",out _)&&!jobs.TryGet("old2",out _),"exactly one current result");
+  Check(jobs.Acquire("current",out var current)&&current.Supported,"cache lease");Check(jobs.RequestBuild(new BomGeometryTicket(2,2,11),"tooLargeForPinnedCache",400,0,token=>Result(400)),"reserve cache-pressure build");Until(jobs,()=>jobs.ActiveCount==0&&jobs.PendingCount==0);Check(jobs.TryGet("tooLargeForPinnedCache",out var negative)&&!negative.Supported&&negative.Reason.Contains("cache budget"),"referenced cache entry may not be evicted");long built=jobs.CompletedBuilds;Check(jobs.RequestBuild(new BomGeometryTicket(2,2,11),"tooLargeForPinnedCache",400,0,token=>throw new Exception("negative result was retried")),"negative cache lookup");jobs.Pump();Check(jobs.CompletedBuilds==built&&jobs.ActiveCount==0,"negative cache prevents retries");jobs.Release("current");
+  Check(jobs.RequestBuild(new BomGeometryTicket(2,2,12),"new",400,0,token=>Result(400)),"eviction build");Until(jobs,()=>jobs.ActiveCount==0&&jobs.PendingCount==0);Check(jobs.CacheBytes<=512&&jobs.TryGet("new",out var newest)&&newest.Supported&&jobs.Evictions>0,"unreferenced LRU eviction");Console.WriteLine("PASS two workers, pending/buffer limits, reset invalidation, leases, LRU and negative cache");
+  var closing=new BomGeometryJobs();closing.Reset(3,3);using var closeGate=new ManualResetEventSlim();Check(closing.RequestBuild(new BomGeometryTicket(3,3,1),"closing",256,0,token=>{closeGate.Wait();return Result();}),"dispose worker request");closing.Pump();closing.Dispose();Check(!closing.Current(new BomGeometryTicket(3,3,1)),"disposed generation cannot apply");closeGate.Set();Check(closing.Drained.Wait(5000)&&closing.ActiveCount==0&&closing.PendingCount==0&&closing.BufferBytes==0&&closing.CacheBytes==0,"disposed workers and buffers must drain");Console.WriteLine("PASS disconnect disposal drains managed jobs with zero applicable stale results");
+ }
+}

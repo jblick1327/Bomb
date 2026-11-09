@@ -26,6 +26,7 @@ public static class BomLevelExportValidation {
   Check(registry.Entries[0].IntactPrefab.GetComponentsInChildren<Collider>(true).Length==0&&registry.Entries[0].IntactPrefab.GetComponentsInChildren<MonoBehaviour>(true).Length==0,"Intact prefab imported gameplay authority");
   string text=File.ReadAllText(output);Check(text.Contains("9007199254741001")&&text.Contains("9007199254742001"),"Exporter rounded full-width source/part IDs");
   var report=JsonUtility.FromJson<Report>(File.ReadAllText(output+".native-report.json"));Check(report.status=="passed"&&report.source_count==2&&report.part_count==2&&report.cell_count>1,"Native report did not validate actual constructed geometry");
+  Check(registry.InitialSources.Length==2&&registry.InitialSources[0].SourceIdentity=="9007199254741001"&&registry.InitialSources[0].InitialCellIds.Length+registry.InitialSources[1].InitialCellIds.Length==report.cell_count,"Native exact initial source/cell membership differs");
   Check(registry.GameplayManifestHash==report.gameplay_manifest_hash&&registry.CatalogHash==report.catalog_hash,"Registry did not use native fingerprints");
   Vector3 expected=first.Group.localToWorldMatrix.MultiplyPoint3x4(new Vector3(1,2,3));float[] point=report.sources[0].matrix_probe;
   Check(Vector3.Distance(expected,new Vector3(point[0],point[1],point[2]))<.0001f,"Column-major Unity/native transform differs");

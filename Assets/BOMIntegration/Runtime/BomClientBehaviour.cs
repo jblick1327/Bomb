@@ -20,6 +20,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  readonly HashSet<ulong> reportedRegistryMatches=new HashSet<ulong>();
  BomSession session;
  public BomSession Session=>session;
+ BomSourcePresentation sourcePresentation;public BomSourcePresentation SourcePresentation=>sourcePresentation;
  public bool AutomatedProfile {get;private set;}
  public bool TryLocalVisualPosition(out Vector3 position){position=default;if(session==null)return false;if(!actors.TryGetValue((2,session.Sample.local_player_id),out var actor))return false;position=actor.GetComponent<BomActorView>().VisualPosition;return true;}
  BomActorShapeInfo shapeInfo;
@@ -31,7 +32,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  readonly List<Mesh> meshes=new List<Mesh>();
  readonly Dictionary<ulong,BomMeshGeometry> cellGeometry=new Dictionary<ulong,BomMeshGeometry>();
  sealed class TerrainBatch {
-  public Transform Body;public uint Color;public readonly List<Vector3> Vertices=new List<Vector3>(),Normals=new List<Vector3>();public readonly List<Vector2> UV=new List<Vector2>();public readonly List<int> Faces=new List<int>(),Sides=new List<int>();
+  public Transform Body;public uint Color;public ulong SourceId;public readonly List<Vector3> Vertices=new List<Vector3>(),Normals=new List<Vector3>();public readonly List<Vector2> UV=new List<Vector2>();public readonly List<int> Faces=new List<int>(),Sides=new List<int>();
   public void Add(BomMeshGeometry geometry,Vector2 offset){int first=Vertices.Count;foreach(var v in geometry.Vertices)Vertices.Add(v+new Vector3(offset.x,offset.y,0));Normals.AddRange(geometry.Normals);UV.AddRange(geometry.UV);foreach(int i in geometry.Faces)Faces.Add(first+i);foreach(int i in geometry.Sides)Sides.Add(first+i);}
   public Mesh Upload()=>new BomMeshGeometry{Vertices=Vertices.ToArray(),Normals=Normals.ToArray(),UV=UV.ToArray(),Faces=Faces.ToArray(),Sides=Sides.ToArray()}.Upload("Native terrain batch");
  }
@@ -40,9 +41,9 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  bool smoke,reset,reconnected,blasted;double smokeSeconds;
  string smokeStartFile="",smokeStopFile="";bool smokeActive,levelSmoke;
  float smokeMove=float.NaN;
- double smokeElapsed;float traveled,jumpRise;Vector2 lastLocal;bool hasLocal;ulong metricGeneration;uint metricEpoch;
+ double reconnectSeconds=8;double smokeElapsed;float traveled,jumpRise;Vector2 lastLocal;bool hasLocal;ulong metricGeneration;uint metricEpoch;
  int snapshots,events,predictedFrames,conservativeFrames;string failure="",identity="";
- public void Close() {cellGeometry.Clear();session?.Dispose();session=null;generation=0;epoch=0;lastEvent=0;acceptedTopology=0;}
+ public void Close() {sourcePresentation?.Clear();cellGeometry.Clear();session?.Dispose();session=null;generation=0;epoch=0;lastEvent=0;acceptedTopology=0;}
  void OnEnable() {
   try {
    Application.runInBackground=true;start=BomSession.Now;inputOffset=start-InputState.currentTime;
@@ -50,7 +51,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    string Arg(string key,string value){int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:value;}
    Port=uint.Parse(Arg("--bom-port",Port.ToString()));smokeSeconds=double.Parse(Arg("--bom-smoke-seconds","0"),System.Globalization.CultureInfo.InvariantCulture);smoke=smokeSeconds>0;
    smokeStartFile=Arg("--bom-smoke-start-file","");smokeActive=string.IsNullOrEmpty(smokeStartFile);
-   smokeStopFile=Arg("--bom-smoke-stop-file","");levelSmoke=Array.IndexOf(args,"--bom-level-smoke")>=0;
+   smokeStopFile=Arg("--bom-smoke-stop-file","");levelSmoke=Array.IndexOf(args,"--bom-level-smoke")>=0;reconnectSeconds=double.Parse(Arg("--bom-reconnect-seconds","8"),System.Globalization.CultureInfo.InvariantCulture);if(levelSmoke){QualitySettings.vSyncCount=0;Application.targetFrameRate=60;}
    AutomatedProfile=double.Parse(Arg("--bom-profile-seconds","0"),System.Globalization.CultureInfo.InvariantCulture)>0;
    Time.timeScale=float.Parse(Arg("--bom-time-scale",Time.timeScale.ToString(System.Globalization.CultureInfo.InvariantCulture)),System.Globalization.CultureInfo.InvariantCulture);
    int legacy=0;foreach(var behavior in FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include,FindObjectsSortMode.None))if(behavior.enabled&&behavior.GetType().Assembly.GetName().Name=="Assembly-CSharp")legacy++;
@@ -61,7 +62,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    session=new BomSession();BomSession.Check(BomNative.bom_client_set_prediction(session.Handle,Prediction?1u:0u));
    if(Array.IndexOf(args,"--bom-no-visual-registry")>=0)VisualRegistry=null;
    string expected=Arg("--bom-expected-manifest",VisualRegistry!=null?VisualRegistry.GameplayManifestHash:"");
-   if(VisualRegistry!=null&&string.IsNullOrEmpty(expected))throw new InvalidOperationException("Visual registry has no finalized native gameplay manifest");if(!string.IsNullOrEmpty(expected))session.ExpectGameplayManifest(expected);Connect();
+   if(VisualRegistry!=null&&string.IsNullOrEmpty(expected))throw new InvalidOperationException("Visual registry has no finalized native gameplay manifest");if(!string.IsNullOrEmpty(expected))session.ExpectGameplayManifest(expected);sourcePresentation=new BomSourcePresentation(VisualRegistry,Material,Array.IndexOf(args,"--bom-tier1")<0);Connect();
    shapeInfo=new BomActorShapeInfo{struct_size=(uint)System.Runtime.InteropServices.Marshal.SizeOf<BomActorShapeInfo>(),version=1};BomSession.Check(BomNative.bom_actor_shape_info(ref shapeInfo));
    var build=new BomBuildInfo{struct_size=(uint)System.Runtime.InteropServices.Marshal.SizeOf<BomBuildInfo>(),version=1};BomSession.Check(BomNative.bom_build_info(ref build));identity="Native "+build.source_build_tag+" / protocol "+build.game_protocol;
    Debug.Log("BOM UNITY ABI PASS: twenty layouts, offsets, alignment; "+identity);
@@ -84,7 +85,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    smokeElapsed=elapsed;
    if(smoke&&smokeActive){float requested=(elapsed%4<2?1:-1)*(levelSmoke?.2f:1);BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,requested));smokeMove=requested;if(elapsed>3&&!blasted){BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle,now,levelSmoke?-12:-6.4f,levelSmoke?7.25f:2.3f));BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle,now));blasted=true;}}
    else if(!smoke&&!AutomatedProfile){BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,Application.isFocused?move.ReadValue<float>():0));}
-   session.Poll(now,Accept);
+   session.Poll(now,Accept);sourcePresentation?.Pump(session);
    if(fallbackEpoch!=session.Sample.epoch||fallbackConnection!=session.Sample.connection_generation){reportedVisualFallbacks.Clear();reportedRegistryMatches.Clear();fallbackEpoch=session.Sample.epoch;fallbackConnection=session.Sample.connection_generation;}
    foreach(var source in session.Sources.Values){
     if(VisualRegistry!=null&&VisualRegistry.TryFind(source.AssetKey,source.VisualHash,out var entry)){
@@ -94,18 +95,18 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    foreach(var request in session.RequestResults)Debug.Log("BOM UNITY REQUEST id="+request.request_id+" kind="+request.kind+" status="+request.status+" effect_tick="+request.effect_tick+" event_id="+request.event_id+" reason="+request.reason);
    if(session.Prediction.status==1)predictedFrames++;if(session.Prediction.status==2)conservativeFrames++;
    if(smoke && smokeActive && elapsed>5&&!reset&&(session.Sample.flags&2)!=0&&!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN"))){BomSession.Check(BomNative.bom_client_host_command(session.Handle,1,0,0));reset=true;}
-   if(smoke && smokeActive && elapsed>8&&!reconnected){BomSession.Check(BomNative.bom_client_disconnect(session.Handle));Connect();reconnected=true;smokeMove=float.NaN;}
+   if(smoke && smokeActive && elapsed>reconnectSeconds&&!reconnected){BomSession.Check(BomNative.bom_client_disconnect(session.Handle));Connect();reconnected=true;smokeMove=float.NaN;}
    if(smoke && smokeActive && (elapsed>=smokeSeconds||!string.IsNullOrEmpty(smokeStopFile)&&File.Exists(smokeStopFile))){bool passed=snapshots>1&&events>0&&reconnected&&session.Sample.input_count>60&&traveled>0.25f&&jumpRise>0.03f&&(!Prediction||predictedFrames>0);Debug.Log("BOM UNITY LIVE "+(passed?"PASS":"FAIL")+" snapshots="+snapshots+" events="+events+" epoch="+epoch+" generation="+generation+" inputs="+session.Sample.input_count+" traveled="+traveled+" jumpRise="+jumpRise+" predicted_frames="+predictedFrames+" conservative_frames="+conservativeFrames);Application.Quit(passed?0:2);Close();}
   } catch(Exception e){Fail(e);}
  }
  void Fail(Exception error){failure=error.ToString();Debug.LogError(failure);Close();ClearScene();if(smoke||AutomatedProfile)Application.Quit(3);}
  void OnApplicationFocus(bool focused){if(!focused)SendInput(()=>BomSession.Check(BomNative.bom_client_clear_intent(session.Handle)));}
- void OnDisable(){move?.Dispose();jump?.Dispose();blast?.Dispose();move=jump=blast=null;Close();ClearScene();}
+ void OnDisable(){move?.Dispose();jump?.Dispose();blast?.Dispose();move=jump=blast=null;Close();ClearScene();sourcePresentation?.Dispose();sourcePresentation=null;}
  void OnApplicationQuit(){Close();}
- void ClearScene(){if(terrain!=null){terrain.SetActive(false);Destroy(terrain);terrain=null;}foreach(var actor in actors.Values)Destroy(actor);actors.Clear();bodies.Clear();foreach(var mesh in meshes)Destroy(mesh);meshes.Clear();revision=ulong.MaxValue;}
+ void ClearScene(bool keepSource=false){if(!keepSource)sourcePresentation?.Clear();if(terrain!=null){terrain.SetActive(false);Destroy(terrain);terrain=null;}foreach(var actor in actors.Values)Destroy(actor);actors.Clear();bodies.Clear();foreach(var mesh in meshes)Destroy(mesh);meshes.Clear();revision=ulong.MaxValue;}
  GameObject Visual(string name,Transform parent,Mesh mesh,uint rgba,List<Mesh> owned) {
   var obj=new GameObject(name);obj.transform.SetParent(parent,false);obj.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{Material,Material};
-  Color color=new Color32((byte)rgba,(byte)(rgba>>8),(byte)(rgba>>16),255);var properties=new MaterialPropertyBlock();properties.SetColor("_BaseColor",color);renderer.SetPropertyBlock(properties,0);properties.SetColor("_BaseColor",new Color(color.r*0.7f,color.g*0.7f,color.b*0.7f,1));renderer.SetPropertyBlock(properties,1);owned.Add(mesh);return obj;
+  Color color=new Color32((byte)rgba,(byte)(rgba>>8),(byte)(rgba>>16),255);var properties=new MaterialPropertyBlock();properties.SetColor("_BaseColor",color);renderer.SetPropertyBlock(properties,0);properties.SetColor("_BaseColor",new Color(color.r*0.7f,color.g*0.7f,color.b*0.7f,1));renderer.SetPropertyBlock(properties,1);owned.Add(mesh);if(Application.isPlaying)mesh.UploadMeshData(true);return obj;
  }
  void Accept(BomSession client) {
   var s=client.Sample;
@@ -115,30 +116,33 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    bool newSession=generation!=s.connection_generation||epoch!=s.epoch;
    if(newSession)cellGeometry.Clear();
    var activeCells=new HashSet<ulong>();
-   var batches=new Dictionary<(uint,ulong,uint),TerrainBatch>();
+   sourcePresentation?.BeforeTopology();
+   var batches=new Dictionary<(uint,ulong,uint,ulong),TerrainBatch>();
+   var nextFallbacks=new Dictionary<ulong,List<Renderer>>();
    var next=new GameObject("Native geometry "+s.epoch+":"+s.revision);next.SetActive(false);
    var nextBodies=new Dictionary<(uint,ulong),Transform>();var nextMeshes=new List<Mesh>();
+   void Flush(TerrainBatch batch){var obj=Visual("Terrain batch",batch.Body,batch.Upload(),batch.Color,nextMeshes);if(!nextFallbacks.TryGetValue(batch.SourceId,out var renderers)){renderers=new List<Renderer>();nextFallbacks.Add(batch.SourceId,renderers);}renderers.Add(obj.GetComponent<MeshRenderer>());}
    try {
     for(int i=0;i<s.cell_count;i++) {
      var cell=client.Cells[i];if(cell.vertex_count<3||cell.vertex_start+cell.vertex_count>s.vertex_count)throw new InvalidOperationException("Cell outline out of bounds");
      var key=(cell.pose_kind,cell.pose_kind==1?cell.id:cell.piece_id);
      if(!nextBodies.TryGetValue(key,out var body)){body=new GameObject("Body "+key).transform;body.SetParent(next.transform,false);body.position=new Vector3(cell.pivot_x,cell.pivot_y,0);nextBodies.Add(key,body);}
 
-     float depthLo=-.3f,depthHi=.3f;
-     if(client.Catalog.binding_count==s.cell_count){var binding=client.CellBindings[i];if(binding.cell_id!=cell.id)throw new InvalidOperationException("Native source binding order differs from cell array");if(client.Sources.TryGetValue(binding.source_identity,out var source)){depthLo=source.Binding.depth_lo;depthHi=source.Binding.depth_hi;}}
+     ulong sourceId=0;float depthLo=-.3f,depthHi=.3f;
+     if(client.Catalog.binding_count==s.cell_count){var binding=client.CellBindings[i];sourceId=binding.source_identity;if(binding.cell_id!=cell.id)throw new InvalidOperationException("Native source binding order differs from cell array");if(client.Sources.TryGetValue(binding.source_identity,out var source)){depthLo=source.Binding.depth_lo;depthHi=source.Binding.depth_hi;}}
      activeCells.Add(cell.id);
      if(!cellGeometry.TryGetValue(cell.id,out var geometry)){
       var outline=new Vector2[cell.vertex_count];for(uint j=0;j<cell.vertex_count;j++){var v=client.Vertices[cell.vertex_start+j];outline[j]=new Vector2(v.x-cell.rest_x,v.y-cell.rest_y);}
       geometry=BomExtrusion.BuildData(outline,depthHi-depthLo,new Vector2(cell.rest_x,cell.rest_y),(depthLo+depthHi)/2);cellGeometry.Add(cell.id,geometry);
      }
-     var batchKey=(key.Item1,key.Item2,cell.color_rgba);
+     var batchKey=(key.Item1,key.Item2,cell.color_rgba,sourceId);
      if(!batches.TryGetValue(batchKey,out var batch)||batch.Vertices.Count+geometry.Vertices.Length>50000){
-      if(batch!=null)Visual("Terrain batch",batch.Body,batch.Upload(),batch.Color,nextMeshes);
-      batch=new TerrainBatch{Body=body,Color=cell.color_rgba};batches[batchKey]=batch;
+      if(batch!=null)Flush(batch);
+      batch=new TerrainBatch{Body=body,Color=cell.color_rgba,SourceId=sourceId};batches[batchKey]=batch;
      }
      batch.Add(geometry,new Vector2(cell.rest_x-cell.pivot_x,cell.rest_y-cell.pivot_y));
     }
-    foreach(var batch in batches.Values)Visual("Terrain batch",batch.Body,batch.Upload(),batch.Color,nextMeshes);
+    foreach(var batch in batches.Values)Flush(batch);
    } catch {Destroy(next);foreach(var mesh in nextMeshes)Destroy(mesh);throw;}
    var obsolete=new List<ulong>();long cacheBytes=0;foreach(var pair in cellGeometry){if(!activeCells.Contains(pair.Key))obsolete.Add(pair.Key);else cacheBytes+=pair.Value.Bytes;}foreach(ulong id in obsolete)cellGeometry.Remove(id);
    if(cacheBytes>256L*1024*1024)throw new InvalidOperationException("Fallback geometry cache exceeds its explicit 256 MiB budget");
@@ -148,8 +152,8 @@ public sealed class BomClientBehaviour : MonoBehaviour {
     else for(int i=0;i<s.vertex_count;i++){var v=client.Vertices[i];min=Vector2.Min(min,new Vector2(v.x,v.y));max=Vector2.Max(max,new Vector2(v.x,v.y));}
     Vector2 center=(min+max)/2;View.transform.position=new Vector3(center.x,center.y,-40);View.orthographicSize=Mathf.Max(6,(max.y-min.y)/2+2,(max.x-min.x)/2/Mathf.Max(0.1f,View.aspect)+2);
    }
-   ClearScene();terrain=next;meshes.AddRange(nextMeshes);foreach(var pair in nextBodies)bodies.Add(pair.Key,pair.Value);
-   terrain.SetActive(true);generation=s.connection_generation;epoch=s.epoch;revision=s.revision;acceptedTopology=s.transaction_id;if(newSession)lastEvent=0;snapshots++;
+   ClearScene(true);terrain=next;meshes.AddRange(nextMeshes);foreach(var pair in nextBodies)bodies.Add(pair.Key,pair.Value);
+   terrain.SetActive(true);sourcePresentation?.SetFallbackBytes(cacheBytes*3);sourcePresentation?.SetTopology(client,bodies,nextFallbacks);generation=s.connection_generation;epoch=s.epoch;revision=s.revision;acceptedTopology=s.transaction_id;if(newSession)lastEvent=0;snapshots++;
    Debug.Log("BOM UNITY SNAPSHOT generation="+generation+" epoch="+epoch+" revision="+revision+" cells="+s.cell_count+" hash="+s.canonical_hash+" terrain_batches="+nextMeshes.Count+" geometry_cache_bytes="+cacheBytes);
   }
   var seen=new HashSet<(uint,ulong)>();
