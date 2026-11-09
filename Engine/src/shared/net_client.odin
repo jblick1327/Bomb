@@ -71,6 +71,10 @@ Net_Client_Stats :: struct {
 }
 
 Net_Client :: struct {
+ round_credentials:Round_Credentials,
+ join_spectator,has_round:bool,
+ round_snapshot:Round_Snapshot,
+ ready_epoch:u32,
  input_link: Input_Link,
  input_probe_at: f64,
  request_counter,host_request_id: u64,

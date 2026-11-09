@@ -24,6 +24,10 @@ BUILD_TAG :: u64(#config(BOM_CORE_BUILD_TAG,0))
 Held :: struct { timestamp: f64, move: f32 }
 Action :: struct { timestamp: f64, x,y: f32 }
 Client_Slot :: struct {
+ round_credentials:core.Round_Credentials,
+ join_spectator:bool,
+ round_players:[2]BomRoundPlayer,
+ round_connections:[4]BomRoundConnection,
  active,live,acquired,has_time,has_geometry: bool,
  generation: u32,
  ctx: runtime.Context,
@@ -72,6 +76,7 @@ get_slot :: proc "contextless" (handle: u64) -> (^Client_Slot,u32) {
 }
 close_client :: proc(s:^Client_Slot) {
  if s.live {
+  s.round_credentials=s.client.round_credentials
   s.last_connection_state=u32(s.client.nc_client.state)
   if s.client.real_reason!="" { delete(s.last_error);s.last_error=strings.clone(s.client.real_reason) }
   nc.client_disconnect(&s.client.nc_client)
@@ -159,6 +164,7 @@ bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
  salt:=nc.random_salt();for salt==s.last_salt {salt=nc.random_salt()};s.last_salt=salt
  core.net_client_init(&s.client,salt,0)
  s.client.real_gate=true;s.client.real_host_token=s.token;s.client.verify=true
+ s.client.round_credentials=s.round_credentials;s.client.join_spectator=s.join_spectator
  s.client.has_expected_manifest=s.has_expected_manifest;s.client.expected_manifest=s.expected_manifest
  s.client.prediction_enabled=!s.prediction_disabled
  s.connection_generation+=1;s.live=true;s.last_connection_state=u32(nc.Client_State.Connecting)
@@ -365,7 +371,7 @@ bom_client_host_command :: proc "c" (handle:u64,op,mode:u32,radius:f32) -> u32 {
 
 // One reliable control request may be outstanding. The existing protocol orders
 // responses, so this maps a local ID to a server result without changing bytes.
-// op 1 reset, 2 mode, 3 radius, 4 native level upload (copied by reliable send).
+// op 1 reset, 2 blast mode, 3 radius, 4 layout, 5 game mode.
 @(export)
 bom_client_request_host_command :: proc "c" (handle:u64,command:^BomHostCommand,command_id:^u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
@@ -373,14 +379,15 @@ bom_client_request_host_command :: proc "c" (handle:u64,command:^BomHostCommand,
  if !s.live || !s.client.real_hello_ok { return NOT_CONNECTED }
  if command==nil || command_id==nil || command.struct_size<u32(size_of(BomHostCommand)) || command.version!=1 || command.reserved!=0 || command.reserved1!=0 { return BAD_ARGUMENT }
  command_id^=0
- if command.op<1 || command.op>4 || command.mode>255 || !core.finite(command.radius) || s.command_counter==0xffffffffffffffff { return BAD_ARGUMENT }
+ if command.op<1 || command.op>5 || command.mode>255 || !core.finite(command.radius) || s.command_counter==0xffffffffffffffff { return BAD_ARGUMENT }
  sent:=false
  if command.op==4 {
   if command.layout_length==0 || command.layout_length>u32(core.NET_APP_MAX_LAYOUT) || command.layout==nil { return BAD_ARGUMENT }
   sent=core.net_host_client_send_layout(&s.client,command.layout[:command.layout_length])
  } else {
   if command.layout_length!=0 { return BAD_ARGUMENT }
-  sent=core.net_host_client_send_command(&s.client,u8(command.op),u8(command.mode),command.radius)
+  op:=command.op==5?core.NET_HOST_GAME_MODE:u8(command.op)
+  sent=core.net_host_client_send_command(&s.client,op,u8(command.mode),command.radius)
  }
  if !sent { return IO_ERROR }
  s.command_counter+=1;s.command_id=s.command_counter;s.command_serial=s.client.control_serial;s.command_pending=true;s.command_ok=false

@@ -25,6 +25,7 @@ Net_Server_Stats :: struct {
 }
 
 Net_Server_Client :: struct {
+ round_credentials:Round_Credentials,
  schedule: Input_Schedule,
  incarnation: u64,
  echo_nonce: u64,
@@ -48,6 +49,10 @@ Net_Server_Client :: struct {
 }
 
 Net_Server :: struct {
+ rounds:Round_Controller,
+ round_admission:Round_Admission,
+ round_dirty,round_mode_pending:bool,
+ round_next_mode:Game_Mode,
  async_rebuild:bool,
  rebuild,rebuild_cleanup:^Net_Rebuild_Job,
  rebuild_test_gate:^b32,
@@ -133,6 +138,7 @@ net_record_hash :: proc(ns: ^Net_Server) {
 }
 
 net_server_join :: proc(ns: ^Net_Server,index: int) {
+ ns.round_dirty=true
  ns.real_hash_generation[index]+=1
  c:=&ns.clients[index]
  ns.next_incarnation+=1;c.incarnation=ns.next_incarnation;c.schedule={};c.echo_nonce=0
@@ -153,6 +159,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
 }
 
 net_server_leave :: proc(ns: ^Net_Server,index: int) {
+ round_disconnect(&ns.rounds,index);ns.round_dirty=true
  if ns.record_hashes && ns.real_logging { fmt.printf("HASH CLOSED client=%d connection=%d tick=%d\n",index,ns.real_hash_generation[index],ns.tick) }
  net_client_state_clear(&ns.clients[index])
  ns.clients[index].active=false
@@ -197,7 +204,8 @@ net_server_blast :: proc(ns: ^Net_Server,index: int,b: Net_Blast) {
  recent:=0
  for t in c.blast_ticks { if ns.tick+1-t<NET_BLAST_RATE_TICKS { recent+=1 } }
  reason:=0
- if !inside { reason=1 } else if recent>=NET_BLAST_RATE_COUNT { reason=2 } else if !sandbox_valid_aim(&w.scene,point) { reason=3 }
+ if ns.rounds.mode==.Elimination {reason=4}
+ else if !inside { reason=1 } else if recent>=NET_BLAST_RATE_COUNT { reason=2 } else if !sandbox_valid_aim(&w.scene,point) { reason=3 }
  if reason!=0 {
   c.stats.blasts_rejected+=1
   switch reason { case 1: c.stats.rejected_outside+=1; case 2: c.stats.rejected_rate+=1; case 3: c.stats.rejected_solid+=1 }
@@ -367,12 +375,16 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
     ns.real_hash_checks+=1
     result:="unrecorded"
     if expected,found:=ns.hashes[net_hash_key(epoch,revision)]; found {
-     if expected!=hash { ns.real_hash_mismatch+=1;result="mismatch" } else { result="match" }
+     if expected!=hash { ns.real_hash_mismatch+=1;result="mismatch" } else {
+      result="match"
+      if epoch==w.scene.epoch {round_ready(&ns.rounds,ev.client,ns.clients[ev.client].incarnation,true)}
+     }
     } else { ns.real_hash_unrecorded+=1 }
     if ns.real_logging { fmt.printf("HASH REPORT client=%d connection=%d epoch=%d revision=%d hash=%d tick=%d result=%s\n",ev.client,ns.real_hash_generation[ev.client],epoch,revision,hash,ns.tick,result) }
    }
   }
  }
+ round_server_prepare(ns)
  // Apply inputs: blasts in player order and sequence order, then the world tick.
  commands:Tick_Commands
  for i in 0..<nc.MAX_CLIENTS {
@@ -393,9 +405,12 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
   for len(c.blast_ticks)>0 && ns.tick+1-c.blast_ticks[0]>=NET_BLAST_RATE_TICKS { ordered_remove(&c.blast_ticks,0) }
  }
  world_started:=time.tick_now()
- post:=world_tick(w,commands,1.0/60.0)
+ post:Tick_Events
+ if ns.rounds.mode==.Sandbox || ns.rounds.state==.Playing {post=world_tick(w,commands,1.0/60.0)}
+ round_server_finish(ns,post)
  append(&ns.world_ms,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))
  ns.tick+=1
+ round_server_broadcast(ns)
  // Structure and events, reliable, to every client.
  out:=repl_server_update(&ns.repl,&w.scene,ns.tick); defer repl_output_destroy(&out)
  epoch_changed:=w.scene.epoch!=ns.frame_epoch

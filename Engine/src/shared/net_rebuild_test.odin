@@ -31,10 +31,12 @@ background_reset_keeps_old_world_live_and_publishes_one_complete_epoch :: proc(t
  t.expect(test,server.game.world.scene.physics.world==old && b2.World_IsValid(old))
  // Join while the new world is being built: commit uses the current player set.
  net_server_join(&server,2)
+ server.game.world.next_bomb_id=345
  sync.atomic_store(&gate,true)
  start:=time.tick_now()
  for net_rebuild_pending(&server) && time.duration_seconds(time.tick_since(start))<5 {net_rebuild_poll(&server);time.sleep(time.Millisecond)}
  t.expect(test,!net_rebuild_pending(&server) && server.game.world.scene.epoch==epoch+1 && server.game.world.tick==0)
+ t.expect(test,server.game.world.next_bomb_id==345)
  t.expect(test,server.game.world.players[1].active && server.game.world.players[2].active && !server.game.world.players[0].active)
  t.expect(test,!b2.World_IsValid(old) && b2.World_IsValid(server.game.world.scene.physics.world))
  net_rebuild_poll(&server);t.expect(test,server.game.world.scene.epoch==epoch+1)

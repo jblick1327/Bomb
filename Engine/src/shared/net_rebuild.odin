@@ -72,6 +72,7 @@ net_rebuild_poll :: proc(ns:^Net_Server) {
  if job==nil || !thread.is_done(job.worker) {return}
  thread.join(job.worker)
  if !job.success {
+  ns.round_mode_pending=false;ns.round_dirty=true
   if ns.real_logging {fmt.printf("REBUILD FAILED: %s\n",job.world.rebuild_error)}
   net_rebuild_free(job,true);ns.rebuild=nil
   return
@@ -79,10 +80,14 @@ net_rebuild_poll :: proc(ns:^Net_Server) {
  // Publish only a completely constructed world. Existing physics/networking
  // continue on the old epoch during construction. No partial scene is sent.
  old:=ns.game.world
+ // Synchronous resets retain this session-wide sequence. Include bombs spawned
+ // in the active world while the replacement was being constructed.
+ job.world.next_bomb_id=old.next_bomb_id
  job.world.scene.revision=old.scene.revision+1
  ns.game.world=job.world;job.world={};ns.rebuild=nil
  net_host_trim_players(ns)
  for i in 0..<len(ns.clients) {if ns.clients[i].active {if !ns.game.world.players[i].active {_=world_add_player(&ns.game.world,i)};ns.game.world.players[i].blast_radius=ns.clients[i].radius}}
+ round_server_after_rebuild(ns)
  if ns.real_logging {fmt.printf("REBUILD COMMIT epoch=%d tick=%d build_ms=%.3f\n",ns.game.world.scene.epoch,ns.tick,time.duration_seconds(time.tick_since(job.started))*1000)}
  net_rebuild_free(job,false)
  // Destroy the detached old world without blocking transport. Do not accept

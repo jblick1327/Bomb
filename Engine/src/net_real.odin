@@ -23,7 +23,7 @@ import "core:time"
 
 // A real second-process bot reuses the step 2b player, including jump counter,
 // numbered blasts, replica, interpolation, acks and adaptive clock.
-net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false) -> bool {
+net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false,spectator:bool=false,observe_rounds:u64=0) -> bool {
  upload_data: []u8
  defer { if upload_data!=nil { delete(upload_data) } }
  if upload_path!="" {
@@ -60,6 +60,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
   net_client_destroy(&client)
  }
  client.real_gate=true
+ client.join_spectator=spectator
  client.prediction_enabled=!prediction_off
  client.real_host_token=host_token
  client.real_protocol=protocol_version
@@ -69,6 +70,7 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
  accumulator:=f64(0)
  next_report:=f64(10)
  upload_sent,reset_sent:=false,false
+ first_round:=u64(0)
  buf:[nc.MAX_PACKET+64]u8
  for {
   now:=time.duration_seconds(time.tick_since(start))
@@ -110,6 +112,10 @@ net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: boo
   packets:=nc.client_take_outgoing(&client.nc_client)
   for p in packets { _=nc.socket_send(&sock,target,p.data) }
   nc.outgoing_free(&packets)
+  if observe_rounds>0 && client.has_round && client.round_snapshot.mode==.Elimination {
+   if first_round==0 {first_round=client.round_snapshot.id}
+   if client.round_snapshot.state==.Finished && client.round_snapshot.id-first_round>=observe_rounds-1 {break}
+  }
   if client.real_reason!="" || client.nc_client.state==.Failed || client.nc_client.state==.Timed_Out || client.nc_client.state==.Disconnected {
    fmt.eprintf("bot disconnected: %v (%s) (%s)\n",client.nc_client.state,client.nc_client.reject_reason,client.real_reason)
    return false
@@ -140,6 +146,8 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
  upload_path:=""
  request_reset:=false
  prediction_off:=false
+ spectator:=false
+ observe_rounds:=u64(0)
  i:=1
  for i<len(args) {
   switch args[i] {
@@ -152,6 +160,10 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
   case "--bad-version":
    protocol_version=GAME_PROTOCOL_VERSION+1;i+=1
   case "--prediction-off": prediction_off=true;i+=1
+  case "--spectator": spectator=true;i+=1
+  case "--observe-rounds":
+   if i+1>=len(args) {return false}
+   n,parsed:=strconv.parse_int(args[i+1]);if !parsed || n<1 || n>10 {return false};observe_rounds=u64(n);i+=2
   case "--upload-layout":
    if i+1>=len(args) { return false };upload_path=args[i+1];i+=2
   case "--host-reset":
@@ -159,5 +171,5 @@ net_real_cli_bot :: proc(args: []string,hidden_window: bool = false) -> bool {
   case: fmt.eprintln("Unknown bot option:",args[i]);return false
   }
  }
- return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off)
+ return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off,spectator,observe_rounds)
 }

@@ -2,7 +2,7 @@
 package ffi
 
 BOM_ABI_MAJOR :: u32(1)
-BOM_ABI_MINOR :: u32(3)
+BOM_ABI_MINOR :: u32(4)
 
 BomCreateInfo :: struct {
  struct_size: u32,
@@ -361,6 +361,56 @@ BomCatalogInfo :: struct {
  sources: [^]BomSourceBinding,
  bindings: [^]BomCellBinding,
  level: BomLevelInfo,
+}
+
+BomRoundPlayer :: struct {
+ session_id: u64,
+ generation: u64,
+ slot: u32,
+ alive: u32,
+ death: u32,
+ reserved: u32,
+ death_tick: u64,
+ alive_ticks: u64,
+ bombs_faced: u64,
+ xp_gained: u64,
+}
+
+BomRoundConnection :: struct {
+ session_id: u64,
+ generation: u64,
+ total_xp: u64,
+ wins: u64,
+ level: u64,
+ xp_in_level: u64,
+ xp_to_next: u64,
+ flags: u32,
+ reserved: u32,
+}
+
+BomRoundInfo :: struct {
+ struct_size: u32,
+ version: u32,
+ epoch: u32,
+ rules_version: u32,
+ tick: u64,
+ round_id: u64,
+ countdown_tick: u64,
+ start_tick: u64,
+ end_tick: u64,
+ bombs_spawned: u64,
+ winner: u64,
+ local_session_id: u64,
+ mode: u32,
+ state: u32,
+ draw: u32,
+ reason: u32,
+ lethal_radius: f32,
+ flags: u32,
+ players: [^]BomRoundPlayer,
+ player_count: u32,
+ connection_count: u32,
+ connections: [^]BomRoundConnection,
 }
 
 @(export)
@@ -764,6 +814,62 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 21: return u32(offset_of(BomCatalogInfo,sources))
   case 22: return u32(offset_of(BomCatalogInfo,bindings))
   case 23: return u32(offset_of(BomCatalogInfo,level))
+  }
+ case 20:
+  switch field_id {
+  case 0: return u32(size_of(BomRoundPlayer))
+  case 1: return u32(align_of(BomRoundPlayer))
+  case 2: return u32(offset_of(BomRoundPlayer,session_id))
+  case 3: return u32(offset_of(BomRoundPlayer,generation))
+  case 4: return u32(offset_of(BomRoundPlayer,slot))
+  case 5: return u32(offset_of(BomRoundPlayer,alive))
+  case 6: return u32(offset_of(BomRoundPlayer,death))
+  case 7: return u32(offset_of(BomRoundPlayer,reserved))
+  case 8: return u32(offset_of(BomRoundPlayer,death_tick))
+  case 9: return u32(offset_of(BomRoundPlayer,alive_ticks))
+  case 10: return u32(offset_of(BomRoundPlayer,bombs_faced))
+  case 11: return u32(offset_of(BomRoundPlayer,xp_gained))
+  }
+ case 21:
+  switch field_id {
+  case 0: return u32(size_of(BomRoundConnection))
+  case 1: return u32(align_of(BomRoundConnection))
+  case 2: return u32(offset_of(BomRoundConnection,session_id))
+  case 3: return u32(offset_of(BomRoundConnection,generation))
+  case 4: return u32(offset_of(BomRoundConnection,total_xp))
+  case 5: return u32(offset_of(BomRoundConnection,wins))
+  case 6: return u32(offset_of(BomRoundConnection,level))
+  case 7: return u32(offset_of(BomRoundConnection,xp_in_level))
+  case 8: return u32(offset_of(BomRoundConnection,xp_to_next))
+  case 9: return u32(offset_of(BomRoundConnection,flags))
+  case 10: return u32(offset_of(BomRoundConnection,reserved))
+  }
+ case 22:
+  switch field_id {
+  case 0: return u32(size_of(BomRoundInfo))
+  case 1: return u32(align_of(BomRoundInfo))
+  case 2: return u32(offset_of(BomRoundInfo,struct_size))
+  case 3: return u32(offset_of(BomRoundInfo,version))
+  case 4: return u32(offset_of(BomRoundInfo,epoch))
+  case 5: return u32(offset_of(BomRoundInfo,rules_version))
+  case 6: return u32(offset_of(BomRoundInfo,tick))
+  case 7: return u32(offset_of(BomRoundInfo,round_id))
+  case 8: return u32(offset_of(BomRoundInfo,countdown_tick))
+  case 9: return u32(offset_of(BomRoundInfo,start_tick))
+  case 10: return u32(offset_of(BomRoundInfo,end_tick))
+  case 11: return u32(offset_of(BomRoundInfo,bombs_spawned))
+  case 12: return u32(offset_of(BomRoundInfo,winner))
+  case 13: return u32(offset_of(BomRoundInfo,local_session_id))
+  case 14: return u32(offset_of(BomRoundInfo,mode))
+  case 15: return u32(offset_of(BomRoundInfo,state))
+  case 16: return u32(offset_of(BomRoundInfo,draw))
+  case 17: return u32(offset_of(BomRoundInfo,reason))
+  case 18: return u32(offset_of(BomRoundInfo,lethal_radius))
+  case 19: return u32(offset_of(BomRoundInfo,flags))
+  case 20: return u32(offset_of(BomRoundInfo,players))
+  case 21: return u32(offset_of(BomRoundInfo,player_count))
+  case 22: return u32(offset_of(BomRoundInfo,connection_count))
+  case 23: return u32(offset_of(BomRoundInfo,connections))
   }
  }
  return 0xffffffff

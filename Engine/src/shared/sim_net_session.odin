@@ -16,16 +16,24 @@ Net_App_Hello :: struct {
  token: string,
  has_expected_manifest:bool,
  expected_manifest:[32]u8,
+ spectator:bool,
+ resume:Round_Credentials,
 }
 
 net_app_read_hello :: proc(data: []u8) -> (hello: Net_App_Hello, valid: bool) {
- if len(data)<1 || data[0]!=NET_APP_HELLO || len(data)>256 { return {},false }
+ if len(data)<1 || data[0]!=NET_APP_HELLO || len(data)>320 { return {},false }
  r:nc.Reader; nc.reader_init(&r,data)
  _=nc.read_u8(&r)
  hello.version=nc.read_u32(&r)
  hello.build=nc.read_string(&r)
  hello.token=nc.read_string(&r)
  if hello.version==GAME_PROTOCOL_VERSION { hello.has_expected_manifest=nc.read_bool(&r);if hello.has_expected_manifest {for &byte in hello.expected_manifest {byte=nc.read_u8(&r)}} }
+ if hello.version==GAME_PROTOCOL_VERSION {
+  hello.spectator=nc.read_bool(&r)
+  for &byte in hello.resume.server {byte=nc.read_u8(&r)}
+  hello.resume.session=nc.read_u64(&r)
+  for &byte in hello.resume.secret {byte=nc.read_u8(&r)}
+ }
  valid=r.ok && r.pos==len(data) && len(hello.build)>0 && len(hello.build)<=NET_APP_MAX_BUILD && len(hello.token)<=NET_APP_MAX_TOKEN
  return
 }
@@ -59,6 +67,9 @@ net_app_server_hello :: proc(ns: ^Net_Server,index: int,data: []u8,now: f64) {
  }
  // No player is ever added before version/build validation.
  net_server_join(ns,index)
+ if reason:=round_server_admit(ns,index,hello.resume,hello.spectator);reason!="" {
+  net_server_leave(ns,index);net_app_send_reject(ns,index,reason,now);return
+ }
  ns.clients[index].is_host=is_host
  if is_host {
   ns.real_host_index=index
@@ -69,8 +80,11 @@ net_app_server_hello :: proc(ns: ^Net_Server,index: int,data: []u8,now: f64) {
  nc.write_u8(&w,NET_APP_WELCOME)
  nc.write_u8(&w,u8(index))
  nc.write_bool(&w,is_host)
+ credential:=ns.clients[index].round_credentials
+ nc.write_raw(&w,credential.server[:]);nc.write_u64(&w,credential.session);nc.write_raw(&w,credential.secret[:])
  _=nc.server_send_reliable(&ns.srv,index,w.data[:])
  net_host_send_settings(ns,index)
+ round_server_sync_bodies(ns);ns.round_dirty=true
  if ns.real_logging { fmt.printf("HELLO OK client=%d role=%s\n",index,is_host?"HOST":"player") }
 }
 

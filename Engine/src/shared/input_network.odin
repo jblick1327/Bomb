@@ -24,6 +24,8 @@ net_scheduled_server_message :: proc(ns:^Net_Server,index:int,channel:u8,data:[]
  if len(data)==0 { return false }
  c:=&ns.clients[index]
  switch data[0] {
+ case NET_APP_READY:
+  if channel==nc.CHANNEL_RELIABLE {round_server_ready(ns,index,data)};return true
  case SCHEDULED_MSG_REQUEST:
   if channel==nc.CHANNEL_RELIABLE { net_request_server_dispatch(ns,index,data) };return true
  case SCHEDULED_MSG_CONTROL:
@@ -82,6 +84,7 @@ net_scheduled_client_message :: proc(c:^Net_Client,channel:u8,data:[]u8,now:f64)
  return false
 }
 net_scheduled_client_update :: proc(c:^Net_Client,now:f64) {
+ round_client_ready(c)
  link:=&c.input_link
  if now>=c.input_probe_at {
   nonce,ok:=input_clock_probe(&link.clock,now)

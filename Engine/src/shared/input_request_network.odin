@@ -49,6 +49,7 @@ net_request_server_dispatch :: proc(ns:^Net_Server,index:int,data:[]u8) {
  if q.epoch!=ns.game.world.scene.epoch { result.status=.Wrong_Epoch }
  else if q.kind==REQUEST_BLAST {
   result.status=blast_intent_status(c.incarnation,q.incarnation,ns.game.world.scene.epoch,q.epoch,ns.tick+1,q.created,q.deadline)
+  if result.status==.Accepted && ns.rounds.mode==.Elimination {result.status=.Rejected;result.reason=6}
   if result.status==.Accepted {
    r:nc.Reader;nc.reader_init(&r,q.payload);point:=Vec2{nc.read_f32(&r),nc.read_f32(&r)}
    if !r.ok || r.pos!=len(q.payload) || !finite(point.x) || !finite(point.y) { result.status=.Rejected;result.reason=2 }

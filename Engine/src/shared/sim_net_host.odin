@@ -15,6 +15,7 @@ NET_HOST_RESET :: u8(1)
 NET_HOST_MODE :: u8(2)
 
 NET_HOST_BOMB_RADIUS :: u8(3)
+NET_HOST_GAME_MODE :: u8(4)
 
 net_host_trim_players :: proc(ns: ^Net_Server) {
  for i in 0..<nc.MAX_CLIENTS {
@@ -24,6 +25,7 @@ net_host_trim_players :: proc(ns: ^Net_Server) {
 
 net_host_apply_layout :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
  if !ns.clients[index].active || !ns.clients[index].is_host { return "host only" }
+ if ns.rounds.mode==.Elimination {return "layout upload requires sandbox mode"}
  if net_rebuild_pending(ns) {return "world rebuild already in progress"}
  if len(data)<2 || len(data)-1>NET_APP_MAX_LAYOUT || data[0]!=NET_APP_LAYOUT_UPLOAD { return "invalid layout upload size" }
  layout,seed,ok,problem:=decode_layout(data[1:])
@@ -44,13 +46,29 @@ net_host_apply_command :: proc(ns: ^Net_Server,index: int,data: []u8) -> string 
  switch data[1] {
  case NET_HOST_RESET:
   if len(data)!=2 { return "invalid reset command" }
+  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Finished {return "round restart requires a finished round"}
+  if ns.rounds.id==max(u64) {return "round identity exhausted"}
   if ns.async_rebuild {return net_rebuild_begin(ns)}
   headless_game_reset(&ns.game)
   net_host_trim_players(ns)
+  round_server_after_rebuild(ns)
+ case NET_HOST_GAME_MODE:
+  if len(data)!=3 || data[2]>u8(Game_Mode.Elimination) {return "invalid game mode"}
+  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Finished && ns.rounds.state!=.Waiting {return "cannot change mode during an active round"}
+  if ns.rounds.id==max(u64) {return "round identity exhausted"}
+  ns.round_mode_pending=true;ns.round_next_mode=Game_Mode(data[2])
+  if ns.async_rebuild {
+   reason:=net_rebuild_begin(ns)
+   if reason!="" {ns.round_mode_pending=false}
+   return reason
+  }
+  headless_game_reset(&ns.game);net_host_trim_players(ns);round_server_after_rebuild(ns)
  case NET_HOST_MODE:
+  if ns.rounds.mode==.Elimination {return "manual tools require sandbox mode"}
   if len(data)!=3 || data[2]>1 { return "invalid blast mode" }
   headless_game_mode(&ns.game,Blast_Mode(data[2]))
  case NET_HOST_BOMB_RADIUS:
+  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Waiting && ns.rounds.state!=.Finished {return "cannot tune an active round"}
   if len(data)!=6 { return "invalid bomb radius" }
   r:nc.Reader;nc.reader_init(&r,data)
   _=nc.read_u8(&r);_=nc.read_u8(&r)
@@ -117,6 +135,7 @@ net_host_client_send_command :: proc(c: ^Net_Client,op: u8,mode: u8=0,radius: f3
  switch op {
  case NET_HOST_RESET:
  case NET_HOST_MODE: nc.write_u8(&w,mode)
+ case NET_HOST_GAME_MODE: nc.write_u8(&w,mode)
  case NET_HOST_BOMB_RADIUS: nc.write_f32(&w,radius)
  case: return false
  }

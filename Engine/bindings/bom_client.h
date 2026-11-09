@@ -340,6 +340,53 @@ typedef struct BomCatalogInfo {
  BomCellBinding* bindings;
  BomLevelInfo level;
 } BomCatalogInfo;
+typedef struct BomRoundPlayer {
+ unsigned long long session_id;
+ unsigned long long generation;
+ unsigned int slot;
+ unsigned int alive;
+ unsigned int death;
+ unsigned int reserved;
+ unsigned long long death_tick;
+ unsigned long long alive_ticks;
+ unsigned long long bombs_faced;
+ unsigned long long xp_gained;
+} BomRoundPlayer;
+typedef struct BomRoundConnection {
+ unsigned long long session_id;
+ unsigned long long generation;
+ unsigned long long total_xp;
+ unsigned long long wins;
+ unsigned long long level;
+ unsigned long long xp_in_level;
+ unsigned long long xp_to_next;
+ unsigned int flags;
+ unsigned int reserved;
+} BomRoundConnection;
+typedef struct BomRoundInfo {
+ unsigned int struct_size;
+ unsigned int version;
+ unsigned int epoch;
+ unsigned int rules_version;
+ unsigned long long tick;
+ unsigned long long round_id;
+ unsigned long long countdown_tick;
+ unsigned long long start_tick;
+ unsigned long long end_tick;
+ unsigned long long bombs_spawned;
+ unsigned long long winner;
+ unsigned long long local_session_id;
+ unsigned int mode;
+ unsigned int state;
+ unsigned int draw;
+ unsigned int reason;
+ float lethal_radius;
+ unsigned int flags;
+ BomRoundPlayer* players;
+ unsigned int player_count;
+ unsigned int connection_count;
+ BomRoundConnection* connections;
+} BomRoundInfo;
 __declspec(dllimport) unsigned int __cdecl bom_abi_version(void);
 __declspec(dllimport) unsigned long long __cdecl bom_build_tag(void);
 __declspec(dllimport) unsigned int __cdecl bom_client_create(BomCreateInfo* info, unsigned long long* handle);
@@ -369,4 +416,6 @@ __declspec(dllimport) unsigned int __cdecl bom_client_reset_prediction_metrics(u
 __declspec(dllimport) unsigned int __cdecl bom_client_next_request_result(unsigned long long handle, unsigned long long after_request_id, BomRequestResult* result);
 __declspec(dllimport) unsigned int __cdecl bom_client_expect_gameplay_manifest(unsigned long long handle, unsigned char* hash, unsigned int length);
 __declspec(dllimport) unsigned int __cdecl bom_client_acquire_catalog(unsigned long long handle, unsigned long long sample_sequence, BomCatalogInfo* catalog);
+__declspec(dllimport) unsigned int __cdecl bom_client_get_round(unsigned long long handle, unsigned long long sample_sequence, BomRoundInfo* info);
+__declspec(dllimport) unsigned int __cdecl bom_client_set_join_options(unsigned long long handle, unsigned int flags);
 #endif

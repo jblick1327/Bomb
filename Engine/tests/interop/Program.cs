@@ -22,7 +22,7 @@ static class Program {
  }
  static T Read<T>(IntPtr pointer,uint index) where T:struct => Marshal.PtrToStructure<T>(IntPtr.Add(pointer,checked((int)index*Marshal.SizeOf<T>())));
  static void Layouts() {
-  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo)};
+  Type[] types={typeof(BomCreateInfo),typeof(BomConnectInfo),typeof(BomVertex),typeof(BomCell),typeof(BomPose),typeof(BomEvent),typeof(BomSample),typeof(BomBuildInfo),typeof(BomStats),typeof(BomError),typeof(BomHostCommand),typeof(BomCommandResult),typeof(BomActorShapeInfo),typeof(BomOwnerState),typeof(BomPredictionStats),typeof(BomRequestResult),typeof(BomLevelInfo),typeof(BomCellBinding),typeof(BomSourceBinding),typeof(BomCatalogInfo),typeof(BomRoundPlayer),typeof(BomRoundConnection),typeof(BomRoundInfo)};
   for(uint i=0;i<types.Length;i++) {
    Type type=types[i];Check((uint)Marshal.SizeOf(type)==BomNative.bom_debug_layout(i,0),type.Name+" sizeof");
    FieldInfo[] fields=type.GetFields(BindingFlags.Public|BindingFlags.Instance);
@@ -88,6 +88,8 @@ static class Program {
   Layouts();Lifetimes();Console.WriteLine("PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles");
   if(args.Length==0)return;
   uint port=uint.Parse(args[0]);double seconds=args.Length>1?double.Parse(args[1]):20;double resetAfter=args.Length>2?double.Parse(args[2]):5;
+  if(Environment.GetEnvironmentVariable("BOM_TEST_ROUNDS")=="1"){RoundProfile.Run(port,seconds);return;}
+  if(Environment.GetEnvironmentVariable("BOM_TEST_UNITY_ROUNDS")=="1"){RoundUnityHost.Run(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_LEVEL_PROFILE")=="1"){LevelProfile.Run(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_PROFILE")=="1"){PredictionProfile.Run(port,seconds);return;}
   if(args.Length>3&&args[3]=="single"){RunSingleHost(port,seconds,resetAfter);return;}

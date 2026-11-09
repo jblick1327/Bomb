@@ -66,6 +66,12 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  if p.mode==.Conservative { p.conservative_seconds+=elapsed }
  p.visual_offset=vmul(p.visual_offset,f32(math.exp(-elapsed/.1)))
  if !c.prediction_enabled { prediction_set_mode(p,.Disabled,.None);return }
+ if c.has_round && c.round_snapshot.mode==.Elimination {
+  index:=c.nc_client.client_index
+  if c.round_snapshot.state!=.Playing || index<0 || index>=MAX_PLAYERS || c.round_snapshot.connections[index].spectator || !c.input_link.has_owner || c.input_link.owner.state_tick<c.round_snapshot.start_tick {
+   prediction_set_mode(p,.Conservative,.Round_Inactive);return
+  }
+ }
  link:=&c.input_link
  if !link.active || !link.has_owner { prediction_set_mode(p,.Warming,.Uninitialized);return }
  owner:=link.owner;history:=&link.history;target:=history.next_tick-1

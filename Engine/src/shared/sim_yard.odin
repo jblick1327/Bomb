@@ -14,6 +14,8 @@ YARD_LEFT :: f32(-8)
 YARD_RIGHT :: f32(9)
 
 World :: struct {
+ elimination_playing:bool,
+ lethal_radius:f32,
  rebuild_error:string,
 	scene: Scene,
 	floor: b2.BodyId,
@@ -42,6 +44,8 @@ Tick_Commands :: struct {
 Explosion_Event :: struct { position: Vec2, radius: f32, elapsed_ms: f64, regions: int, event_id: u64 }
 
 Tick_Events :: struct {
+ deaths:[MAX_PLAYERS]Round_Death,
+ bombs_spawned:u64,
  explosions: [dynamic]Explosion_Event,
  player_respawned,blast_rejected: [MAX_PLAYERS]bool,
  structure_changed: bool,
@@ -75,6 +79,11 @@ sandbox_valid_aim :: proc(s: ^Scene,point: Vec2) -> bool {
 }
 
 world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
+ if w.elimination_playing {
+  for player,i in w.players {
+   if player.active && round_capsule_hit(from_b2(b2.Body_GetPosition(player.body)),point,w.lethal_radius) {events.deaths[i]=.Blast}
+  }
+ }
  start:=time.tick_now()
  regions:=len(w.scene.subdivisions)
  blast_pass(&w.scene,Blast{position=point,radius=radius})
@@ -104,11 +113,14 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  for player_commands,i in commands.players {
   if !w.players[i].active { continue }
   for point in player_commands.blasts {
+   if w.elimination_playing {events.blast_rejected[i]=true;continue}
    if sandbox_valid_aim(&w.scene,point) { world_explode(w,point,w.players[i].blast_radius,&events) }
    else { events.blast_rejected[i]=true }
   }
  }
+ previous_bomb_id:=w.next_bomb_id
  bomb_rain_before_step(w,dt)
+ events.bombs_spawned=w.next_bomb_id-previous_bomb_id
  for &player,i in w.players {
   if player.active { player_before_step(&player,commands.players[i].move,commands.players[i].jump,dt) }
  }
@@ -118,6 +130,13 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  if world_remove_out_of_bounds(w) { events.structure_changed=true }
  for &player,i in w.players {
   if player.active {
+   if w.elimination_playing {
+    player_after_movement_step(&player)
+    outside:=player_out_of_bounds(&player)
+    if w.scene.level_policy.active {outside=!level_bounds_contains(w.scene.level_policy.kill,player.pose.position)}
+    if outside && events.deaths[i]==.None {events.deaths[i]=.Bounds}
+    continue
+   }
    if w.scene.level_policy.active {
     player_after_movement_step(&player)
     if !level_bounds_contains(w.scene.level_policy.kill,player.pose.position) { player_respawn_at(&player,w.scene.level_policy.spawns[i]);events.player_respawned[i]=true }
