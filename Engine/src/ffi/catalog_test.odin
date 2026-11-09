@@ -5,7 +5,7 @@ import core "../shared"
 @(test)
 catalog_binding_view_is_sample_coherent_and_keeps_u64_ids_and_matrix_order :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64;t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
  layout,_,ok,reason:=core.decode_layout(transmute([]u8)#load("../presets/unity-policy-v4.json"));t.expect(test,ok,reason);if !ok {return};defer core.destroy_layout(&layout)
  w:=core.World{settings=core.DEFAULT_SANDBOX_SETTINGS};core.world_rebuild_layout(&w,&layout,false)

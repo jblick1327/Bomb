@@ -81,7 +81,7 @@ truncated_and_mutated_structure_messages_do_not_panic :: proc(t:^testing.T) {
 sample_preserves_full_ids_reference_pivots_and_rubber_centers :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);testing.expect(t,status==OK);context=s.ctx
+ s,status:=get_slot(handle);testing.expect(t,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true
  defer testing.expect(t,bom_client_destroy(handle)==OK)
  rep:=&s.client.rep
@@ -112,7 +112,7 @@ sample_preserves_full_ids_reference_pivots_and_rubber_centers :: proc(t:^testing
 complete_topology_transaction_remains_until_acknowledged :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);testing.expect(t,status==OK);context=s.ctx
+ s,status:=get_slot(handle);testing.expect(t,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true
  defer testing.expect(t,bom_client_destroy(handle)==OK)
  core.net_client_on_structure(&s.client,empty_baseline(100,10))

@@ -7,7 +7,7 @@ reconnect_reuses_local_port_with_fresh_salt_even_if_disconnect_is_lost :: proc(t
  t.expect(test,bom_client_create(&info,&handle)==OK);defer t.expect(test,bom_client_destroy(handle)==OK)
  connection:=BomConnectInfo{struct_size=u32(size_of(BomConnectInfo)),version=1,ipv4=0x7f000001,port=32000}
  t.expect(test,bom_client_connect(handle,&connection)==OK)
- slot,status:=get_slot(handle);t.expect(test,status==OK);context=slot.ctx
+ slot,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=slot.ctx.allocator
  port,salt:=nc.socket_port(&slot.socket),slot.client.nc_client.salt
  server:nc.Server;nc.server_init(&server);defer nc.server_destroy(&server)
  address:=nc.address_loopback(port)

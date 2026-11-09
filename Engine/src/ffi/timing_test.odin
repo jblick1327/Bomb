@@ -11,7 +11,7 @@ timing_fixture :: proc(t:^testing.T,intervals:[]f64) -> (u64,u16,u64) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
  s,status:=get_slot(handle);testing.expect(t,status==OK)
- context=s.ctx
+ context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0)
  
  s.client.nc_client.state=.Connected;s.client.real_gate=false;s.live=true
@@ -58,7 +58,7 @@ test_timing_same_commands_for_30_60_144_and_irregular :: proc(t:^testing.T) {
 test_fractional_sample_does_not_advance_fixed_commands :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);testing.expect(t,status==OK);context=s.ctx
+ s,status:=get_slot(handle);testing.expect(t,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1236,0);s.live=true
  defer { testing.expect(t,bom_client_destroy(handle)==OK) }
  s.client.has_epoch=true;s.client.epoch=1;s.journal_epoch=1
@@ -83,7 +83,7 @@ test_timing_stall_backward_and_duplicate_do_not_burst :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
  s,status:=get_slot(handle);testing.expect(t,status==OK)
- context=s.ctx
+ context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1235,0);s.client.nc_client.state=.Connected;s.live=true
  
  defer { testing.expect(t,bom_client_destroy(handle)==OK) }

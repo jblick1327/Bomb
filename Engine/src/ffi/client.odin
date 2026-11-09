@@ -6,6 +6,7 @@ import "core:mem"
 import "core:strings"
 import "core:fmt"
 import w "core:sys/windows"
+import b2 "vendor:box2d"
 import nc "../netcode"
 import core "../shared"
 
@@ -65,6 +66,7 @@ Client_Slot :: struct {
 }
 slots: [16]Client_Slot
 owner_thread: u32
+physics_baseline:i32
 
 get_slot :: proc "contextless" (handle: u64) -> (^Client_Slot,u32) {
  if owner_thread!=u32(w.GetCurrentThreadId()) { return nil,WRONG_THREAD }
@@ -124,6 +126,8 @@ bom_client_create :: proc "c" (info:^BomCreateInfo,handle:^u64) -> u32 {
  thread:=u32(w.GetCurrentThreadId())
  if owner_thread!=0 && owner_thread!=thread { return WRONG_THREAD }
  owner_thread=thread
+ any_active:=false;for slot in slots {if slot.active {any_active=true;break}}
+ if !any_active {physics_baseline=b2.GetByteCount()}
  for &s,i in slots {
   if s.active || s.generation==0xffffffff { continue }
   generation:=s.generation+1
@@ -146,6 +150,12 @@ bom_client_destroy :: proc "c" (handle:u64) -> u32 {
  remaining:=s.allocations.current_memory_allocated
  mem.tracking_allocator_destroy(&s.allocations)
  generation:=s.generation;s^=Client_Slot{generation=generation}
+ any_active:=false;for slot in slots {if slot.active {any_active=true;break}}
+ if !any_active {
+  physics_bytes:=b2.GetByteCount();context=runtime.default_context()
+  fmt.printf("BOM CLIENT RESOURCES handles=0 odin_live_bytes=%d box2d_baseline=%d box2d_live_bytes=%d\n",remaining,physics_baseline,physics_bytes)
+  if physics_bytes!=physics_baseline {return IO_ERROR}
+ }
  if remaining!=0 { return IO_ERROR }
  return OK
 }

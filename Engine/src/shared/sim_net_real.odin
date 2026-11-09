@@ -6,6 +6,7 @@ import fmt "core:fmt"
 import os "core:os"
 import strconv "core:strconv"
 import time "core:time"
+import b2 "vendor:box2d"
 
 NET_REAL_PORT :: u16(47380)
 
@@ -79,11 +80,13 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
  sock:nc.Socket
  if !nc.socket_open(&sock,port,{127,0,0,1}) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
  defer nc.socket_close(&sock)
+ physics_baseline:=b2.GetByteCount()
  ns,ok:=net_real_create_server(layout)
  if !ok { return false }
  ns.real_gate=true;ns.async_rebuild=true
  ns.real_host_token=host_token
- defer net_server_destroy(&ns)
+ destroyed:=false
+ defer {if !destroyed {net_server_destroy(&ns)}}
  fmt.printf("BOM staging server listening on 127.0.0.1:%d only; tick=60Hz\n",port)
  start:=time.tick_now()
  last:=f64(0)
@@ -144,7 +147,13 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
   if !encoded||os.write_entire_file(metrics_path,bytes)!=nil {fmt.eprintln("Cannot write server metrics:",metrics_path);return false}
  }
  fmt.printf("SERVER final hashes=%d mismatches=%d unrecorded=%d\n",ns.real_hash_checks,ns.real_hash_mismatch,ns.real_hash_unrecorded)
- return ns.real_hash_mismatch==0 && ns.real_hash_unrecorded==0
+ passed:=ns.real_hash_mismatch==0 && ns.real_hash_unrecorded==0
+ net_server_destroy(&ns);destroyed=true
+ resources:=Net_Real_Resources{box2d_baseline=i64(physics_baseline),box2d_after=i64(b2.GetByteCount())}
+ resources.no_lost_world_bytes=resources.box2d_baseline==resources.box2d_after
+ fmt.printf("SERVER RESOURCES box2d_baseline=%d box2d_after=%d no_lost_world_bytes=%t\n",resources.box2d_baseline,resources.box2d_after,resources.no_lost_world_bytes)
+ if metrics_path!="" {path:=fmt.aprintf("%s.resources.json",metrics_path);defer delete(path);bytes,encoded:=exact_json_encode(resources,true);defer delete(bytes);if !encoded||os.write_entire_file(path,bytes)!=nil {return false}}
+ return passed&&resources.no_lost_world_bytes
 }
 
 net_real_cli_server :: proc(args: []string) -> bool {
@@ -186,3 +195,5 @@ Net_Real_Metrics :: struct {
  sample_capacity:u64,first_sample_index:u64,
  tick_ms:[]f64,world_ms:[]f64,
 }
+
+Net_Real_Resources :: struct {box2d_baseline,box2d_after:i64,no_lost_world_bytes:bool}

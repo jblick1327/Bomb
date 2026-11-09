@@ -17,6 +17,7 @@ Net_Server_Stats :: struct {
  saturated_ticks,ticks: int, // ticks where some candidate did not fit the budget
  staleness_max: u64,
  staleness_samples: [dynamic]u16,
+ staleness_count:u64,
  jumps_applied,jump_presses_seen: int,
  blasts_applied,blasts_rejected,blast_duplicates: int,
  rejected_rate,rejected_outside,rejected_solid: int,
@@ -321,9 +322,10 @@ net_build_frame :: proc(ns: ^Net_Server,index: int) {
  for e in entries {
   if since,ok:=c.pending[e.key]; ok {
    late:=ns.tick-since
-   c.stats.staleness_max=max(c.stats.staleness_max,late); append(&c.stats.staleness_samples,u16(min(late,65535)))
+   c.stats.staleness_max=max(c.stats.staleness_max,late); net_record_bounded_sample(&c.stats.staleness_samples,c.stats.staleness_count,u16(min(late,65535)))
    delete_key(&c.pending,e.key)
-  } else { append(&c.stats.staleness_samples,0) }
+  } else { net_record_bounded_sample(&c.stats.staleness_samples,c.stats.staleness_count,u16(0)) }
+  c.stats.staleness_count+=1
   c.last_sent[e.key]=e.state
   if e.key in c.priority { c.priority[e.key]=0 }
  }
@@ -332,8 +334,8 @@ net_build_frame :: proc(ns: ^Net_Server,index: int) {
  for key in c.last_sent { if key not_in ns.current { append(&stale,key) } }
  for key in stale { delete_key(&c.last_sent,key); delete_key(&c.pending,key); delete_key(&c.priority,key) }
  c.stats.parts_sent+=len(parts)
- append(&c.stats.frame_bytes,i32(total)); append(&c.stats.frame_parts,i32(len(parts)))
- append(&c.stats.build_ms,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
+ net_record_bounded_sample(&c.stats.frame_bytes,u64(c.stats.ticks-1),i32(total)); net_record_bounded_sample(&c.stats.frame_parts,u64(c.stats.ticks-1),i32(len(parts)))
+ net_server_record_timing(&c.stats.build_ms,u64(c.stats.ticks-1),f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
 }
 
 net_server_reset_frames :: proc(ns: ^Net_Server) {
@@ -457,7 +459,8 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
 // Keep the latest 65,536 complete samples in a bounded ring, independently of
 // physics/scheduling. The exported report records the cursor and total count.
 NET_SERVER_TIMING_CAPACITY :: 65536
-net_server_record_timing :: proc(samples:^[dynamic]f64,tick:u64,milliseconds:f64) {
- if len(samples^)<NET_SERVER_TIMING_CAPACITY {append(samples,milliseconds)}
- else {samples^[tick%NET_SERVER_TIMING_CAPACITY]=milliseconds}
+net_server_record_timing :: proc(samples:^[dynamic]f64,tick:u64,milliseconds:f64) {net_record_bounded_sample(samples,tick,milliseconds)}
+net_record_bounded_sample :: proc(samples:^[dynamic]$T,index:u64,value:T) {
+ if len(samples^)<NET_SERVER_TIMING_CAPACITY {append(samples,value)}
+ else {samples^[index%NET_SERVER_TIMING_CAPACITY]=value}
 }

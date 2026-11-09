@@ -63,6 +63,7 @@ Net_Client_Stats :: struct {
  resets: int,
  jumps_pressed,blasts_issued,blasts_dropped,blast_rejections_seen: int,
  delay_history: [dynamic]u8,
+ delay_samples:u64,
  frames_lost: int,
  input_bytes,input_count,input_max: int,
  input_payload_hash: u64, // Diagnostic digest of the complete fixed-command byte stream.
@@ -477,7 +478,7 @@ net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Clien
   net_client_update_clock(c)
   net_client_apply_queue(c)
   net_client_compute_drawn(c)
-  append(&c.stats.delay_history,u8(c.delay))
+  net_record_bounded_sample(&c.stats.delay_history,c.stats.delay_samples,u8(c.delay));c.stats.delay_samples+=1
   if !c.real_gate || c.real_hello_ok {
    if c.real_gate { net_scheduled_client_update(c,now) }
    if input_source!=nil { input_source(c,source_data) }

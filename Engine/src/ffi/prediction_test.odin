@@ -8,7 +8,7 @@ import math "core:math"
 local_terminal_results_cannot_skip_an_earlier_unresolved_request :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
  s.client.request_counter=1;s.client.request_pending[1]={true,1,core.REQUEST_BLAST}
  t.expect(test,core.net_request_client_local_result(&s.client,core.REQUEST_BLAST,.Expired,0))
@@ -23,7 +23,7 @@ local_terminal_results_cannot_skip_an_earlier_unresolved_request :: proc(test:^t
 terminal_request_stream_preserves_u64_identity_status_and_effect_tick :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
  base:=u64(9007199254740993)
  for id in base+1..=base+2 { s.client.completed_requests[id%1024]={kind=core.REQUEST_BLAST,result=core.Request_Result{request_id=id,effect_tick=base+100,event_id=base+200,status=.Accepted}} }
@@ -39,7 +39,7 @@ terminal_request_stream_preserves_u64_identity_status_and_effect_tick :: proc(te
 identical_held_snapshots_coalesce_without_losing_transition_time_or_order :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true;defer t.expect(test,bom_client_destroy(handle)==OK)
  for i in 0..<100000 { t.expect(test,bom_client_set_held_input(handle,f64(i)/100000,1)==OK) }
  t.expect(test,len(s.held)==1 && s.held[0].timestamp==0 && s.held[0].move==1)
@@ -53,7 +53,7 @@ identical_held_snapshots_coalesce_without_losing_transition_time_or_order :: pro
 prediction_api_versions_busy_clear_and_full_width_owner :: proc(test:^t.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);s.live=true
  defer t.expect(test,bom_client_destroy(handle)==OK)
  o:=core.Owner_State{identity={9007199254740999,7,9007199254742001},state_tick=9007199254743001,finalized_through=9007199254743001,last_applied_sequence=9007199254744001,last_jump_edge=9007199254745001,teleport_serial=9007199254746001,support_cell=9007199254747001,support_kind=1,grounded=true,position={1.2345,2.3456},velocity={3.4567,4.5678},coyote=.073,buffered_jump=.056}
@@ -73,7 +73,7 @@ prediction_api_versions_busy_clear_and_full_width_owner :: proc(test:^t.T) {
 scheduled_timing_fixture :: proc(test:^t.T,fps:int) -> (u64,u64,u64,u64) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  t.expect(test,bom_client_create(&info,&handle)==OK)
- s,status:=get_slot(handle);t.expect(test,status==OK);context=s.ctx
+ s,status:=get_slot(handle);t.expect(test,status==OK);context.allocator=s.ctx.allocator
  core.net_client_init(&s.client,1234,0);
  s.client.nc_client.state=.Connected;s.client.real_gate=true;s.client.real_hello_ok=true;s.client.real_hello_sent=true;s.client.prediction_enabled=false;s.live=true
  defer t.expect(test,bom_client_destroy(handle)==OK)
