@@ -43,7 +43,7 @@ editor_smoke_radius :: proc(target: rl.RenderTexture2D) {
 	assert(hud==0 && aim==0 && segments==0,"Queued radius and adaptive aim ring checks")
 }
 sandbox_smoke_editor :: proc() {
-	assert(os.make_directory_all("evidence/editor-step2")==nil)
+	assert(os.make_directory_all("output/editor-step2")==nil)
 	box2d_before:=b2.GetByteCount()
 	track: mem.Tracking_Allocator
 	mem.tracking_allocator_init(&track,context.allocator)
@@ -81,7 +81,7 @@ sandbox_smoke_editor :: proc() {
 	sandbox_smoke_frame(&g,target,smoke_mouse(i32(b.x),i32(b.y)))
 	assert(g.editor.dragging && g.editor.start==Vec2{1,1} && g.editor.cursor==Vec2{2.6,3})
 	assert(editor_rectangle_problem(&g.layout,editor_rectangle(g.editor.start,g.editor.cursor,g.editor.palette))=="Overlaps an object")
-	sandbox_smoke_export(target,"evidence/editor-step2/edit-invalid-drag.png")
+	sandbox_smoke_export(target,"output/editor-step2/edit-invalid-drag.png")
 	sandbox_smoke_frame(&g,target,smoke_button(false))
 	assert(len(g.layout.objects)==1 && g.status=="Overlaps an object")
 	fmt.println("B native smoke passed: number keys, snapped mouse preview, invalid reason and cancellation")
@@ -104,7 +104,7 @@ editor_smoke_presets :: proc(target: rl.RenderTexture2D) {
 		layout,ok:=encode_layout(&g.layout,g.world.settings.seed)
 		assert(err==nil && ok && string(saved)==string(layout),"Preset did not autosave")
 		delete(saved); delete(layout)
-		sandbox_smoke_click(&g,target,810,43)
+		sandbox_smoke_click(&g,target,930,43)
 		assert(!g.editor.editing && g.world.tick==0,"Preset capture must be Test at tick 0")
 		before,encoded:=encode_world_snapshot(&g.world); assert(encoded); defer delete(before)
 		poses:=make(map[u64]Pose); defer delete(poses)
@@ -115,7 +115,7 @@ editor_smoke_presets :: proc(target: rl.RenderTexture2D) {
 		sandbox_draw_hud(&g,1280,800)
 		ui_text(.Heading,rl.TextFormat("%s / tick 0",name),24,105,YARD_ACCENT)
 		rl.EndTextureMode(); rl.EndDrawing()
-		sandbox_smoke_export(target,rl.TextFormat("evidence/editor-step2/preset-%d.png",i+1))
+		sandbox_smoke_export(target,rl.TextFormat("output/editor-step2/preset-%d.png",i+1))
 		after,ok2:=encode_world_snapshot(&g.world); defer delete(after)
 		assert(ok2 && string(before)==string(after),"Capture changed the World")
 	}

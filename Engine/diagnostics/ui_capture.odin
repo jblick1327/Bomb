@@ -14,17 +14,20 @@ run_ui_captures :: proc(directory:string) {
  g.layout_directory="output/ui-capture-layouts"; assert(os.make_directory_all(g.layout_directory)==nil)
  assert(sandbox_save_current_layout(&g)); sandbox_autosave_layout(&g)
  poses:=make(map[u64]Pose); defer delete(poses)
- for i in 0..<6 {
+ for i in 0..<9 {
   if i==1 { sandbox_toggle_editor(&g) }
   if i==2 { sandbox_toggle_editor(&g); sandbox_set_materials_panel(&g); g.material_selected=0; materials_sync_name(&g) }
   if i==3 { g.material_selected=4; materials_sync_name(&g) }
   if i==4 { sandbox_set_layouts_panel(&g,true) }
   if i==5 { sandbox_set_panel(&g,true) }
+  if i==6 { g.menu_page=.Gameplay }
+  if i==7 { g.menu_page=.Appearance }
+  if i==8 { g.menu_page=.Help }
   ui_overflows=0
   rl.BeginDrawing(); rl.BeginTextureMode(target); rl.ClearBackground({19,28,42,255})
   sandbox_draw_world(&g,sandbox_view(1280,800),poses); sandbox_draw_hud(&g,1280,800)
   rl.EndTextureMode(); rl.EndDrawing()
-  names:=[6]string{"edit-hud","test-hud","materials-builtin","materials-custom","layouts","settings"}
+  names:=[9]string{"edit-hud","test-hud","materials-builtin","materials-custom","layouts","menu","gameplay","appearance","help"}
   fmt.printf("UI screen=%s overflow=%d\n",names[i],ui_overflows)
   path:=fmt.aprintf("%s/%s.png",directory,names[i]); sandbox_smoke_export(target,cstring_clone(path)); delete(path)
  }

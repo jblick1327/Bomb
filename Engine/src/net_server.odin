@@ -3,6 +3,7 @@ package main
 import nc "netcode"
 import b2 "vendor:box2d"
 import "core:math"
+import "core:fmt"
 import "core:slice"
 import "core:time"
 
@@ -29,6 +30,7 @@ Net_Server_Stats :: struct {
 }
 Net_Server_Client :: struct {
  active: bool,
+ is_host: bool, // validated only in the real-process app handshake
  ring: [NET_SENT_RING]Pose_Table,
  ring_tick: [NET_SENT_RING]u64,
  ring_valid: [NET_SENT_RING]bool,
@@ -54,7 +56,14 @@ Net_Server :: struct {
  current: map[u64]Net_Entity,
  keys: [dynamic]u64,
  tick_ms,world_ms: [dynamic]f64,
- record_hashes: bool,
+ record_hashes: bool,real_logging: bool,
+ real_gate: bool, // application Hello required before a World player is created
+ real_host_token: string, // CLI-owned for lifetime of process
+ real_host_index: int,
+ real_host_seen: bool,
+ real_host_left_at: f64,
+ real_reject_at: [nc.MAX_CLIENTS]f64,
+ real_hash_checks,real_hash_mismatch,real_hash_unrecorded: int,
  hashes: map[u64]u64, // (epoch<<40 | revision) -> hash of the canonical structure
  reliable_bytes: int,
  explosions_emitted: int,
@@ -66,6 +75,8 @@ net_hash_key :: proc(epoch: u32,revision: u64) -> u64 { return (u64(epoch)<<40)|
 net_server_init :: proc(ns: ^Net_Server,game: Sandbox,record_hashes: bool = false) {
  ns^={}
  ns.game=game
+ ns.real_host_index=-1
+ ns.real_host_left_at=-1
  ns.record_hashes=record_hashes
  nc.server_init(&ns.srv)
  ns.current=make(map[u64]Net_Entity)
@@ -113,7 +124,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
  c.has_input=false; c.input_seq=0; c.move=0; c.jump_counter=0; c.jump_pending=false
  c.last_blast_seq=0; c.recent_count=0
  clear(&c.blast_queue); clear(&c.blast_ticks)
- c.active=true; c.radius=ns.game.world.settings.blast_radius
+ c.active=true; c.is_host=false; c.radius=ns.game.world.settings.blast_radius
  world_add_player(&ns.game.world,index)
  out:=repl_server_baseline(&ns.repl,&ns.game.world.scene,ns.tick); defer repl_output_destroy(&out)
  net_send_reliable_parts(ns,index,&out)
@@ -121,6 +132,7 @@ net_server_join :: proc(ns: ^Net_Server,index: int) {
 net_server_leave :: proc(ns: ^Net_Server,index: int) {
  net_client_state_clear(&ns.clients[index])
  ns.clients[index].active=false
+ ns.clients[index].is_host=false
  world_remove_player(&ns.game.world,index)
 }
 
@@ -146,7 +158,7 @@ net_server_input :: proc(ns: ^Net_Server,index: int,in_: Net_Input) {
  }
  if c.has_input && !seq16_newer(in_.seq,c.input_seq) { c.stats.inputs_stale+=1; return }
  c.has_input=true; c.input_seq=in_.seq
- c.move=move_dequantize(in_.move); c.radius=radius_dequantize(in_.radius_q)
+ c.move=move_dequantize(in_.move); if !ns.real_gate { c.radius=radius_dequantize(in_.radius_q) }
 }
 
 // Applies one blast request: exactly once per sequence number, in order.
@@ -156,7 +168,7 @@ net_server_blast :: proc(ns: ^Net_Server,index: int,b: Net_Blast) {
  for i in 0..<min(c.recent_count,len(c.recent_seqs)) { if c.recent_seqs[i]==b.seq { c.stats.blast_duplicates+=1; return } }
  c.recent_seqs[c.recent_count%len(c.recent_seqs)]=b.seq; c.recent_count+=1
  point:=Vec2{nc.dequantize_pos(b.x),nc.dequantize_pos(b.y)}
- radius:=radius_dequantize(b.radius_q)
+ radius:=c.radius; if !ns.real_gate { radius=radius_dequantize(b.radius_q) }
  inside:=point.x>=YARD_LEFT && point.x<=YARD_RIGHT && point.y>YARD_FLOOR_BOTTOM && point.y<=NET_YARD_CEILING
  recent:=0
  for t in c.blast_ticks { if ns.tick+1-t<NET_BLAST_RATE_TICKS { recent+=1 } }
@@ -306,11 +318,35 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
  events:=nc.server_take_events(&ns.srv); defer nc.server_events_free(&events)
  for ev in events {
   switch ev.kind {
-  case .Connected: net_server_join(ns,ev.client)
-  case .Disconnected: net_server_leave(ns,ev.client)
+  case .Connected:
+   if ns.real_logging { fmt.printf("CONNECT client=%d\n",ev.client) }
+   ns.real_reject_at[ev.client]=0
+   if !ns.real_gate { net_server_join(ns,ev.client) }
+  case .Disconnected:
+   if ns.real_logging { fmt.printf("DISCONNECT client=%d reason=%v\n",ev.client,ev.reason) }
+   net_app_server_disconnect(ns,ev.client,now)
+   ns.real_reject_at[ev.client]=0
+   net_server_leave(ns,ev.client)
   case .Message:
+   if ns.real_gate && !ns.clients[ev.client].active {
+    if ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && ev.data[0]==NET_APP_HELLO {
+     net_app_server_hello(ns,ev.client,ev.data,now)
+    }
+    continue // no input, hash or host command before authorization
+   }
    if ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
     if in_,ok:=input_decode(ev.data); ok { net_server_input(ns,ev.client,in_) }
+   } else if ns.real_gate && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && (ev.data[0]==NET_APP_LAYOUT_UPLOAD || ev.data[0]==NET_APP_HOST_COMMAND) {
+    net_host_dispatch(ns,ev.client,ev.data)
+   } else if ns.record_hashes && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && ev.data[0]==NET_REAL_HASH_REPORT {
+    r:nc.Reader;nc.reader_init(&r,ev.data)
+    _=nc.read_u8(&r)
+    epoch:=nc.read_u32(&r);revision:=nc.read_u64(&r);hash:=nc.read_u64(&r)
+    if !r.ok || r.pos!=len(ev.data) { continue }
+    ns.real_hash_checks+=1
+    if expected,found:=ns.hashes[net_hash_key(epoch,revision)]; found {
+     if expected!=hash { ns.real_hash_mismatch+=1 }
+    } else { ns.real_hash_unrecorded+=1 }
    }
   }
  }
@@ -349,6 +385,15 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
  // Pose frames, unreliable, one per client.
  net_collect(ns)
  for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { net_build_frame(ns,i) } }
+ // Delay a rejected peer's removal long enough to deliver its reliable reason.
+ if ns.real_gate {
+  for i in 0..<nc.MAX_CLIENTS {
+   if ns.real_reject_at[i]>0 && now>=ns.real_reject_at[i] {
+    ns.real_reject_at[i]=0
+    nc.server_kick(&ns.srv,i)
+   }
+  }
+ }
  nc.server_update(&ns.srv,now)
  append(&ns.tick_ms,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
 }

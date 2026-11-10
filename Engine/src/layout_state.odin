@@ -81,6 +81,7 @@ sandbox_replace_layout :: proc(game: ^Sandbox,layout: Layout,seed: u8) {
 	game.world.settings.seed=seed
 	game.editor.editing=true
 	game.panel_open=false; game.layouts_open=false
+ game.palette_open=false
 	sandbox_reset(game)
 	sandbox_layout_changed(game)
 }

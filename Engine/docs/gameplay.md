@@ -34,7 +34,7 @@ The floor is authored as one 17-by-3 rectangle with a deterministic context, the
 
 | R / Reset button in Test | Rebuild the same authored layout and seed |
 
-| Tab / Escape / Settings button | Open settings and pause; close to resume |
+| Tab / Escape / Menu button | Open the menu and pause solo play; close to resume |
 
 | F3 in Test | Toggle IDs, connections, counts and inspection tools |
 
@@ -44,11 +44,11 @@ The aiming circle shows the active blast radius. A red cross and message mark or
 
 
 
-In Settings, switch **Manual blasts / Falling bombs** to choose the explosion source immediately, without resetting the yard. Falling bombs spawn at random horizontal positions across the yard every 1–2.5 seconds. Each is an ordinary circle body that collides with the floor, debris and player. Its one-second fuse starts on first landing on a supporting surface, including authored objects; airborne time and side contacts do not start the fuse. A red countdown ring marks a lit fuse. The body disappears when it explodes at its current position, using the current blast radius, with a brief expanding flash. Manual placement and its aiming circle are disabled in this mode. Returning to Manual clears pending bombs. Settings pauses drops, fuses and flashes along with physics. Reset clears bombs and repeats the applied seed's drop sequence, independently of destruction generation.
+In **Menu > Gameplay**, switch **Manual blasts / Falling bombs** to choose the explosion source immediately, without resetting the yard. Falling bombs spawn at random horizontal positions across the yard every 1–2.5 seconds. Each is an ordinary circle body that collides with the floor, debris and player. Its one-second fuse starts on first landing on a supporting surface, including authored objects; airborne time and side contacts do not start the fuse. A red countdown ring marks a lit fuse. The body disappears when it explodes at its current position, using the current blast radius, with a brief expanding flash. Manual placement and its aiming circle are disabled in this mode. Returning to Manual clears pending bombs. Settings pauses drops, fuses and flashes along with physics. Reset clears bombs and repeats the applied seed's drop sequence, independently of destruction generation.
 
 
 
-Mode and radius changes are immediate, including inside Settings. The **Outline width (px)** slider adjusts physical piece silhouettes and flexible broken-bond crack lines from 0 (no outline), through fractional pixel widths, to the original thick 2-pixel outline. The width starts at 2 and stays set across resets and Edit/Test transitions; drag previews and inspection IDs/links remain available independently. Objects use fixed palette presets; global material sliders do not override them. The initial setup uses manual blasts, seed 42, radius 5.0 and impulse scale 0.2. The independent ground uses Stone's Chunks recipe, strengths 35/20 and flexibility 0.
+Mode and radius changes are immediate, including inside Settings. The **Menu > Appearance > Outline width** slider adjusts physical piece silhouettes and flexible broken-bond crack lines from 0 (no outline), through fractional pixel widths, to the original thick 2-pixel outline. The width starts at 2 and stays set across resets and Edit/Test transitions; drag previews and inspection IDs/links remain available independently. Objects use fixed palette presets; global material sliders do not override them. The initial setup uses manual blasts, seed 42, radius 5.0 and impulse scale 0.2. The independent ground uses Stone's Chunks recipe, strengths 35/20 and flexibility 0.
 
 
 
@@ -106,7 +106,7 @@ Fractional outlines below 1 px use a continuous 1 px stroke with proportional al
 
 
 
-In Edit, open Materials next to Layouts. Wood, Glass, Rubber and Stone are fixed recipes. Duplicate any built-in to create one of at most four custom entries. Rename it (1?20 printable characters, unique in the palette), choose a colour from twelve swatches and adjust toughness (0.25?4), blast resistance (0?6), and the family knob: Wood strip thickness (0.2?0.6), Glass shock loss (1?12), or Rubber flexibility (0.2?1; lower is stiffer). Stone has no extra knob. The base family is fixed after duplication. Toughness scales both subdivision and connection strength. Mortar keeps its global strength.
+In Edit, open the material picker and choose **Manage materials**. Built-ins show a short description and **Create custom copy**; sliders and colour swatches appear only for editable custom materials. Wood, Glass, Rubber and Stone are fixed recipes. Create a copy of any built-in to make one of at most four custom entries. Rename it (1?20 printable characters, unique in the palette), choose a colour from twelve swatches and adjust toughness (0.25?4), blast resistance (0?6), and the family knob: Wood strip thickness (0.2?0.6), Glass shock loss (1?12), or Rubber flexibility (0.2?1; lower is stiffer). Stone has no extra knob. The base family is fixed after duplication. Toughness scales both subdivision and connection strength. Mortar keeps its global strength.
 
 
 
@@ -116,3 +116,10 @@ Keys 1?8 select the palette entries; long names are shortened on narrow buttons.
 
 Layout version 2 stores custom definitions in palette order and object references by name. Version 1 remains supported. Built-in Wood now has an explicit strip thickness of 0.2; older World snapshots with no strip thickness still mean 0.3.
 
+
+
+## Menu organization
+
+The Edit toolbar contains Test, Layouts and Menu. Test mode contains Edit, Reset and Menu; multiplayer guests see Menu. The bottom editor strip contains the selected material, shape, angle, glue and mortar tools. Open its material picker to select a palette entry or manage custom materials. The full shortcut list is under Menu > Help.
+
+Menu > Gameplay groups blast mode and radius. Menu > Appearance changes local outlines. Menu > Multiplayer provides Host, Join, connection status and Leave. Current hosting remains limited to the same computer. Multiplayer gameplay continues while a menu is open, with local movement and blasts suppressed. The host controls gameplay settings, which synchronize to guests and late joiners. F3 contains RTT/interpolation diagnostics rather than showing them in normal menus.

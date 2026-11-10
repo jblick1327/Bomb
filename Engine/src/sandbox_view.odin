@@ -39,33 +39,13 @@ sandbox_gui_style :: proc() {
 sandbox_slider :: proc(x,y,width: f32,label: cstring,value: ^f32,low,high: f32,decimals: bool = false) {
 	ui_text(.Body,label,i32(x),i32(y),YARD_INK)
 	text:=rl.TextFormat("%.0f",value^)
-	if decimals { text=rl.TextFormat("%.2f",value^) }
+	if decimals { text=rl.TextFormat("%.1f",value^) }
 	ui_text(.Body,text,i32(x+width)-i32(ui_measure(.Body,text)),i32(y),YARD_ACCENT)
-	_ = rl.GuiSliderBar({x,y+25,width,16},nil,nil,value,low,high)
+	_ = rl.GuiSlider({x,y+25,width,16},nil,nil,value,low,high)
 }
-Sandbox_UI_Action :: enum { None, Open, Resume, Reset, Toggle_Editor, Layouts, Materials }
+Sandbox_UI_Action :: enum { None, Open, Resume, Reset, Toggle_Editor, Layouts, Materials, Gameplay, Appearance, Help, Multiplayer }
 sandbox_draw_panel :: proc(game: ^Sandbox,width,height: f32) -> Sandbox_UI_Action {
-	rl.DrawRectangle(0,0,i32(width),i32(height),{8,14,23,205})
-	x,y:=(width-560)*0.5,(height-360)*0.5
-	rl.DrawRectangleRounded({x,y,560,360},0.025,8,{23,35,49,255})
-	x+=28; y+=24
-	ui_panel_title("Settings",x,y)
-	y+=54
-	mode:=i32(sandbox_mode(game))
-	_ = rl.GuiToggleGroup({x,y,248,32},"Manual blasts;Falling bombs",&mode)
-	sandbox_set_blast_mode(game,Blast_Mode(mode))
-	y+=48
-	radius:=sandbox_radius(game)
-	sandbox_slider(x,y,236,"Blast radius",&radius,0.5,6,true)
-	sandbox_slider(x+268,y,236,"Outline width (px)",&game.outline_width,0,2,true)
-	sandbox_set_radius(game,radius)
-	y+=70
-	ui_text(.Body,"Objects use their palette material. Ground stays Stone.",i32(x),i32(y),YARD_MUTED)
-	y+=26
-	y+=42
-	if ui_button({x,y,504,36},"Resume") { return .Resume }
- if game.status_time>0 { ui_label(.Small,rl.TextFormat("%s",game.status),{x,y+43,504,22},YARD_ACCENT,true) }
-	return .None
+ return sandbox_draw_menu(game,width,height)
 }
 draw_burst :: proc(view: View,burst: Bomb_Burst) {
 	progress:=burst.age/BOMB_BURST_TIME
@@ -160,71 +140,66 @@ sandbox_draw_aim :: proc(game: ^Sandbox,view: View,mouse: rl.Vector2) {
 		ui_text(.Body,label,i32(x),i32(y),color)
 	}
 }
-sandbox_draw_hud :: proc(game: ^Sandbox,width,height: f32) -> Sandbox_UI_Action {
-	// raygui clears its private slider capture only when a slider sees mouse-up.
-	// Keep that release path alive if Escape closed the panel during a drag.
-	if !game.panel_open && !rl.IsMouseButtonDown(.LEFT) {
-		dummy:=f32(0)
-		_ = rl.GuiSliderBar({-100,-100,20,10},nil,nil,&dummy,0,1)
-	}
-	rl.DrawRectangle(0,0,i32(width),88,{19,28,42,250})
+sandbox_draw_hud :: proc(game: ^Sandbox,width,height: f32,net:^Net_Game_UI=nil) -> Sandbox_UI_Action {
+ if !game.panel_open && !rl.IsMouseButtonDown(.LEFT) {
+  dummy:=f32(0);_ = rl.GuiSliderBar({-100,-100,20,10},nil,nil,&dummy,0,1)
+ }
+ online:=net!=nil && net.active
+ rl.DrawRectangle(0,0,i32(width),88,{19,28,42,250})
  ui_label(.Title,"BLAST YARD",{20,20,180,34},YARD_INK)
- pill_color:=YARD_ACCENT; mode:cstring="EDIT · paused"; if !game.editor.editing { pill_color={245,206,133,255}; mode="TEST" }
- pill_width:=ui_measure(.Small,mode)+24
- rl.DrawRectangleRoundedLinesEx({208,23,pill_width,31},0.6,8,1,pill_color); ui_label(.Small,mode,{220,23,pill_width-24,31},pill_color)
- help:cstring="Drag shapes above ground"; if !game.editor.editing { help="Move, jump and blast"; if game.world.settings.blast_mode==.Falling_Bombs { help="Move and jump / Falling bombs" } }
- ui_label(.Small,help,{22,62,500,20},YARD_MUTED)
+ mode:cstring="Edit";if !game.editor.editing { mode="Test" }
+ ui_label(.Small,mode,{210,24,100,32},YARD_ACCENT)
+ if online {
+  status:cstring="Connecting..."
+  if net.client.real_hello_ok { status=rl.TextFormat("Player %d",net.client.nc_client.client_index+1) }
+  ui_label(.Small,status,{320,24,max(f32(100),width-760),32},YARD_MUTED,true)
+ }
  if !game.panel_open {
-  label:cstring="Edit"; if game.editor.editing { label="Test" }
-  if ui_button({width-536,24,134,40},label,"Enter") { return .Toggle_Editor }
-  if !game.editor.editing && ui_button(sandbox_reset_button(width),"Reset","R") { return .Reset }
-  if game.editor.editing && ui_button(sandbox_reset_button(width),"Layouts") { return .Layouts }
-  if game.editor.editing && ui_button({width-394,24,114,40},"Materials") { return .Materials }
-  if ui_button(sandbox_settings_button(width),"Settings","Tab") { return .Open }
+  editable:=!online || net.client.real_is_host
+  if editable {
+   label:cstring="Edit";if game.editor.editing { label="Test" }
+   if ui_button({width-416,24,134,40},label) { return .Toggle_Editor }
+   if !game.editor.editing && ui_button(sandbox_reset_button(width),"Reset") { return .Reset }
+   if game.editor.editing && ui_button(sandbox_reset_button(width),"Layouts") { return .Layouts }
+  }
+  if ui_button(sandbox_settings_button(width),"Menu") { return .Open }
  }
  rl.DrawRectangle(0,i32(height)-80,i32(width),80,{19,28,42,250})
  if game.editor.editing {
-  if game.panel_open { rl.GuiDisable() }
-  count:=palette_count(&game.layout); total:=count; if count<8 { total+=1 }
-  button_width:=(width-260-f32(total-1)*5)/f32(total)
-  for i in 0..<count {
-   box:=rl.Rectangle{16+f32(i)*(button_width+5),height-66,button_width,36}
-   clicked:=rl.GuiButton(box,nil); active:=game.editor.palette==Slot(i)
-   color:=YARD_INK; if active { rl.DrawRectangleRec(box,YARD_ACCENT); color={19,28,42,255} }
-   ui_keycap({box.x+5,box.y+7,22,22},rl.TextFormat("%d",i+1),color)
-   m:=layout_material(&game.layout,Slot(i)); rl.DrawRectangle(i32(box.x+33),i32(box.y+12),12,12,material_color(m))
-   ui_label(.Body,rl.TextFormat("%s",m.name),{box.x+51,box.y,box.width-56,box.height},color,true)
-   if clicked { game.editor.palette=Slot(i) }
-  }
-  if count<8 && ui_button({16+f32(count)*(button_width+5),height-66,button_width,36},"+ New") { return .Materials }
-  mortar:cstring="Mortar: off"; if game.editor.mortar { mortar="Mortar: on" }
-  if ui_toggle({width-232,height-66,216,36},mortar,&game.editor.mortar,"M") {}
-  if game.panel_open { rl.GuiEnable() }
-  shape_name:cstring="Rect";if game.editor.shape==.Wedge { shape_name="Wedge" }
-  ui_label(.Small,rl.TextFormat("Shape: %s [T]    Angle %.0f° [Q/E]    Glue [G]    ·    Drag: place / Right click: remove",shape_name,game.editor.angle),{18,height-25,width-36,22},YARD_MUTED,true)
+  if action:=sandbox_draw_editor_toolbar(game,width,height);action!=.None { return action }
+  hint:cstring="Drag to place"
+  if game.editor.glue_tool { hint="Choose two touching objects to glue" }
+  else if game.editor.dragging { hint="Release to place" }
+  ui_label(.Small,hint,{18,height-25,width-36,22},YARD_MUTED)
  } else {
-  controls:cstring="A/D  Move   ·   Space  Jump   ·   Click  Blast   ·   R  Reset"
-  if game.world.settings.blast_mode==.Falling_Bombs { controls="A/D  Move   ·   Space  Jump   ·   Falling bombs   ·   R  Reset" }
-  ui_label(.Body,controls,{22,height-62,width-270,30},YARD_INK,true)
-  ui_label(.Body,rl.TextFormat("Radius %.1f  ·  Wheel",sandbox_radius(game)),{width-226,height-62,210,30},YARD_ACCENT,true)
+  radius:=sandbox_radius(game);wheel:=true
+  if online { radius=net.client.real_settings.blast_radius;wheel=net.client.real_is_host }
+  label:=rl.TextFormat("Blast radius %.1f",radius)
+  if wheel { label=rl.TextFormat("Blast radius %.1f  /  Wheel",radius) }
+  ui_label(.Body,label,{22,height-62,350,30},YARD_ACCENT,true)
  }
  if game.status_time>0 && !game.panel_open {
-  text:=rl.TextFormat("%s",game.status); w:=min(width-48,ui_measure(.Body,text)+32); x:=(width-w)/2
-  rl.DrawRectangle(i32(x),i32(height)-126,i32(w),32,{23,40,51,240}); ui_label(.Body,text,{x+16,height-126,w-32,32},YARD_ACCENT,true)
+  text:=rl.TextFormat("%s",game.status);w:=min(width-48,ui_measure(.Body,text)+32);x:=(width-w)/2
+  rl.DrawRectangle(i32(x),i32(height)-126,i32(w),32,{23,40,51,240});ui_label(.Body,text,{x+16,height-126,w-32,32},YARD_ACCENT,true)
  }
-	if game.inspection && !game.editor.editing {
-		rl.DrawRectangleRounded({24,106,450,150},0.07,8,{22,36,51,240})
-		ui_text(.Heading,"INSPECTION  /  F3",40,120,YARD_ACCENT)
-		a,b,c:=counts_runtime(&game.world.scene)
-		ui_text(.Body,rl.TextFormat("%d regions  /  %d links  /  %d pieces",a,b,c),40,150,YARD_INK)
-		ui_text(.Body,"Right click: select   Delete / Ctrl+click: remove",40,180,YARD_MUTED)
-		ui_text(.Body,"Shift+click / X: break link   J: links   V: surface",40,204,YARD_MUTED)
-		ui_text(.Body,"S/L: save/load snapshot   D: move   Space: jump",40,228,YARD_MUTED)
-	}
-	if game.materials_open { return sandbox_draw_materials_panel(game,width,height) }
+ if game.inspection && !game.editor.editing {
+  rl.DrawRectangleRounded({24,106,450,150},0.07,8,{22,36,51,240})
+  ui_text(.Heading,"Diagnostics",40,120,YARD_ACCENT)
+  if online {
+   c:=&net.client
+   ui_text(.Body,rl.TextFormat("RTT %.0f ms / Delay %d ticks",c.nc_client.endpoint.stats.rtt*1000,c.delay),40,154,YARD_INK)
+   ui_text(.Body,rl.TextFormat("Frames %d / Structure errors %d",c.stats.frames_complete,c.stats.structure_errors),40,184,YARD_MUTED)
+  } else {
+   a,b,c:=counts_runtime(&game.world.scene)
+   ui_text(.Body,rl.TextFormat("%d regions / %d links / %d pieces",a,b,c),40,150,YARD_INK)
+   ui_text(.Small,"Right click: select / Delete: remove / X: break link",40,180,YARD_MUTED)
+   ui_text(.Small,"J: links / V: surface / S/L: save/load snapshot",40,208,YARD_MUTED)
+  }
+ }
+ if game.materials_open { return sandbox_draw_materials_panel(game,width,height) }
  if game.layouts_open { return sandbox_draw_layouts_panel(game,width,height) }
-	if game.panel_open { return sandbox_draw_panel(game,width,height) }
-	return .None
+ if game.panel_open { return sandbox_draw_menu(game,width,height,net) }
+ return .None
 }
 sandbox_inspect_input :: proc(game: ^Sandbox,point: Vec2,view: View,over_ui: bool) -> bool {
 	if !game.inspection || game.panel_open { return false }
@@ -262,11 +237,15 @@ sandbox_read_input :: proc(game:^Sandbox=nil) -> Sandbox_Input {
 	move:=f32(0)
 	if rl.IsKeyDown(.A) || rl.IsKeyDown(.LEFT) { move-=1 }
 	if rl.IsKeyDown(.D) || rl.IsKeyDown(.RIGHT) { move+=1 }
-	return Sandbox_Input{move=move,jump_pressed=rl.IsKeyPressed(.SPACE),jump_down=rl.IsKeyDown(.SPACE),blast_pressed=rl.IsMouseButtonPressed(.LEFT),blast_down=rl.IsMouseButtonDown(.LEFT),menu_pressed=rl.IsKeyPressed(.TAB) || rl.IsKeyPressed(.ESCAPE) && (game==nil || !game.editor.glue_tool),reset_pressed=rl.IsKeyPressed(.R),inspection_pressed=rl.IsKeyPressed(.F3),edit_pressed=rl.IsKeyPressed(.ENTER),wheel=rl.GetMouseWheelMove()}
+	return Sandbox_Input{move=move,jump_pressed=rl.IsKeyPressed(.SPACE),jump_down=rl.IsKeyDown(.SPACE),blast_pressed=rl.IsMouseButtonPressed(.LEFT),blast_down=rl.IsMouseButtonDown(.LEFT),menu_pressed=rl.IsKeyPressed(.TAB) || rl.IsKeyPressed(.ESCAPE) && (game==nil || game.panel_open || game.palette_open || !game.editor.glue_tool),reset_pressed=rl.IsKeyPressed(.R),inspection_pressed=rl.IsKeyPressed(.F3),edit_pressed=rl.IsKeyPressed(.ENTER),wheel=rl.GetMouseWheelMove()}
 }
 sandbox_handle_ui :: proc(game: ^Sandbox,action: Sandbox_UI_Action) {
 	switch action {
 	case .Open: sandbox_set_panel(game,true)
+ case .Gameplay: game.menu_page=.Gameplay
+ case .Appearance: game.menu_page=.Appearance
+ case .Help: game.menu_page=.Help
+ case .Multiplayer: // The live loop owns the socket panel.
 	case .Resume: sandbox_set_panel(game,false)
 	case .Reset: sandbox_reset(game); sandbox_notice(game,"Yard reset")
 	case .Toggle_Editor: sandbox_toggle_editor(game)
@@ -300,26 +279,40 @@ run_sandbox :: proc(smoke: bool = false,smoke_input: bool = false,smoke_msaa: bo
 	if smoke_input { sandbox_smoke_inputs(&game); return }
 	if smoke_editor { sandbox_smoke_editor(); return }
 	if !smoke { sandbox_start_layout_files(&game,"layouts") }
+	net_ui:Net_Game_UI
+	net_gui_init(&net_ui)
+	defer net_gui_destroy(&net_ui)
 	poses:=make(map[u64]Pose); defer delete(poses)
 	target:=rl.RenderTexture2D{}
 	if smoke { target=rl.LoadRenderTexture(rl.GetScreenWidth(),rl.GetScreenHeight()) }
 	defer { if smoke { rl.UnloadRenderTexture(target) } }
 	frames:=0
 	for !rl.WindowShouldClose() {
-		files_consumed:=sandbox_layout_file_input(&game)
+		net_gui_step(&net_ui,&game)
+		files_consumed:=false
+		if !net_ui.open && (!net_ui.active || game.editor.editing) { files_consumed=sandbox_layout_file_input(&game) }
 		width,height:=f32(rl.GetScreenWidth()),f32(rl.GetScreenHeight())
 		view:=sandbox_view(width,height)
 		mouse:=rl.GetMousePosition()
-		over_ui:=sandbox_over_hud(mouse,width,height,game.inspection && !game.editor.editing)
+		over_ui:=sandbox_over_hud(mouse,width,height,game.inspection && !game.editor.editing) || game.palette_open
 		raw:=sandbox_read_input(&game)
+  if net_ui.open && rl.IsKeyPressed(.ESCAPE) { raw.menu_pressed=true }
 		input:=Sandbox_Input{}
-		if !files_consumed { input=sandbox_route_input(&game,raw,over_ui) }
+		if net_ui.active { net_ui.client.human_move=0 }
+  if net_ui.open && raw.menu_pressed {
+   net_ui.open=false;sandbox_set_panel(&game,true);files_consumed=true
+  }
+  if !net_ui.open && !files_consumed {
+   if net_ui.active { net_gui_route_input(&net_ui,&game,raw,view,over_ui) }
+   else { input=sandbox_route_input(&game,raw,over_ui) }
+  }
 		point:=world_point(view,mouse)
-		if !files_consumed && !raw.menu_pressed && !raw.reset_pressed {
+		if !net_ui.open && (!net_ui.active || game.editor.editing) && !files_consumed && !raw.menu_pressed && !raw.reset_pressed {
 			if game.editor.editing { sandbox_editor_input(&game,point,over_ui) }
 			else if !sandbox_inspect_input(&game,point,view,over_ui) && input.blast_pressed { sandbox_blast(&game,point) }
 		}
-		sandbox_advance(&game,rl.GetFrameTime(),input)
+		if !net_ui.active && !net_ui.open { sandbox_advance(&game,rl.GetFrameTime(),input) }
+  else { game.status_time=max(f32(0),game.status_time-rl.GetFrameTime()) }
 		clear(&poses)
 		for sub in game.world.scene.subdivisions {
 			if !sub.live { continue }
@@ -333,16 +326,26 @@ run_sandbox :: proc(smoke: bool = false,smoke_input: bool = false,smoke_msaa: bo
 		rl.BeginDrawing()
 		if smoke { rl.BeginTextureMode(target) }
 		rl.ClearBackground({19,28,42,255})
-		sandbox_draw_world(&game,view,poses,piece_frames)
-		if !game.panel_open && !over_ui { sandbox_draw_aim(&game,view,mouse) }
-		action:=sandbox_draw_hud(&game,width,height)
+		if net_ui.active && !game.editor.editing {
+			net_client_draw(&net_ui.client,view,game.outline_width)
+			net_gui_draw_local_outline(&net_ui,view)
+			if !net_ui.open && !game.panel_open && !over_ui { net_gui_aim_draw(&net_ui,view,mouse) }
+		} else {
+			sandbox_draw_world(&game,view,poses,piece_frames)
+			if !net_ui.open && !game.panel_open && !over_ui { sandbox_draw_aim(&game,view,mouse) }
+		}
+		action:=Sandbox_UI_Action.None
+		if !net_ui.open {
+   action=sandbox_draw_hud(&game,width,height,&net_ui)
+		}
+  else { action=net_gui_draw_panel(&net_ui,&game,width,height) }
 		if smoke {
 			rl.EndTextureMode()
 			rl.DrawTextureRec(target.texture,{0,0,f32(target.texture.width),-f32(target.texture.height)},{0,0},rl.WHITE)
 		}
 		rl.EndDrawing()
 		delete(piece_frames)
-		sandbox_handle_ui(&game,action)
+  if action!=.None { sandbox_dispatch_ui(&game,action,&net_ui) }
 		sandbox_autosave_layout(&game)
 		frames+=1
 		if smoke && frames==2 {

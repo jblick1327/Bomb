@@ -61,5 +61,4 @@ ui_recipe_name :: proc(recipe:Recipe)->cstring { switch recipe { case .Wood:retu
 
 ui_panel_title :: proc(title:cstring,x,y:f32) {
  ui_text(.Title,title,i32(x),i32(y),YARD_INK)
- ui_text(.Small,"Paused",i32(x+ui_measure(.Title,title)+18),i32(y+8),YARD_MUTED)
 }

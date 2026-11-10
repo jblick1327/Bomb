@@ -27,14 +27,7 @@ preset_piece_angle :: proc(s: ^Scene,piece: Piece) -> f32 {
 }
 
 // Fresh layout build, identical to the soak's create -> place -> Test path.
-preset_test_yard :: proc(index: int) -> Sandbox {
-	g:=sandbox_editor_create()
-	layouts:=PRESET_LAYOUTS
-	layout,seed,ok,problem:=decode_layout(transmute([]byte)layouts[index]); assert(ok,problem)
-	destroy_layout(&g.layout); g.layout=layout; g.world.settings.seed=seed
-	sandbox_toggle_editor(&g)
-	return g
-}
+
 @(test)
 presets_decode_and_materials_matches_soak :: proc(t: ^testing.T) {
 	sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)

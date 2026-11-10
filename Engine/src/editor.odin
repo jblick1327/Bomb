@@ -88,6 +88,7 @@ editor_remove :: proc(game: ^Sandbox,point: Vec2) -> bool {
 }
 sandbox_toggle_editor :: proc(game: ^Sandbox) {
 	if game.panel_open { return }
+	game.palette_open=false
 	game.editor.editing=!game.editor.editing
 	game.editor.dragging=false
 	sandbox_reset(game)
