@@ -1,0 +1,4157 @@
+{
+  "status": "passed",
+  "required_final_duration": true,
+  "requested_common_seconds": 1800,
+  "issues": [],
+  "exit_codes": {
+    "primary": 0,
+    "guest": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "forced_stops": [],
+  "reset_requests": 183,
+  "accepted_same_tick_overlap_pairs": 552,
+  "server_resources": {
+    "box2d_baseline": 0,
+    "box2d_after": 0,
+    "no_lost_world_bytes": true
+  },
+  "hash_coverage": {
+    "status": "passed",
+    "expected_unique": 2952,
+    "matching_unique": 2947,
+    "missing_steady": 0,
+    "missing_tail": 5,
+    "missing_reports": [
+      {
+        "client": 3,
+        "connection": 4,
+        "epoch": 35,
+        "revision": 1071,
+        "sent_tick": 19292,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 3,
+        "connection": 5,
+        "epoch": 44,
+        "revision": 1071,
+        "sent_tick": 24699,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 3,
+        "connection": 6,
+        "epoch": 53,
+        "revision": 1071,
+        "sent_tick": 30102,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 3,
+        "connection": 7,
+        "epoch": 62,
+        "revision": 1071,
+        "sent_tick": 35505,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 3,
+        "connection": 8,
+        "epoch": 71,
+        "revision": 1070,
+        "sent_tick": 40908,
+        "classification": "disconnect-tail"
+      }
+    ],
+    "bad_reports": [],
+    "unexpected_reports": [],
+    "per_client_connection": {
+      "0:1": {
+        "matched": 737,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:1": {
+        "matched": 737,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:1": {
+        "matched": 31,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:1": {
+        "matched": 13,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:2": {
+        "matched": 37,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:2": {
+        "matched": 48,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:3": {
+        "matched": 37,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:3": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:4": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "3:5": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "2:4": {
+        "matched": 50,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:6": {
+        "matched": 37,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "2:5": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:7": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "2:6": {
+        "matched": 48,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:8": {
+        "matched": 35,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "3:9": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:7": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:10": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:8": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:11": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:9": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:12": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:13": {
+        "matched": 37,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:10": {
+        "matched": 50,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:14": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:11": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:15": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:12": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:16": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:17": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:13": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:18": {
+        "matched": 37,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:14": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:19": {
+        "matched": 35,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:15": {
+        "matched": 49,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:20": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:21": {
+        "matched": 30,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:16": {
+        "matched": 26,
+        "missing_steady": 0,
+        "missing_tail": 0
+      }
+    },
+    "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+  },
+  "clients": {
+    "primary": {
+      "status": "measured",
+      "scene": "PerformanceReference",
+      "os": "Windows 11  (10.0.26300) 64bit",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "backend": "Mono",
+      "native_build_tag": "217136225208817073",
+      "cpu_threads": 16,
+      "system_ram_mb": 16011,
+      "gpu_ram_mb": 5921,
+      "width": 1920,
+      "height": 1080,
+      "frames": 104661,
+      "max_cells": 475,
+      "max_poses": 403,
+      "max_moving": 400,
+      "seconds": 1800.0,
+      "warmup_seconds": 5.0,
+      "max_source_read_ms": 5.306,
+      "max_mesh_upload_ms": 3.0862,
+      "max_measured_source_read_ms": 0.0,
+      "max_measured_upload_ms": 0.2362,
+      "max_pooled_actors": 2,
+      "native_update": {
+        "samples": 94040,
+        "min": 0.0046,
+        "p50": 2.5946,
+        "p95": 4.201,
+        "p99": 5.998,
+        "max": 52.8827,
+        "mean": 2.7490406231391096
+      },
+      "copy": {
+        "samples": 94040,
+        "min": 0.0032,
+        "p50": 0.0074,
+        "p95": 0.0196,
+        "p99": 0.0388,
+        "max": 3.7849,
+        "mean": 0.011700944279031008
+      },
+      "presentation": {
+        "samples": 94040,
+        "min": 0.1142,
+        "p50": 0.2385,
+        "p95": 0.5369,
+        "p99": 0.9706,
+        "max": 75.2886,
+        "mean": 0.35188382071459234
+      },
+      "geometry": {
+        "samples": 94040,
+        "min": 0.0096,
+        "p50": 0.0151,
+        "p95": 0.0332,
+        "p99": 0.1073,
+        "max": 4.882,
+        "mean": 0.029102270310507508
+      },
+      "cpu_frame": {
+        "samples": 104661,
+        "min": 7.2467,
+        "p50": 16.6673,
+        "p95": 16.7761,
+        "p99": 17.3519,
+        "max": 179.6506,
+        "mean": 16.898186666475976
+      },
+      "gpu_frame": {
+        "samples": 103917,
+        "min": 0.432128,
+        "p50": 0.76288,
+        "p95": 2.90304,
+        "p99": 7.250944,
+        "max": 42.769408,
+        "mean": 1.1166860173407758
+      },
+      "wall_frame": {
+        "samples": 104661,
+        "min": 2.3490000000947475,
+        "p50": 16.665399999965302,
+        "p95": 17.716500000005908,
+        "p99": 21.71490000000631,
+        "max": 1050.959300000045,
+        "mean": 17.19857364252207
+      },
+      "stable_pose_frames": 93167,
+      "stable_copy_max_gc": 0,
+      "stable_present_max_gc": 0,
+      "stable_geometry_max_gc": 0,
+      "stable_pose_zero_allocation": true,
+      "max_copy_gc": 1028,
+      "max_present_gc": 30544,
+      "max_geometry_gc": 3454,
+      "total_frame_gc": 2985339350,
+      "thread_api_control_bytes": 0,
+      "profiler_control_events": 1,
+      "allocation_counter_valid": true,
+      "frame_allocation_counter_valid": true,
+      "allocation_counter_method": "GC.Alloc current-thread event count",
+      "allocation_counter_unit": "allocation events",
+      "stale_results": 4,
+      "stale_applications": 0,
+      "resources_drained": true,
+      "final_job_buffers": 0,
+      "final_cpu_cache": 0,
+      "final_gpu_cache": 0,
+      "final_active_jobs": 0,
+      "final_actor_views": 0,
+      "final_runtime_meshes": 0,
+      "observed_measured_span_seconds": 1800.0032048
+    },
+    "guest": {
+      "status": "measured",
+      "scene": "PerformanceReference",
+      "os": "Windows 11  (10.0.26300) 64bit",
+      "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "backend": "IL2CPP",
+      "native_build_tag": "217136225208817073",
+      "cpu_threads": 16,
+      "system_ram_mb": 16011,
+      "gpu_ram_mb": 5921,
+      "width": 1920,
+      "height": 1080,
+      "frames": 104428,
+      "max_cells": 475,
+      "max_poses": 403,
+      "max_moving": 400,
+      "seconds": 1800.0,
+      "warmup_seconds": 5.0,
+      "max_source_read_ms": 1.9631,
+      "max_mesh_upload_ms": 1.1343,
+      "max_measured_source_read_ms": 0.0,
+      "max_measured_upload_ms": 0.1375,
+      "max_pooled_actors": 2,
+      "native_update": {
+        "samples": 94381,
+        "min": 0.0055,
+        "p50": 0.1818,
+        "p95": 0.4133,
+        "p99": 0.7341,
+        "max": 44.1799,
+        "mean": 0.2117734459266116
+      },
+      "copy": {
+        "samples": 94381,
+        "min": 0.0036,
+        "p50": 0.008,
+        "p95": 0.0203,
+        "p99": 0.044,
+        "max": 4.0763,
+        "mean": 0.012262832561638806
+      },
+      "presentation": {
+        "samples": 94381,
+        "min": 0.0949,
+        "p50": 0.2378,
+        "p95": 0.5438,
+        "p99": 0.9933,
+        "max": 74.5369,
+        "mean": 0.34603210815736446
+      },
+      "geometry": {
+        "samples": 94381,
+        "min": 0.0076,
+        "p50": 0.014,
+        "p95": 0.0287,
+        "p99": 0.1003,
+        "max": 5.3062,
+        "mean": 0.026649515262605738
+      },
+      "cpu_frame": {
+        "samples": 104428,
+        "min": 3.7864,
+        "p50": 16.6673,
+        "p95": 16.7691,
+        "p99": 17.1425,
+        "max": 178.9574,
+        "mean": 16.859387434405004
+      },
+      "gpu_frame": {
+        "samples": 103759,
+        "min": 0.431104,
+        "p50": 0.760832,
+        "p95": 2.850816,
+        "p99": 7.300096,
+        "max": 42.94144,
+        "mean": 1.103127184803257
+      },
+      "wall_frame": {
+        "samples": 104428,
+        "min": 1.9748000013350975,
+        "p50": 16.669300001012743,
+        "p95": 17.331799999737996,
+        "p99": 18.4821999991982,
+        "max": 1850.5952000014076,
+        "mean": 17.236967490519913
+      },
+      "stable_pose_frames": 93563,
+      "stable_copy_max_gc": 0,
+      "stable_present_max_gc": 0,
+      "stable_geometry_max_gc": 0,
+      "stable_pose_zero_allocation": true,
+      "max_copy_gc": 1124,
+      "max_present_gc": 29870,
+      "max_geometry_gc": 4470,
+      "total_frame_gc": 3018627939,
+      "thread_api_control_bytes": 0,
+      "profiler_control_events": 1,
+      "allocation_counter_valid": true,
+      "frame_allocation_counter_valid": true,
+      "allocation_counter_method": "GC.Alloc current-thread event count",
+      "allocation_counter_unit": "allocation events",
+      "stale_results": 2,
+      "stale_applications": 0,
+      "resources_drained": true,
+      "final_job_buffers": 0,
+      "final_cpu_cache": 0,
+      "final_gpu_cache": 0,
+      "final_active_jobs": 0,
+      "final_actor_views": 0,
+      "final_runtime_meshes": 0,
+      "observed_measured_span_seconds": 1800.0052959000004
+    }
+  },
+  "memory": {
+    "primary": {
+      "equivalent_initial_state_cycles": [
+        {
+          "connection": 1,
+          "epoch": 7,
+          "elapsed": 21.0056519,
+          "native_owned": 3722585,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 8,
+          "elapsed": 30.9397602,
+          "native_owned": 3369017,
+          "native_live": 6919,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 9,
+          "elapsed": 40.80615590000001,
+          "native_owned": 3225185,
+          "native_live": 6902,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 1,
+          "epoch": 10,
+          "elapsed": 50.8175401,
+          "native_owned": 3129593,
+          "native_live": 6897,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 11,
+          "elapsed": 60.832423000000006,
+          "native_owned": 3277177,
+          "native_live": 6899,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 1,
+          "epoch": 12,
+          "elapsed": 70.9998506,
+          "native_owned": 3759273,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 80.8090134,
+          "native_owned": 3094089,
+          "native_live": 6900,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 91.09309350000001,
+          "native_owned": 4199681,
+          "native_live": 7700,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 100.9328627,
+          "native_owned": 3497601,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 111.0733262,
+          "native_owned": 3853073,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 121.0644934,
+          "native_owned": 3972009,
+          "native_live": 6929,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 18,
+          "elapsed": 130.8163165,
+          "native_owned": 3141185,
+          "native_live": 6897,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 21,
+          "elapsed": 161.1459054,
+          "native_owned": 4202955,
+          "native_live": 7678,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 24,
+          "elapsed": 191.0423187,
+          "native_owned": 3739457,
+          "native_live": 6924,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 25,
+          "elapsed": 201.0663941,
+          "native_owned": 3626057,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 26,
+          "elapsed": 211.2352976,
+          "native_owned": 4333674,
+          "native_live": 7687,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 27,
+          "elapsed": 220.8679346,
+          "native_owned": 3002857,
+          "native_live": 6895,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 3,
+          "epoch": 28,
+          "elapsed": 231.1629263,
+          "native_owned": 3718041,
+          "native_live": 6925,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 30,
+          "elapsed": 251.04378789999998,
+          "native_owned": 3391265,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 36,
+          "elapsed": 311.3298567,
+          "native_owned": 4440404,
+          "native_live": 7687,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 39,
+          "elapsed": 341.2231526,
+          "native_owned": 3862004,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 40,
+          "elapsed": 351.1633511,
+          "native_owned": 3473340,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 41,
+          "elapsed": 361.1479163,
+          "native_owned": 3422980,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 42,
+          "elapsed": 371.1269666,
+          "native_owned": 3148028,
+          "native_live": 6902,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 4,
+          "epoch": 43,
+          "elapsed": 381.1400831,
+          "native_owned": 3443964,
+          "native_live": 6910,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 45,
+          "elapsed": 401.1385647,
+          "native_owned": 3247492,
+          "native_live": 6909,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 46,
+          "elapsed": 411.23806460000003,
+          "native_owned": 3327036,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 4,
+          "epoch": 47,
+          "elapsed": 421.2856355,
+          "native_owned": 3685844,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 48,
+          "elapsed": 431.4904355,
+          "native_owned": 4214793,
+          "native_live": 7730,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 49,
+          "elapsed": 441.4328083,
+          "native_owned": 4333991,
+          "native_live": 7672,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 51,
+          "elapsed": 461.2123396,
+          "native_owned": 3359164,
+          "native_live": 6906,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 54,
+          "elapsed": 491.1414711,
+          "native_owned": 3211196,
+          "native_live": 6902,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 55,
+          "elapsed": 501.3788561,
+          "native_owned": 3663196,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 57,
+          "elapsed": 521.2554215,
+          "native_owned": 3476044,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 5,
+          "epoch": 58,
+          "elapsed": 531.4131937,
+          "native_owned": 3954796,
+          "native_live": 6931,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 59,
+          "elapsed": 541.2752295,
+          "native_owned": 3272508,
+          "native_live": 6904,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 60,
+          "elapsed": 551.2892604,
+          "native_owned": 3386508,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 61,
+          "elapsed": 561.3592708,
+          "native_owned": 3625324,
+          "native_live": 6918,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 62,
+          "elapsed": 571.4257861,
+          "native_owned": 3980628,
+          "native_live": 6930,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 63,
+          "elapsed": 581.2373032,
+          "native_owned": 3295196,
+          "native_live": 6901,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 64,
+          "elapsed": 591.3834705,
+          "native_owned": 3718212,
+          "native_live": 6920,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 65,
+          "elapsed": 601.4327303,
+          "native_owned": 3865548,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 66,
+          "elapsed": 611.3184599,
+          "native_owned": 3425020,
+          "native_live": 6910,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 67,
+          "elapsed": 621.5884836,
+          "native_owned": 4417885,
+          "native_live": 7674,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 70,
+          "elapsed": 651.4206825,
+          "native_owned": 3451100,
+          "native_live": 6924,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 6,
+          "epoch": 71,
+          "elapsed": 661.4968114,
+          "native_owned": 3657172,
+          "native_live": 6925,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 72,
+          "elapsed": 671.4372737,
+          "native_owned": 3688268,
+          "native_live": 6920,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 73,
+          "elapsed": 681.3591385,
+          "native_owned": 3209460,
+          "native_live": 6897,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 75,
+          "elapsed": 701.3934603,
+          "native_owned": 3356444,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 7,
+          "epoch": 76,
+          "elapsed": 711.3692394,
+          "native_owned": 3384316,
+          "native_live": 6906,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 77,
+          "elapsed": 721.3411149,
+          "native_owned": 3443164,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 78,
+          "elapsed": 731.3685541,
+          "native_owned": 3388388,
+          "native_live": 6904,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 79,
+          "elapsed": 741.4626806,
+          "native_owned": 3680988,
+          "native_live": 6917,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 80,
+          "elapsed": 751.7311875,
+          "native_owned": 4531871,
+          "native_live": 7694,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 7,
+          "epoch": 81,
+          "elapsed": 761.4148093,
+          "native_owned": 3414204,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 82,
+          "elapsed": 771.5284097,
+          "native_owned": 3607780,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 83,
+          "elapsed": 781.3781,
+          "native_owned": 3181892,
+          "native_live": 6899,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 84,
+          "elapsed": 791.4498872,
+          "native_owned": 3329244,
+          "native_live": 6906,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 85,
+          "elapsed": 801.5756669,
+          "native_owned": 3684884,
+          "native_live": 6918,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 86,
+          "elapsed": 811.6259157,
+          "native_owned": 4071028,
+          "native_live": 6937,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 87,
+          "elapsed": 821.4003461,
+          "native_owned": 3243180,
+          "native_live": 6903,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 88,
+          "elapsed": 831.5057476,
+          "native_owned": 3448212,
+          "native_live": 6910,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 89,
+          "elapsed": 841.5041724,
+          "native_owned": 3420988,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 8,
+          "epoch": 90,
+          "elapsed": 851.6792269,
+          "native_owned": 4262215,
+          "native_live": 7677,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 91,
+          "elapsed": 861.605461,
+          "native_owned": 3656068,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 93,
+          "elapsed": 881.4778553,
+          "native_owned": 3503228,
+          "native_live": 6909,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 94,
+          "elapsed": 891.5902279000001,
+          "native_owned": 3595836,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 95,
+          "elapsed": 901.5031919,
+          "native_owned": 3278308,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 9,
+          "epoch": 97,
+          "elapsed": 921.7752117,
+          "native_owned": 4419911,
+          "native_live": 7745,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 98,
+          "elapsed": 931.7941144,
+          "native_owned": 4493447,
+          "native_live": 7682,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 9,
+          "epoch": 99,
+          "elapsed": 941.5821012,
+          "native_owned": 3305596,
+          "native_live": 6916,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 9,
+          "epoch": 100,
+          "elapsed": 951.4451724,
+          "native_owned": 3093580,
+          "native_live": 6900,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 9,
+          "epoch": 101,
+          "elapsed": 961.5655438,
+          "native_owned": 3269276,
+          "native_live": 6910,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 9,
+          "epoch": 102,
+          "elapsed": 971.6378381,
+          "native_owned": 3567276,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 103,
+          "elapsed": 981.5830744,
+          "native_owned": 3541412,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 105,
+          "elapsed": 1001.7003307,
+          "native_owned": 3776148,
+          "native_live": 6924,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 106,
+          "elapsed": 1011.5996358,
+          "native_owned": 3450372,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 107,
+          "elapsed": 1021.5670376999999,
+          "native_owned": 3185652,
+          "native_live": 6899,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 109,
+          "elapsed": 1041.6818138,
+          "native_owned": 3626152,
+          "native_live": 6916,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 110,
+          "elapsed": 1051.9589543,
+          "native_owned": 4582091,
+          "native_live": 7688,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 111,
+          "elapsed": 1061.7355691,
+          "native_owned": 3651312,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 112,
+          "elapsed": 1071.7194947,
+          "native_owned": 3832680,
+          "native_live": 6920,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 113,
+          "elapsed": 1081.6295093,
+          "native_owned": 3325872,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 114,
+          "elapsed": 1091.8107639,
+          "native_owned": 3746064,
+          "native_live": 6926,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 115,
+          "elapsed": 1101.8382194,
+          "native_owned": 3925400,
+          "native_live": 6930,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 116,
+          "elapsed": 1111.9232662,
+          "native_owned": 4315977,
+          "native_live": 7684,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 10,
+          "epoch": 117,
+          "elapsed": 1121.9499131,
+          "native_owned": 4217799,
+          "native_live": 7680,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 118,
+          "elapsed": 1131.6655019,
+          "native_owned": 3267888,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 119,
+          "elapsed": 1141.6493095,
+          "native_owned": 3270136,
+          "native_live": 6902,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 120,
+          "elapsed": 1151.6644819,
+          "native_owned": 3240448,
+          "native_live": 6901,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 121,
+          "elapsed": 1161.6913091,
+          "native_owned": 3305756,
+          "native_live": 6901,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 11,
+          "epoch": 122,
+          "elapsed": 1171.9704297,
+          "native_owned": 4255617,
+          "native_live": 7687,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 123,
+          "elapsed": 1181.6817885,
+          "native_owned": 3206460,
+          "native_live": 6900,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 124,
+          "elapsed": 1191.8361922,
+          "native_owned": 3503548,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 11,
+          "epoch": 125,
+          "elapsed": 1201.7016803,
+          "native_owned": 3243324,
+          "native_live": 6903,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 11,
+          "epoch": 126,
+          "elapsed": 1211.7164548,
+          "native_owned": 3155916,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 11,
+          "epoch": 127,
+          "elapsed": 1221.7579491,
+          "native_owned": 3564876,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 128,
+          "elapsed": 1231.9827334,
+          "native_owned": 4069281,
+          "native_live": 7669,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 129,
+          "elapsed": 1241.8667901000001,
+          "native_owned": 3774100,
+          "native_live": 6921,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 130,
+          "elapsed": 1251.7594762,
+          "native_owned": 3384668,
+          "native_live": 6904,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 131,
+          "elapsed": 1261.7414986,
+          "native_owned": 3091948,
+          "native_live": 6897,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 11,
+          "epoch": 132,
+          "elapsed": 1272.003753,
+          "native_owned": 4026968,
+          "native_live": 7672,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 133,
+          "elapsed": 1281.8603633,
+          "native_owned": 3506847,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 134,
+          "elapsed": 1291.969742,
+          "native_owned": 3714479,
+          "native_live": 6924,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 12,
+          "epoch": 135,
+          "elapsed": 1302.0036807,
+          "native_owned": 3984943,
+          "native_live": 6930,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 136,
+          "elapsed": 1311.9565664,
+          "native_owned": 3629935,
+          "native_live": 6922,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 137,
+          "elapsed": 1321.8930768,
+          "native_owned": 3503615,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 12,
+          "epoch": 138,
+          "elapsed": 1331.9113596,
+          "native_owned": 3413343,
+          "native_live": 6903,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 139,
+          "elapsed": 1341.8858699,
+          "native_owned": 3389511,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 12,
+          "epoch": 141,
+          "elapsed": 1362.1306585,
+          "native_owned": 4370571,
+          "native_live": 7700,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 142,
+          "elapsed": 1372.017738,
+          "native_owned": 3833399,
+          "native_live": 6922,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 143,
+          "elapsed": 1382.0443881,
+          "native_owned": 3830175,
+          "native_live": 6924,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 12,
+          "epoch": 144,
+          "elapsed": 1391.971315,
+          "native_owned": 3360471,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 13,
+          "epoch": 145,
+          "elapsed": 1401.9857207,
+          "native_owned": 3393243,
+          "native_live": 6907,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 146,
+          "elapsed": 1412.0262075,
+          "native_owned": 3621875,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 147,
+          "elapsed": 1421.9763357,
+          "native_owned": 3389611,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 13,
+          "epoch": 149,
+          "elapsed": 1441.9445825,
+          "native_owned": 3180523,
+          "native_live": 6901,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 150,
+          "elapsed": 1451.9958335000001,
+          "native_owned": 3330387,
+          "native_live": 6909,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 13,
+          "epoch": 151,
+          "elapsed": 1462.0745043,
+          "native_owned": 3657459,
+          "native_live": 6918,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 152,
+          "elapsed": 1472.044656,
+          "native_owned": 3448139,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 13,
+          "epoch": 153,
+          "elapsed": 1481.9363013,
+          "native_owned": 3182411,
+          "native_live": 6904,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 13,
+          "epoch": 154,
+          "elapsed": 1492.0295484,
+          "native_owned": 3593299,
+          "native_live": 6917,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 155,
+          "elapsed": 1501.955615,
+          "native_owned": 3273067,
+          "native_live": 6904,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 156,
+          "elapsed": 1512.2545454,
+          "native_owned": 4259696,
+          "native_live": 7679,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 157,
+          "elapsed": 1522.0350326,
+          "native_owned": 3373483,
+          "native_live": 6910,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 158,
+          "elapsed": 1532.2564341,
+          "native_owned": 4390857,
+          "native_live": 7677,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 159,
+          "elapsed": 1542.1243718,
+          "native_owned": 3566507,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 160,
+          "elapsed": 1552.2088732,
+          "native_owned": 3889051,
+          "native_live": 6929,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 161,
+          "elapsed": 1562.1221268,
+          "native_owned": 3444379,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 289
+        },
+        {
+          "connection": 14,
+          "epoch": 162,
+          "elapsed": 1572.1944898,
+          "native_owned": 3837235,
+          "native_live": 6928,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 163,
+          "elapsed": 1582.2189151,
+          "native_owned": 3921267,
+          "native_live": 6925,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 164,
+          "elapsed": 1592.2665815,
+          "native_owned": 4154423,
+          "native_live": 7668,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 166,
+          "elapsed": 1612.1083642,
+          "native_owned": 3448203,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 167,
+          "elapsed": 1622.103158,
+          "native_owned": 3414939,
+          "native_live": 6908,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 168,
+          "elapsed": 1632.3350165,
+          "native_owned": 4078060,
+          "native_live": 7683,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 169,
+          "elapsed": 1642.2687124,
+          "native_owned": 4006719,
+          "native_live": 6926,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 170,
+          "elapsed": 1652.3491191,
+          "native_owned": 4244451,
+          "native_live": 7679,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 15,
+          "epoch": 171,
+          "elapsed": 1662.3766797,
+          "native_owned": 4358219,
+          "native_live": 7677,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 172,
+          "elapsed": 1672.2995684,
+          "native_owned": 3980207,
+          "native_live": 6928,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 173,
+          "elapsed": 1682.2276664,
+          "native_owned": 3476887,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 174,
+          "elapsed": 1692.26907,
+          "native_owned": 3772559,
+          "native_live": 6919,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 175,
+          "elapsed": 1702.2011179,
+          "native_owned": 3532671,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 176,
+          "elapsed": 1712.2777541,
+          "native_owned": 3774167,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 177,
+          "elapsed": 1722.2933641,
+          "native_owned": 3573791,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 178,
+          "elapsed": 1732.2619181,
+          "native_owned": 3504447,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 179,
+          "elapsed": 1742.0758085,
+          "native_owned": 3091759,
+          "native_live": 6896,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 15,
+          "epoch": 180,
+          "elapsed": 1752.2447646,
+          "native_owned": 3390383,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 181,
+          "elapsed": 1762.183219,
+          "native_owned": 3450695,
+          "native_live": 6907,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 182,
+          "elapsed": 1772.2758233,
+          "native_owned": 3391903,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 183,
+          "elapsed": 1782.4555641,
+          "native_owned": 4358331,
+          "native_live": 7675,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 184,
+          "elapsed": 1792.3057712,
+          "native_owned": 3453047,
+          "native_live": 6916,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 185,
+          "elapsed": 1802.2775163000001,
+          "native_owned": 3360223,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 186,
+          "elapsed": 1812.5463722,
+          "native_owned": 4477781,
+          "native_live": 7692,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        }
+      ],
+      "last_ten": [
+        {
+          "connection": 15,
+          "epoch": 177,
+          "elapsed": 1722.2933641,
+          "native_owned": 3573791,
+          "native_live": 6923,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 178,
+          "elapsed": 1732.2619181,
+          "native_owned": 3504447,
+          "native_live": 6915,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 179,
+          "elapsed": 1742.0758085,
+          "native_owned": 3091759,
+          "native_live": 6896,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 402
+        },
+        {
+          "connection": 15,
+          "epoch": 180,
+          "elapsed": 1752.2447646,
+          "native_owned": 3390383,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 181,
+          "elapsed": 1762.183219,
+          "native_owned": 3450695,
+          "native_live": 6907,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 182,
+          "elapsed": 1772.2758233,
+          "native_owned": 3391903,
+          "native_live": 6913,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 183,
+          "elapsed": 1782.4555641,
+          "native_owned": 4358331,
+          "native_live": 7675,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 184,
+          "elapsed": 1792.3057712,
+          "native_owned": 3453047,
+          "native_live": 6916,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 185,
+          "elapsed": 1802.2775163000001,
+          "native_owned": 3360223,
+          "native_live": 6911,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 186,
+          "elapsed": 1812.5463722,
+          "native_owned": 4477781,
+          "native_live": 7692,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        }
+      ],
+      "strictly_increasing_native_bytes": false,
+      "max_native_owned": 13092684,
+      "max_cache_cpu": 6541360,
+      "max_cache_gpu": 2771712,
+      "max_job_buffers": 0
+    },
+    "guest": {
+      "equivalent_initial_state_cycles": [
+        {
+          "connection": 1,
+          "epoch": 7,
+          "elapsed": 18.883542399998987,
+          "native_owned": 3461341,
+          "native_live": 5968,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 1,
+          "epoch": 8,
+          "elapsed": 28.72023479999916,
+          "native_owned": 3217493,
+          "native_live": 5955,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 9,
+          "elapsed": 38.62339599999905,
+          "native_owned": 2871753,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 10,
+          "elapsed": 48.62510239999938,
+          "native_owned": 2749785,
+          "native_live": 5937,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 11,
+          "elapsed": 58.77188179999939,
+          "native_owned": 3014257,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 12,
+          "elapsed": 68.68383859999994,
+          "native_owned": 2831273,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 78.66769799999929,
+          "native_owned": 2868473,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 88.98677309999948,
+          "native_owned": 3989065,
+          "native_live": 6777,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 98.71789589999935,
+          "native_owned": 2864409,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 108.77389219999895,
+          "native_owned": 2984465,
+          "native_live": 5950,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 118.84869040000012,
+          "native_owned": 3224841,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 18,
+          "elapsed": 128.6892584999987,
+          "native_owned": 2949353,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 19,
+          "elapsed": 138.93771779999952,
+          "native_owned": 3543209,
+          "native_live": 5967,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 21,
+          "elapsed": 158.78159069999856,
+          "native_owned": 3220025,
+          "native_live": 5953,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 22,
+          "elapsed": 168.97988599999917,
+          "native_owned": 3754881,
+          "native_live": 5976,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 23,
+          "elapsed": 179.0884363999994,
+          "native_owned": 4031983,
+          "native_live": 6777,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 3,
+          "epoch": 24,
+          "elapsed": 188.94903559999875,
+          "native_owned": 3429569,
+          "native_live": 5968,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 3,
+          "epoch": 25,
+          "elapsed": 198.87562640000033,
+          "native_owned": 3217929,
+          "native_live": 5957,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 3,
+          "epoch": 26,
+          "elapsed": 209.0011383000001,
+          "native_owned": 3543273,
+          "native_live": 5964,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 27,
+          "elapsed": 218.7673176999997,
+          "native_owned": 2729989,
+          "native_live": 5935,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 4,
+          "epoch": 28,
+          "elapsed": 228.98723429999882,
+          "native_owned": 3521421,
+          "native_live": 5969,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 29,
+          "elapsed": 239.11696200000006,
+          "native_owned": 4152365,
+          "native_live": 6768,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 4,
+          "epoch": 30,
+          "elapsed": 248.9385289999991,
+          "native_owned": 2894349,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 4,
+          "epoch": 31,
+          "elapsed": 259.11925809999957,
+          "native_owned": 3366365,
+          "native_live": 5966,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 4,
+          "epoch": 35,
+          "elapsed": 299.2299817999992,
+          "native_owned": 4150254,
+          "native_live": 6784,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 36,
+          "elapsed": 309.03264339999987,
+          "native_owned": 3285772,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 37,
+          "elapsed": 319.1289934999986,
+          "native_owned": 3484828,
+          "native_live": 5969,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 38,
+          "elapsed": 329.2459285999994,
+          "native_owned": 4079135,
+          "native_live": 6771,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 39,
+          "elapsed": 339.0660775999986,
+          "native_owned": 3425148,
+          "native_live": 5964,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 5,
+          "epoch": 40,
+          "elapsed": 348.9304992999987,
+          "native_owned": 3101068,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 41,
+          "elapsed": 358.91336760000013,
+          "native_owned": 2956396,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 42,
+          "elapsed": 369.06894079999984,
+          "native_owned": 3107028,
+          "native_live": 5953,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 43,
+          "elapsed": 379.01641219999874,
+          "native_owned": 3162292,
+          "native_live": 5952,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 5,
+          "epoch": 44,
+          "elapsed": 390.30099150000024,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 45,
+          "elapsed": 398.9420661999993,
+          "native_owned": 2871368,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 6,
+          "epoch": 46,
+          "elapsed": 409.0039562000002,
+          "native_owned": 2949832,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 6,
+          "epoch": 47,
+          "elapsed": 419.09943310000017,
+          "native_owned": 3224320,
+          "native_live": 5957,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 48,
+          "elapsed": 429.19935629999964,
+          "native_owned": 3225136,
+          "native_live": 5961,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 291
+        },
+        {
+          "connection": 6,
+          "epoch": 49,
+          "elapsed": 439.1953462999991,
+          "native_owned": 3276680,
+          "native_live": 5959,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 291
+        },
+        {
+          "connection": 6,
+          "epoch": 51,
+          "elapsed": 459.0290630999989,
+          "native_owned": 2898324,
+          "native_live": 5953,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 6,
+          "epoch": 52,
+          "elapsed": 469.3558140999994,
+          "native_owned": 4126019,
+          "native_live": 6770,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 6,
+          "epoch": 53,
+          "elapsed": 480.29527359999884,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 7,
+          "epoch": 54,
+          "elapsed": 488.9735485000001,
+          "native_owned": 2760544,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 7,
+          "epoch": 55,
+          "elapsed": 499.06358219999856,
+          "native_owned": 2864496,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 7,
+          "epoch": 56,
+          "elapsed": 509.3905092999994,
+          "native_owned": 4300515,
+          "native_live": 6775,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 57,
+          "elapsed": 519.0074961999999,
+          "native_owned": 2894264,
+          "native_live": 5943,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 58,
+          "elapsed": 529.2090093999996,
+          "native_owned": 3458976,
+          "native_live": 5967,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 59,
+          "elapsed": 539.1246876999994,
+          "native_owned": 2861928,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 7,
+          "epoch": 60,
+          "elapsed": 548.9937230999985,
+          "native_owned": 2716024,
+          "native_live": 5933,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 7,
+          "epoch": 61,
+          "elapsed": 559.1902731999999,
+          "native_owned": 3280024,
+          "native_live": 5958,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 7,
+          "epoch": 62,
+          "elapsed": 570.2949964,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 63,
+          "elapsed": 579.0681041999997,
+          "native_owned": 2848900,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 8,
+          "epoch": 64,
+          "elapsed": 589.1010291000002,
+          "native_owned": 2979948,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 8,
+          "epoch": 65,
+          "elapsed": 599.1638411999993,
+          "native_owned": 3220260,
+          "native_live": 5952,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 66,
+          "elapsed": 609.1411372000002,
+          "native_owned": 3160284,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 67,
+          "elapsed": 619.3615832999985,
+          "native_owned": 3602860,
+          "native_live": 5971,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 68,
+          "elapsed": 629.4386254000001,
+          "native_owned": 3730788,
+          "native_live": 5984,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 8,
+          "epoch": 70,
+          "elapsed": 649.2654149999998,
+          "native_owned": 3014364,
+          "native_live": 5956,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 8,
+          "epoch": 71,
+          "elapsed": 660.3102019999988,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 9,
+          "epoch": 72,
+          "elapsed": 669.2351973999994,
+          "native_owned": 2990576,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 9,
+          "epoch": 73,
+          "elapsed": 679.1654543999994,
+          "native_owned": 2920656,
+          "native_live": 5943,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 9,
+          "epoch": 74,
+          "elapsed": 689.3934718,
+          "native_owned": 3601968,
+          "native_live": 5964,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 75,
+          "elapsed": 699.1950371999992,
+          "native_owned": 3043272,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 76,
+          "elapsed": 709.2246751999992,
+          "native_owned": 3104696,
+          "native_live": 5950,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 77,
+          "elapsed": 719.0937767999985,
+          "native_owned": 2742064,
+          "native_live": 5932,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 9,
+          "epoch": 78,
+          "elapsed": 729.146706399999,
+          "native_owned": 2836032,
+          "native_live": 5940,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 9,
+          "epoch": 79,
+          "elapsed": 739.4207740000002,
+          "native_owned": 3521440,
+          "native_live": 5966,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 9,
+          "epoch": 80,
+          "elapsed": 750.3190251999986,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 81,
+          "elapsed": 759.1999901999989,
+          "native_owned": 2760156,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 82,
+          "elapsed": 769.2604682000001,
+          "native_owned": 3105660,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 83,
+          "elapsed": 779.2240418000001,
+          "native_owned": 2804764,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 10,
+          "epoch": 84,
+          "elapsed": 789.2008714000003,
+          "native_owned": 2745020,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 85,
+          "elapsed": 799.3200543000003,
+          "native_owned": 3220100,
+          "native_live": 5955,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 86,
+          "elapsed": 809.5163868,
+          "native_owned": 3639668,
+          "native_live": 5972,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 87,
+          "elapsed": 819.241333599999,
+          "native_owned": 2923972,
+          "native_live": 5943,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 10,
+          "epoch": 88,
+          "elapsed": 829.2741731999995,
+          "native_owned": 2982580,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 10,
+          "epoch": 89,
+          "elapsed": 839.1895177999995,
+          "native_owned": 2749084,
+          "native_live": 5936,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 11,
+          "epoch": 90,
+          "elapsed": 849.6053297999988,
+          "native_owned": 4241575,
+          "native_live": 6773,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 91,
+          "elapsed": 859.2908619999998,
+          "native_owned": 3009036,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 92,
+          "elapsed": 869.5482606999994,
+          "native_owned": 3514540,
+          "native_live": 5968,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 93,
+          "elapsed": 879.2264732999993,
+          "native_owned": 2723980,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 11,
+          "epoch": 94,
+          "elapsed": 889.3987234999986,
+          "native_owned": 3136564,
+          "native_live": 5956,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 11,
+          "epoch": 95,
+          "elapsed": 899.2645651999992,
+          "native_owned": 2749227,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 11,
+          "epoch": 96,
+          "elapsed": 909.4642308999992,
+          "native_owned": 3103868,
+          "native_live": 5956,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 291
+        },
+        {
+          "connection": 11,
+          "epoch": 97,
+          "elapsed": 919.428125299999,
+          "native_owned": 3276332,
+          "native_live": 5954,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 11,
+          "epoch": 98,
+          "elapsed": 930.3463347999987,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 12,
+          "epoch": 99,
+          "elapsed": 939.3960164,
+          "native_owned": 2996876,
+          "native_live": 5950,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 12,
+          "epoch": 100,
+          "elapsed": 949.3050437999991,
+          "native_owned": 2838516,
+          "native_live": 5943,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 12,
+          "epoch": 101,
+          "elapsed": 959.4263814999995,
+          "native_owned": 2956412,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 102,
+          "elapsed": 969.4776542,
+          "native_owned": 3043292,
+          "native_live": 5955,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 12,
+          "epoch": 103,
+          "elapsed": 979.4404310999998,
+          "native_owned": 3160316,
+          "native_live": 5952,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 104,
+          "elapsed": 989.6356254999992,
+          "native_owned": 3551876,
+          "native_live": 5980,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 12,
+          "epoch": 105,
+          "elapsed": 999.5059986999986,
+          "native_owned": 3339356,
+          "native_live": 5962,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 106,
+          "elapsed": 1009.3861589999997,
+          "native_owned": 2923724,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 12,
+          "epoch": 107,
+          "elapsed": 1020.3544212999986,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 13,
+          "epoch": 109,
+          "elapsed": 1039.4854813000002,
+          "native_owned": 2950604,
+          "native_live": 5948,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 291
+        },
+        {
+          "connection": 13,
+          "epoch": 110,
+          "elapsed": 1049.6392583999987,
+          "native_owned": 3694076,
+          "native_live": 5972,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 111,
+          "elapsed": 1059.4629809999988,
+          "native_owned": 3038924,
+          "native_live": 5948,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 112,
+          "elapsed": 1069.467455599999,
+          "native_owned": 3018524,
+          "native_live": 5949,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 113,
+          "elapsed": 1079.4132720999987,
+          "native_owned": 2751516,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 13,
+          "epoch": 114,
+          "elapsed": 1089.6843762999997,
+          "native_owned": 3642020,
+          "native_live": 5975,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 115,
+          "elapsed": 1099.5563217,
+          "native_owned": 3098540,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 13,
+          "epoch": 116,
+          "elapsed": 1110.3755591999998,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 117,
+          "elapsed": 1119.682155999999,
+          "native_owned": 3583788,
+          "native_live": 5970,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 118,
+          "elapsed": 1129.5550502999995,
+          "native_owned": 3042628,
+          "native_live": 5948,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 119,
+          "elapsed": 1139.4576978999994,
+          "native_owned": 2890252,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 14,
+          "epoch": 120,
+          "elapsed": 1149.4850984999994,
+          "native_owned": 2804764,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 121,
+          "elapsed": 1159.5480227999997,
+          "native_owned": 2898392,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 122,
+          "elapsed": 1169.7986409999994,
+          "native_owned": 3694204,
+          "native_live": 5973,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 14,
+          "epoch": 123,
+          "elapsed": 1179.5166090999992,
+          "native_owned": 2831372,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 14,
+          "epoch": 124,
+          "elapsed": 1189.5503489000002,
+          "native_owned": 2954276,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 14,
+          "epoch": 125,
+          "elapsed": 1200.3731912000003,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 126,
+          "elapsed": 1209.4989969999988,
+          "native_owned": 2785860,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 15,
+          "epoch": 127,
+          "elapsed": 1219.5424793999991,
+          "native_owned": 2920308,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 128,
+          "elapsed": 1229.7595532999985,
+          "native_owned": 3395636,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 129,
+          "elapsed": 1239.532822199999,
+          "native_owned": 2891700,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 15,
+          "epoch": 130,
+          "elapsed": 1249.5848528999995,
+          "native_owned": 2866252,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 131,
+          "elapsed": 1259.5710850999985,
+          "native_owned": 2776036,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 15,
+          "epoch": 132,
+          "elapsed": 1269.7190993999993,
+          "native_owned": 3310924,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 133,
+          "elapsed": 1279.6891644999996,
+          "native_owned": 3073132,
+          "native_live": 5949,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 15,
+          "epoch": 134,
+          "elapsed": 1290.4188195999996,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 135,
+          "elapsed": 1299.8117736999993,
+          "native_owned": 3406359,
+          "native_live": 5967,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 136,
+          "elapsed": 1309.707688999999,
+          "native_owned": 2923647,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 291
+        },
+        {
+          "connection": 16,
+          "epoch": 137,
+          "elapsed": 1319.6725876,
+          "native_owned": 2896791,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 138,
+          "elapsed": 1329.7083217,
+          "native_owned": 2864079,
+          "native_live": 5940,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 16,
+          "epoch": 139,
+          "elapsed": 1339.7023695999997,
+          "native_owned": 3011903,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 141,
+          "elapsed": 1359.8604691,
+          "native_owned": 3514319,
+          "native_live": 5969,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 16,
+          "epoch": 142,
+          "elapsed": 1369.750990299999,
+          "native_owned": 2955431,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 17,
+          "epoch": 144,
+          "elapsed": 1389.7369855999987,
+          "native_owned": 2818299,
+          "native_live": 5939,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 17,
+          "epoch": 145,
+          "elapsed": 1399.7643332999996,
+          "native_owned": 2923963,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 17,
+          "epoch": 146,
+          "elapsed": 1409.845239799999,
+          "native_owned": 3161795,
+          "native_live": 5956,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 17,
+          "epoch": 147,
+          "elapsed": 1419.7859509999998,
+          "native_owned": 2924059,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 17,
+          "epoch": 148,
+          "elapsed": 1430.0164970999995,
+          "native_owned": 3974112,
+          "native_live": 6768,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 17,
+          "epoch": 149,
+          "elapsed": 1439.6872223999999,
+          "native_owned": 2774875,
+          "native_live": 5938,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 17,
+          "epoch": 150,
+          "elapsed": 1449.8090921999992,
+          "native_owned": 3009451,
+          "native_live": 5948,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 17,
+          "epoch": 151,
+          "elapsed": 1459.9041127,
+          "native_owned": 3131011,
+          "native_live": 5952,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 17,
+          "epoch": 152,
+          "elapsed": 1470.507823599999,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 153,
+          "elapsed": 1479.7970361999996,
+          "native_owned": 2875687,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 154,
+          "elapsed": 1489.8308383000003,
+          "native_owned": 2812095,
+          "native_live": 5943,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 155,
+          "elapsed": 1499.7222537999987,
+          "native_owned": 2744959,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 18,
+          "epoch": 156,
+          "elapsed": 1510.006846799999,
+          "native_owned": 3577207,
+          "native_live": 5969,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 18,
+          "epoch": 157,
+          "elapsed": 1519.8869920999987,
+          "native_owned": 3042495,
+          "native_live": 5952,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 158,
+          "elapsed": 1529.972678,
+          "native_owned": 3251623,
+          "native_live": 5964,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 159,
+          "elapsed": 1539.9696360999988,
+          "native_owned": 3106543,
+          "native_live": 5954,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 18,
+          "epoch": 160,
+          "elapsed": 1549.9773898000003,
+          "native_owned": 3217455,
+          "native_live": 5959,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 18,
+          "epoch": 161,
+          "elapsed": 1560.6071782999988,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 19,
+          "epoch": 162,
+          "elapsed": 1570.0579179999986,
+          "native_owned": 3312407,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 163,
+          "elapsed": 1579.9513217999993,
+          "native_owned": 3191319,
+          "native_live": 5954,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 164,
+          "elapsed": 1589.9589418999985,
+          "native_owned": 3339079,
+          "native_live": 5958,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 165,
+          "elapsed": 1600.0497846999988,
+          "native_owned": 3372047,
+          "native_live": 5961,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 166,
+          "elapsed": 1609.916116299999,
+          "native_owned": 3047079,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 167,
+          "elapsed": 1619.9234165999987,
+          "native_owned": 3016127,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 168,
+          "elapsed": 1630.0842862999998,
+          "native_owned": 3425135,
+          "native_live": 5962,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 169,
+          "elapsed": 1640.0185230999996,
+          "native_owned": 3338943,
+          "native_live": 5959,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 19,
+          "epoch": 170,
+          "elapsed": 1650.7149618000003,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 20,
+          "epoch": 171,
+          "elapsed": 1660.1729239999986,
+          "native_owned": 3602063,
+          "native_live": 5966,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 172,
+          "elapsed": 1670.0511245999987,
+          "native_owned": 3275567,
+          "native_live": 5953,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 173,
+          "elapsed": 1680.010270499999,
+          "native_owned": 3011903,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 174,
+          "elapsed": 1690.1169813999986,
+          "native_owned": 3216271,
+          "native_live": 5950,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 175,
+          "elapsed": 1700.04479,
+          "native_owned": 3098159,
+          "native_live": 5949,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 20,
+          "epoch": 176,
+          "elapsed": 1710.1502478000002,
+          "native_owned": 3343151,
+          "native_live": 5963,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 177,
+          "elapsed": 1720.1353591999996,
+          "native_owned": 3344199,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 178,
+          "elapsed": 1730.0875977999985,
+          "native_owned": 3077551,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 179,
+          "elapsed": 1740.7271991999987,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 180,
+          "elapsed": 1750.010061699999,
+          "native_owned": 2871907,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 21,
+          "epoch": 181,
+          "elapsed": 1759.9789762,
+          "native_owned": 2983387,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 182,
+          "elapsed": 1770.1211999999996,
+          "native_owned": 3191387,
+          "native_live": 5955,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 183,
+          "elapsed": 1780.2654561999989,
+          "native_owned": 3609131,
+          "native_live": 5972,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 21,
+          "epoch": 184,
+          "elapsed": 1790.1808967999987,
+          "native_owned": 3073299,
+          "native_live": 5958,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 185,
+          "elapsed": 1800.0437172999991,
+          "native_owned": 2894355,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 21,
+          "epoch": 186,
+          "elapsed": 1810.3337037000001,
+          "native_owned": 4044665,
+          "native_live": 6771,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        }
+      ],
+      "last_ten": [
+        {
+          "connection": 20,
+          "epoch": 177,
+          "elapsed": 1720.1353591999996,
+          "native_owned": 3344199,
+          "native_live": 5960,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 178,
+          "elapsed": 1730.0875977999985,
+          "native_owned": 3077551,
+          "native_live": 5951,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 20,
+          "epoch": 179,
+          "elapsed": 1740.7271991999987,
+          "native_owned": 229760,
+          "native_live": 11,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 180,
+          "elapsed": 1750.010061699999,
+          "native_owned": 2871907,
+          "native_live": 5942,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 21,
+          "epoch": 181,
+          "elapsed": 1759.9789762,
+          "native_owned": 2983387,
+          "native_live": 5945,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 182,
+          "elapsed": 1770.1211999999996,
+          "native_owned": 3191387,
+          "native_live": 5955,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 183,
+          "elapsed": 1780.2654561999989,
+          "native_owned": 3609131,
+          "native_live": 5972,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 21,
+          "epoch": 184,
+          "elapsed": 1790.1808967999987,
+          "native_owned": 3073299,
+          "native_live": 5958,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 21,
+          "epoch": 185,
+          "elapsed": 1800.0437172999991,
+          "native_owned": 2894355,
+          "native_live": 5946,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 21,
+          "epoch": 186,
+          "elapsed": 1810.3337037000001,
+          "native_owned": 4044665,
+          "native_live": 6771,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        }
+      ],
+      "strictly_increasing_native_bytes": false,
+      "max_native_owned": 12901980,
+      "max_cache_cpu": 6541360,
+      "max_cache_gpu": 2771712,
+      "max_job_buffers": 0
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
+    "source_dirty": true,
+    "source_root": "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\.worktrees\\odin-owner-followup",
+    "source_sha256": "3036c3f1370d5b101a94ebac4570b0907ebe45c325a6a32839efebb01696ff81",
+    "build_tag": 217136225208817073,
+    "source_fingerprint_culture": "en-CA",
+    "fingerprint_runtime": ".NET 10.0.12",
+    "files": 112,
+    "dll_sha256": "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+    "compiler": "C:\\Users\\jblic\\Downloads\\odin-windows-amd64-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "game_protocol": 7,
+    "canonical_version": 3
+  },
+  "players": {
+    "primary": {
+      "backend": "Mono",
+      "executable_sha256": "611524be5112ddf5d1d6244f74eb890243581d3b096414fe6481e7f00629bc6b",
+      "native_dll_sha256": "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+      "runtime_sha256": "1aba18d76a0ba83738654110b914bc424d3e67b7cef2af61bb6ed38e041099ac"
+    },
+    "guest": {
+      "backend": "IL2CPP",
+      "executable_sha256": "db663a45c5073935e57c87a4be44e0ffa196a8360904e16364fbc68366cb7e47",
+      "native_dll_sha256": "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+      "runtime_sha256": "2cf4e2f2b62c91b003a3d29957000ff7857c6e78a5ceff4e3bcdc25e45c6579b"
+    }
+  },
+  "relays": {
+    "primary": {
+      "configuration": {
+        "seed": 42,
+        "rtt_ms": 100,
+        "jitter_ms": 20,
+        "random_loss": 0,
+        "duplicate_probability": 0.01,
+        "reorder_probability": 0.02,
+        "burst_interval": 120,
+        "burst_offset": 45,
+        "burst_seconds": 0.5,
+        "packet_bound": 1200,
+        "queue_bound": 10000,
+        "jitter": "positive uniform per direction",
+        "version": 1
+      },
+      "counters": {
+        "received": 314476,
+        "forwarded": 316378,
+        "random_drops": 0,
+        "burst_drops": 1177,
+        "duplicates": 3079,
+        "reordered": 6348,
+        "max_packet": 1200,
+        "peak_queued": 71,
+        "shutdown_discarded": 0
+      },
+      "trace_sha256": "95122cae7604eca2ac34809e674add31d96c7afb3abf5bfe781b2b1030d84ad7"
+    },
+    "guest": {
+      "configuration": {
+        "seed": 137,
+        "rtt_ms": 100,
+        "jitter_ms": 20,
+        "random_loss": 0,
+        "duplicate_probability": 0.01,
+        "reorder_probability": 0.02,
+        "burst_interval": 120,
+        "burst_offset": 45,
+        "burst_seconds": 0.5,
+        "packet_bound": 1200,
+        "queue_bound": 10000,
+        "jitter": "positive uniform per direction",
+        "version": 1
+      },
+      "counters": {
+        "received": 310875,
+        "forwarded": 312804,
+        "random_drops": 0,
+        "burst_drops": 1171,
+        "duplicates": 3100,
+        "reordered": 6216,
+        "max_packet": 1200,
+        "peak_queued": 72,
+        "shutdown_discarded": 0
+      },
+      "trace_sha256": "149e085f407ac3b9d5b025dda9524a031dd6bae0c761481d42cd90c8f51e0083"
+    }
+  },
+  "commands": {
+    "server": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\BOM-server.exe",
+      "--port",
+      "52997",
+      "--layout",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\layout.json",
+      "--seconds",
+      "2040",
+      "--host-token",
+      "[REDACTED]",
+      "--metrics",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\server-metrics.json"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\interop-performance-host\\PerformanceHost.dll",
+      "52997",
+      "2030"
+    ],
+    "observer": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:52997",
+      "--spectator",
+      "--prediction-off",
+      "--seconds",
+      "2035",
+      "--stop-file",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\observer-stop.signal"
+    ],
+    "primary": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-players\\Mono-live-20261110T2149\\BombPerformance.exe",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1920",
+      "-screen-height",
+      "1080",
+      "--bom-port",
+      "52998",
+      "--bom-perf-out",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\primary.json",
+      "--bom-perf-scene",
+      "PerformanceReference",
+      "--bom-perf-seconds",
+      "1800",
+      "--bom-perf-warmup",
+      "5",
+      "--bom-perf-start-file",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\measurement-start.signal",
+      "--bom-soak",
+      "--bom-soak-role",
+      "primary",
+      "--bom-soak-join-delay",
+      "0",
+      "--bom-source-job-gate",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\release-jobs.signal",
+      "--bom-source-job-gate-asset",
+      "performance/disconnected-group-4-v1",
+      "-logFile",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\primary.log"
+    ],
+    "guest": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-players\\IL2CPP-live-attempt2\\BombPerformance.exe",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1920",
+      "-screen-height",
+      "1080",
+      "--bom-port",
+      "52999",
+      "--bom-perf-out",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\guest.json",
+      "--bom-perf-scene",
+      "PerformanceReference",
+      "--bom-perf-seconds",
+      "1800",
+      "--bom-perf-warmup",
+      "5",
+      "--bom-perf-start-file",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\measurement-start.signal",
+      "--bom-soak",
+      "--bom-soak-role",
+      "guest",
+      "--bom-soak-join-delay",
+      "15",
+      "--bom-source-job-gate",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\release-jobs.signal",
+      "--bom-source-job-gate-asset",
+      "performance/disconnected-group-4-v1",
+      "-logFile",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\evidence\\M9\\soak-20261110T225008541332Z\\guest.log",
+      "--bom-prediction-off"
+    ]
+  },
+  "scope": "Real dedicated server, two standalone Unity clients, native host controller and independent Odin observer. Two transparent UDP relays add traced bidirectional jitter, duplication, reordering and 500 ms bursts; packets use only the native codec."
+}
