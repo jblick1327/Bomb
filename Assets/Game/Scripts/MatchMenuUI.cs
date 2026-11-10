@@ -43,6 +43,8 @@ public sealed class MatchMenuUI : MonoBehaviour
     private Vector3 mainMenuCameraPosition;
     private Quaternion mainMenuCameraRotation;
     private Button mainMenuPlayButton;
+    private Button onlineButton;
+    private bool onlineMenuOpen;
     private Button startButton;
     private Button shopButton;
     private Button settingsButton;
@@ -139,6 +141,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         secondaryMenuOpen = false;
         shopMenuOpen = false;
         settingsMenuOpen = false;
+        onlineMenuOpen = false;
         settingsCanvasObject = null;
         controllerStatusText = null;
         lastControllerStatus = null;
@@ -154,6 +157,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             splashscreen = GameObject.Find("splashscreen");
             titleImage = GameObject.Find("TitleImage");
             HookPlayButton();
+            HookOnlineButton();
             HookShopButton();
             HookSettingsButton();
             HookQuitButton();
@@ -173,6 +177,10 @@ public sealed class MatchMenuUI : MonoBehaviour
 
     private void Update()
     {
+        if (onlineButton != null && mainMenuPlayButton != null
+            && onlineButton.gameObject.activeSelf != mainMenuPlayButton.gameObject.activeSelf)
+            onlineButton.gameObject.SetActive(mainMenuPlayButton.gameObject.activeSelf);
+
         if ((secondaryMenuOpen || SceneManager.GetActiveScene().name == "LevelSetupScene")
             && setupCanvasObject != null && !isTransitioning)
         {
@@ -295,8 +303,53 @@ public sealed class MatchMenuUI : MonoBehaviour
             mainMenuPlayButton = button;
             button.onClick.RemoveListener(ShowSecondaryMenu);
             button.onClick.AddListener(ShowSecondaryMenu);
+            // Offline covers single player and couch co-op, through the setup screen.
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null) label.text = "OFFLINE";
             return;
         }
+    }
+
+    // Adds the ONLINE button under OFFLINE, styled the same.
+    private void HookOnlineButton()
+    {
+        onlineButton = null;
+        if (mainMenuPlayButton == null) return;
+        GameObject onlineObject = Instantiate(mainMenuPlayButton.gameObject, mainMenuPlayButton.transform.parent, false);
+        onlineObject.name = "OnlineButton";
+        RectTransform onlineRect = onlineObject.GetComponent<RectTransform>();
+        RectTransform playRect = mainMenuPlayButton.GetComponent<RectTransform>();
+        onlineRect.anchoredPosition = playRect.anchoredPosition + new Vector2(0f, -110f);
+        onlineButton = onlineObject.GetComponent<Button>();
+        onlineButton.onClick.RemoveAllListeners();
+        onlineButton.onClick.AddListener(ShowOnlineMenu);
+        TMP_Text label = onlineObject.GetComponentInChildren<TMP_Text>(true);
+        if (label != null) label.text = "ONLINE";
+        GameAudio.RegisterButton(onlineButton);
+    }
+
+    private void ShowOnlineMenu()
+    {
+        if (isTransitioning || onlineMenuOpen || settingsMenuOpen || shopMenuOpen || secondaryMenuOpen)
+            return;
+        onlineMenuOpen = true;
+        SetMainMenuButtonsVisible(false);
+        OnlineMenuUI.Open(CloseOnlineMenu);
+    }
+
+    private void CloseOnlineMenu()
+    {
+        onlineMenuOpen = false;
+        SetMainMenuButtonsVisible(true);
+    }
+
+    private void SetMainMenuButtonsVisible(bool visible)
+    {
+        if (splashscreen != null) splashscreen.SetActive(visible);
+        if (titleImage != null) titleImage.SetActive(visible);
+        if (mainMenuPlayButton != null) mainMenuPlayButton.gameObject.SetActive(visible);
+        if (shopButton != null) shopButton.gameObject.SetActive(visible);
+        if (settingsButton != null) settingsButton.gameObject.SetActive(visible);
     }
 
     private void HookShopButton()
@@ -314,7 +367,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             shopObject.name = "ShopButton";
             RectTransform shopRect = shopObject.GetComponent<RectTransform>();
             RectTransform playRect = mainMenuPlayButton.GetComponent<RectTransform>();
-            shopRect.anchoredPosition = playRect.anchoredPosition + new Vector2(0f, -110f);
+            shopRect.anchoredPosition = playRect.anchoredPosition + new Vector2(0f, -220f);
             shopButton = shopObject.GetComponent<Button>();
             TMP_Text buttonLabel = shopObject.GetComponentInChildren<TMP_Text>(true);
             if (buttonLabel != null) buttonLabel.text = "SHOP";
@@ -838,7 +891,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         RefreshRosterForInputMode();
     }
 
-    private TextMeshProUGUI AddHeaderBar(RectTransform parent, string label, Color color, float widthFraction, float fontSize)
+    internal static TextMeshProUGUI AddHeaderBar(RectTransform parent, string label, Color color, float widthFraction, float fontSize)
     {
         float halfWidth = widthFraction * .5f;
         RectTransform bar = AddPanel(parent, label + " Header", new Vector2(.5f - halfWidth, 1f), new Vector2(.5f + halfWidth, 1f), color);
@@ -1136,7 +1189,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         }
     }
 
-    private RectTransform AddPanel(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, Color color)
+    internal static RectTransform AddPanel(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, Color color)
     {
         GameObject panel = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         RectTransform rect = panel.GetComponent<RectTransform>();
@@ -1149,7 +1202,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         return rect;
     }
 
-    private TextMeshProUGUI AddText(RectTransform parent, string value, Vector2 anchorMin, Vector2 anchorMax, float size, Color color, FontStyles style, Color? background = null)
+    internal static TextMeshProUGUI AddText(RectTransform parent, string value, Vector2 anchorMin, Vector2 anchorMax, float size, Color color, FontStyles style, Color? background = null)
     {
         RectTransform rect;
         if (background.HasValue)
@@ -1189,7 +1242,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         return text;
     }
 
-    private Button AddButton(RectTransform parent, string label, Vector2 anchorMin, Vector2 anchorMax, Color color, UnityEngine.Events.UnityAction action, float fontSize, Color textColor)
+    internal static Button AddButton(RectTransform parent, string label, Vector2 anchorMin, Vector2 anchorMax, Color color, UnityEngine.Events.UnityAction action, float fontSize, Color textColor)
     {
         GameObject buttonObject = new GameObject(label.Replace("\n", " ") + " Button", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
         RectTransform rect = buttonObject.GetComponent<RectTransform>();
