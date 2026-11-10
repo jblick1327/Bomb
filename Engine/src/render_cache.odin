@@ -1,4 +1,6 @@
 package main
+
+import shared "shared"
 import "core:time"
 
 import rl "vendor:raylib"
@@ -74,7 +76,7 @@ release_render_caches :: proc(caches: ^Render_Cache_State) {
 // This is the only phase that may insert cache entries. Complete it before
 // taking any cache pointer: an insertion can move the map's value storage.
 render_cache_prepass :: proc(s: ^Scene,caches: ^Render_Cache_State) {
- when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_cache_ms+=frame_ms(frame_start) } } }
+ when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if shared.frame_measuring { shared.frame_cache_ms+=frame_ms(frame_start) } } }
 
 	if !caches.initialized || caches.structure_revision!=s.structure_revision {
 		when ODIN_TEST { render_signature_test_calls+=1 }
@@ -235,6 +237,7 @@ triangle_indices :: proc(outline: Polygon,fan: bool = false) -> [dynamic]int {
 	return result
 }
 render_static :: proc(s: ^Scene,statics: ^Static_Index,sub: Subdivision) -> bool {
+ if s.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy {return sub.provenance.pinned}
  if statics!=nil { static_index_refresh(s,statics); return statics.anchored[sub.owner] }
  return piece_anchored(s,sub.owner,s.anchor_y)
 }
@@ -246,7 +249,7 @@ render_together_neighbours :: proc(s: ^Scene,sub: Subdivision,statics_in: ^Stati
  if statics==nil { statics=&local }
  defer static_index_release(&local)
  static_index_refresh(s,statics)
- anchored:=statics.anchored[sub.owner]
+ anchored:=render_static(s,statics,sub)
  candidates: [dynamic]u64
  seen:=make(map[u64]bool); defer delete(seen)
  add_candidate :: proc(candidates: ^[dynamic]u64,seen: ^map[u64]bool,s: ^Scene,id: u64) {
@@ -285,7 +288,7 @@ render_together_neighbours :: proc(s: ^Scene,sub: Subdivision,statics_in: ^Stati
   if id==sub.id { continue }
   other:=s.subdivisions[s.sub_rows[id]]
   together:=sub.owner==other.owner && s.materials[sub.material].flexibility==0
-  together=together || anchored && statics.anchored[other.owner]
+  together=together || anchored && render_static(s,statics,other)
   if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || (s.connections[s.conn_rows[c]].live && !s.connections[s.conn_rows[c]].mortar) }
   if !together { continue }
   boundaries:=shared_segments(sub.outline,other.outline)

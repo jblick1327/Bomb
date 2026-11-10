@@ -1,5 +1,7 @@
 package main
 
+
+import shared "shared"
 import "core:fmt"
 import "core:math"
 
@@ -37,8 +39,6 @@ run_mortar_calibration :: proc() {
  assert(n2>2*n1,"Calibration requires N(F2)>2*N(F1)")
 }
 
-BOM_MORTAR_MEASURE :: #config(BOM_MORTAR_MEASURE,false)
-when BOM_MORTAR_MEASURE { @(thread_local) mortar_measured_force_breaks: int }
 mortar_bridge_yard :: proc() -> Sandbox {
  g:=sandbox_editor_create(); assert(sandbox_load_preset(&g,4)); sandbox_toggle_editor(&g); return g
 }
@@ -56,13 +56,13 @@ run_mortar_bridge_measurements :: proc() {
  when BOM_MORTAR_MEASURE {
   idle:=mortar_bridge_yard()
   regions,links,pieces:=counts_runtime(&idle.world.scene); mortar:=mortar_live_count(&idle.world.scene)
-  mortar_measured_force_breaks=0; changed_ticks:=0; first_change:=0
+  shared.mortar_measured_force_breaks=0; changed_ticks:=0; first_change:=0
   for tick in 1..=600 {
    sandbox_tick(&idle,0,false)
    r,l,_:=counts_runtime(&idle.world.scene)
    if r!=regions || l!=links { changed_ticks+=1; if first_change==0 { first_change=tick } }
   }
-  fmt.printf("Mortar C1 regions=%d->%d links=%d->%d pieces=%d->%d mortar=%d->%d force_breaks=%d changed_ticks=%d first_change=%d\n",regions,len(idle.world.scene.subdivisions),links,len(idle.world.scene.connections),pieces,len(idle.world.scene.pieces),mortar,mortar_live_count(&idle.world.scene),mortar_measured_force_breaks,changed_ticks,first_change)
+  fmt.printf("Mortar C1 regions=%d->%d links=%d->%d pieces=%d->%d mortar=%d->%d force_breaks=%d changed_ticks=%d first_change=%d\n",regions,len(idle.world.scene.subdivisions),links,len(idle.world.scene.connections),pieces,len(idle.world.scene.pieces),mortar,mortar_live_count(&idle.world.scene),shared.mortar_measured_force_breaks,changed_ticks,first_change)
   sandbox_destroy(&idle)
   hit:=mortar_bridge_yard(); before:=mortar_live_count(&hit.world.scene)
   original:=make(map[u64]bool); defer delete(original)
@@ -73,12 +73,12 @@ run_mortar_bridge_measurements :: proc() {
   for id in original { if _,ok:=hit.world.scene.conn_rows[id]; !ok { retired+=1 } }
   for c in hit.world.scene.connections { if c.live && c.mortar && !original[c.id] { inherited+=1 } }
   fmt.printf("Mortar C2 direct blast retired_original_ids=%d new_inherited_ids=%d\n",retired,inherited)
-  mortar_measured_force_breaks=0; below_tick:=0; lowest:=mortar_deck_lowest(&hit.world.scene)
+  shared.mortar_measured_force_breaks=0; below_tick:=0; lowest:=mortar_deck_lowest(&hit.world.scene)
   for tick in 1..=180 {
    sandbox_tick(&hit,0,false); lowest=min(lowest,mortar_deck_lowest(&hit.world.scene))
    if below_tick==0 && mortar_deck_lowest(&hit.world.scene)<1 { below_tick=tick }
   }
-  fmt.printf("Mortar C2 before_blast=%d after_blast=%d after_180=%d force_breaks=%d deck_below_y1_tick=%d min_deck_y=%.9f\n",before,after_blast,mortar_live_count(&hit.world.scene),mortar_measured_force_breaks,below_tick,lowest)
+  fmt.printf("Mortar C2 before_blast=%d after_blast=%d after_180=%d force_breaks=%d deck_below_y1_tick=%d min_deck_y=%.9f\n",before,after_blast,mortar_live_count(&hit.world.scene),shared.mortar_measured_force_breaks,below_tick,lowest)
   sandbox_destroy(&hit)
  }
 }

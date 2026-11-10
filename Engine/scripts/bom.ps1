@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Position = 0)]
-    [ValidateSet('Run', 'Build', 'Test', 'Smoke', 'SmokeInput', 'SmokeEditor', 'SmokeMaterials', 'SmokeMenus', 'Soak', 'NetTest', 'ReplicationSoak')]
+    [ValidateSet('Run', 'Build', 'Server', 'Test', 'Smoke', 'SmokeInput', 'SmokeEditor', 'SmokeMaterials', 'SmokeMenus', 'Soak', 'NetTest', 'ReplicationSoak')]
     [string]$Task = 'Run',
     [string[]]$CompilerArguments = @()
 )
@@ -31,6 +31,8 @@ try {
     }
     if ($Task -eq 'Build') {
         $odinArguments = @('build', $stage, '-o:speed', '-out:build/BOM.exe')
+    } elseif ($Task -eq 'Server') {
+        $odinArguments = @('build', "$stage/server", '-o:speed', '-out:build/BOM-server.exe')
     } elseif ($Task -eq 'Test') {
         $odinArguments = @('test', $stage, '-out:build/BOM-tests.exe')
     } elseif ($Task -eq 'NetTest') {
@@ -77,6 +79,11 @@ try {
         throw "Odin $Task failed with exit code $odinExitCode."
     }
 } finally {
-    if ($stage -and (Test-Path -LiteralPath $stage)) { Remove-Item -LiteralPath $stage -Recurse -Force }
+    if ($stage -and (Test-Path -LiteralPath $stage)) {
+        $resolvedStage = (Resolve-Path -LiteralPath $stage).Path
+        $allowedStageRoot = [IO.Path]::GetFullPath((Join-Path $projectRoot 'build')) + [IO.Path]::DirectorySeparatorChar
+        if (!$resolvedStage.StartsWith($allowedStageRoot, [StringComparison]::OrdinalIgnoreCase)) { throw 'Refusing cleanup outside generated build directory.' }
+        Remove-Item -LiteralPath $resolvedStage -Recurse -Force
+    }
     Pop-Location
 }

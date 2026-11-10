@@ -1,4 +1,6 @@
 package main
+
+import shared "shared"
 import "core:testing"
 import "core:sync"
 import "core:fmt"
@@ -64,9 +66,9 @@ force_rule_legacy_history :: proc(t:^testing.T) {
    case 3:g=mortar_cantilever(4.4);ticks=240
    case 4:g=mortar_bridge_yard()
    }
-   seam_diagnostic_scene=&g.world.scene;seam_diagnostic_run=fmt.tprintf("fixture-%d",fixture)
-   for tick in 1..=ticks { seam_diagnostic_tick=tick;sandbox_tick(&g,0,false) }
-   seam_diagnostic_scene=nil;sandbox_destroy(&g)
+   shared.seam_diagnostic_scene=&g.world.scene;shared.seam_diagnostic_run=fmt.tprintf("fixture-%d",fixture)
+   for tick in 1..=ticks { shared.seam_diagnostic_tick=tick;sandbox_tick(&g,0,false) }
+   shared.seam_diagnostic_scene=nil;sandbox_destroy(&g)
   }
  }
 }

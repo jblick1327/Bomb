@@ -1,4 +1,6 @@
 package main
+
+import shared "shared"
 import "core:testing"
 import "core:sync"
 import "core:strings"
@@ -6,7 +8,7 @@ import "core:strings"
 cover_chords_endpoints_concavity_and_self :: proc(t:^testing.T) {
  points:=[6]Vec2{{0,0},{2,0},{2,1},{1,1},{1,2},{0,2}}
  cover:=Cover{}; append(&cover.cells,Cover_Cell{id=1,owner=7,resistance=3,points=points[:],lo={0,0},hi={2,2}}); defer { delete(cover.cells); delete(cover.cuts); delete(cover.candidates) }
- active_cover=&cover; defer { active_cover=nil }
+ shared.active_cover=&cover; defer { shared.active_cover=nil }
  testing.expect(t,close(cover_distance({3,0.5},{-1,0.5},8),10))
  testing.expect(t,close(cover_distance({3,0.5},{-1,0.5},7),4))
  testing.expect(t,close(cover_distance({0.5,0.5},{-1,0.5},8),3))
@@ -36,9 +38,9 @@ cover_wall_protects_wood :: proc(t:^testing.T) {
  g:=sandbox_editor_create(); defer sandbox_destroy(&g)
  g.editor.palette=recipe_slot(.Stone); testing.expect(t,editor_place(&g,{2,0},{2.4,2.4})); g.editor.palette=recipe_slot(.Wood); testing.expect(t,editor_place(&g,{2.6,0},{3.6,1.6})); sandbox_toggle_editor(&g)
  when #config(BOM_COVER_TEST_BASELINE,false) { for &m in g.world.scene.materials { m.blast_resistance=0 } }
- cover_wood_failures=0; blast_pass(&g.world.scene,Blast{{1,1},5})
+ shared.cover_wood_failures=0; blast_pass(&g.world.scene,Blast{{1,1},5})
  area:f32; for sub in g.world.scene.subdivisions { if sub.live && g.world.scene.materials[sub.material].name=="wood" { area+=polygon_area(sub.outline) } }
- testing.expect(t,1.6-area<0.001 && cover_wood_failures==0,"Wall must prevent Wood cell failure")
+ testing.expect(t,1.6-area<0.001 && shared.cover_wood_failures==0,"Wall must prevent Wood cell failure")
 }
 
 @(test)
@@ -46,7 +48,7 @@ cover_grid_matches_exhaustive_rays :: proc(t:^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  g:=sandbox_editor_create(); defer sandbox_destroy(&g)
  g.editor.palette=recipe_slot(.Stone); testing.expect(t,editor_place(&g,{-3,0},{-2.6,3})); g.editor.palette=recipe_slot(.Wood); testing.expect(t,editor_place(&g,{-2,0},{0,2})); sandbox_toggle_editor(&g)
- c:=cover_begin(&g.world.scene); defer cover_destroy(&c); active_cover=&c; defer { active_cover=nil }
+ c:=cover_begin(&g.world.scene); defer cover_destroy(&c); shared.active_cover=&c; defer { shared.active_cover=nil }
  grid:=c.grid
  for x in -8..=8 { for y in -2..=8 {
   origin:=Vec2{-4,1}; point:=Vec2{f32(x)*0.5,f32(y)*0.5}
@@ -71,7 +73,7 @@ cover_zero_load_early_exit_preserves_load :: proc(t:^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  g:=sandbox_editor_create(); defer sandbox_destroy(&g)
  g.editor.palette=recipe_slot(.Stone); testing.expect(t,editor_place(&g,{1,0},{2,3})); g.editor.palette=recipe_slot(.Wood); testing.expect(t,editor_place(&g,{3,0},{5,2})); sandbox_toggle_editor(&g)
- c:=cover_begin(&g.world.scene); defer cover_destroy(&c); active_cover=&c; defer { active_cover=nil }
+ c:=cover_begin(&g.world.scene); defer cover_destroy(&c); shared.active_cover=&c; defer { shared.active_cover=nil }
  saved:=c.cache; c.cache=nil; defer { c.cache=saved }
  for x in -2..=16 { for y in -4..=8 {
   point:=Vec2{f32(x)*0.5,f32(y)*0.5}; origin:=Vec2{0,1}
@@ -83,7 +85,7 @@ cover_zero_load_early_exit_preserves_load :: proc(t:^testing.T) {
 
 @(test)
 blast_shape_cache_matches_uncached_and_checks_collisions :: proc(t:^testing.T) {
- c:=Cover{}; active_cover=&c; defer { active_cover=nil; cover_destroy(&c) }
+ c:=Cover{}; shared.active_cover=&c; defer { shared.active_cover=nil; cover_destroy(&c) }
  points:=[6]Vec2{{0,0},{2,0},{2,1},{1,0.5},{1,2},{0,2}}
  for _ in 0..<3 {
   testing.expect(t,transmute(u32)blast_cached_width(points[:])==transmute(u32)outline_width_uncached(points[:]))
@@ -114,12 +116,12 @@ blast_width_stack_hull_matches_original :: proc(t:^testing.T) {
 
 @(test)
 blast_generation_arena_matches_owned_generation :: proc(t:^testing.T) {
- c:=Cover{}; defer { active_cover=nil; cover_destroy(&c) }
+ c:=Cover{}; defer { shared.active_cover=nil; cover_destroy(&c) }
  points:=[4]Vec2{{0,0},{3,0},{3,2},{0,2}}
  for material in Recipe { for seed in 1..=8 {
-  recipe:=editor_material(material); active_cover=nil
+  recipe:=editor_material(material); shared.active_cover=nil
   expected:=generate_children_impl(Polygon{points[:]},recipe,u8(seed),0.1,false)
-  active_cover=&c; actual:=generate_children(Polygon{points[:]},recipe,u8(seed),0.1,false)
+  shared.active_cover=&c; actual:=generate_children(Polygon{points[:]},recipe,u8(seed),0.1,false)
   testing.expect(t,len(expected)==len(actual))
   if len(expected)==len(actual) { for polygon,i in expected {
    testing.expect(t,len(polygon.points)==len(actual[i].points))

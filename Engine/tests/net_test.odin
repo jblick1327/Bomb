@@ -187,7 +187,7 @@ test_server :: proc() -> Net_Server {
 net_server_frame_matches_rigid_render_frame :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  ns:=test_server(); defer net_server_destroy(&ns)
- sandbox_explode(&ns.game,{-4.3,1})
+ headless_fixture_explode(&ns.game,{-4.3,1})
  for _ in 0..<90 { world_tick(&ns.game.world,Tick_Commands{},1.0/60.0) }
  net_collect(&ns)
  s:=&ns.game.world.scene
@@ -210,7 +210,7 @@ net_server_frame_matches_rigid_render_frame :: proc(t: ^testing.T) {
 net_server_blast_rules_and_exactly_once :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  ns:=test_server(); defer net_server_destroy(&ns)
- sandbox_fixture_mode(&ns.game,.Manual)
+ headless_game_mode(&ns.game,.Manual)
  net_server_join(&ns,0)
  blast :: proc(seq: u16,x,y: f32) -> Net_Blast { return {seq=seq,x=nc.quantize_pos(x),y=nc.quantize_pos(y),radius_q=radius_quantize(2)} }
  send :: proc(ns: ^Net_Server,seq_no: u16,blasts: ..Net_Blast) {
@@ -250,10 +250,10 @@ net_server_blast_rules_and_exactly_once :: proc(t: ^testing.T) {
 net_server_budget_priority_and_final_pose :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  ns:=test_server(); defer net_server_destroy(&ns)
- sandbox_fixture_mode(&ns.game,.Manual)
+ headless_game_mode(&ns.game,.Manual)
  net_server_join(&ns,0)
  c:=&ns.clients[0]
- for point in ([]Vec2{{-6.4,2.3},{-4.3,1},{-0.7,1},{2.5,1},{4.3,2.4},{6.2,1}}) { sandbox_explode(&ns.game,point) }
+ for point in ([]Vec2{{-6.4,2.3},{-4.3,1},{-0.7,1},{2.5,1},{4.3,2.4},{6.2,1}}) { headless_fixture_explode(&ns.game,point) }
  big_frames,total_frames:=0,0
  // An ideal client: it acks every frame at once.
  for tick in 0..<1500 {
@@ -281,7 +281,7 @@ net_server_budget_priority_and_final_pose :: proc(t: ^testing.T) {
 net_server_epoch_change_resets_frame_state :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  ns:=test_server(); defer net_server_destroy(&ns)
- sandbox_fixture_mode(&ns.game,.Manual)
+ headless_game_mode(&ns.game,.Manual)
  net_server_join(&ns,0)
  c:=&ns.clients[0]
  for tick in 0..<30 {
@@ -290,7 +290,7 @@ net_server_epoch_change_resets_frame_state :: proc(t: ^testing.T) {
  }
  testing.expect(t,c.has_ack)
  epoch:=ns.game.world.scene.epoch
- sandbox_reset(&ns.game)
+ headless_game_reset(&ns.game)
  net_server_tick(&ns,31.0/60)
  testing.expect(t,ns.game.world.scene.epoch==epoch+1 && !c.has_ack && ns.frame_epoch==epoch+1)
  // An ack that still names the old epoch is ignored; the first frame of the new epoch is absolute.
@@ -318,14 +318,14 @@ net_client_clock_adjusts_by_at_most_five_percent_and_snaps :: proc(t: ^testing.T
  c.newest_complete=1000; c.delay=2; c.clock=990
  net_client_update_clock(&c)
  testing.expect(t,c.clock>990+1 && math.abs(c.clock-991.05)<1e-9 && c.stats.snaps==0,"far behind: rate is capped at +5%")
- c.clock=1010; net_client_update_clock(&c)
- testing.expect(t,math.abs(c.clock-1010.95)<1e-9,"far ahead: rate is capped at -5%")
- c.clock=997.9; net_client_update_clock(&c)
+ c.delay=12;c.clock=995; net_client_update_clock(&c)
+ testing.expect(t,math.abs(c.clock-995.95)<1e-9,"ahead of target within received poses: rate is capped at -5%")
+ c.delay=2;c.clock=997.9; net_client_update_clock(&c)
  testing.expect(t,math.abs(c.clock-998.9)<0.01,"on target: real time")
  c.clock=900; net_client_update_clock(&c)
  testing.expect(t,c.clock==998 && c.stats.snaps==1,"more than 0.5 s off: snap")
  c.clock=1031; net_client_update_clock(&c)
- testing.expect(t,c.clock==998 && c.stats.snaps==2)
+ testing.expect(t,c.clock==1000 && c.stats.snaps==2,"an injected invalid clock is bounded by the newest received pose")
 }
 @(test)
 net_client_delay_adapts_to_jitter_and_loss :: proc(t: ^testing.T) {
@@ -429,7 +429,7 @@ net_client_structure_waits_for_its_tick_and_epoch_resets :: proc(t: ^testing.T) 
  net_client_on_reliable(&c,w.data[:]); net_client_apply_queue(&c)
  testing.expect(t,len(c.queue)==1 && c.stats.events_played==0)
  c.clock=200; net_client_apply_queue(&c)
- testing.expect(t,len(c.queue)==0 && c.stats.events_played==1 && len(c.bursts)==1)
+ testing.expect(t,len(c.queue)==0 && c.stats.events_played==1 && len(c.events)==1)
  // A new epoch's Baseline resets the replica, the tables and the clock.
  last:=map[u64]Pose_State{ent_key(.Player,0)={}}; defer delete(last)
  put_frame(&c,300,last)
@@ -463,7 +463,7 @@ net_end_to_end_short_soak :: proc(t: ^testing.T) {
 net_server_budget_fresh_first_priority_and_convergence :: proc(t: ^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  ns:=test_server(); defer net_server_destroy(&ns)
- sandbox_fixture_mode(&ns.game,.Manual)
+ headless_game_mode(&ns.game,.Manual)
  net_server_join(&ns,0)
  c:=&ns.clients[0]
  player:=ns.game.world.players[0].pose.position

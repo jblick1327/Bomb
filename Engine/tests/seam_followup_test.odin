@@ -1,4 +1,6 @@
 package main
+
+import shared "shared"
 import "core:testing"
 import "core:sync"
 import "core:fmt"
@@ -28,7 +30,7 @@ demo_original_blast_remote_seams :: proc(t:^testing.T) {
  testing.expect(t,len(ids)>0)
  post:=f32(0)
  broke:=make(map[u64]int);defer delete(broke)
- seam_damage_scene=s;seam_damage_peak=make(map[u64]f32);defer { seam_damage_scene=nil;delete(seam_damage_peak);seam_damage_peak=nil }
+ shared.seam_damage_scene=s;shared.seam_damage_peak=make(map[u64]f32);defer { shared.seam_damage_scene=nil;delete(shared.seam_damage_peak);shared.seam_damage_peak=nil }
  for tick in 1..=120 {
   sandbox_tick(&g,0,false);now:=seam_right_post_movement(&g);post=max(post,now)
   for id in ids { if row,ok:=s.conn_rows[id];(!ok || !s.connections[row].live) && broke[id]==0 { broke[id]=tick } }
@@ -39,7 +41,7 @@ demo_original_blast_remote_seams :: proc(t:^testing.T) {
    testing.expect(t,post<0.05,"The right post must stay put")
   }
  }
- for id in ids { fmt.printf("Original blast far_connection=%d first_break_tick=%d peak_damage=%.9f\n",id,broke[id],seam_damage_peak[id]) }
- fmt.printf("Original blast SEAM_TOUGHNESS=%g entries=%d\n",SEAM_TOUGHNESS,len(seam_damage_peak))
+ for id in ids { fmt.printf("Original blast far_connection=%d first_break_tick=%d peak_damage=%.9f\n",id,broke[id],shared.seam_damage_peak[id]) }
+ fmt.printf("Original blast SEAM_TOUGHNESS=%g entries=%d\n",SEAM_TOUGHNESS,len(shared.seam_damage_peak))
  sandbox_destroy(&g)
 }
