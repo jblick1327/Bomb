@@ -1,0 +1,84 @@
+﻿{
+    "scope":  "Real DLL ABI/lifecycle and optional UDP run; remaining M3 gates are tracked separately",
+    "status":  "passed",
+    "exit_code":  0,
+    "commands":  [
+                     {
+                         "arguments":  [
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\scripts\\generate-interop-caller.py"
+                                       ],
+                         "program":  "python",
+                         "log":  "generate-c-caller-20261110T202925146Z.log",
+                         "exit_code":  0
+                     },
+                     {
+                         "arguments":  [
+                                           "/nologo",
+                                           "/W4",
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\tests\\interop\\layout_test.c",
+                                           "/FoC:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\layout-test.obj",
+                                           "/FeC:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\layout-test.exe",
+                                           "/link",
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\bomcore.lib",
+                                           "kernel32.lib"
+                                       ],
+                         "program":  "cl.exe",
+                         "log":  "c-build-20261110T202925146Z.log",
+                         "exit_code":  0
+                     },
+                     {
+                         "arguments":  [
+
+                                       ],
+                         "program":  "layout-test.exe",
+                         "log":  "c-abi-lifetime-overflow-20261110T202925146Z.log",
+                         "exit_code":  0
+                     },
+                     {
+                         "arguments":  [
+                                           "build",
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\tests\\interop\\Interop.csproj",
+                                           "--source",
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\empty-nuget",
+                                           "--nologo",
+                                           "-o",
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\interop"
+                                       ],
+                         "program":  "dotnet",
+                         "log":  "managed-build-20261110T202925146Z.log",
+                         "exit_code":  0
+                     },
+                     {
+                         "arguments":  [
+                                           "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\interop\\Interop.dll"
+                                       ],
+                         "program":  "dotnet",
+                         "log":  "managed-abi-lifetime-20261110T202925146Z.log",
+                         "exit_code":  0
+                     }
+                 ],
+    "errors":  [
+
+               ],
+    "native_identity":  {
+                            "abi_major":  1,
+                            "abi_minor":  4,
+                            "source_commit":  "dc22bcb6f925d773b2735278d0165c19c06f35db",
+                            "source_dirty":  true,
+                            "source_root":  "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\.worktrees\\odin-owner-followup",
+                            "source_sha256":  "3036c3f1370d5b101a94ebac4570b0907ebe45c325a6a32839efebb01696ff81",
+                            "build_tag":  217136225208817073,
+                            "source_fingerprint_culture":  "en-CA",
+                            "fingerprint_runtime":  ".NET 10.0.12",
+                            "files":  112,
+                            "dll_sha256":  "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+                            "compiler":  "C:\\Users\\jblic\\Downloads\\odin-windows-amd64-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+                            "compiler_arguments":  [
+                                                       "-ignore-vs-search",
+                                                       "-debug"
+                                                   ],
+                            "optimization":  "speed",
+                            "game_protocol":  7,
+                            "canonical_version":  3
+                        }
+}

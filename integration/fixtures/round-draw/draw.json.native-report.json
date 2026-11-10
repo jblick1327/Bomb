@@ -1,10 +1,10 @@
 {
 	"status": "passed",
 	"level_id": "bom-elimination-draw-fixture-v1",
-	"gameplay_manifest_hash": "94d0d318993f7376eec9011478b3730ad28ff3ec67287f459b9662bf9ad93719",
-	"gameplay_config_hash": "3d1c4f66bc71b5308c17a6b219d539efce82437258b41b3e6505d9705e78a853",
-	"catalog_hash": "6eb1d933411e01a0c97342c156e42238682e24b747c34d4aad95154dab6074b7",
-	"game_protocol": 6,
+	"gameplay_manifest_hash": "79df12815760a06a5c06eab9c6b9f3a353a248efce7cda9eb10bb43d98a13095",
+	"gameplay_config_hash": "1402a12361198fe32c988bb883232159591eb9cdc8e8422e9ea08e33882e0c7f",
+	"catalog_hash": "222fe04bd76f9e9aa676798d33bef27371792a3cae4177632d72ce1d6eb38eb0",
+	"game_protocol": 7,
 	"canonical_version": 3,
 	"source_count": 1,
 	"part_count": 1,
@@ -98,7 +98,7 @@
 			}
 		},
 		"config": {
-			"version": 1,
+			"version": 2,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
@@ -112,7 +112,17 @@
 			},
 			"bomb_fuse": 1,
 			"bomb_drop_min": 1,
-			"bomb_drop_max": 2.5
+			"bomb_drop_max": 2.5,
+			"bomb_radius": 5,
+			"elimination_start_interval": {
+				"x": 1,
+				"y": 2.5
+			},
+			"elimination_end_interval": {
+				"x": 0.4,
+				"y": 1
+			},
+			"elimination_ramp_seconds": 90
 		}
 	},
 	"sources": [

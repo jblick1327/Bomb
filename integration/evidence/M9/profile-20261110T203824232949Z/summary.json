@@ -1,0 +1,118 @@
+{
+  "status": "passed",
+  "profile": {
+    "config": "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\local.config.owner-validation.json",
+    "seconds": 600,
+    "rtt_ms": 200.0,
+    "jitter_ms": 30.0,
+    "loss": 0.05,
+    "fps": 144,
+    "prediction_off": false,
+    "seed": 42,
+    "unity_player": null,
+    "evidence_stage": "M9"
+  },
+  "exit_codes": {
+    "profile": 0,
+    "server": 0
+  },
+  "failure": "",
+  "relay_errors": [],
+  "relay": {
+    "jitter_policy": "positive uniform per direction",
+    "received": 95909,
+    "forwarded": 91120,
+    "dropped": 4789,
+    "peak_queued": 27,
+    "max_packet": 1168
+  },
+  "result": {
+    "status": "passed",
+    "failures": [],
+    "seconds": 600,
+    "fps": 144,
+    "actualPresentationFps": 143.995,
+    "frameIntervalP50Ms": 7.029299999885552,
+    "frameIntervalP95Ms": 7.2713000001840555,
+    "prediction": true,
+    "warmupSeconds": 21.760963599999968,
+    "frames": 86397,
+    "predictedFrames": 86397,
+    "fallbackFrames": 0,
+    "inputResponseSamples": 300,
+    "inputResponseExpired": 0,
+    "inputToPresentationP95Ms": 13.694899999791232,
+    "inputResponseBudgetMs": 25.611111111111114,
+    "stats": {
+      "struct_size": 160,
+      "version": 1,
+      "status": 1,
+      "reason": 0,
+      "input_generation": 3,
+      "owner_tick": 37324,
+      "predicted_tick": 37343,
+      "finalized_through_tick": 37324,
+      "last_applied_sequence": 36678,
+      "rtt_seconds": 0.25964648418396585,
+      "positive_jitter_p95_seconds": 0.011843424574554895,
+      "clock_error_ticks": 0.5964419963017462,
+      "lead_ticks": 11,
+      "pending_commands": 19,
+      "correction_count": 22883,
+      "snap_count": 0,
+      "conservative_transitions": 0,
+      "recoveries": 0,
+      "reset_count": 0,
+      "correction_p95": 0.001,
+      "correction_p99": 0.002,
+      "correction_max": 0.1020395,
+      "visual_offset_x": -2.1101303e-09,
+      "visual_offset_y": 1.9126918e-09,
+      "reserved": 0,
+      "conservative_seconds": 0
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
+    "source_dirty": true,
+    "source_root": "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\.worktrees\\odin-owner-followup",
+    "source_sha256": "3036c3f1370d5b101a94ebac4570b0907ebe45c325a6a32839efebb01696ff81",
+    "build_tag": 217136225208817073,
+    "source_fingerprint_culture": "en-CA",
+    "fingerprint_runtime": ".NET 10.0.12",
+    "files": 112,
+    "dll_sha256": "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+    "compiler": "C:\\Users\\jblic\\Downloads\\odin-windows-amd64-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "game_protocol": 7,
+    "canonical_version": 3
+  },
+  "native_plugin_sha256": "9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f",
+  "server_sha256": "1333904f1b8d83b089b33ccb1cb13b6f982a49f2b8d1ee5a126ff774b6072fb4",
+  "commands": {
+    "server": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\BOM-server.exe",
+      "--port",
+      "53949",
+      "--seconds",
+      "660",
+      "--layout",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\fixtures\\M5\\static-layout.json",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "profile": [
+      "dotnet",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T202808-469cbecd\\source\\build\\interop\\Interop.dll",
+      "53950",
+      "600"
+    ]
+  },
+  "scope": "Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement."
+}

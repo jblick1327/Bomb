@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "exit_codes": {
+    "native-clients": 0,
+    "server": 0
+  },
+  "errors": [],
+  "scope": "Real UDP Odin server and four native C ABI client handles; Unity menu/art and two-Unity M8 gate still required.",
+  "commands": {
+    "server": [
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T170506-519a5bcc\\source\\build\\BOM-server.exe",
+      "--port",
+      "56231",
+      "--seconds",
+      "68",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "native-clients": [
+      "dotnet",
+      "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\unity\\Bomb\\integration\\build\\owner-native\\20261110T170506-519a5bcc\\source\\build\\interop\\Interop.dll",
+      "56231",
+      "60"
+    ]
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
+    "source_dirty": true,
+    "source_root": "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\.worktrees\\odin-owner-followup",
+    "source_sha256": "37e1c93b44f8fb6917aa0b0dc0fa4dfaf51aaedb2dcc69e9ad404cedd47fa88d",
+    "build_tag": 251670049890209718,
+    "source_fingerprint_culture": "en-CA",
+    "fingerprint_runtime": ".NET 10.0.12",
+    "files": 112,
+    "dll_sha256": "fc5f5212f4ffbd01a39f0cffe1b9279561061189aa4567b67481d4d430278517",
+    "compiler": "C:\\Users\\jblic\\Downloads\\odin-windows-amd64-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "game_protocol": 7,
+    "canonical_version": 3
+  }
+}

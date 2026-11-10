@@ -1,0 +1,1427 @@
+--- src/model.odin::add_subdivision
++++ src/shared/sim_model.odin::add_subdivision
+@@ -2,5 +2,5 @@
+ 	id := new_id(s)
+ 	piece := s.pieces[s.piece_rows[owner]]
+-	retain_subdivision(s,Subdivision{id=id,owner=owner,material=piece.material,seed=piece.seed,outline=outline,pose=pose,live=true})
++	retain_subdivision(s,Subdivision{id=id,owner=owner,material=piece.material,seed=piece.seed,outline=outline,pose=pose,live=true,provenance={source_identity=SOURCE_DIAGNOSTIC,source_part_id=owner}})
+ 	append(&s.pieces[s.piece_rows[owner]].subdivisions,id)
+ 	s.pieces[s.piece_rows[owner]].mass+=polygon_area(outline)
+
+
+--- src/bombs.odin::bomb_rain_after_step
++++ src/shared/sim_bombs.odin::bomb_rain_after_step
+@@ -12,5 +12,7 @@
+ 		explode:=bomb.landed && bomb.fuse<=0.000001
+ 		if explode { append(&positions,position) }
+-		if explode || position.y < -3 || position.x < -9 || position.x > 10 {
++  outside:=position.y < -3 || position.x < -9 || position.x > 10
++  if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.bombs.cleanup_bounds,position) }
++		if explode || outside {
+ 			b2.DestroyBody(bomb.body)
+ 		} else { game.bombs[bomb_count]=bomb; bomb_count+=1 }
+
+
+--- src/bombs.odin::bomb_rain_before_step
++++ src/shared/sim_bombs.odin::bomb_rain_before_step
+@@ -4,7 +4,9 @@
+ 	rain.until_drop-=dt
+ 	if rain.until_drop<=0 {
+-		x:=rand.float32_range(-7,8,rand.default_random_generator(&rain.random))
+-		world_bomb_spawn(game,{x,BOMB_SKY_HEIGHT})
+-		rain.until_drop+=bomb_drop_delay(rain)
++  lo,hi,height:=f32(-7),f32(8),BOMB_SKY_HEIGHT
++  if game.scene.level_policy.active { limits:=game.scene.level_policy.bombs;lo=limits.spawn_x.x;hi=limits.spawn_x.y;height=limits.spawn_height }
++		x:=rand.float32_range(lo,hi,rand.default_random_generator(&rain.random))
++		world_bomb_spawn(game,{x,height})
++  if game.scene.level_policy.active { rain.until_drop+=bomb_drop_delay_config(rain,game.scene.level_policy.config) }else{rain.until_drop+=bomb_drop_delay(rain)}
+ 	}
+ }
+
+--- src/bombs.odin::bomb_rain_reset
++++ src/shared/sim_bombs.odin::bomb_rain_reset
+@@ -1,6 +1,6 @@
+-bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8) {
++bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8,config:Gameplay_Config=DEFAULT_GAMEPLAY_CONFIG) {
+ 	// Reset the independent stream after rebuilding the physics world.
+ 	// A separate stream leaves procedural destruction seeds independent of drops.
+ 	rain.random=rand.create(u64(seed)+0x626f6d62)
+-	rain.until_drop=bomb_drop_delay(rain)
++	rain.until_drop=bomb_drop_delay_config(rain,config)
+ }
+
+--- src/replication.odin::canonical_encode_into
++++ src/shared/replication.odin::canonical_encode_into
+@@ -4,4 +4,5 @@
+  nc.write_u8(w,REPL_CANON_VERSION)
+  nc.write_varint(w,u64(s.epoch)); nc.write_varint(w,s.structure_revision); nc.write_f32(w,s.anchor_y)
++ repl_write_catalog(w,s)
+  repl_write_body(w,s,x)
+ }
+
+--- src/layout_state.odin::decode_layout
++++ src/shared/sim_layout_state.odin::decode_layout
+@@ -1,3 +1,5 @@
+ decode_layout :: proc(data: []byte) -> (layout: Layout,seed: u8,ok: bool,problem: string) {
++ header:struct{version:int};if json.unmarshal(data,&header)!=nil { return {},0,false,"Invalid layout JSON" }
++ if header.version==4 { return decode_unity_layout(data) }
+ 	wire:=Wire_Layout{}
+ 	defer {
+
+
+--- src/material_library.odin::destroy_layout
++++ src/shared/sim_material_library.odin::destroy_layout
+@@ -1,3 +1,4 @@
+ destroy_layout :: proc(layout:^Layout) {
++ if layout.level!=nil { destroy_level_layout(layout.level);free(layout.level) }
+  for m in layout.materials { delete(m.name) }; delete(layout.materials); delete(layout.objects); delete(layout.glue); layout^={}
+ }
+
+--- src/net_frame.odin::event_decode
++++ src/shared/net_frame.odin::event_decode
+@@ -3,4 +3,5 @@
+  if nc.read_u8(&r)!=NET_MSG_EVENT { return {},false }
+  e.kind=nc.read_u8(&r); e.tick=nc.read_varint(&r)
++ e.event_id=nc.read_u64(&r)
+  switch e.kind {
+  case NET_EVENT_EXPLOSION: e.position={nc.read_f32(&r),nc.read_f32(&r)}; e.radius=nc.read_f32(&r)
+
+
+--- src/net_frame.odin::event_encode_explosion
++++ src/shared/net_frame.odin::event_encode_explosion
+@@ -1,4 +1,5 @@
+-event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32) {
++event_encode_explosion :: proc(w: ^nc.Writer,tick: u64,position: Vec2,radius: f32,event_id:u64=0) {
+  nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_EXPLOSION); nc.write_varint(w,tick)
++ nc.write_u64(w,event_id)
+  nc.write_f32(w,position.x); nc.write_f32(w,position.y); nc.write_f32(w,radius)
+ }
+
+--- src/net_frame.odin::event_encode_rejected
++++ src/shared/net_frame.odin::event_encode_rejected
+@@ -1,3 +1,3 @@
+-event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16) {
+- nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick); nc.write_u16(w,seq)
++event_encode_rejected :: proc(w: ^nc.Writer,tick: u64,seq: u16,event_id:u64=0) {
++ nc.write_u8(w,NET_MSG_EVENT); nc.write_u8(w,NET_EVENT_BLAST_REJECTED); nc.write_varint(w,tick);nc.write_u64(w,event_id); nc.write_u16(w,seq)
+ }
+
+--- src/exact_json.odin::exact_json_value
++++ src/shared/exact_json.odin::exact_json_value
+@@ -4,4 +4,13 @@
+  #partial switch info in ti.variant {
+  case runtime.Type_Info_Float:
++  if ti.id==f64 {
++   f:=(^f64)(v.data)^
++   if math.is_nan(f)||math.is_inf(f) {return false}
++   if transmute(u64)f==0x8000000000000000 {strings.write_string(b,"-0.0");return true}
++   buf:[64]byte
++   number:=strconv.write_float(buf[:],f,'g',-1,64)
++   if len(number)>0&&number[0]=='+' {number=number[1:]}
++   strings.write_string(b,number);return true
++  }
+   if ti.id!=f32 { return false }
+   f:=(^f32)(v.data)^
+
+
+--- src/net_session.odin::net_app_client_control
++++ src/shared/net_session.odin::net_app_client_control
+@@ -2,4 +2,6 @@
+  if !c.real_gate || len(data)==0 { return false }
+  switch data[0] {
++ case NET_APP_ROUND:
++  round_client_accept(c,data);return true
+  case NET_APP_SETTINGS:
+   r:nc.Reader;nc.reader_init(&r,data)
+@@ -12,6 +14,10 @@
+   r:nc.Reader;nc.reader_init(&r,data)
+   _=nc.read_u8(&r);index:=int(nc.read_u8(&r));host:=nc.read_bool(&r)
++  credential:Round_Credentials
++  for &byte in credential.server {byte=nc.read_u8(&r)}
++  credential.session=nc.read_u64(&r)
++  for &byte in credential.secret {byte=nc.read_u8(&r)}
+   if !r.ok || r.pos!=len(data) || index!=c.nc_client.client_index { return true }
+-  c.real_is_host=host;c.real_hello_ok=true
++  c.real_is_host=host;c.real_hello_ok=true;c.round_credentials=credential
+   return true
+  case NET_APP_REJECT:
+@@ -31,4 +37,6 @@
+   _=nc.read_u8(&r);kind:=nc.read_u8(&r);ok:=nc.read_bool(&r);reason:=nc.read_string(&r)
+   if !r.ok || r.pos!=len(data) || len(reason)>NET_APP_MAX_REASON { return true }
++  c.control_serial+=1;c.control_kind=kind;c.control_ok=ok
++  delete(c.control_reason);c.control_reason=strings.clone(reason)
+   fmt.printf("APP RESULT kind=%d status=%s reason=%s\n",kind,ok?"OK":"REJECT",reason)
+   return true
+
+
+--- src/net_session.odin::net_app_client_send_hello
++++ src/shared/net_session.odin::net_app_client_send_hello
+@@ -2,5 +2,6 @@
+  if !c.real_gate || c.real_hello_sent || c.nc_client.state!=.Connected { return }
+  w:nc.Writer;nc.writer_init(&w,64);defer nc.writer_destroy(&w)
+- net_app_write_hello(&w,c.real_protocol,c.real_build,c.real_host_token)
++ expected:[]u8;if c.has_expected_manifest {expected=c.expected_manifest[:]}
++ net_app_write_hello(&w,c.real_protocol,c.real_build,c.real_host_token,expected,c.join_spectator,c.round_credentials)
+  if nc.client_send_reliable(&c.nc_client,w.data[:]) { c.real_hello_sent=true }
+ }
+
+--- src/net_session.odin::net_app_read_hello
++++ src/shared/sim_net_session.odin::net_app_read_hello
+@@ -1,4 +1,4 @@
+ net_app_read_hello :: proc(data: []u8) -> (hello: Net_App_Hello, valid: bool) {
+- if len(data)<1 || data[0]!=NET_APP_HELLO || len(data)>256 { return {},false }
++ if len(data)<1 || data[0]!=NET_APP_HELLO || len(data)>320 { return {},false }
+  r:nc.Reader; nc.reader_init(&r,data)
+  _=nc.read_u8(&r)
+@@ -6,4 +6,11 @@
+  hello.build=nc.read_string(&r)
+  hello.token=nc.read_string(&r)
++ if hello.version==GAME_PROTOCOL_VERSION { hello.has_expected_manifest=nc.read_bool(&r);if hello.has_expected_manifest {for &byte in hello.expected_manifest {byte=nc.read_u8(&r)}} }
++ if hello.version==GAME_PROTOCOL_VERSION {
++  hello.spectator=nc.read_bool(&r)
++  for &byte in hello.resume.server {byte=nc.read_u8(&r)}
++  hello.resume.session=nc.read_u64(&r)
++  for &byte in hello.resume.secret {byte=nc.read_u8(&r)}
++ }
+  valid=r.ok && r.pos==len(data) && len(hello.build)>0 && len(hello.build)<=NET_APP_MAX_BUILD && len(hello.token)<=NET_APP_MAX_TOKEN
+  return
+
+
+--- src/net_session.odin::net_app_server_hello
++++ src/shared/sim_net_session.odin::net_app_server_hello
+@@ -4,4 +4,5 @@
+  if !ok { net_app_send_reject(ns,index,"invalid hello",now);return }
+  if reason:=net_app_hello_error(hello);reason!="" { net_app_send_reject(ns,index,reason,now);return }
++ if hello.has_expected_manifest&&hello.expected_manifest!=ns.game.world.scene.gameplay_manifest { net_app_send_reject(ns,index,"gameplay level/config manifest mismatch",now);return }
+  is_host:=false
+  if ns.real_host_token!="" && hello.token==ns.real_host_token {
+@@ -11,4 +12,7 @@
+  // No player is ever added before version/build validation.
+  net_server_join(ns,index)
++ if reason:=round_server_admit(ns,index,hello.resume,hello.spectator);reason!="" {
++  net_server_leave(ns,index);net_app_send_reject(ns,index,reason,now);return
++ }
+  ns.clients[index].is_host=is_host
+  if is_host {
+@@ -21,6 +25,9 @@
+  nc.write_u8(&w,u8(index))
+  nc.write_bool(&w,is_host)
++ credential:=ns.clients[index].round_credentials
++ nc.write_raw(&w,credential.server[:]);nc.write_u64(&w,credential.session);nc.write_raw(&w,credential.secret[:])
+  _=nc.server_send_reliable(&ns.srv,index,w.data[:])
+  net_host_send_settings(ns,index)
++ round_server_sync_bodies(ns);ns.round_dirty=true
+  if ns.real_logging { fmt.printf("HELLO OK client=%d role=%s\n",index,is_host?"HOST":"player") }
+ }
+
+--- src/net_session.odin::net_app_write_hello
++++ src/shared/net_session.odin::net_app_write_hello
+@@ -1,6 +1,11 @@
+-net_app_write_hello :: proc(w: ^nc.Writer, version: u32, build, token: string) {
++net_app_write_hello :: proc(w: ^nc.Writer, version: u32, build, token: string,expected:[]u8=nil,spectator:bool=false,resume:Round_Credentials={}) {
+  nc.write_u8(w, NET_APP_HELLO)
+  nc.write_u32(w, version)
+  nc.write_string(w, build)
+  nc.write_string(w, token)
++ if version==GAME_PROTOCOL_VERSION { nc.write_bool(w,len(expected)==32);if len(expected)==32 {nc.write_raw(w,expected)} }
++ if version==GAME_PROTOCOL_VERSION {
++  credential:=resume
++  nc.write_bool(w,spectator);nc.write_raw(w,credential.server[:]);nc.write_u64(w,credential.session);nc.write_raw(w,credential.secret[:])
++ }
+ }
+
+--- src/net_server.odin::net_build_frame
++++ src/shared/sim_net_server.odin::net_build_frame
+@@ -65,7 +65,8 @@
+   if since,ok:=c.pending[e.key]; ok {
+    late:=ns.tick-since
+-   c.stats.staleness_max=max(c.stats.staleness_max,late); append(&c.stats.staleness_samples,u16(min(late,65535)))
++   c.stats.staleness_max=max(c.stats.staleness_max,late); net_record_bounded_sample(&c.stats.staleness_samples,c.stats.staleness_count,u16(min(late,65535)))
+    delete_key(&c.pending,e.key)
+-  } else { append(&c.stats.staleness_samples,0) }
++  } else { net_record_bounded_sample(&c.stats.staleness_samples,c.stats.staleness_count,u16(0)) }
++  c.stats.staleness_count+=1
+   c.last_sent[e.key]=e.state
+   if e.key in c.priority { c.priority[e.key]=0 }
+@@ -76,5 +77,5 @@
+  for key in stale { delete_key(&c.last_sent,key); delete_key(&c.pending,key); delete_key(&c.priority,key) }
+  c.stats.parts_sent+=len(parts)
+- append(&c.stats.frame_bytes,i32(total)); append(&c.stats.frame_parts,i32(len(parts)))
+- append(&c.stats.build_ms,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
++ net_record_bounded_sample(&c.stats.frame_bytes,u64(c.stats.ticks-1),i32(total)); net_record_bounded_sample(&c.stats.frame_parts,u64(c.stats.ticks-1),i32(len(parts)))
++ net_server_record_timing(&c.stats.build_ms,u64(c.stats.ticks-1),f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
+ }
+
+--- src/net_client.odin::net_client_apply_queue
++++ src/shared/net_client.odin::net_client_apply_queue
+@@ -1,3 +1,7 @@
+ net_client_apply_queue :: proc(c: ^Net_Client) {
++ slice.stable_sort_by(c.queue[:],proc(a,b:Net_Queued)->bool {
++  if a.tick!=b.tick { return a.tick<b.tick }
++  return !a.event && b.event
++ })
+  for len(c.queue)>0 {
+   q:=c.queue[0]
+@@ -7,5 +11,5 @@
+    if e,ok:=event_decode(q.data); ok {
+     switch e.kind {
+-    case NET_EVENT_EXPLOSION: append(&c.bursts,Bomb_Burst{position=e.position,radius=e.radius}); c.stats.events_played+=1
++    case NET_EVENT_EXPLOSION: append(&c.events,e); c.stats.events_played+=1
+     case NET_EVENT_BLAST_REJECTED: c.stats.blast_rejections_seen+=1
+     }
+
+
+--- src/net_client.odin::net_client_clear_state
++++ src/shared/net_client.odin::net_client_clear_state
+@@ -7,5 +7,6 @@
+  clear(&c.arrivals); clear(&c.missing); clear(&c.loss_times)
+  clear(&c.blasts); clear(&c.drawn); clear(&c.acks_to_check); c.has_ack_sent=false
++ c.blast_ages={}
+  clear(&c.anchored); c.anchored_valid=false
+- clear(&c.bursts)
++ clear(&c.events)
+ }
+
+--- src/net_client.odin::net_client_complete_frame
++++ src/shared/net_client.odin::net_client_complete_frame
+@@ -12,4 +12,5 @@
+  if c.ring[slot].valid { delete(c.ring[slot].table) }
+  c.ring[slot]=Complete_Frame{valid=true,tick=a.tick,table=table}
++ if c.real_gate { _=collision_history_record_frame(&c.collision_history,c.epoch,a.tick,&table) }
+  c.stats.frames_complete+=1
+  append(&c.arrivals,Arrival{now,a.tick})
+
+
+--- src/net_client.odin::net_client_compute_drawn
++++ src/shared/net_client.odin::net_client_compute_drawn
+@@ -1,35 +1,3 @@
+-net_client_compute_drawn :: proc(c: ^Net_Client) {
+- clear(&c.drawn)
+- if !c.has_clock || !c.has_complete || !c.has_epoch { return }
+- floor_tick:=u64(max(math.floor(c.clock),0))
+- lower,upper:^Complete_Frame
+- start:=min(floor_tick,c.newest_complete)
+- for step in 0..<u64(NET_CLIENT_RING) {
+-  if step>start { break }
+-  f:=&c.ring[(start-step)%NET_CLIENT_RING]
+-  if f.valid && f.tick==start-step { lower=f; break }
+- }
+- for t:=floor_tick+1; t<=c.newest_complete && t<=floor_tick+NET_CLIENT_RING; t+=1 {
+-  f:=&c.ring[t%NET_CLIENT_RING]
+-  if f.valid && f.tick==t { upper=f; break }
+- }
+- c.dbg_lower=0; c.dbg_upper=0
+- if lower!=nil { c.dbg_lower=lower.tick }; if upper!=nil { c.dbg_upper=upper.tick }
+- if lower==nil && upper==nil { return }
+- if lower==nil {
+-  for key,s in upper.table { if net_in_structure(c,key) { c.drawn[key]=net_drawn_single(s) } }
+-  return
+- }
+- if upper==nil || upper.tick<=lower.tick {
+-  for key,s in lower.table { if net_in_structure(c,key) { c.drawn[key]=net_drawn_single(s) } }
+-  return
+- }
+- alpha:=f32((c.clock-f64(lower.tick))/f64(upper.tick-lower.tick))
+- alpha=clamp(alpha,0,1)
+- for key,s0 in lower.table {
+-  if !net_in_structure(c,key) { continue }
+-  if s1,ok:=upper.table[key]; ok { c.drawn[key]=net_drawn_from(s0,s1,alpha) }
+-  else { c.drawn[key]=net_drawn_single(s0) } // gone at the upper frame: drawn until the clock reaches it
+- }
+- // Rows only in the upper table are new there and show from that frame on.
++net_client_compute_drawn :: proc(c:^Net_Client) {
++ net_client_compute_interpolated(c);net_prediction_apply(c)
+ }
+
+--- src/net_client.odin::net_client_destroy
++++ src/shared/net_client.odin::net_client_destroy
+@@ -1,10 +1,14 @@
+ net_client_destroy :: proc(c: ^Net_Client) {
++ prediction_controller_destroy(c.prediction);c.prediction=nil
++ collision_history_destroy(&c.collision_history)
+  net_client_clear_state(c)
+  nc.client_destroy(&c.nc_client)
+  delete(c.real_reason)
++ delete(c.control_reason)
+  replica_destroy(&c.rep)
+- release_render_caches(&c.caches)
++ replica_destroy(&c.received)
++ c.presentation_reset_serial+=1
+  delete(c.queue); delete(c.pending); delete(c.arrivals); delete(c.missing); delete(c.loss_times)
+- delete(c.blasts); delete(c.acks_to_check); delete(c.drawn); delete(c.anchored); delete(c.bursts); delete(c.applied)
++ delete(c.blasts); delete(c.acks_to_check); delete(c.drawn); delete(c.anchored); delete(c.events); delete(c.applied)
+  delete(c.stats.delay_history)
+  c^={}
+
+
+--- src/net_client.odin::net_client_init
++++ src/shared/net_client.odin::net_client_init
+@@ -1,4 +1,5 @@
+-net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64,bot_seed: u64 = 0,bot_enabled: bool = false) {
++net_client_init :: proc(c: ^Net_Client,salt: u32,now: f64) {
+  c^={}
++ c.prediction_enabled=true
+  nc.client_init(&c.nc_client)
+  nc.client_connect(&c.nc_client,salt,now)
+@@ -6,9 +7,8 @@
+  c.real_build=GAME_BUILD_ID
+  replica_init(&c.rep)
++ replica_init(&c.received)
+  c.delay=NET_DELAY_MIN
+  c.drawn=make(map[u64]Net_Drawn); c.anchored=make(map[u64]bool)
+  c.radius_q=radius_quantize(DEFAULT_SANDBOX_SETTINGS.blast_radius)
+  c.real_settings=DEFAULT_SANDBOX_SETTINGS
+- c.bot_enabled=bot_enabled
+- if bot_enabled { bot_init(&c.bot,bot_seed,true) }
+ }
+
+--- src/net_client.odin::net_client_make_input
++++ src/shared/net_client.odin::net_client_make_input
+@@ -1,29 +1,11 @@
+ net_client_make_input :: proc(c: ^Net_Client) {
++ if c.real_gate { net_scheduled_client_input(c);return }
+  move:f32
+  index:=c.nc_client.client_index
+- if c.bot_enabled && !c.idle && c.has_epoch && c.has_complete {
+-  position:Vec2; have:=false
+-  if d,ok:=c.drawn[ent_key(.Player,u64(index))]; ok { position={d.x,d.y}; have=true }
+-  else if f:=&c.ring[c.newest_complete%NET_CLIENT_RING]; f.valid { if s,ok:=f.table[ent_key(.Player,u64(index))]; ok { position={pose_dq_pos(s.x),pose_dq_pos(s.y)}; have=true } }
+-  if have {
+-   commands:Player_Commands
+-   bot_step_scene(&c.bot,&c.rep.scene,position,f32(NET_STEP_DT),&commands)
+-   move=commands.move
+-   if commands.jump { c.jump_counter+=1; c.stats.jumps_pressed+=1 }
+-   for point in commands.blasts {
+-    c.blast_seq+=1
+-    if len(c.blasts)>=NET_MAX_BLASTS { ordered_remove(&c.blasts,0); c.stats.blasts_dropped+=1 }
+-    append(&c.blasts,Net_Blast{seq=c.blast_seq,x=nc.quantize_pos(point.x),y=nc.quantize_pos(point.y),radius_q=c.radius_q})
+-    c.stats.blasts_issued+=1
+-   }
+-   delete(commands.blasts)
+-  }
+- } else if !c.bot_enabled {
+-  move=c.human_move
+-  if c.human_jump_pending {
+-   c.jump_counter+=1
+-   c.stats.jumps_pressed+=1
+-   c.human_jump_pending=false
+-  }
++ move=c.human_move
++ if c.human_jump_pending {
++  c.jump_counter+=1
++  c.stats.jumps_pressed+=1
++  c.human_jump_pending=false
+  }
+  c.input_seq+=1
+@@ -38,4 +20,6 @@
+  w:nc.Writer; nc.writer_init(&w,64); defer nc.writer_destroy(&w)
+  input_encode(in_,&w)
++ if c.stats.input_count==0 { c.stats.input_payload_hash=14695981039346656037 }
++ for byte in w.data { c.stats.input_payload_hash=(c.stats.input_payload_hash~u64(byte))*1099511628211 }
+  c.stats.input_bytes+=len(w.data); c.stats.input_count+=1; c.stats.input_max=max(c.stats.input_max,len(w.data))
+  nc.client_send_unreliable(&c.nc_client,w.data[:])
+
+
+--- src/net_client.odin::net_client_on_frame
++++ src/shared/net_client.odin::net_client_on_frame
+@@ -28,5 +28,5 @@
+  if !c.has_seen || part.tick>=c.newest_seen {
+   c.has_seen=true; c.newest_seen=part.tick; c.confirmed_blast=part.blast_seq
+-  for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) }
++  if !c.real_gate { for len(c.blasts)>0 && !seq16_newer(c.blasts[0].seq,part.blast_seq) { ordered_remove(&c.blasts,0) } }
+  }
+  if var.got==var.count {
+
+
+--- src/net_client.odin::net_client_on_reliable
++++ src/shared/net_client.odin::net_client_on_reliable
+@@ -10,5 +10,5 @@
+   if !ok { return }
+   net_client_note_late(c,e.tick,true)
+-  append(&c.queue,Net_Queued{tick=e.tick,event=true,data=slice.clone(data)})
++  net_client_queue_owned(c,Net_Queued{tick=e.tick,event=true,data=slice.clone(data)})
+  }
+ }
+
+--- src/net_client.odin::net_client_on_structure
++++ src/shared/net_client.odin::net_client_on_structure
+@@ -2,4 +2,13 @@
+  kind,tick,epoch,ok:=repl_peek(message)
+  if !ok { delete(message); c.stats.structure_errors+=1; return }
++ if err:=replica_apply_message(&c.received,message); err!="" {
++  delete(message);c.stats.structure_errors+=1
++  if c.real_reason=="" { c.real_reason=strings.clone(err) }
++  return
++ }
++ if c.has_expected_manifest&&c.received.scene.gameplay_manifest!=c.expected_manifest {
++  delete(message);if c.real_reason=="" {c.real_reason=strings.clone("gameplay level/config manifest mismatch after world change")};return
++ }
++ if c.real_gate { _=collision_history_record_topology(&c.collision_history,&c.received.scene,c.received.tick) }
+  if kind==.Baseline && (!c.has_epoch || epoch!=u64(c.epoch)) {
+   net_client_reset(c)
+@@ -10,4 +19,4 @@
+  if !c.has_epoch { delete(message); return }
+  net_client_note_late(c,tick,false)
+- append(&c.queue,Net_Queued{tick=tick,data=message})
++ net_client_queue_owned(c,Net_Queued{tick=tick,data=message})
+ }
+
+--- src/net_client.odin::net_client_record_applied
++++ src/shared/net_client.odin::net_client_record_applied
+@@ -2,5 +2,5 @@
+  c.stats.structure_applied+=1
+  c.anchored_valid=false
+- if c.rep.rebuilt { release_render_caches(&c.caches) }
++ if c.rep.rebuilt { c.presentation_reset_serial+=1 }
+  if c.verify {
+   data:=canonical_encode(&c.rep.scene); defer delete(data)
+
+
+--- src/net_client.odin::net_client_reset
++++ src/shared/net_client.odin::net_client_reset
+@@ -1,5 +1,7 @@
+ net_client_reset :: proc(c: ^Net_Client) {
++ prediction_controller_reset(c)
+  c.stats.resets+=1
+  net_client_clear_state(c)
+- release_render_caches(&c.caches)
++ input_link_clear_intent(&c.input_link)
++ c.presentation_reset_serial+=1
+ }
+
+--- src/net_client.odin::net_client_step
++++ src/shared/net_client.odin::net_client_step
+@@ -1,7 +1,9 @@
+-net_client_step :: proc(c: ^Net_Client,now: f64) {
++net_client_step :: proc(c: ^Net_Client,now: f64,input_source: proc(c: ^Net_Client,data: rawptr)=nil,source_data: rawptr=nil) {
++ clear(&c.events)
+  if c.nc_client.state==.Connected {
+   net_app_client_send_hello(c)
+   msgs:=nc.client_take_messages(&c.nc_client); defer nc.messages_free(&msgs)
+   for m in msgs {
++   if c.real_gate && net_scheduled_client_message(c,m.channel,m.data,now) { continue }
+    if m.channel==nc.CHANNEL_RELIABLE {
+     if !net_app_client_control(c,m.data) { net_client_on_reliable(c,m.data) }
+@@ -12,11 +14,12 @@
+   net_client_update_clock(c)
+   net_client_apply_queue(c)
+-  for &burst in c.bursts { burst.age+=f32(NET_STEP_DT) }
+-  count:=0
+-  for burst in c.bursts { if burst.age<BOMB_BURST_TIME { c.bursts[count]=burst; count+=1 } }
+-  resize(&c.bursts,count)
+   net_client_compute_drawn(c)
+-  append(&c.stats.delay_history,u8(c.delay))
+-  if !c.real_gate || c.real_hello_ok { net_client_make_input(c) }
++  net_record_bounded_sample(&c.stats.delay_history,c.stats.delay_samples,u8(c.delay));c.stats.delay_samples+=1
++  if !c.real_gate || c.real_hello_ok {
++   if c.real_gate { net_scheduled_client_update(c,now) }
++   if input_source!=nil { input_source(c,source_data) }
++   net_client_make_input(c)
++   net_prediction_update(c,now);net_prediction_apply(c)
++  }
+  }
+  nc.client_update(&c.nc_client,now)
+
+
+--- src/net_client.odin::net_client_update_clock
++++ src/shared/net_client.odin::net_client_update_clock
+@@ -1,10 +1,12 @@
+ net_client_update_clock :: proc(c: ^Net_Client) {
+  if !c.has_complete { return }
+- target:=f64(c.newest_complete)-f64(c.delay)
+- if !c.has_clock { c.clock=target; c.has_clock=true; c.stats.snaps+=1; return }
++ if c.newest_complete<c.rep.tick { c.has_clock=false;return }
++ floor:=f64(c.rep.tick);ceiling:=max(floor,f64(c.newest_complete))
++ target:=clamp(f64(c.newest_complete)-f64(c.delay),floor,ceiling)
++ if !c.has_clock { c.clock=clamp(max(c.clock,target),floor,ceiling); c.has_clock=true; c.stats.snaps+=1; return }
+  err:=target-c.clock
+- if math.abs(err)>NET_CLOCK_SNAP_TICKS { c.clock=target; c.stats.snaps+=1; return }
++ if math.abs(err)>NET_CLOCK_SNAP_TICKS { c.clock=clamp(max(c.clock,target),floor,ceiling); c.stats.snaps+=1; return }
+  adjust:=clamp(err*NET_CLOCK_GAIN,-NET_CLOCK_MAX_ADJUST,NET_CLOCK_MAX_ADJUST)
+- c.clock+=1+adjust
++ c.clock=clamp(c.clock+1+adjust,floor,ceiling)
+  c.stats.clock_ticks+=1; c.stats.adjust_sum+=adjust; c.stats.adjust_abs_max=max(c.stats.adjust_abs_max,math.abs(adjust))
+  if math.abs(adjust)>=NET_CLOCK_MAX_ADJUST-1e-12 { c.stats.clock_saturated+=1 }
+
+
+--- src/net_host.odin::net_host_apply_command
++++ src/shared/sim_net_host.odin::net_host_apply_command
+@@ -1,14 +1,32 @@
+ net_host_apply_command :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
+  if !ns.clients[index].active || !ns.clients[index].is_host { return "host only" }
++ if net_rebuild_pending(ns) {return "world rebuild already in progress"}
+  if len(data)<2 || data[0]!=NET_APP_HOST_COMMAND { return "invalid host command" }
+  switch data[1] {
+  case NET_HOST_RESET:
+   if len(data)!=2 { return "invalid reset command" }
+-  sandbox_reset(&ns.game)
++  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Finished {return "round restart requires a finished round"}
++  if ns.rounds.id==max(u64) {return "round identity exhausted"}
++  if ns.async_rebuild {return net_rebuild_begin(ns)}
++  headless_game_reset(&ns.game)
+   net_host_trim_players(ns)
++  round_server_after_rebuild(ns)
++ case NET_HOST_GAME_MODE:
++  if len(data)!=3 || data[2]>u8(Game_Mode.Elimination) {return "invalid game mode"}
++  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Finished && ns.rounds.state!=.Waiting {return "cannot change mode during an active round"}
++  if ns.rounds.id==max(u64) {return "round identity exhausted"}
++  ns.round_mode_pending=true;ns.round_next_mode=Game_Mode(data[2])
++  if ns.async_rebuild {
++   reason:=net_rebuild_begin(ns)
++   if reason!="" {ns.round_mode_pending=false}
++   return reason
++  }
++  headless_game_reset(&ns.game);net_host_trim_players(ns);round_server_after_rebuild(ns)
+  case NET_HOST_MODE:
++  if ns.rounds.mode==.Elimination {return "manual tools require sandbox mode"}
+   if len(data)!=3 || data[2]>1 { return "invalid blast mode" }
+-  sandbox_fixture_mode(&ns.game,Blast_Mode(data[2]))
++  headless_game_mode(&ns.game,Blast_Mode(data[2]))
+  case NET_HOST_BOMB_RADIUS:
++  if ns.rounds.mode==.Elimination && ns.rounds.state!=.Waiting && ns.rounds.state!=.Finished {return "cannot tune an active round"}
+   if len(data)!=6 { return "invalid bomb radius" }
+   r:nc.Reader;nc.reader_init(&r,data)
+
+
+--- src/net_host.odin::net_host_apply_layout
++++ src/shared/sim_net_host.odin::net_host_apply_layout
+@@ -1,4 +1,6 @@
+ net_host_apply_layout :: proc(ns: ^Net_Server,index: int,data: []u8) -> string {
+  if !ns.clients[index].active || !ns.clients[index].is_host { return "host only" }
++ if ns.rounds.mode==.Elimination {return "layout upload requires sandbox mode"}
++ if net_rebuild_pending(ns) {return "world rebuild already in progress"}
+  if len(data)<2 || len(data)-1>NET_APP_MAX_LAYOUT || data[0]!=NET_APP_LAYOUT_UPLOAD { return "invalid layout upload size" }
+  layout,seed,ok,problem:=decode_layout(data[1:])
+@@ -7,8 +9,6 @@
+  ns.game.layout=layout
+  ns.game.world.settings.seed=seed
+- ns.game.editor.editing=false
+- sandbox_reset(&ns.game)
++ headless_game_reset(&ns.game)
+  net_host_trim_players(ns)
+- sandbox_layout_changed(&ns.game)
+  if ns.real_logging { fmt.printf("LAYOUT OK client=%d epoch=%d objects=%d\n",index,ns.game.world.scene.epoch,len(ns.game.layout.objects)) }
+  return ""
+
+
+--- src/net_host.odin::net_host_client_send_command
++++ src/shared/sim_net_host.odin::net_host_client_send_command
+@@ -7,7 +7,8 @@
+  case NET_HOST_RESET:
+  case NET_HOST_MODE: nc.write_u8(&w,mode)
++ case NET_HOST_GAME_MODE: nc.write_u8(&w,mode)
+  case NET_HOST_BOMB_RADIUS: nc.write_f32(&w,radius)
+  case: return false
+  }
+- return nc.client_send_reliable(&c.nc_client,w.data[:])
++ return net_request_client_send(c,NET_APP_HOST_COMMAND,w.data[:])
+ }
+
+--- src/net_host.odin::net_host_client_send_layout
++++ src/shared/sim_net_host.odin::net_host_client_send_layout
+@@ -4,4 +4,4 @@
+  nc.write_u8(&w,NET_APP_LAYOUT_UPLOAD)
+  nc.write_raw(&w,data)
+- return nc.client_send_reliable(&c.nc_client,w.data[:])
++ return net_request_client_send(c,NET_APP_LAYOUT_UPLOAD,w.data[:])
+ }
+
+--- src/net_real.odin::net_real_cli_server
++++ src/shared/sim_net_real.odin::net_real_cli_server
+@@ -1,10 +1,18 @@
+ net_real_cli_server :: proc(args: []string) -> bool {
++ if len(args)>0&&args[0]=="--validate-layout" {
++  if len(args)!=4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json");return false}
++  return level_validate_cli(args[1],args[3])
++ }
+  port:=NET_REAL_PORT
+  layout:=""
+  seconds:=f64(0)
+  host_token:=""
++ metrics_path:=""
++ bind_ip:=[4]u8{127,0,0,1}
+  i:=0
+  for i<len(args) {
+   switch args[i] {
++  case "--bind":
++   if i+1>=len(args){return false};ip,ok:=net_real_cli_bind(args[i+1]);if !ok {fmt.eprintln("--bind requires a numeric IPv4 address without a port");return false};bind_ip=ip;i+=2
+   case "--port":
+    if i+1>=len(args) { fmt.eprintln("--port requires 1..65535");return false }
+@@ -15,4 +23,6 @@
+    if i+1>=len(args) { return false }
+    n,ok:=strconv.parse_int(args[i+1]);if !ok || n<1 { return false };seconds=f64(n);i+=2
++  case "--metrics":
++   if i+1>=len(args)||len(args[i+1])==0 {return false};metrics_path=args[i+1];i+=2
+   case "--host-token":
+    if i+1>=len(args) || len(args[i+1])<16 || len(args[i+1])>NET_APP_MAX_TOKEN {
+@@ -23,4 +33,5 @@
+   }
+  }
+- return net_real_run_server(port,layout,seconds,host_token)
++ if bind_ip[0]!=127&&len(host_token)<16 {fmt.eprintln("Non-loopback bind requires --host-token");return false}
++ return net_real_run_server(port,layout,seconds,host_token,metrics_path,bind_ip)
+ }
+
+--- src/net_real.odin::net_real_create_server
++++ src/shared/sim_net_real.odin::net_real_create_server
+@@ -1,20 +1,22 @@
+ net_real_create_server :: proc(layout_path: string) -> (ns: Net_Server,ok: bool) {
+- g:=sandbox_editor_create()
++ g:=Headless_Game{world=World{settings=DEFAULT_SANDBOX_SETTINGS},layout=Layout{next_identity=1}}
++ // Preserve the legacy empty Edit -> loaded Edit -> Test rebuild sequence.
++ world_rebuild_layout(&g.world,&g.layout,true)
++ data:[]u8
+  if layout_path!="" {
+-  data,err:=os.read_entire_file(layout_path,context.allocator)
+-  if err!=nil { fmt.eprintln("Cannot read server layout:",layout_path); sandbox_destroy(&g);return {},false }
+-  ok=sandbox_load_layout_data(&g,data)
+-  delete(data)
+- } else {
+-  ok=sandbox_load_layout_data(&g,transmute([]u8)PRESET_LAYOUTS[0])
+- }
+- if !ok { fmt.eprintln("Server layout invalid");sandbox_destroy(&g);return {},false }
+- g.editor.editing=false
+- sandbox_reset(&g)
+- // No fake player 0 before anyone joins. Each connect owns a slot, added
+- // by the established net_server_join code.
++  bytes,err:=os.read_entire_file(layout_path,context.allocator)
++  data=bytes
++  if err!=nil { fmt.eprintln("Cannot read server layout:",layout_path); headless_game_destroy(&g);return {},false }
++ } else { data=transmute([]u8)PRESET_LAYOUTS[0] }
++ layout,seed,valid,problem:=decode_layout(data)
++ if layout_path!="" { delete(data) }
++ if !valid { fmt.eprintln("Server layout invalid:",problem); headless_game_destroy(&g);return {},false }
++ destroy_layout(&g.layout);g.layout=layout;g.world.settings.seed=seed
++ world_rebuild_layout(&g.world,&g.layout,true)
++ headless_game_reset(&g)
+  _=world_remove_player(&g.world,0)
+- net_server_init(&ns,g,true)
++ net_server_init_world(&ns,g,true)
+  ns.real_logging=true
++
+  return ns,true
+ }
+
+--- src/net_real.odin::net_real_run_server
++++ src/shared/sim_net_real.odin::net_real_run_server
+@@ -1,12 +1,14 @@
+-net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "") -> bool {
++net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "",metrics_path:string="",bind_ip:[4]u8={127,0,0,1}) -> bool {
+  sock:nc.Socket
+- if !nc.socket_open(&sock,port,{127,0,0,1}) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
++ if !nc.socket_open(&sock,port,bind_ip) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
+  defer nc.socket_close(&sock)
++ physics_baseline:=b2.GetByteCount()
+  ns,ok:=net_real_create_server(layout)
+  if !ok { return false }
+- ns.real_gate=true
++ ns.real_gate=true;ns.async_rebuild=true
+  ns.real_host_token=host_token
+- defer net_server_destroy(&ns)
+- fmt.printf("BOM staging server listening on 127.0.0.1:%d only; tick=60Hz\n",port)
++ destroyed:=false
++ defer {if !destroyed {net_server_destroy(&ns)}}
++ fmt.printf("BOM staging server listening on %d.%d.%d.%d:%d; tick=60Hz\n",bind_ip[0],bind_ip[1],bind_ip[2],bind_ip[3],port)
+  start:=time.tick_now()
+  last:=f64(0)
+@@ -14,4 +16,5 @@
+  report_at:=f64(10)
+  last_bytes:[nc.MAX_CLIENTS]u64
++ last_generation:[nc.MAX_CLIENTS]u64
+  buf:[nc.MAX_PACKET+64]u8
+  overrun_count:=0
+@@ -41,4 +44,5 @@
+    accumulator=0
+   }
++  net_scheduled_server_echoes(&ns,(accumulator+time.duration_seconds(time.tick_since(start))-now)/NET_STEP_DT,now)
+   packets:=nc.server_take_outgoing(&ns.srv)
+   for p in packets { _=nc.socket_send(&sock,p.to,p.data) }
+@@ -49,5 +53,8 @@
+     if !c.active { continue }
+     bytes:=c.endpoint.stats.bytes_sent
++    if last_generation[i]!=ns.real_hash_generation[i] || bytes<last_bytes[i] { last_bytes[i]=0;last_generation[i]=ns.real_hash_generation[i] }
+     fmt.printf("  client=%d addr=%v RTT=%.0fms tx=%.0f kbit/s\n",i,c.address,c.endpoint.stats.rtt*1000,f64(bytes-last_bytes[i])*8/10000)
++    input:=&ns.clients[i].schedule
++    fmt.printf("INPUT client=%d incarnation=%d generation=%d finalized=%d applied_sequence=%d accepted=%d duplicates=%d conflicts=%d late=%d starved=%d neutralized=%d\n",i,ns.clients[i].incarnation,input.identity.generation,input.finalized_through,input.last_applied_sequence,input.accepted,input.duplicates,input.conflicts,input.too_late,input.starved,input.neutralized)
+     last_bytes[i]=bytes
+    }
+@@ -56,5 +63,17 @@
+   time.sleep(time.Millisecond)
+  }
++ if metrics_path!="" {
++  report:=Net_Real_Metrics{ticks=ns.tick,overruns=u64(overrun_count),hash_checks=u64(ns.real_hash_checks),hash_mismatches=u64(ns.real_hash_mismatch),hash_unrecorded=u64(ns.real_hash_unrecorded),sample_capacity=NET_SERVER_TIMING_CAPACITY,first_sample_index=0,tick_ms=ns.tick_ms[:],world_ms=ns.world_ms[:]}
++  if ns.tick>NET_SERVER_TIMING_CAPACITY {report.first_sample_index=ns.tick%NET_SERVER_TIMING_CAPACITY}
++  bytes,encoded:=exact_json_encode(report,true);defer delete(bytes)
++  if !encoded||os.write_entire_file(metrics_path,bytes)!=nil {fmt.eprintln("Cannot write server metrics:",metrics_path);return false}
++ }
+  fmt.printf("SERVER final hashes=%d mismatches=%d unrecorded=%d\n",ns.real_hash_checks,ns.real_hash_mismatch,ns.real_hash_unrecorded)
+- return ns.real_hash_mismatch==0 && ns.real_hash_unrecorded==0
++ passed:=ns.real_hash_mismatch==0 && ns.real_hash_unrecorded==0
++ net_server_destroy(&ns);destroyed=true
++ resources:=Net_Real_Resources{box2d_baseline=i64(physics_baseline),box2d_after=i64(b2.GetByteCount())}
++ resources.no_lost_world_bytes=resources.box2d_baseline==resources.box2d_after
++ fmt.printf("SERVER RESOURCES box2d_baseline=%d box2d_after=%d no_lost_world_bytes=%t\n",resources.box2d_baseline,resources.box2d_after,resources.no_lost_world_bytes)
++ if metrics_path!="" {path:=fmt.aprintf("%s.resources.json",metrics_path);defer delete(path);bytes,encoded:=exact_json_encode(resources,true);defer delete(bytes);if !encoded||os.write_entire_file(path,bytes)!=nil {return false}}
++ return passed&&resources.no_lost_world_bytes
+ }
+
+--- src/net_server.odin::net_send_reliable_parts
++++ src/shared/sim_net_server.odin::net_send_reliable_parts
+@@ -1,3 +1,8 @@
+ net_send_reliable_parts :: proc(ns: ^Net_Server,client: int,out: ^Repl_Output) {
+- for part in out.parts { if nc.server_send_reliable(&ns.srv,client,part) { ns.reliable_bytes+=len(part) } }
++ queued:=true
++ for part in out.parts { if nc.server_send_reliable(&ns.srv,client,part) { ns.reliable_bytes+=len(part) } else { queued=false } }
++ if ns.record_hashes && ns.real_logging {
++  s:=&ns.game.world.scene
++  fmt.printf("HASH EXPECT client=%d connection=%d epoch=%d revision=%d tick=%d queued=%s\n",client,ns.real_hash_generation[client],s.epoch,s.structure_revision,ns.tick,queued?"yes":"no")
++ }
+ }
+
+--- src/net_server.odin::net_server_blast
++++ src/shared/sim_net_server.odin::net_server_blast
+@@ -10,5 +10,6 @@
+  for t in c.blast_ticks { if ns.tick+1-t<NET_BLAST_RATE_TICKS { recent+=1 } }
+  reason:=0
+- if !inside { reason=1 } else if recent>=NET_BLAST_RATE_COUNT { reason=2 } else if !sandbox_valid_aim(&w.scene,point) { reason=3 }
++ if ns.rounds.mode==.Elimination || (ns.real_gate && !c.is_host) {reason=4}
++ else if !inside { reason=1 } else if recent>=NET_BLAST_RATE_COUNT { reason=2 } else if !sandbox_valid_aim(&w.scene,point) { reason=3 }
+  if reason!=0 {
+   c.stats.blasts_rejected+=1
+
+
+--- src/net_server.odin::net_server_destroy
++++ src/shared/sim_net_server.odin::net_server_destroy
+@@ -1,4 +1,6 @@
+ net_server_destroy :: proc(ns: ^Net_Server) {
++ net_rebuild_destroy(ns)
+  for &c in ns.clients {
++  if c.requests!=nil { free(c.requests);c.requests=nil }
+   net_client_state_clear(&c)
+   delete(c.priority); delete(c.last_sent); delete(c.pending); delete(c.blast_queue); delete(c.blast_ticks)
+@@ -7,5 +9,5 @@
+  nc.server_destroy(&ns.srv)
+  repl_server_destroy(&ns.repl)
+- sandbox_destroy(&ns.game)
++ headless_game_destroy(&ns.game)
+  delete(ns.current); delete(ns.keys); delete(ns.tick_ms); delete(ns.world_ms); delete(ns.hashes)
+  delete(ns.pre_events.explosions)
+
+
+--- src/net_server.odin::net_server_join
++++ src/shared/sim_net_server.odin::net_server_join
+@@ -1,4 +1,9 @@
+ net_server_join :: proc(ns: ^Net_Server,index: int) {
++ ns.round_dirty=true
++ ns.real_hash_generation[index]+=1
+  c:=&ns.clients[index]
++ ns.next_incarnation+=1;c.incarnation=ns.next_incarnation;c.schedule={};c.echo_nonce=0
++ if c.requests==nil { c.requests=new(Request_Cache) }
++ c.requests^=Request_Cache{incarnation=c.incarnation}
+  net_client_state_clear(c)
+  if c.priority==nil { c.priority=make(map[u64]f32) }
+@@ -12,3 +17,4 @@
+  out:=repl_server_baseline(&ns.repl,&ns.game.world.scene,ns.tick); defer repl_output_destroy(&out)
+  net_send_reliable_parts(ns,index,&out)
++ if ns.real_gate { net_scheduled_server_offer(ns,index) }
+ }
+
+--- src/net_server.odin::net_server_leave
++++ src/shared/sim_net_server.odin::net_server_leave
+@@ -1,3 +1,5 @@
+ net_server_leave :: proc(ns: ^Net_Server,index: int) {
++ round_disconnect(&ns.rounds,index);ns.round_dirty=true
++ if ns.record_hashes && ns.real_logging { fmt.printf("HASH CLOSED client=%d connection=%d tick=%d\n",index,ns.real_hash_generation[index],ns.tick) }
+  net_client_state_clear(&ns.clients[index])
+  ns.clients[index].active=false
+
+
+--- src/net_server.odin::net_server_tick
++++ src/shared/sim_net_server.odin::net_server_tick
+@@ -1,3 +1,4 @@
+ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
++ if ns.async_rebuild {net_rebuild_poll(ns)}
+  started:=time.tick_now()
+  w:=&ns.game.world
+@@ -21,8 +22,7 @@
+     continue // no input, hash or host command before authorization
+    }
+-   if ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
++   if ns.real_gate && net_scheduled_server_message(ns,ev.client,ev.channel,ev.data) { continue }
++   if !ns.real_gate && ev.channel==nc.CHANNEL_UNRELIABLE && len(ev.data)>0 && ev.data[0]==NET_MSG_INPUT {
+     if in_,ok:=input_decode(ev.data); ok { net_server_input(ns,ev.client,in_) }
+-   } else if ns.real_gate && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && (ev.data[0]==NET_APP_LAYOUT_UPLOAD || ev.data[0]==NET_APP_HOST_COMMAND) {
+-    net_host_dispatch(ns,ev.client,ev.data)
+    } else if ns.record_hashes && ev.channel==nc.CHANNEL_RELIABLE && len(ev.data)>0 && ev.data[0]==NET_REAL_HASH_REPORT {
+     r:nc.Reader;nc.reader_init(&r,ev.data)
+@@ -31,10 +31,16 @@
+     if !r.ok || r.pos!=len(ev.data) { continue }
+     ns.real_hash_checks+=1
++    result:="unrecorded"
+     if expected,found:=ns.hashes[net_hash_key(epoch,revision)]; found {
+-     if expected!=hash { ns.real_hash_mismatch+=1 }
++     if expected!=hash { ns.real_hash_mismatch+=1;result="mismatch" } else {
++      result="match"
++      if epoch==w.scene.epoch {round_ready(&ns.rounds,ev.client,ns.clients[ev.client].incarnation,true)}
++     }
+     } else { ns.real_hash_unrecorded+=1 }
++    if ns.real_logging { fmt.printf("HASH REPORT client=%d connection=%d epoch=%d revision=%d hash=%d tick=%d result=%s\n",ev.client,ns.real_hash_generation[ev.client],epoch,revision,hash,ns.tick,result) }
+    }
+   }
+  }
++ round_server_prepare(ns)
+  // Apply inputs: blasts in player order and sequence order, then the world tick.
+  commands:Tick_Commands
+@@ -43,5 +49,12 @@
+   if !c.active || !w.players[i].active { continue }
+   if c.has_input { w.players[i].blast_radius=c.radius }
+-  commands.players[i].move=c.move; commands.players[i].jump=c.jump_pending; c.jump_pending=false
++  if ns.real_gate {
++   if c.schedule.identity.epoch==w.scene.epoch {
++    step:=input_schedule_consume(&c.schedule,ns.tick+1)
++    commands.players[i].move=move_dequantize(step.command.move);commands.players[i].jump=step.command.jump_edge!=0
++    if commands.players[i].jump { c.stats.jumps_applied+=1 }
++   }
++  } else { commands.players[i].move=c.move;commands.players[i].jump=c.jump_pending }
++  c.jump_pending=false
+   slice.sort_by(c.blast_queue[:],proc(a,b: Net_Blast) -> bool { return seq16_newer(b.seq,a.seq) })
+   for b in c.blast_queue { net_server_blast(ns,i,b) }
+@@ -50,18 +63,31 @@
+  }
+  world_started:=time.tick_now()
+- post:=world_tick(w,commands,1.0/60.0)
+- append(&ns.world_ms,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))
++ post:Tick_Events
++ if ns.rounds.mode==.Sandbox || ns.rounds.state==.Playing {post=world_tick(w,commands,1.0/60.0)}
++ round_server_finish(ns,post)
++ net_server_record_timing(&ns.world_ms,ns.tick,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))
+  ns.tick+=1
++ round_server_broadcast(ns)
+  // Structure and events, reliable, to every client.
+  out:=repl_server_update(&ns.repl,&w.scene,ns.tick); defer repl_output_destroy(&out)
+- if w.scene.epoch!=ns.frame_epoch { net_server_reset_frames(ns) }
++ epoch_changed:=w.scene.epoch!=ns.frame_epoch
++ if epoch_changed { net_server_reset_frames(ns) }
+  if out.kind!=.None {
+   net_record_hash(ns)
+   for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { net_send_reliable_parts(ns,i,&out) } }
+  }
++ if ns.real_gate {
++  for i in 0..<nc.MAX_CLIENTS {
++   if !ns.clients[i].active { continue }
++   if epoch_changed || post.player_respawned[i] { net_scheduled_server_offer(ns,i) }
++   net_scheduled_server_owner(ns,i)
++  }
++ }
+  for list in ([2][dynamic]Explosion_Event{ns.pre_events.explosions,post.explosions}) {
+   for e in list {
++   event_id:=e.event_id
++   if event_id==0 { ns.next_event_id+=1;event_id=ns.next_event_id }
+    wr:nc.Writer; nc.writer_init(&wr,24)
+-   event_encode_explosion(&wr,ns.tick,e.position,e.radius)
++   event_encode_explosion(&wr,ns.tick,e.position,e.radius,event_id)
+    for i in 0..<nc.MAX_CLIENTS { if ns.clients[i].active { nc.server_send_reliable(&ns.srv,i,wr.data[:]) } }
+    nc.writer_destroy(&wr); ns.explosions_emitted+=1
+@@ -82,4 +108,4 @@
+  }
+  nc.server_update(&ns.srv,now)
+- append(&ns.tick_ms,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
++ net_server_record_timing(&ns.tick_ms,ns.tick-1,f64(time.tick_diff(started,time.tick_now()))/f64(time.Millisecond))
+ }
+
+--- src/physics.odin::physics_sync_structure
++++ src/shared/sim_physics.odin::physics_sync_structure
+@@ -7,7 +7,5 @@
+  clear(&s.pending_regions)
+  anchored:=make(map[u64]bool); defer delete(anchored)
+- if s.anchor_y>-1e30 {
+-  for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { anchored[p.id]=true } }
+- }
++ for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { anchored[p.id]=true } }
+  ids: [dynamic]u64; defer delete(ids)
+  for p in s.pieces { if p.live { append(&ids,p.id) } }; sort_ids(ids[:])
+@@ -32,5 +30,6 @@
+   sub:=s.subdivisions[s.sub_rows[id]]
+   rigid:=s.materials[sub.material].flexibility==0
+-  kind:=b2.BodyType.dynamicBody; if anchored[sub.owner] { kind=.staticBody }
++  pinned:=anchored[sub.owner];if sub.provenance.motion!=.Legacy { pinned=sub.provenance.pinned }
++  kind:=b2.BodyType.dynamicBody; if pinned { kind=.staticBody }
+   if rigid {
+    if sub.body==b2.nullBodyId {
+
+
+--- src/physics.odin::piece_anchored
++++ src/shared/physics.odin::piece_anchored
+@@ -1,4 +1,3 @@
+ piece_anchored :: proc(s: ^Scene,piece_id: u64,anchor_y: f32) -> bool {
+- if !(anchor_y>-1e30) { return false }
+  row,ok:=s.piece_rows[piece_id]; if !ok { return false }
+  for id in s.pieces[row].subdivisions {
+@@ -6,4 +5,6 @@
+   sub:=s.subdivisions[srow]
+   if !sub.live { continue }
++  if sub.provenance.motion!=.Legacy { if sub.provenance.pinned { return true };continue }
++  if !(anchor_y>-1e30) { continue }
+   for a,i in sub.outline.points {
+    b:=sub.outline.points[(i+1)%len(sub.outline.points)]
+
+
+--- src/player.odin::player_after_step
++++ src/shared/sim_player.odin::player_after_step
+@@ -1,10 +1,8 @@
+ player_after_step :: proc(player: ^Player) -> bool {
+-	position:=from_b2(b2.Body_GetPosition(player.body))
+-	if position.x < -8.5 || position.x > 9.5 || position.y < -3 || position.y > 12 || math.is_nan(position.y) {
++	if player_out_of_bounds(player) {
+ 		player_respawn(player)
+ 		return true
+ 	}
+-	player_read_support(player)
+-	player_refresh_pose(player)
++	player_after_movement_step(player)
+ 	return false
+ }
+
+--- src/player.odin::player_before_step
++++ src/shared/sim_player.odin::player_before_step
+@@ -1,16 +1,4 @@
+ player_before_step :: proc(player: ^Player,move: f32,jump_pressed: bool,dt: f32) {
+ 	player_read_support(player)
+-	if player.grounded { player.coyote=PLAYER_TUNING.coyote_time } else { player.coyote=max(f32(0),player.coyote-dt) }
+-	if jump_pressed { player.buffered_jump=PLAYER_TUNING.jump_buffer }
+-	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
+-	target:=clamp(move,f32(-1),f32(1))*PLAYER_TUNING.speed
+-	velocity.x+=clamp(target-velocity.x,-PLAYER_TUNING.acceleration*dt,PLAYER_TUNING.acceleration*dt)
+-	if player.buffered_jump>0 && player.coyote>0 {
+-		velocity.y=PLAYER_TUNING.jump_speed+max(f32(0),player.support_velocity.y)
+-		player.grounded=false
+-		player.coyote=0
+-		player.buffered_jump=0
+-	}
+-	player.buffered_jump=max(f32(0),player.buffered_jump-dt)
+-	b2.Body_SetLinearVelocity(player.body,to_b2(velocity))
++	player_movement_from_support(player,move,jump_pressed,dt)
+ }
+
+--- src/player.odin::player_create
++++ src/shared/sim_player.odin::player_create
+@@ -12,5 +12,5 @@
+ 	shape.filter.groupIndex=-1
+ 	_ = b2.CreateCapsuleShape(body,shape,b2.Capsule{center1={0,-PLAYER_SEGMENT},center2={0,PLAYER_SEGMENT},radius=PLAYER_RADIUS})
+-	player:=Player{active=true,body=body,blast_radius=blast_radius}
++	player:=Player{active=true,body=body,blast_radius=blast_radius,teleport_serial=1}
+ 	player_refresh_pose(&player)
+ 	return player
+
+
+--- src/player.odin::player_read_support
++++ src/shared/sim_player.odin::player_read_support
+@@ -2,4 +2,5 @@
+ 	player.grounded=false
+ 	player.support_velocity={}
++	player.support_cell=0;player.support_kind=0
+ 	position:=from_b2(b2.Body_GetPosition(player.body))
+ 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
+@@ -10,5 +11,6 @@
+ 		normal:=from_b2(contact.manifold.normal)
+ 		other:=a
+-		if a==player.body { normal=vmul(normal,-1); other=b }
++		other_shape:=contact.shapeIdA
++		if a==player.body { normal=vmul(normal,-1); other=b;other_shape=contact.shapeIdB }
+ 		if normal.y<0.55 { continue }
+ 		for i in 0..<int(contact.manifold.pointCount) {
+@@ -18,4 +20,7 @@
+ 				player.grounded=true
+ 				player.support_velocity=support_velocity
++				player.support_cell=u64(uintptr(b2.Shape_GetUserData(other_shape)))
++				player.support_kind=1
++				if player.support_cell==0 { player.support_kind=b2.Body_GetType(other)==.staticBody?u8(2):u8(3) }
+ 			}
+ 		}
+
+
+--- src/player.odin::player_respawn
++++ src/shared/sim_player.odin::player_respawn
+@@ -1,8 +1,3 @@
+ player_respawn :: proc(player: ^Player) {
+-	body:=player.body
+-	b2.Body_SetTransform(body,to_b2(PLAYER_SPAWN),b2.MakeRot(0))
+-	b2.Body_SetLinearVelocity(body,{})
+-	b2.Body_SetAngularVelocity(body,0)
+-	player^=Player{active=true,body=body,blast_radius=player.blast_radius}
+-	player_refresh_pose(player)
++ player_respawn_at(player,PLAYER_SPAWN)
+ }
+
+--- src/model.odin::rebuild_piece
++++ src/shared/sim_model.odin::rebuild_piece
+@@ -34,5 +34,5 @@
+ 		// The union cannot be narrower than a member it contains.
+ 		wide_member:=false
+-		for id in group { if s.subdivisions[s.sub_rows[id]].width>=s.minimum_width { wide_member=true; break } }
++		for id in group { sub:=s.subdivisions[s.sub_rows[id]];if sub.width>=s.minimum_width||!cell_damage_allowed(sub) { wide_member=true; break } }
+ 		if !wide_member && piece_width(s,group[:])<s.minimum_width {
+ 			for id in group { s.subdivisions[s.sub_rows[id]].live=false }
+
+
+--- src/replication.odin::repl_read_cell
++++ src/shared/replication.odin::repl_read_cell
+@@ -2,7 +2,9 @@
+  c:Repl_Cell
+  c.id=nc.read_varint(r); c.owner=nc.read_varint(r); c.material=int(nc.read_varint(r))
++ source,part:=nc.read_u64(r),nc.read_u64(r);flags:=nc.read_u32(r)
++ policy,valid:=cell_policy_decode(source,part,flags);if !valid { nc.reader_fail(r);return c };c.provenance=policy
+  c.frame=nc.read_f32(r)
+  count:=nc.read_varint(r)
+- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return c }
++ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r))/8 { nc.reader_fail(r); return c }
+  c.outline=make([]Vec2,int(count))
+  for i in 0..<int(count) { c.outline[i]={nc.read_f32(r),nc.read_f32(r)} }
+
+
+--- src/replication.odin::repl_read_connection
++++ src/shared/replication.odin::repl_read_connection
+@@ -3,5 +3,5 @@
+  c.id=nc.read_varint(r); c.a=nc.read_varint(r); c.b=nc.read_varint(r); c.mortar=nc.read_bool(r)
+  count:=nc.read_varint(r)
+- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return c }
++ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r))/20 { nc.reader_fail(r); return c }
+  c.glue=make([]Glue_Sample,int(count))
+  for i in 0..<int(count) { c.glue[i]={p={nc.read_f32(r),nc.read_f32(r)},q={nc.read_f32(r),nc.read_f32(r)},w=nc.read_f32(r)} }
+
+
+--- src/replication.odin::repl_read_id_list
++++ src/shared/replication.odin::repl_read_id_list
+@@ -1,5 +1,5 @@
+ repl_read_id_list :: proc(r: ^nc.Reader) -> []u64 {
+  count:=nc.read_varint(r)
+- if !r.ok || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return nil }
++ if !r.ok || count>REPL_MAX_VERTICES || count>u64(nc.reader_remaining(r)) { nc.reader_fail(r); return nil }
+  ids:=make([]u64,int(count))
+  for i in 0..<int(count) { ids[i]=nc.read_varint(r) }
+
+
+--- src/replication.odin::repl_write_cell
++++ src/shared/replication.odin::repl_write_cell
+@@ -1,4 +1,5 @@
+ repl_write_cell :: proc(w: ^nc.Writer,sub: Subdivision) {
+  nc.write_varint(w,sub.id); nc.write_varint(w,sub.owner); nc.write_varint(w,u64(sub.material))
++ nc.write_u64(w,sub.provenance.source_identity);nc.write_u64(w,sub.provenance.source_part_id);nc.write_u32(w,cell_policy_flags(sub.provenance))
+  nc.write_f32(w,sub.frame)
+  nc.write_varint(w,u64(len(sub.outline.points)))
+
+
+--- src/replication.odin::replica_add_cell
++++ src/shared/replication.odin::replica_add_cell
+@@ -1,5 +1,5 @@
+ replica_add_cell :: proc(rep: ^Replica,c: Repl_Cell) {
+  s:=&rep.scene
+- sub:=Subdivision{id=c.id,owner=c.owner,material=c.material,frame=c.frame,outline=make_polygon(c.outline),rest_center=c.rest_center,live=true}
++ sub:=Subdivision{id=c.id,owner=c.owner,material=c.material,frame=c.frame,outline=make_polygon(c.outline),rest_center=c.rest_center,live=true,provenance=c.provenance}
+  sub.pose=Pose{position=c.rest_center}
+  s.sub_rows[sub.id]=len(s.subdivisions); append(&s.subdivisions,sub)
+
+
+--- src/replication.odin::replica_apply_baseline
++++ src/shared/replication.odin::replica_apply_baseline
+@@ -3,31 +3,48 @@
+  version:=nc.read_u8(r)
+  epoch:=nc.read_varint(r); revision:=nc.read_varint(r); anchor_y:=nc.read_f32(r)
+- if !r.ok || version!=REPL_CANON_VERSION { return "bad baseline header" }
++ if !r.ok || version!=REPL_CANON_VERSION || epoch>0xffffffff || !finite(anchor_y) { return "bad baseline header" }
+  scene_destroy(&rep.scene)
+  rep.scene=new_scene(0)
+  s:=&rep.scene
+  s.epoch=u32(epoch); s.structure_revision=revision; s.anchor_y=anchor_y
++ if reason:=repl_read_catalog(r,s);reason!="" { return reason }
+  count:=nc.read_varint(r)
+- for _ in 0..<count { replica_add_material(rep,repl_read_material(r)); if !r.ok { return "truncated materials" } }
++ if count>1024 { return "too many baseline materials" }
++ for _ in 0..<count { m:=repl_read_material(r);if !r.ok || !repl_valid_material(m) { return "invalid baseline material" };replica_add_material(rep,m) }
+  cell_count:=nc.read_varint(r)
++ if cell_count>REPL_MAX_CELLS { return "too many baseline cells" }
++ vertices:=0
+  for _ in 0..<cell_count {
+   c:=repl_read_cell(r); defer delete(c.outline)
+   if !r.ok { return "truncated cells" }
++  vertices+=len(c.outline)
++  if !repl_valid_cell(c,len(s.materials)) || !repl_valid_source_binding(s,c) || c.id in s.sub_rows || vertices>REPL_MAX_VERTICES { return "invalid or duplicate baseline cell/source binding" }
+   replica_add_cell(rep,c)
+  }
+  conns:[dynamic]Repl_Connection; defer { for c in conns { delete(c.glue) }; delete(conns) }
+  conn_count:=nc.read_varint(r)
+- for _ in 0..<conn_count { c:=repl_read_connection(r); if !r.ok { return "truncated connections" }; append(&conns,c) }
++ if conn_count>REPL_MAX_VERTICES { return "too many baseline connections" }
++ for _ in 0..<conn_count { c:=repl_read_connection(r); if !r.ok { delete(c.glue);return "truncated connections" }; append(&conns,c) }
+  piece_count:=nc.read_varint(r)
++ if piece_count>REPL_MAX_CELLS { return "too many baseline pieces" }
++ listed_cells:=0
+  for _ in 0..<piece_count {
+   id:=nc.read_varint(r); material:=int(nc.read_varint(r)); ref_rest:=Vec2{nc.read_f32(r),nc.read_f32(r)}; cells:=repl_read_id_list(r); defer delete(cells)
+   if !r.ok || !valid_vec(ref_rest) { return "truncated or invalid pieces" }
++  if !repl_valid_piece(rep,id,material,ref_rest,cells) || id in s.piece_rows { return "invalid baseline piece references" }
++  listed_cells+=len(cells)
++  for cell in cells { if s.subdivisions[s.sub_rows[cell]].owner!=id { return "baseline owner/membership mismatch" } }
+   replica_add_piece(rep,id,material,ref_rest,cells)
+  }
+- for c in conns { replica_add_connection(rep,c) }
++ if listed_cells!=len(s.subdivisions) { return "baseline membership does not cover cells" }
++ for sub in s.subdivisions { if sub.owner not_in s.piece_rows { return "baseline cell owner is missing" } }
++ for c in conns {
++  if !repl_valid_connection(c) || c.id in s.conn_rows || c.a not_in s.sub_rows || c.b not_in s.sub_rows { return "invalid baseline connection references" }
++  replica_add_connection(rep,c)
++ }
+  touched:=make(map[u64]bool); defer delete(touched)
+  for p in s.pieces { touched[p.id]=true }
+  replica_finish_pieces(rep,touched)
+- if nc.reader_remaining(r)!=0 { return "trailing bytes in baseline" }
++ if !r.ok || nc.reader_remaining(r)!=0 { return "truncated or trailing bytes in baseline" }
+  rep.tick=tick; rep.has_baseline=true; rep.baselines_applied+=1; rep.rebuilt=true
+  return ""
+
+
+--- src/replication.odin::replica_apply_delta
++++ src/shared/replication.odin::replica_apply_delta
+@@ -2,5 +2,5 @@
+  s:=&rep.scene
+  tick:=nc.read_varint(r); epoch:=nc.read_varint(r); from:=nc.read_varint(r); to:=nc.read_varint(r)
+- if !r.ok { return "bad delta header" }
++ if !r.ok || epoch>0xffffffff || to<from { return "bad delta header" }
+  if !rep.has_baseline { return "delta before baseline" }
+  if u32(epoch)!=s.epoch { return "delta from another epoch" }
+@@ -10,16 +10,20 @@
+  cells_added:[dynamic]Repl_Cell; defer { for c in cells_added { delete(c.outline) }; delete(cells_added) }
+  conns_added:[dynamic]Repl_Connection; defer { for c in conns_added { delete(c.glue) }; delete(conns_added) }
+- Piece_Add :: struct { id: u64, material: int, ref_rest: Vec2, cells: []u64 }
++ Piece_Add :: Repl_Piece_Add
+  pieces_added:[dynamic]Piece_Add; defer { for p in pieces_added { delete(p.cells) }; delete(pieces_added) }
+  pieces_changed:[dynamic]Piece_Add; defer { for p in pieces_changed { delete(p.cells) }; delete(pieces_changed) }
+  count:=nc.read_varint(r)
++ if count>1024 || u64(len(s.materials))+count>1024 { return "too many delta materials" }
+  for _ in 0..<count { m:=repl_read_material(r); if !r.ok { return "truncated materials" }; append(&materials,m) }
+  count=nc.read_varint(r)
++ if count>REPL_MAX_CELLS { return "too many added cells" }
+  for _ in 0..<count { c:=repl_read_cell(r); if !r.ok { delete(c.outline); return "truncated cells" }; append(&cells_added,c) }
+  cells_removed:=repl_read_id_list(r); defer delete(cells_removed)
+  count=nc.read_varint(r)
++ if count>REPL_MAX_VERTICES { return "too many added connections" }
+  for _ in 0..<count { c:=repl_read_connection(r); if !r.ok { delete(c.glue); return "truncated connections" }; append(&conns_added,c) }
+  conns_removed:=repl_read_id_list(r); defer delete(conns_removed)
+  count=nc.read_varint(r)
++ if count>REPL_MAX_CELLS { return "too many added pieces" }
+  for _ in 0..<count {
+   id:=nc.read_varint(r); material:=int(nc.read_varint(r)); ref_rest:=Vec2{nc.read_f32(r),nc.read_f32(r)}; cells:=repl_read_id_list(r)
+@@ -29,4 +33,5 @@
+  pieces_removed:=repl_read_id_list(r); defer delete(pieces_removed)
+  count=nc.read_varint(r)
++ if count>REPL_MAX_CELLS { return "too many changed pieces" }
+  for _ in 0..<count {
+   id:=nc.read_varint(r); cells:=repl_read_id_list(r)
+@@ -35,4 +40,5 @@
+  }
+  if !r.ok || nc.reader_remaining(r)!=0 { return "malformed delta" }
++ if problem:=repl_validate_delta(rep,materials[:],cells_added[:],cells_removed,conns_added[:],conns_removed,pieces_added[:],pieces_removed,pieces_changed[:]);problem!="" { return problem }
+  // Apply: materials, removals (connections, pieces, cells), additions (cells, pieces, connections).
+  for m in materials { replica_add_material(rep,m) }
+
+
+--- src/replication.odin::replica_collect
++++ src/shared/replication.odin::replica_collect
+@@ -2,5 +2,5 @@
+  r:nc.Reader; nc.reader_init(&r,part)
+  mark:=nc.read_u8(&r); seq:=u32(nc.read_varint(&r)); index:=int(nc.read_varint(&r)); total:=int(nc.read_varint(&r))
+- if !r.ok || mark!=REPL_PART_MARK || total<1 || index>=total { return nil,false,"bad part header" }
++ if !r.ok || mark!=REPL_PART_MARK || total<1 || total>65536 || index<0 || index>=total { return nil,false,"bad part header" }
+  if index==0 {
+   clear(&rep.part_buffer); rep.part_seq=seq; rep.part_total=total; rep.part_have=0
+@@ -8,4 +8,5 @@
+   return nil,false,"part out of sequence"
+  }
++ if len(rep.part_buffer)+len(part)-r.pos>REPL_MAX_ASSEMBLED_BYTES { clear(&rep.part_buffer);return nil,false,"assembled structure exceeds capacity" }
+  append(&rep.part_buffer,..part[r.pos:])
+  rep.part_have+=1
+
+
+--- src/replication.odin::replica_receive
++++ src/shared/replication.odin::replica_receive
+@@ -2,5 +2,5 @@
+  r:nc.Reader; nc.reader_init(&r,part)
+  mark:=nc.read_u8(&r); seq:=u32(nc.read_varint(&r)); index:=int(nc.read_varint(&r)); total:=int(nc.read_varint(&r))
+- if !r.ok || mark!=REPL_PART_MARK || total<1 || index>=total { return false,"bad part header" }
++ if !r.ok || mark!=REPL_PART_MARK || total<1 || total>65536 || index<0 || index>=total { return false,"bad part header" }
+  if index==0 {
+   clear(&rep.part_buffer); rep.part_seq=seq; rep.part_total=total; rep.part_have=0
+@@ -8,4 +8,5 @@
+   return false,"part out of sequence"
+  }
++ if len(rep.part_buffer)+len(part)-r.pos>REPL_MAX_ASSEMBLED_BYTES { clear(&rep.part_buffer);return false,"assembled structure exceeds capacity" }
+  append(&rep.part_buffer,..part[r.pos:])
+  rep.part_have+=1
+
+
+--- src/model.odin::scene_destroy
++++ src/shared/model.odin::scene_destroy
+@@ -1,4 +1,7 @@
+ scene_destroy :: proc(s: ^Scene) {
+ 	physics_destroy(s)
++ delete(s.level_json)
++ if s.catalog!=nil {destroy_level_layout(s.catalog);free(s.catalog)}
++ for part in s.source_parts { delete(part.segments) };delete(s.source_parts)
+  for c in s.connections { delete(c.rest_segments); delete(c.glue) }
+ 	for &sub in s.subdivisions { delete(sub.outline.points); delete(sub.incident_links); delete(sub.shapes) }
+
+
+--- src/glass_shock.odin::shock_apply
++++ src/shared/sim_glass_shock.odin::shock_apply
+@@ -21,5 +21,5 @@
+  for id in links { if s.connections[s.conn_rows[id]].live { append(&ids,id) } }; sort_ids(ids[:])
+  for id in ids {
+-  c:=s.connections[s.conn_rows[id]]; if c.mortar { continue }; a,a_ok:=shock.cells[c.a]; b,b_ok:=shock.cells[c.b]
++  c:=s.connections[s.conn_rows[id]]; if c.mortar||!connection_damage_allowed(s,c) { continue }; a,a_ok:=shock.cells[c.a]; b,b_ok:=shock.cells[c.b]
+   if !a_ok || !b_ok || !a.reached || !b.reached || a.group!=b.group { continue }
+   left,right:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
+
+
+--- src/destruction.odin::stage_failures
++++ src/shared/sim_destruction.odin::stage_failures
+@@ -25,4 +25,5 @@
+ 		if !ok || !s.subdivisions[row].live { continue }
+ 		parent := s.subdivisions[row]
++  if creation_size==0&&!failures.administrative&&!cell_damage_allowed(parent) { continue }
+   if !refine_only && s.materials[parent.material].name=="wood" { cover_wood_failures+=1 }
+   if direct { shock_mark_direct(shock,id) }
+@@ -59,4 +60,5 @@
+ 			child_row := s.sub_rows[child]
+    s.subdivisions[child_row].frame=parent.frame
++   cell_inherit_provenance(s,child,parent)
+    shock_inherit(shock,id,child)
+    if active_cover!=nil { active_cover.owners[child]=active_cover.owners[id]; if flag,ok:=active_cover.shadow[id]; ok { active_cover.shadow[child]=flag } }
+@@ -83,4 +85,5 @@
+ 		if ok && s.connections[row].live {
+ 			c := s.connections[row]
++   if creation_size==0&&!failures.administrative&&!connection_damage_allowed(s,c) { continue }
+    if c.mortar { path:=string("blast");if failures.impact { path="force" };seam_diagnostic_death(s,c,path);s.connections[row].live=false; continue }
+ 			affected[s.subdivisions[s.sub_rows[c.a]].owner] = true
+
+
+--- src/yard.odin::world_add_player
++++ src/shared/sim_yard.odin::world_add_player
+@@ -2,4 +2,6 @@
+  if index<0 || index>=MAX_PLAYERS || w.players[index].active || !w.scene.physics.active { return false }
+  w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius)
++ w.players[index].tuning=scene_gameplay_config(&w.scene).player
++ if w.scene.level_policy.active { b2.Body_SetTransform(w.players[index].body,to_b2(w.scene.level_policy.spawns[index]),b2.MakeRot(0));player_refresh_pose(&w.players[index]) }
+  return true
+ }
+
+--- src/bombs.odin::world_bomb_spawn
++++ src/shared/sim_bombs.odin::world_bomb_spawn
+@@ -11,5 +11,5 @@
+ 	_ = b2.CreateCircleShape(body,shape,b2.Circle{radius=BOMB_RADIUS})
+ 	game.next_bomb_id+=1
+-	bomb:=Bomb{id=game.next_bomb_id,body=body,fuse=BOMB_FUSE}
++	bomb:=Bomb{id=game.next_bomb_id,body=body,fuse=scene_gameplay_config(&game.scene).bomb_fuse}
+ 	bomb.pose=read_body_state(body).pose
+ 	append(&game.bombs,bomb)
+
+
+--- src/yard.odin::world_explode
++++ src/shared/sim_yard.odin::world_explode
+@@ -1,3 +1,8 @@
+ world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
++ if w.elimination_playing {
++  for player,i in w.players {
++   if player.active && round_capsule_hit(from_b2(b2.Body_GetPosition(player.body)),point,w.lethal_radius) {events.deaths[i]=.Blast}
++  }
++ }
+  start:=time.tick_now()
+  regions:=len(w.scene.subdivisions)
+
+
+--- src/yard.odin::world_remove_out_of_bounds
++++ src/shared/sim_yard.odin::world_remove_out_of_bounds
+@@ -4,5 +4,6 @@
+ 	for sub in game.scene.subdivisions {
+ 		p:=sub.pose.position
+-		if sub.live && p.y<YARD_FLOOR_BOTTOM-2 { append(&f.discard_subdivisions,sub.id) }
++  outside:=p.y<YARD_FLOOR_BOTTOM-2;if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.fragment_cull,p) }
++		if sub.live && outside { append(&f.discard_subdivisions,sub.id) }
+ 	}
+ 	if len(f.discard_subdivisions)==0 { return false }
+
+
+--- src/yard.odin::world_start_physics
++++ src/shared/sim_yard.odin::world_start_physics
+@@ -1,5 +1,8 @@
+ world_start_physics :: proc(game: ^World) {
+  s:=&game.scene
+-	physics_init(s,{0,-9.8},YARD_FLOOR_BOTTOM)
++ anchor:=YARD_FLOOR_BOTTOM;if s.level_policy.active { anchor=-1e30 }
++	physics_init(s,scene_gameplay_config(s).gravity,anchor)
++ game.floor={}
++ if !s.level_policy.active {
+ 	def:=b2.DefaultBodyDef()
+ 	def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
+@@ -8,4 +11,5 @@
+ 	// Extend beyond the playable edges so excavation never opens the screen bottom.
+ 	_ = b2.CreatePolygonShape(game.floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*0.5))
++ }
+ 	// A rebuild keeps the active player set (and their radii); a fresh world starts with player 0.
+ 	was:=game.players
+@@ -15,5 +19,5 @@
+ 	if !any_active { world_add_player(game,0) }
+ 	else { for i in 0..<MAX_PLAYERS { if was[i].active { world_add_player(game,i); game.players[i].blast_radius=was[i].blast_radius } } }
+-	bomb_rain_reset(&game.rain,game.settings.seed)
++	bomb_rain_reset(&game.rain,game.settings.seed,scene_gameplay_config(s))
+ 	clear(&game.bombs)
+ 	game.tick=0
+
+
+--- src/yard.odin::world_tick
++++ src/shared/sim_yard.odin::world_tick
+@@ -8,9 +8,9 @@
+   w.settings.blast_mode=mode
+   bomb_rain_clear(w)
+-  w.rain.until_drop=bomb_drop_delay(&w.rain)
++  w.rain.until_drop=bomb_drop_delay_config(&w.rain,scene_gameplay_config(&w.scene))
+  }
+  failures:=Failures{}
+- if commands.remove_region!=0 { append(&failures.discard_subdivisions,commands.remove_region) }
+- if commands.break_connection!=0 { append(&failures.connections,commands.break_connection) }
++ if commands.remove_region!=0 { failures.administrative=true;append(&failures.discard_subdivisions,commands.remove_region) }
++ if commands.break_connection!=0 { failures.administrative=true;append(&failures.connections,commands.break_connection) }
+  if len(failures.discard_subdivisions)+len(failures.connections)>0 {
+   apply_failures(&w.scene,failures); physics_sync_structure(&w.scene); events.structure_changed=true
+@@ -21,9 +21,12 @@
+   if !w.players[i].active { continue }
+   for point in player_commands.blasts {
++   if w.elimination_playing {events.blast_rejected[i]=true;continue}
+    if sandbox_valid_aim(&w.scene,point) { world_explode(w,point,w.players[i].blast_radius,&events) }
+    else { events.blast_rejected[i]=true }
+   }
+  }
++ previous_bomb_id:=w.next_bomb_id
+  bomb_rain_before_step(w,dt)
++ events.bombs_spawned=w.next_bomb_id-previous_bomb_id
+  for &player,i in w.players {
+   if player.active { player_before_step(&player,commands.players[i].move,commands.players[i].jump,dt) }
+@@ -34,5 +37,17 @@
+  if world_remove_out_of_bounds(w) { events.structure_changed=true }
+  for &player,i in w.players {
+-  if player.active { events.player_respawned[i]=player_after_step(&player) }
++  if player.active {
++   if w.elimination_playing {
++    player_after_movement_step(&player)
++    outside:=player_out_of_bounds(&player)
++    if w.scene.level_policy.active {outside=!level_bounds_contains(w.scene.level_policy.kill,player.pose.position)}
++    if outside && events.deaths[i]==.None {events.deaths[i]=.Bounds}
++    continue
++   }
++   if w.scene.level_policy.active {
++    player_after_movement_step(&player)
++    if !level_bounds_contains(w.scene.level_policy.kill,player.pose.position) { player_respawn_at(&player,w.scene.level_policy.spawns[i]);events.player_respawned[i]=true }
++   }else{events.player_respawned[i]=player_after_step(&player)}
++  }
+  }
+  world_refresh_poses(w)
+

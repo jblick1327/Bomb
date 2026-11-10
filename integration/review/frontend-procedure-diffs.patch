@@ -1,0 +1,498 @@
+--- src/model.odin::contains_id
++++ src/model.odin::contains_id
+@@ -1,3 +1,3 @@
+ contains_id :: proc(ids: []u64,id: u64) -> bool {
+- when BOM_PROFILE { started:=time.tick_now(); defer profile_add(12,started); if blast_profile!=nil { blast_profile.counts[6]+=1 } }
++ when BOM_PROFILE { started:=time.tick_now(); defer profile_add(12,started); if shared.blast_profile!=nil { shared.blast_profile.counts[6]+=1 } }
+  for x in ids { if x == id { return true } }; return false }
+
+--- src/state.odin::decode_scene_state
++++ src/state.odin::decode_scene_state
+@@ -1,4 +1,5 @@
+ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
+-	if (wire.version != 1 && wire.version != 2) || !finite(wire.minimum_width) || wire.minimum_width < 0 { return {},false }
++	if (wire.version != 1 && wire.version != 2 && wire.version!=3) || !finite(wire.minimum_width) || wire.minimum_width < 0 { return {},false }
++ if wire.version==3&&wire.provenance_version!=1 { return {},false }
+ 	s := new_scene(wire.minimum_width)
+ 	s.next_id = wire.next_id
+@@ -8,4 +9,5 @@
+ 	ok := false
+ 	defer { if !ok { scene_destroy(&s) } }
++ if wire.version==3&&!scene_restore_catalog_data(&s,wire.level_json,wire.source_parts[:]) { return {},false }
+ 	for m in wire.materials {
+ 		if !finite(m.subdivision_strength) || !finite(m.connection_strength) || m.subdivision_strength < 0 || m.connection_strength < 0 || !finite(m.flexibility) || m.flexibility < 0 || m.generation_count < 1 || !finite(m.aspect_ratio) || m.aspect_ratio <= 0 { return {},false }
+@@ -41,4 +43,8 @@
+ 	}
+ 	for &sub in wire.subdivisions {
++  if wire.version<3 { sub.provenance={} }else{
++   _,valid:=cell_policy_decode(sub.provenance.source_identity,sub.provenance.source_part_id,cell_policy_flags(sub.provenance));if !valid { return {},false }
++   if sub.provenance.motion!=.Legacy&&cell_pinned(&s,sub)!=sub.provenance.pinned { return {},false }
++  }
+ 		if sub.id == 0 || sub.id > s.next_id || seen[sub.id] || !sub.live { return {},false }
+ 		seen[sub.id] = true
+
+
+--- src/world_state.odin::decode_world_snapshot
++++ src/world_state.odin::decode_world_snapshot
+@@ -1,6 +1,7 @@
+ decode_world_snapshot :: proc(data: []byte,epoch: u32 = 0) -> (World,bool) {
+- header: struct { version: int }
++ header: struct { version: int, minimum_width:union{f32} }
+  if json.unmarshal(data,&header)!=nil { return {},false }
+- if header.version==1 || header.version==2 {
++ _,scene_header:=header.minimum_width.(f32)
++ if header.version==1 || header.version==2 || header.version==3&&scene_header {
+   scene,ok:=decode_snapshot(data); if !ok { return {},false }
+   scene.epoch=epoch
+
+
+--- src/state.odin::destroy_decoded_snapshot
++++ src/state.odin::destroy_decoded_snapshot
+@@ -1,3 +1,4 @@
+ destroy_decoded_snapshot :: proc(snapshot: ^Snapshot) {
++ delete(snapshot.level_json);for part in snapshot.source_parts { delete(part.segments) };delete(snapshot.source_parts)
+ 	for m in snapshot.materials { delete(m.name) }
+ 	for c in snapshot.connections { delete(c.glue) }
+
+
+--- src/editor.odin::editor_build_objects
++++ src/editor.odin::editor_build_objects
+@@ -1,13 +1,3 @@
+-editor_build_objects :: proc(game: ^Sandbox, objects: ^[dynamic]Built_Object = nil) {
+-	s:=&game.world.scene
+-	materials: [8]int
+-	for choice in Recipe { materials[int(choice)]=add_material(s,editor_material(choice)) }
+- for i in 4..<palette_count(&game.layout) {
+-  used:=false; for object in game.layout.objects { if int(object.material)==i { used=true; break } }
+-  if used {
+-   m:=layout_material(&game.layout,Slot(i)); m.name=strings.clone(m.name); append(&s.owned_names,m.name)
+-   materials[i]=add_material(s,m)
+-  }
+- }
+-	editor_build_rectangles(game,materials,objects)
++editor_build_objects :: proc(game: ^Sandbox,objects: ^[dynamic]Built_Object=nil) {
++ layout_build_objects(&game.world,&game.layout,game.editor.editing,objects)
+ }
+
+--- src/editor.odin::editor_build_rectangles
++++ src/editor.odin::editor_build_rectangles
+@@ -1,35 +1,3 @@
+-editor_build_rectangles :: proc(game: ^Sandbox,materials: [8]int, objects: ^[dynamic]Built_Object = nil) {
+-	s:=&game.world.scene
+-	if game.editor.editing { return }
+-	for object in game.layout.objects {
+-		seed:=derive_seed(game.world.settings.seed,0x10000+object.identity)
+-		if layout_base(&game.layout,object.material)==.Rubber { seed=0 }
+-		first_id:=s.next_id+1
+-		owner:=add_piece(s,materials[int(object.material)],seed)
+-  if object.angle!=0 || object.shape!=.Rect { build_shaped_object(s,object,owner); if objects!=nil { append(objects,built_object(object,first_id,s.next_id+1)) };continue }
+-		nx,ny:=1,1
+-		if layout_base(&game.layout,object.material)==.Rubber {
+-			nx=int(math.ceil((object.hi.x-object.lo.x)/RUBBER_CELL_SIZE-0.00001))
+-			ny=int(math.ceil((object.hi.y-object.lo.y)/RUBBER_CELL_SIZE-0.00001))
+-		}
+-		// Uniform fitted cells: one target size, no tiny leftover edge strips.
+-		dx,dy:=(object.hi.x-object.lo.x)/f32(nx),(object.hi.y-object.lo.y)/f32(ny)
+-		ids:=make([]u64,nx*ny)
+-		for row in 0..<ny {
+-			for column in 0..<nx {
+-				x0,x1:=object.lo.x+f32(column)*dx,object.lo.x+f32(column+1)*dx
+-				y0,y1:=object.lo.y+f32(row)*dy,object.lo.y+f32(row+1)*dy
+-				points:=[4]Vec2{{x0,y0},{x1,y0},{x1,y1},{x0,y1}}
+-				outline:=Polygon{points=points[:]}
+-				id:=add_subdivision(s,owner,outline,Pose{position=centroid(outline)})
+-
+-				index:=row*nx+column; ids[index]=id
+-				if column>0 { connection:=add_connection(s,ids[index-1],id); assert(connection!=0); }
+-				if row>0 { connection:=add_connection(s,ids[index-nx],id); assert(connection!=0); }
+-			}
+-		}
+-		delete(ids)
+-		if layout_base(&game.layout,object.material)!=.Rubber { presplit_piece(s,owner) }
+-  if objects!=nil { append(objects,Built_Object{identity=object.identity,mortar=object.mortar,lo=object.lo,hi=object.hi,first_id=first_id,end_id=s.next_id+1}) }
+-	}
++editor_build_rectangles :: proc(game: ^Sandbox,materials: [8]int,objects: ^[dynamic]Built_Object=nil) {
++ layout_build_rectangles(&game.world,&game.layout,game.editor.editing,materials,objects)
+ }
+
+--- src/layout_state.odin::encode_layout
++++ src/layout_state.odin::encode_layout
+@@ -1,3 +1,4 @@
+ encode_layout :: proc(layout: ^Layout,seed: u8) -> ([]byte,bool) {
++ if layout.level!=nil {return exact_json_encode(layout.level^)}
+ 	wire:=Wire_Layout{kind="bom-layout",version=3,seed=u64(seed),next_identity=layout.next_identity}
+ 	defer { delete(wire.objects); delete(wire.materials);delete(wire.glue) }
+
+
+--- src/state.odin::encode_snapshot
++++ src/state.odin::encode_snapshot
+@@ -2,4 +2,12 @@
+ 	view := read_state(s)
+ 	defer release_state_view(&view)
++ if view.version==3 {
++  legacy:=s.level_json==""&&len(s.source_parts)==0
++  for sub in s.subdivisions { if sub.provenance.motion!=.Legacy { legacy=false;break } }
++  // Legacy standalone Scene captures retain their original decimal formatting;
++  // the World path already uses exact floats. Authored v4 scenes use exact data.
++  if legacy { bytes,err:=json.marshal(view,{pretty=true});return bytes,err==nil }
++  return exact_json_encode(view,true)
++ }
+ 	wire:=Legacy_Scene_Wire{version=view.version,next_id=view.next_id,revision=view.revision,minimum_width=view.minimum_width,materials=view.materials,connections=view.connections,pieces=view.pieces}
+  defer delete(wire.subdivisions)
+
+
+--- src/net_game_ui.odin::net_gui_connect
++++ src/net_game_ui.odin::net_gui_connect
+@@ -6,5 +6,4 @@
+  ui.client.verify=true
+  ui.client.real_host_token=token
+- ui.client.bot_enabled=false
+  ui.start=time.tick_now()
+  ui.last_step=0
+
+
+--- src/net_game_ui.odin::net_gui_destroy
++++ src/net_game_ui.odin::net_gui_destroy
+@@ -6,4 +6,5 @@
+   nc.client_disconnect(&ui.client.nc_client)
+   net_gui_flush(ui)
++  net_client_view_destroy(&ui.client_view)
+   net_client_destroy(&ui.client)
+   nc.socket_close(&ui.socket)
+
+
+--- src/net_game_ui.odin::net_gui_human_input
++++ src/net_game_ui.odin::net_gui_human_input
+@@ -3,5 +3,5 @@
+  c:=&ui.client
+  c.human_move=0
+- if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok { return }
++ if ui.open || game.panel_open || game.editor.editing || !c.real_hello_ok || !rl.IsWindowFocused() { c.human_jump_pending=false;clear(&c.blasts);return }
+  if rl.IsKeyDown(.A) || rl.IsKeyDown(.LEFT) { c.human_move-=1 }
+  if rl.IsKeyDown(.D) || rl.IsKeyDown(.RIGHT) { c.human_move+=1 }
+
+
+--- src/net_game_ui.odin::net_gui_leave
++++ src/net_game_ui.odin::net_gui_leave
+@@ -8,4 +8,5 @@
+   nc.client_disconnect(&ui.client.nc_client)
+   net_gui_flush(ui)
++  net_client_view_destroy(&ui.client_view)
+   net_client_destroy(&ui.client)
+   nc.socket_close(&ui.socket)
+
+
+--- src/net_game_ui.odin::net_gui_route_input
++++ src/net_game_ui.odin::net_gui_route_input
+@@ -1,7 +1,11 @@
+ net_gui_route_input :: proc(ui:^Net_Game_UI,game:^Sandbox,raw:Sandbox_Input,view:View,over_ui:bool) {
+  ui.client.human_move=0
++ captured:=ui.open || game.panel_open || game.editor.editing || !rl.IsWindowFocused()
++ if captured && !ui.input_captured { net_client_clear_intent(&ui.client) }
++ ui.input_captured=captured
+  if raw.menu_pressed {
+   if game.palette_open { game.palette_open=false;sandbox_clear_input(game) }
+   else { sandbox_set_panel(game,!game.panel_open) }
++  net_client_clear_intent(&ui.client)
+   return
+  }
+
+
+--- src/net_game_ui.odin::net_gui_step
++++ src/net_game_ui.odin::net_gui_step
+@@ -12,7 +12,9 @@
+  }
+  steps:=0
+- for now-ui.last_step>=NET_STEP_DT && steps<5 {
++ if now<ui.last_step || now-ui.last_step>NET_STEP_DT*4+1e-8 { ui.last_step=now;net_client_clear_intent(&ui.client);ui.client.has_clock=false }
++ for now-ui.last_step+1e-9>=NET_STEP_DT && steps<4 {
+   ui.last_step+=NET_STEP_DT
+-  net_client_step(&ui.client,now)
++  net_client_step(&ui.client,ui.last_step)
++  net_client_view_step(&ui.client,&ui.client_view)
+   // The same canonical-hash feedback used by the headless smoke client.
+   for applied in ui.client.applied {
+@@ -28,5 +30,4 @@
+   steps+=1
+  }
+- if steps==5 && now-ui.last_step>=NET_STEP_DT { ui.last_step=now }
+  net_gui_flush(ui)
+  c:=&ui.client
+
+
+--- src/net_real.odin::net_real_cli_bot
++++ src/net_real.odin::net_real_cli_bot
+@@ -7,4 +7,8 @@
+  upload_path:=""
+  request_reset:=false
++ prediction_off:=false
++ spectator:=false
++ observe_rounds:=u64(0)
++ stop_file:=""
+  i:=1
+  for i<len(args) {
+@@ -13,4 +17,6 @@
+    if i+1>=len(args) { return false }
+    n,parsed:=strconv.parse_int(args[i+1]);if !parsed || n<1 { return false };seconds=f64(n);i+=2
++  case "--stop-file":
++   if i+1>=len(args)||len(args[i+1])==0 {return false};stop_file=args[i+1];i+=2
+   case "--host-token":
+    if i+1>=len(args) || len(args[i+1])>NET_APP_MAX_TOKEN { return false }
+@@ -18,4 +24,9 @@
+   case "--bad-version":
+    protocol_version=GAME_PROTOCOL_VERSION+1;i+=1
++  case "--prediction-off": prediction_off=true;i+=1
++  case "--spectator": spectator=true;i+=1
++  case "--observe-rounds":
++   if i+1>=len(args) {return false}
++   n,parsed:=strconv.parse_int(args[i+1]);if !parsed || n<1 || n>10 {return false};observe_rounds=u64(n);i+=2
+   case "--upload-layout":
+    if i+1>=len(args) { return false };upload_path=args[i+1];i+=2
+@@ -25,4 +36,4 @@
+   }
+  }
+- return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset)
++ return net_real_run_bot(target,seconds,hidden_window,host_token,protocol_version,upload_path,request_reset,prediction_off,spectator,observe_rounds,stop_file)
+ }
+
+--- src/net_real.odin::net_real_run_bot
++++ src/net_real.odin::net_real_run_bot
+@@ -1,3 +1,3 @@
+-net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false) -> bool {
++net_real_run_bot :: proc(target: nc.Address,seconds: f64 = 60,hidden_window: bool = false,host_token: string = "",protocol_version: u32 = GAME_PROTOCOL_VERSION,upload_path: string="",request_reset: bool=false,prediction_off:bool=false,spectator:bool=false,observe_rounds:u64=0,stop_file:string="") -> bool {
+  upload_data: []u8
+  defer { if upload_data!=nil { delete(upload_data) } }
+@@ -24,18 +24,37 @@
+  defer nc.socket_close(&sock)
+  client:Net_Client
+- net_client_init(&client,nc.random_salt(),0,42,true)
+- defer net_client_destroy(&client)
++ client_view:Net_Client_View
++ defer net_client_view_destroy(&client_view)
++ net_client_init(&client,nc.random_salt(),0)
++ bot:Bot; bot_init(&bot,42,true)
++ defer {
++  nc.client_disconnect(&client.nc_client)
++  outgoing:=nc.client_take_outgoing(&client.nc_client)
++  for packet in outgoing { _=nc.socket_send(&sock,target,packet.data) }
++  nc.outgoing_free(&outgoing)
++  net_client_destroy(&client)
++ }
+  client.real_gate=true
++ client.join_spectator=spectator
++ client.prediction_enabled=!prediction_off
+  client.real_host_token=host_token
+  client.real_protocol=protocol_version
+  client.verify=true
+  start:=time.tick_now()
+- last_tick:=f64(0)
++ last_now:=f64(0)
++ accumulator:=f64(0)
+  next_report:=f64(10)
++ next_stop_check:=f64(0)
+  upload_sent,reset_sent:=false,false
++ first_round:=u64(0)
+  buf:[nc.MAX_PACKET+64]u8
+  for {
+   now:=time.duration_seconds(time.tick_since(start))
+-  if seconds>0 && now>=seconds { break }
++  elapsed:=now-last_now;last_now=now
++  if elapsed<0 || elapsed>0.25 || accumulator+elapsed>NET_STEP_DT*4+1e-8 {
++   accumulator=0;net_client_clear_intent(&client);client.has_clock=false
++  } else { accumulator+=elapsed }
++  if seconds>0 && now>=seconds {break}
++  if stop_file!=""&&now>=next_stop_check {next_stop_check=now+.1;if os.exists(stop_file){break}}
+   for {
+    packet,from,has:=nc.socket_receive(&sock,buf[:])
+@@ -43,6 +62,9 @@
+    if from==target { nc.client_receive(&client.nc_client,packet,now) }
+   }
+-  if now-last_tick>=NET_STEP_DT {
+-   net_client_step(&client,now)
++  steps:=0
++  for accumulator+1e-9>=NET_STEP_DT && steps<4 {
++   fixed_now:=now-accumulator+NET_STEP_DT
++   net_client_step(&client,fixed_now,net_bot_client_input,&bot)
++   if hidden_window { net_client_view_step(&client,&client_view) }
+    if client.real_hello_ok {
+     if len(upload_data)>0 && !upload_sent { upload_sent=net_host_client_send_layout(&client,upload_data) }
+@@ -63,9 +85,13 @@
+    }
+    clear(&client.applied)
+-   last_tick=now
++   accumulator-=NET_STEP_DT;steps+=1
+   }
+   packets:=nc.client_take_outgoing(&client.nc_client)
+   for p in packets { _=nc.socket_send(&sock,target,p.data) }
+   nc.outgoing_free(&packets)
++  if observe_rounds>0 && client.has_round && client.round_snapshot.mode==.Elimination {
++   if first_round==0 {first_round=client.round_snapshot.id}
++   if client.round_snapshot.state==.Finished && client.round_snapshot.id-first_round>=observe_rounds-1 {break}
++  }
+   if client.real_reason!="" || client.nc_client.state==.Failed || client.nc_client.state==.Timed_Out || client.nc_client.state==.Disconnected {
+    fmt.eprintf("bot disconnected: %v (%s) (%s)\n",client.nc_client.state,client.nc_client.reject_reason,client.real_reason)
+@@ -75,5 +101,5 @@
+    rl.BeginDrawing()
+    rl.ClearBackground({19,28,42,255})
+-   net_client_draw(&client,sandbox_view(1280,800))
++   net_client_draw(&client,&client_view,sandbox_view(1280,800))
+    rl.EndDrawing()
+   }
+
+
+--- src/state.odin::read_state
++++ src/state.odin::read_state
+@@ -1,4 +1,4 @@
+ read_state :: proc(s: ^Scene) -> Snapshot {
+-	out := Snapshot{version=2,next_id=s.next_id,revision=s.revision,minimum_width=s.minimum_width}
++	out := Snapshot{version=3,provenance_version=1,next_id=s.next_id,revision=s.revision,minimum_width=s.minimum_width,level_json=s.level_json,source_parts=s.source_parts}
+ 	for m in s.materials {
+ 		wire := Wire_Material{impact_scale=m.impact_scale,name=m.name,subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate}
+
+
+--- src/render_cache.odin::render_cache_prepass
++++ src/render_cache.odin::render_cache_prepass
+@@ -1,4 +1,4 @@
+ render_cache_prepass :: proc(s: ^Scene,caches: ^Render_Cache_State) {
+- when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_cache_ms+=frame_ms(frame_start) } } }
++ when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if shared.frame_measuring { shared.frame_cache_ms+=frame_ms(frame_start) } } }
+ 
+ 	if !caches.initialized || caches.structure_revision!=s.structure_revision {
+
+
+--- src/render_cache.odin::render_static
++++ src/render_cache.odin::render_static
+@@ -1,3 +1,4 @@
+ render_static :: proc(s: ^Scene,statics: ^Static_Index,sub: Subdivision) -> bool {
++ if s.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy {return sub.provenance.pinned}
+  if statics!=nil { static_index_refresh(s,statics); return statics.anchored[sub.owner] }
+  return piece_anchored(s,sub.owner,s.anchor_y)
+
+
+--- src/render_cache.odin::render_together_neighbours
++++ src/render_cache.odin::render_together_neighbours
+@@ -5,5 +5,5 @@
+  defer static_index_release(&local)
+  static_index_refresh(s,statics)
+- anchored:=statics.anchored[sub.owner]
++ anchored:=render_static(s,statics,sub)
+  candidates: [dynamic]u64
+  seen:=make(map[u64]bool); defer delete(seen)
+@@ -44,5 +44,5 @@
+   other:=s.subdivisions[s.sub_rows[id]]
+   together:=sub.owner==other.owner && s.materials[sub.material].flexibility==0
+-  together=together || anchored && statics.anchored[other.owner]
++  together=together || anchored && render_static(s,statics,other)
+   if c,ok:=s.connection_pairs[pair_key(sub.id,id)]; ok { together=together || (s.connections[s.conn_rows[c]].live && !s.connections[s.conn_rows[c]].mortar) }
+   if !together { continue }
+
+
+--- src/sandbox_view.odin::run_sandbox
++++ src/sandbox_view.odin::run_sandbox
+@@ -68,5 +68,5 @@
+ 		rl.ClearBackground({19,28,42,255})
+ 		if net_ui.active && !game.editor.editing {
+-			net_client_draw(&net_ui.client,view,game.outline_width)
++			net_client_draw(&net_ui.client,&net_ui.client_view,view,game.outline_width)
+ 			net_gui_draw_local_outline(&net_ui,view)
+ 			if !net_ui.open && !game.panel_open && !over_ui { net_gui_aim_draw(&net_ui,view,mouse) }
+
+
+--- src/layout_state.odin::sandbox_load_layout_data
++++ src/layout_state.odin::sandbox_load_layout_data
+@@ -3,4 +3,5 @@
+ 	if !ok { sandbox_notice(game,problem); return false }
+ 	sandbox_replace_layout(game,layout,seed)
++ if game.layout.level!=nil {sandbox_notice(game,"Unity-authored level: read-only in the Odin editor; export preserves v4 metadata")}
+ 	return true
+ }
+
+--- src/layout_state.odin::sandbox_replace_layout
++++ src/layout_state.odin::sandbox_replace_layout
+@@ -3,5 +3,5 @@
+  game.editor.palette=recipe_slot(.Wood); game.material_selected=0; game.material_name_edit=false; game.materials_open=false
+ 	game.world.settings.seed=seed
+-	game.editor.editing=true
++	game.editor.editing=layout.level==nil
+ 	game.panel_open=false; game.layouts_open=false
+  game.palette_open=false
+
+
+--- src/yard.odin::sandbox_reset
++++ src/yard.odin::sandbox_reset
+@@ -5,20 +5,6 @@
+ 	if radius,ok:=game.queued.players[0].radius.(f32); ok && game.world.players[0].active { game.world.players[0].blast_radius=radius }
+ 	game.queued.players[0].radius=nil; game.queued.bomb_radius=nil; game.queued.mode=nil
+-	revision:=game.world.scene.revision+1
+-	epoch:=game.world.scene.epoch+1
+-	scene_destroy(&game.world.scene)
+-	s:=&game.world.scene
+-	s^=new_scene(WOOD_MINIMUM_WIDTH)
+-	s.revision=revision
+-	s.epoch=epoch
+-	material:=add_material(s,editor_material(.Stone))
+-	seed:=game.world.settings.seed
+-	objects: [dynamic]Built_Object; defer delete(objects)
+- editor_build_objects(game,&objects)
+- ground:=sandbox_add_ground(s,material,seed)
+- build_mortar(s,objects[:],ground)
+- build_glue(s,game.layout.glue[:],objects[:],ground)
+-
+-	sandbox_start_physics(game)
++ world_rebuild_layout(&game.world,&game.layout,game.editor.editing)
++ clear(&game.bursts); clear(&game.previous_bombs)
+ 	game.selected=0
+ 	game.editor.dragging=false
+
+
+--- src/editor.odin::sandbox_toggle_editor
++++ src/editor.odin::sandbox_toggle_editor
+@@ -1,3 +1,4 @@
+ sandbox_toggle_editor :: proc(game: ^Sandbox) {
++ if game.layout.level!=nil {sandbox_notice(game,"Unity-authored level: edit proxies in Unity; this view is read-only");return}
+ 	if game.panel_open { return }
+ 	game.palette_open=false
+
+
+--- src/world_compat.odin::world_capture_compatible
++++ src/world_compat.odin::world_capture_compatible
+@@ -2,17 +2,29 @@
+  if string(old)==string(fresh) { return true }
+  old_scene,ok_old:=world_scene_section(old); new_scene,ok_new:=world_scene_section(fresh)
+- if !ok_old || !ok_new || old_scene!=new_scene { return false }
+- old_wire:=World_Snapshot_V3{}; new_wire:=World_Snapshot{}
++ if !ok_old || !ok_new {
++  a,b:Snapshot
++  defer destroy_decoded_snapshot(&a);defer destroy_decoded_snapshot(&b)
++  if json.unmarshal(old,&a)!=nil||json.unmarshal(fresh,&b)!=nil { return false }
++  return legacy_scene_migration_identical(&a,&b)
++ }
++ old_wire,new_wire:World_Snapshot
+  if json.unmarshal(old,&old_wire)!=nil { return false }
+- defer { destroy_decoded_snapshot(&old_wire.scene); delete(old_wire.bombs) }
++ defer { destroy_decoded_snapshot(&old_wire.scene); delete(old_wire.players);delete(old_wire.bombs) }
++ if old_wire.version==3 {
++  legacy:World_Snapshot_V3
++  if json.unmarshal(old,&legacy)!=nil { destroy_decoded_snapshot(&legacy.scene);delete(legacy.bombs);return false }
++  destroy_decoded_snapshot(&old_wire.scene);delete(old_wire.bombs)
++  old_wire.scene=legacy.scene;old_wire.bombs=legacy.bombs
++  append(&old_wire.players,Wire_Player_Entry{index=0,body=legacy.player.body,coyote=legacy.player.coyote,buffered_jump=legacy.player.buffered_jump,blast_radius=legacy.settings.blast_radius})
++ }
+  if json.unmarshal(fresh,&new_wire)!=nil { return false }
+  defer { destroy_decoded_snapshot(&new_wire.scene); delete(new_wire.players); delete(new_wire.bombs) }
+- if old_wire.version!=3 || new_wire.version!=4 || len(new_wire.players)==0 || new_wire.players[0].index!=0 { return false }
+- first:=new_wire.players[0]
+- a:=Compat_Rest{player=old_wire.player,bombs=old_wire.bombs,rain=old_wire.rain,settings=old_wire.settings,tick=old_wire.tick}
+- b:=Compat_Rest{player={body=first.body,coyote=first.coyote,buffered_jump=first.buffered_jump},bombs=new_wire.bombs,rain=new_wire.rain,settings=new_wire.settings,tick=new_wire.tick}
++ if old_scene!=new_scene&&!legacy_scene_migration_identical(&old_wire.scene,&new_wire.scene) { return false }
++ if (old_wire.version!=3&&old_wire.version!=4)||new_wire.version!=4 { return false }
++ Rest :: struct { players:[dynamic]Wire_Player_Entry,bombs:[dynamic]Wire_Bomb,rain:Bomb_Rain,settings:Sandbox_Settings,tick:u64 }
++ a:=Rest{old_wire.players,old_wire.bombs,old_wire.rain,old_wire.settings,old_wire.tick}
++ b:=Rest{new_wire.players,new_wire.bombs,new_wire.rain,new_wire.settings,new_wire.tick}
+  // The optional bomb id is a later addition to the format; it is not part of the comparison.
+- for &bomb in a.bombs { bomb.id=nil }
+- for &bomb in b.bombs { bomb.id=nil }
++ if old_wire.version==3 { for &bomb in a.bombs { bomb.id=nil };for &bomb in b.bombs { bomb.id=nil } }
+  bytes_a,ok_a:=exact_json_encode(a,false); defer delete(bytes_a)
+  bytes_b,ok_b:=exact_json_encode(b,false); defer delete(bytes_b)
+
