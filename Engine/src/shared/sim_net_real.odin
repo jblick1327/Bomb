@@ -76,9 +76,9 @@ net_real_create_server :: proc(layout_path: string) -> (ns: Net_Server,ok: bool)
  return ns,true
 }
 
-net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "",metrics_path:string="") -> bool {
+net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token: string = "",metrics_path:string="",bind_ip:[4]u8={127,0,0,1}) -> bool {
  sock:nc.Socket
- if !nc.socket_open(&sock,port,{127,0,0,1}) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
+ if !nc.socket_open(&sock,port,bind_ip) { fmt.eprintf("Could not bind UDP port %d\n",port);return false }
  defer nc.socket_close(&sock)
  physics_baseline:=b2.GetByteCount()
  ns,ok:=net_real_create_server(layout)
@@ -87,7 +87,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
  ns.real_host_token=host_token
  destroyed:=false
  defer {if !destroyed {net_server_destroy(&ns)}}
- fmt.printf("BOM staging server listening on 127.0.0.1:%d only; tick=60Hz\n",port)
+ fmt.printf("BOM staging server listening on %d.%d.%d.%d:%d; tick=60Hz\n",bind_ip[0],bind_ip[1],bind_ip[2],bind_ip[3],port)
  start:=time.tick_now()
  last:=f64(0)
  accumulator:=f64(0)
@@ -166,9 +166,12 @@ net_real_cli_server :: proc(args: []string) -> bool {
  seconds:=f64(0)
  host_token:=""
  metrics_path:=""
+ bind_ip:=[4]u8{127,0,0,1}
  i:=0
  for i<len(args) {
   switch args[i] {
+  case "--bind":
+   if i+1>=len(args){return false};ip,ok:=net_real_cli_bind(args[i+1]);if !ok {fmt.eprintln("--bind requires a numeric IPv4 address without a port");return false};bind_ip=ip;i+=2
   case "--port":
    if i+1>=len(args) { fmt.eprintln("--port requires 1..65535");return false }
    p,ok:=net_real_cli_port(args[i+1]);if !ok { fmt.eprintln("Invalid port");return false };port=p;i+=2
@@ -187,7 +190,8 @@ net_real_cli_server :: proc(args: []string) -> bool {
   case: fmt.eprintln("Unknown --server option:",args[i]);return false
   }
  }
- return net_real_run_server(port,layout,seconds,host_token,metrics_path)
+ if bind_ip[0]!=127&&len(host_token)<16 {fmt.eprintln("Non-loopback bind requires --host-token");return false}
+ return net_real_run_server(port,layout,seconds,host_token,metrics_path,bind_ip)
 }
 
 Net_Real_Metrics :: struct {
@@ -197,3 +201,9 @@ Net_Real_Metrics :: struct {
 }
 
 Net_Real_Resources :: struct {box2d_baseline,box2d_after:i64,no_lost_world_bytes:bool}
+
+net_real_cli_bind :: proc(text:string)->([4]u8,bool) {
+ for byte in text {if byte==':' {return {},false}}
+ address,ok:=net_real_parse_target(text)
+ return nc.address_ip(address),ok
+}

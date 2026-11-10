@@ -19,3 +19,13 @@ net_entity_and_delay_diagnostic_samples_are_bounded :: proc(test:^t.T) {
  last:=u64(NET_SERVER_TIMING_CAPACITY*3+6)
  t.expect(test,staleness[last%NET_SERVER_TIMING_CAPACITY]==u16(last%65536)&&delays[last%NET_SERVER_TIMING_CAPACITY]==u8(last%251))
 }
+
+@(test)
+explicit_server_bind_keeps_numeric_ipv4_and_requires_nonlocal_host_authorization :: proc(test:^t.T) {
+ valid:=[3]string{"127.0.0.2","0.0.0.0","192.168.1.4"}
+ for text in valid {_,ok:=net_real_cli_bind(text);t.expect(test,ok)}
+ invalid:=[6]string{"","localhost","127.0.0.1:47380","256.0.0.1","127.0.0","127.0.0.1/24"}
+ for text in invalid {_,ok:=net_real_cli_bind(text);t.expect(test,!ok)}
+ ip,ok:=net_real_cli_bind("127.0.0.2");t.expect(test,ok&&ip==[4]u8{127,0,0,2})
+ args:=[4]string{"--bind","0.0.0.0","--seconds","1"};t.expect(test,!net_real_cli_server(args[:]))
+}
