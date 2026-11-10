@@ -1,10 +1,10 @@
 {
 	"status": "passed",
 	"level_id": "bomb-yard-network-v1",
-	"gameplay_manifest_hash": "412ab48308d93db91db83875ad01e30fa3733a3f211310501a202670d44905f4",
-	"gameplay_config_hash": "3d1c4f66bc71b5308c17a6b219d539efce82437258b41b3e6505d9705e78a853",
-	"catalog_hash": "b60c1a66a4febd4f1ea2352296254ebc8fcb1f0dfdc1f7480b9068e337491480",
-	"game_protocol": 6,
+	"gameplay_manifest_hash": "873303e4999f1c77b70b5b6a972a8083e33574931921e1ee9a62202f515382e1",
+	"gameplay_config_hash": "1402a12361198fe32c988bb883232159591eb9cdc8e8422e9ea08e33882e0c7f",
+	"catalog_hash": "115164c3e11a134eedadae2fad42ca5f509a7765ad139c186cc0adeb7dbc61c8",
+	"game_protocol": 7,
 	"canonical_version": 3,
 	"source_count": 16,
 	"part_count": 17,
@@ -98,7 +98,7 @@
 			}
 		},
 		"config": {
-			"version": 1,
+			"version": 2,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
@@ -112,7 +112,17 @@
 			},
 			"bomb_fuse": 1,
 			"bomb_drop_min": 1,
-			"bomb_drop_max": 2.5
+			"bomb_drop_max": 2.5,
+			"bomb_radius": 5,
+			"elimination_start_interval": {
+				"x": 1,
+				"y": 2.5
+			},
+			"elimination_end_interval": {
+				"x": 0.4,
+				"y": 1
+			},
+			"elimination_ramp_seconds": 90
 		}
 	},
 	"sources": [

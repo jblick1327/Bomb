@@ -48,10 +48,12 @@ public sealed class BomSession : IDisposable {
   }
  }
  public BomSession() {
+  BomNativeIdentity.Verify();
   VerifyLayouts();var info=new BomCreateInfo{struct_size=(uint)Marshal.SizeOf<BomCreateInfo>(),version=1};ulong value=0;
   Check(BomNative.bom_client_create(ref info,ref value));Handle=value;
  }
  public void Connect(uint ipv4,uint port,string token="") {
+  BomNativeIdentity.Verify();
   IntPtr text=IntPtr.Zero;
   try {
    byte[] bytes=System.Text.Encoding.UTF8.GetBytes(token);if(bytes.Length>0){text=Marshal.AllocHGlobal(bytes.Length);Marshal.Copy(bytes,0,text,bytes.Length);}
@@ -103,7 +105,7 @@ public sealed class BomSession : IDisposable {
    Copy(sample.poses,sample.pose_count,ref Poses);Copy(sample.events,sample.event_count,ref Events);
    CopyCatalog(sample);
    var round=new BomRoundInfo{struct_size=(uint)Marshal.SizeOf<BomRoundInfo>(),version=1};Check(BomNative.bom_client_get_round(Handle,sample.sample_sequence,ref round));
-   if(round.player_count>2||round.connection_count>4)throw new InvalidOperationException("Invalid native round roster");
+   if(round.player_count>4||round.connection_count>4)throw new InvalidOperationException("Invalid native round roster");
    Copy(round.players,round.player_count,ref RoundPlayers);Copy(round.connections,round.connection_count,ref RoundConnections);
    round.players=round.connections=IntPtr.Zero;Round=round;
    if(sample.error_length>65536)throw new InvalidOperationException("Invalid error length");

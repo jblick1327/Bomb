@@ -51,7 +51,9 @@ results={name:{(int(row[0]),int(row[3]),int(row[4])) for row in rows if row[1]==
 observer_results={(int(i),int(w),1 if draw=='true' else 0) for i,w,draw in re.findall(r'ROUND SNAPSHOT id=(\d+) epoch=\d+ state=Finished tick=\d+ winner=(\d+) draw=(true|false)',read(out/'observer-stdout.log'))}
 agreed=results['primary']==results['guest']==observer_results and len(observer_results)==2
 captures=all((out/(role+'-'+phase+'.png')).exists() for role in ['primary','guest'] for phase in ['menu','sandbox','disconnected'])
-capture_check=subprocess.run(['pwsh','-NoProfile','-File',str(pathlib.Path(__file__).with_name('Test-RenderCaptures.ps1')),'-Directory',str(out),'-ReportPath',str(out/'render-capture-check.json')],capture_output=True,text=True)
+shell=shutil.which('pwsh') or shutil.which('powershell')
+if shell is None:raise RuntimeError('PowerShell is required for the rendered capture check')
+capture_check=subprocess.run([shell,'-NoProfile','-File',str(pathlib.Path(__file__).with_name('Test-RenderCaptures.ps1')),'-Directory',str(out),'-ReportPath',str(out/'render-capture-check.json')],capture_output=True,text=True)
 captures=captures and capture_check.returncode==0
 passed=not failure and len(codes)==5 and all(code==0 for code in codes.values()) and agreed and captures and coverage['status']=='passed' and all('BOM ROUND UNITY PASS' in read(out/(role+'.log')) for role in ['primary','guest'])
 summary={'status':'passed' if passed else 'failed','scope':'two Unity menu/art clients, native host and independent Odin observer across two elimination rounds; additional M8 draw/event/visual acceptance gates remain separately required',
