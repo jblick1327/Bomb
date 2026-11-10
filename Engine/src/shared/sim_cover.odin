@@ -138,17 +138,17 @@ cover_shadow :: proc(sub:Subdivision,origin:Vec2) -> bool {
 
 @(thread_local) active_cover:^Cover
 
-cover_begin :: proc(s:^Scene,load_limit:f32=0) -> Cover {
+cover_begin :: proc(s:^Scene,load_limit:f32=0,include_zero_resistance_solids:bool=false) -> Cover {
  when BOM_PROFILE { started:=time.tick_now(); defer profile_add(17,started) }
  c:=Cover{unpartitionable=make(map[u64]bool),load_limit=load_limit,owners=make(map[u64]u64),shadow=make(map[u64]bool),grid=make(map[Cover_Key][]Cover_Group)}
  ids:[dynamic]u64; defer delete(ids)
  for sub in s.subdivisions { if sub.live { append(&ids,sub.id) } }; sort_ids(ids[:])
  total_points:=0
- for id in ids { sub:=s.subdivisions[s.sub_rows[id]]; if s.materials[sub.material].blast_resistance!=0 { total_points+=len(sub.outline.points) } }
+ for id in ids { sub:=s.subdivisions[s.sub_rows[id]]; if include_zero_resistance_solids||s.materials[sub.material].blast_resistance!=0 { total_points+=len(sub.outline.points) } }
  c.point_storage=make([]Vec2,total_points); c.edge_storage=make([]Cover_Edge,total_points); cursor:=0
  for id in ids {
   sub:=s.subdivisions[s.sub_rows[id]]; c.owners[id]=sub.owner
-  resistance:=s.materials[sub.material].blast_resistance; if resistance==0 { continue }
+  resistance:=s.materials[sub.material].blast_resistance; if resistance==0&&!include_zero_resistance_solids { continue }
   cell:=Cover_Cell{id=id,owner=sub.owner,resistance=resistance,points=c.point_storage[cursor:cursor+len(sub.outline.points)],edges=c.edge_storage[cursor:cursor+len(sub.outline.points)],lo={1e30,1e30},hi={-1e30,-1e30}}
   for p,i in sub.outline.points { q:=posed_point(sub,p); cell.points[i]=q; cell.lo={min(cell.lo.x,q.x),min(cell.lo.y,q.y)}; cell.hi={max(cell.hi.x,q.x),max(cell.hi.y,q.y)} }
   for a,i in cell.points { edge:=vsub(cell.points[(i+1)%len(cell.points)],a); cell.edges[i]={edge,vdot(edge,edge)} }
@@ -216,25 +216,42 @@ cover_distance :: proc(point,origin:Vec2,owner:u64,count_sample:bool=true) -> f3
  for index in c.candidates {
   cell:=c.cells[index]
   if cell.owner==owner || hi.x<cell.lo.x || lo.x>cell.hi.x || hi.y<cell.lo.y || lo.y>cell.hi.y { continue }
-  clear(&cuts); append(&cuts,0,1)
-  for a,i in cell.points {
-   b:=cell.points[(i+1)%len(cell.points)]; edge:=vsub(b,a); if len(cell.edges)>0 { edge=cell.edges[i].delta }; den:=vcross(delta,edge)
-   if den==0 { continue }
-   t:=vcross(vsub(a,origin),edge)/den; u:=vcross(vsub(a,origin),delta)/den
-   if t>0 && t<1 && u>=0 && u<=1 { append(&cuts,t) }
-  }
-  for i in 1..<len(cuts) { value:=cuts[i]; j:=i; for j>0 && cuts[j-1]>value { cuts[j]=cuts[j-1]; j-=1 }; cuts[j]=value }
-  fraction:f32
-  for i in 0..<len(cuts)-1 {
-   mid:=vadd(origin,vmul(delta,(cuts[i]+cuts[i+1])*0.5)); inside:=false; boundary:=false
-   for a,j in cell.points { b:=cell.points[(j+1)%len(cell.points)]; e:=vsub(b,a); squared:=vdot(e,e); if len(cell.edges)>0 { e=cell.edges[j].delta; squared=cell.edges[j].squared }; m:=vsub(mid,a); if vcross(e,m)==0 && vdot(m,e)>=0 && vdot(m,e)<=squared { boundary=true }; if (a.y>mid.y)!=(b.y>mid.y) && mid.x<(b.x-a.x)*(mid.y-a.y)/(b.y-a.y)+a.x { inside=!inside } }
-   if inside && !boundary { fraction+=cuts[i+1]-cuts[i] }
-  }
+  fraction:=cover_ray_fraction(cell,origin,point,&cuts)
   distance+=cell.resistance*ray_length*fraction
   if c.load_limit>0 && distance>=c.load_limit { break }
  }
  if cache_slot>=0 { c.cache[cache_slot]={transmute(u32)point.x,transmute(u32)point.y,transmute(u32)origin.x,transmute(u32)origin.y,owner,distance,true} }
  return distance
+}
+
+// Shared geometric chord calculation. Destruction continues to multiply the
+// exact same fraction by material resistance; player visibility only asks
+// whether a positive interior chord exists. Boundary-only contact is unchanged.
+cover_ray_fraction :: proc(cell:Cover_Cell,origin,point:Vec2,scratch:^[dynamic]f32) -> f32 {
+ cuts:=scratch^;defer {scratch^=cuts}
+ delta:=vsub(point,origin)
+ clear(&cuts); append(&cuts,0,1)
+ for a,i in cell.points {
+  b:=cell.points[(i+1)%len(cell.points)]; edge:=vsub(b,a); if len(cell.edges)>0 { edge=cell.edges[i].delta }; den:=vcross(delta,edge)
+  if den==0 { continue }
+  t:=vcross(vsub(a,origin),edge)/den; u:=vcross(vsub(a,origin),delta)/den
+  if t>0 && t<1 && u>=0 && u<=1 { append(&cuts,t) }
+ }
+ for i in 1..<len(cuts) { value:=cuts[i]; j:=i; for j>0 && cuts[j-1]>value { cuts[j]=cuts[j-1]; j-=1 }; cuts[j]=value }
+ fraction:f32
+ for i in 0..<len(cuts)-1 {
+  mid:=vadd(origin,vmul(delta,(cuts[i]+cuts[i+1])*0.5)); inside:=false; boundary:=false
+  for a,j in cell.points { b:=cell.points[(j+1)%len(cell.points)]; e:=vsub(b,a); squared:=vdot(e,e); if len(cell.edges)>0 { e=cell.edges[j].delta; squared=cell.edges[j].squared }; m:=vsub(mid,a); if vcross(e,m)==0 && vdot(m,e)>=0 && vdot(m,e)<=squared { boundary=true }; if (a.y>mid.y)!=(b.y>mid.y) && mid.x<(b.x-a.x)*(mid.y-a.y)/(b.y-a.y)+a.x { inside=!inside } }
+  if inside && !boundary { fraction+=cuts[i+1]-cuts[i] }
+ }
+ return fraction
+}
+
+cover_ray_occluded :: proc(c:^Cover,origin,point:Vec2) -> bool {
+ lo:=Vec2{min(point.x,origin.x),min(point.y,origin.y)};hi:=Vec2{max(point.x,origin.x),max(point.y,origin.y)}
+ cover_candidates(c,lo,hi,0,true,origin,point)
+ for index in c.candidates {if cover_ray_fraction(c.cells[index],origin,point,&c.cuts)>0 {return true}}
+ return false
 }
 
 cover_sample_distance :: proc(sub:Subdivision,point,origin:Vec2) -> f32 {

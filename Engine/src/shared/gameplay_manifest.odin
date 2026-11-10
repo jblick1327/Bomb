@@ -5,6 +5,9 @@ gameplay_config_write :: proc(w:^nc.Writer,c:Gameplay_Config) {
  nc.write_u32(w,c.version);nc.write_f32(w,c.gravity.x);nc.write_f32(w,c.gravity.y)
  nc.write_f32(w,c.player.speed);nc.write_f32(w,c.player.acceleration);nc.write_f32(w,c.player.jump_speed);nc.write_f32(w,c.player.coyote_time);nc.write_f32(w,c.player.jump_buffer)
  nc.write_f32(w,c.bomb_fuse);nc.write_f32(w,c.bomb_drop_min);nc.write_f32(w,c.bomb_drop_max)
+ nc.write_f32(w,c.bomb_radius)
+ nc.write_f32(w,c.elimination_start_interval.x);nc.write_f32(w,c.elimination_start_interval.y)
+ nc.write_f32(w,c.elimination_end_interval.x);nc.write_f32(w,c.elimination_end_interval.y);nc.write_f32(w,c.elimination_ramp_seconds)
  // Shape dimensions and movement/contact implementation remain native-versioned.
  nc.write_f32(w,PLAYER_RADIUS);nc.write_f32(w,PLAYER_SEGMENT);nc.write_f32(w,BOMB_RADIUS)
 }

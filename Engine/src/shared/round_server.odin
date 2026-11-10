@@ -42,7 +42,7 @@ round_server_can_play :: proc(ns:^Net_Server,slot:int)->bool {
   c:=r.connections[slot]
   if !c.connected || c.explicit_spectator {return false}
   count:=0
-  for other,i in r.connections {if other.connected && !other.explicit_spectator {if i==slot {return count<2};count+=1}}
+  for other,i in r.connections {if other.connected && !other.explicit_spectator {if i==slot {return count<MAX_PLAYERS};count+=1}}
   return false
  }
  for p in r.players {if p.slot==slot && round_player_connected(r,p) {return r.state==.Countdown || p.alive}}
@@ -63,7 +63,7 @@ round_server_after_rebuild :: proc(ns:^Net_Server) {
   _=round_begin(&ns.rounds)
   ns.game.world.settings.blast_mode=.Falling_Bombs
   // Falling bomb physics, radius, fuse and deterministic stream stay native.
-  bomb_rain_reset(&ns.game.world.rain,ns.game.world.settings.seed,scene_gameplay_config(&ns.game.world.scene))
+  bomb_rain_reset(&ns.game.world.rain,ns.game.world.settings.seed,scene_gameplay_config(&ns.game.world.scene),true)
  }
  ns.game.world.elimination_playing=false
  round_server_sync_bodies(ns)
@@ -73,11 +73,11 @@ round_server_after_rebuild :: proc(ns:^Net_Server) {
 round_server_prepare :: proc(ns:^Net_Server) {
  if ns.rounds.mode!=.Elimination {return}
  old:=ns.rounds.state
+ old_players:=ns.rounds.players
  round_prepare_tick(&ns.rounds,ns.tick+1)
- if old!=ns.rounds.state {ns.round_dirty=true}
+ if old!=ns.rounds.state || old_players!=ns.rounds.players {ns.round_dirty=true}
  round_server_sync_bodies(ns)
  ns.game.world.elimination_playing=ns.rounds.state==.Playing
- ns.game.world.lethal_radius=ns.rounds.lethal_radius
  // A new schedule fences all held pre-countdown input. It is accepted by the
  // same native input machinery; Unity does not retarget old movement/jumps.
  if old!=.Playing && ns.rounds.state==.Playing {

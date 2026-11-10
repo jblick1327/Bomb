@@ -88,6 +88,7 @@ static class Program {
   Layouts();Lifetimes();Console.WriteLine("PASS ABI layouts/offsets, owner thread, BUSY sample, 100 lifecycle cycles, stale handles");
   if(args.Length==0)return;
   uint port=uint.Parse(args[0]);double seconds=args.Length>1?double.Parse(args[1]):20;double resetAfter=args.Length>2?double.Parse(args[2]):5;
+  if(Environment.GetEnvironmentVariable("BOM_TEST_ROUNDS_FOUR")=="1"){RoundProfile.RunFour(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_ROUNDS")=="1"){RoundProfile.Run(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_UNITY_ROUNDS")=="1"){RoundUnityHost.Run(port,seconds);return;}
   if(Environment.GetEnvironmentVariable("BOM_TEST_LEVEL_PROFILE")=="1"){LevelProfile.Run(port,seconds);return;}

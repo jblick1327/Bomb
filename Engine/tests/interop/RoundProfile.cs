@@ -17,7 +17,7 @@ static class RoundProfile {
   public void Poll(double now){if(!Connected)return;Ok(BomNative.bom_client_update(Handle,now),"round pump");var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Ok(BomNative.bom_client_acquire_sample(Handle,ref sample),"round acquire");try{
    Need(sample.error_length==0,"native error: "+(sample.error_length>0?Marshal.PtrToStringUTF8(sample.error_text,(int)sample.error_length):""));Baseline=(sample.flags&3)==3;
    var round=new BomRoundInfo{struct_size=(uint)Marshal.SizeOf<BomRoundInfo>(),version=1};Ok(BomNative.bom_client_get_round(Handle,sample.sample_sequence,ref round),"round snapshot");
-   if((round.flags&1)!=0){Need(round.player_count==2&&round.connection_count==4,"bounded round roster");Need(round.round_id>=LastRound&&round.tick>=LastTick,"monotonic round stream");LastRound=round.round_id;LastTick=round.tick;Players=Copy<BomRoundPlayer>(round.players,round.player_count);Connections=Copy<BomRoundConnection>(round.connections,round.connection_count);round.players=round.connections=IntPtr.Zero;Round=round;}
+   if((round.flags&1)!=0){Need((round.player_count==0||(round.player_count>=2&&round.player_count<=4))&&round.connection_count==4,"bounded round roster");Need(round.round_id>=LastRound&&round.tick>=LastTick,"monotonic round stream");LastRound=round.round_id;LastTick=round.tick;Players=Copy<BomRoundPlayer>(round.players,round.player_count);Connections=Copy<BomRoundConnection>(round.connections,round.connection_count);round.players=round.connections=IntPtr.Zero;Round=round;}
   }finally{Ok(BomNative.bom_client_release_sample(Handle,sample.sample_sequence),"round release");}Ok(BomNative.bom_client_ack_sample(Handle,sample.sample_sequence),"round ack");}
   static T[] Copy<T>(IntPtr data,uint count) where T:struct {var result=new T[count];for(int i=0;i<count;i++)result[i]=Marshal.PtrToStructure<T>(IntPtr.Add(data,i*Marshal.SizeOf<T>()));return result;}
   public void Command(uint op,uint mode=0)=>Ok(BomNative.bom_client_host_command(Handle,op,mode,0),"host intent "+op);
@@ -43,7 +43,9 @@ static class RoundProfile {
     if(!manualSent&&(owner.flags&5)==5&&owner.state_tick>=host.Round.start_tick&&now-at>1){Ok(BomNative.bom_client_enqueue_action(host.Handle,now,0,3),"elimination manual blast intent");manualSent=true;}
     ulong cursor=0;for(int n=0;n<10;n++){var result=new BomRequestResult{struct_size=(uint)Marshal.SizeOf<BomRequestResult>(),version=1};Ok(BomNative.bom_client_next_request_result(host.Handle,cursor,ref result),"round action result");if((result.flags&1)==0)break;cursor=result.request_id;if(result.kind==1&&result.status==2&&result.reason==6)manualRejected=true;}
     if(guest.CommandStatus()==3&&late.Baseline&&(late.Round.flags&4)!=0&&manualRejected&&now-at>3){
-     guest.Disconnect();phase=6;
+     // This diagnostic deliberately exercises two-player forfeits again on
+     // restart. The separately tested late join must not become player three.
+     late.Disconnect();guest.Disconnect();phase=6;
     }
    }
    else if(phase==6&&host.Round.state==3){Need(host.Round.draw==0&&host.Round.winner==host.Round.local_session_id&&host.Round.reason==2,"disconnect resolved as forfeit");firstTotal=host.Profile(host.Round.local_session_id).total_xp;Need(host.Profile(host.Round.local_session_id).wins==1,"server awarded first win once");guest.Connect(port);phase=7;}
@@ -55,5 +57,24 @@ static class RoundProfile {
    Thread.Sleep(2);
   }
   throw new TimeoutException($"round integration phase={phase} host={host.Round.round_id}/{host.Round.state} guest={guest.Round.round_id}/{guest.Round.state}");
+ }
+ public static void RunFour(uint port,double seconds){
+  using var host=new Client();using var second=new Client();using var third=new Client();using var fourth=new Client();
+  var clients=new[]{host,second,third,fourth};host.Token=Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"";
+  foreach(var client in clients)client.Connect(port);
+  double started=Now,finished=0;int phase=0;ulong winner=0,total=0;
+  while(Now-started<seconds){double now=Now;foreach(var client in clients)client.Poll(now);
+   if(phase==0&&clients.All(c=>c.Baseline&&c.Round.local_session_id!=0)&&now-started>1.5){host.Command(5,1);phase=1;}
+   else if(phase==1&&clients.All(c=>c.Round.mode==1&&c.Round.state==2)){
+    var expected=clients.Select(c=>c.Round.local_session_id).OrderBy(id=>id).ToArray();
+    foreach(var client in clients){Need(client.Players.Length==4,"all four validated ready players admitted");Need(client.Players.Select(p=>p.session_id).OrderBy(id=>id).SequenceEqual(expected),"four-player roster agrees across clients");}
+    winner=host.Round.local_session_id;second.Disconnect();third.Disconnect();fourth.Disconnect();phase=2;
+   }else if(phase==2&&host.Round.state==3){
+    Need(host.Round.winner==winner&&host.Round.draw==0&&host.Round.reason==2,"last of four alive wins by forfeit");
+    Need(host.Profile(winner).wins==1,"four-player winner awarded once");total=host.Profile(winner).total_xp;finished=now;phase=3;
+   }else if(phase==3&&now-finished>1){Need(host.Profile(winner).total_xp==total&&host.Profile(winner).wins==1,"four-player persistent result is idempotent");Console.WriteLine($"PASS real UDP four-player round roster=4 last_alive_wins=1 exactly_once_award=1 winner={winner}");return;}
+   Thread.Sleep(2);
+  }
+  throw new TimeoutException($"four-player integration phase={phase} round={host.Round.round_id}/{host.Round.state} roster={host.Players.Length}");
  }
 }

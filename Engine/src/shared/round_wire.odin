@@ -4,7 +4,7 @@ import "core:fmt"
 
 NET_APP_ROUND :: u8(0xCA)
 NET_APP_READY :: u8(0xCB)
-ROUND_RULES_VERSION :: u32(1)
+ROUND_RULES_VERSION :: u32(2)
 
 Round_Connection_View :: struct {
  session_id,generation,total_xp,wins:u64,
@@ -20,7 +20,7 @@ Round_Snapshot :: struct {
  draw:bool,
  reason:Round_End,
  lethal_radius:f32,
- players:[2]Round_Player,
+ players:[MAX_PLAYERS]Round_Player,
  connections:[MAX_PLAYERS]Round_Connection_View,
 }
 
@@ -29,7 +29,7 @@ round_snapshot :: proc(ns:^Net_Server)->Round_Snapshot {
  result:=Round_Snapshot{epoch=ns.game.world.scene.epoch,rules_version=ROUND_RULES_VERSION,
   tick=ns.tick,id=r.id,countdown_tick=r.countdown_tick,start_tick=r.start_tick,end_tick=r.end_tick,
   bombs_spawned=r.bombs_spawned,winner=r.winner,mode=r.mode,state=r.state,draw=r.draw,reason=r.reason,
-  lethal_radius=r.lethal_radius,players=r.players}
+  lethal_radius=ns.game.world.settings.blast_radius,players=r.players}
  for c,i in r.connections {
   v:=&result.connections[i]
   v.session_id=c.session_id;v.generation=c.generation;v.connected=c.connected;v.ready=c.ready

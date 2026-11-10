@@ -22,11 +22,16 @@ bomb_drop_delay :: proc(rain: ^Bomb_Rain) -> f32 {
 }
  bomb_drop_delay_config :: proc(rain:^Bomb_Rain,config:Gameplay_Config) -> f32 { return rand.float32_range(config.bomb_drop_min,config.bomb_drop_max,rand.default_random_generator(&rain.random)) }
 
-bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8,config:Gameplay_Config=DEFAULT_GAMEPLAY_CONFIG) {
+bomb_rain_reset :: proc(rain: ^Bomb_Rain,seed: u8,config:Gameplay_Config=DEFAULT_GAMEPLAY_CONFIG,elimination:bool=false) {
 	// Reset the independent stream after rebuilding the physics world.
 	// A separate stream leaves procedural destruction seeds independent of drops.
 	rain.random=rand.create(u64(seed)+0x626f6d62)
-	rain.until_drop=bomb_drop_delay_config(rain,config)
+ rain.until_drop=bomb_drop_delay_round(rain,config,elimination,0)
+}
+bomb_drop_delay_round :: proc(rain:^Bomb_Rain,config:Gameplay_Config,elimination:bool,tick:u64) -> f32 {
+ if !elimination {return bomb_drop_delay_config(rain,config)}
+ interval:=elimination_bomb_interval(config,tick)
+ return rand.float32_range(interval.x,interval.y,rand.default_random_generator(&rain.random))
 }
 
 bomb_rain_clear :: proc(w: ^World) {
@@ -76,7 +81,7 @@ bomb_rain_before_step :: proc(game: ^World,dt: f32) {
   if game.scene.level_policy.active { limits:=game.scene.level_policy.bombs;lo=limits.spawn_x.x;hi=limits.spawn_x.y;height=limits.spawn_height }
 		x:=rand.float32_range(lo,hi,rand.default_random_generator(&rain.random))
 		world_bomb_spawn(game,{x,height})
-  if game.scene.level_policy.active { rain.until_drop+=bomb_drop_delay_config(rain,game.scene.level_policy.config) }else{rain.until_drop+=bomb_drop_delay(rain)}
+  rain.until_drop+=bomb_drop_delay_round(rain,scene_gameplay_config(&game.scene),game.elimination_playing,game.tick)
 	}
 }
 

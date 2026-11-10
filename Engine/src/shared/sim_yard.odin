@@ -15,7 +15,6 @@ YARD_RIGHT :: f32(9)
 
 World :: struct {
  elimination_playing:bool,
- lethal_radius:f32,
  rebuild_error:string,
 	scene: Scene,
 	floor: b2.BodyId,
@@ -80,9 +79,15 @@ sandbox_valid_aim :: proc(s: ^Scene,point: Vec2) -> bool {
 
 world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
  if w.elimination_playing {
+  physics_read_motion(&w.scene)
+  // This snapshot is read before this explosion can fracture any cover. It is
+  // separate from destruction's resistance snapshot, so zero-resistance solids
+  // still block players without altering material attenuation or damage.
+  cover:=cover_begin(&w.scene,radius,true)
   for player,i in w.players {
-   if player.active && round_capsule_hit(from_b2(b2.Body_GetPosition(player.body)),point,w.lethal_radius) {events.deaths[i]=.Blast}
+   if player.active && blast_capsule_visible(&cover,from_b2(b2.Body_GetPosition(player.body)),Blast{point,radius}) {events.deaths[i]=.Blast}
   }
+  cover_destroy(&cover)
  }
  start:=time.tick_now()
  regions:=len(w.scene.subdivisions)
@@ -154,12 +159,19 @@ world_refresh_poses :: proc(w: ^World) {
 }
 
 world_remove_out_of_bounds :: proc(game: ^World) -> bool {
-	f:=Failures{}
+ f:=Failures{administrative=true}
 	defer delete(f.discard_subdivisions)
 	for sub in game.scene.subdivisions {
+  if !sub.live {continue}
+  if sub.provenance.motion==.Fixed||sub.provenance.motion==.Anchored {continue}
+  if sub.provenance.motion==.Legacy {
+   if game.scene.physics.active&&sub.body!=b2.nullBodyId {
+    if b2.Body_GetType(sub.body)!=.dynamicBody {continue}
+   }else if piece_anchored(&game.scene,sub.owner,game.scene.anchor_y) {continue}
+  }
 		p:=sub.pose.position
   outside:=p.y<YARD_FLOOR_BOTTOM-2;if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.fragment_cull,p) }
-		if sub.live && outside { append(&f.discard_subdivisions,sub.id) }
+  if outside { append(&f.discard_subdivisions,sub.id) }
 	}
 	if len(f.discard_subdivisions)==0 { return false }
 	apply_failures(&game.scene,f)

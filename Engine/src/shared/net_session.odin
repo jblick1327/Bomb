@@ -5,9 +5,9 @@ import nc "../netcode"
 import fmt "core:fmt"
 import strings "core:strings"
 
-GAME_PROTOCOL_VERSION :: u32(6)
+GAME_PROTOCOL_VERSION :: u32(7)
 
-GAME_BUILD_ID :: "BOM-rounds-2026-11-09"
+GAME_BUILD_ID :: "BOM-owner-rules-2026-11-10"
 
 NET_APP_HELLO :: u8(0xC2)
 

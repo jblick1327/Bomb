@@ -10,8 +10,11 @@ bom_client_get_round :: proc "c" (handle,sample_sequence:u64,info:^BomRoundInfo)
  if info==nil || info.struct_size<u32(size_of(BomRoundInfo)) || info.version!=1 {return BAD_ARGUMENT}
  if !s.client.has_round {info^=BomRoundInfo{struct_size=u32(size_of(BomRoundInfo)),version=1};return OK}
  r:=s.client.round_snapshot
- for p,i in r.players {
-  s.round_players[i]={session_id=p.session_id,generation=p.generation,slot=u32(p.slot),alive=p.alive?1:0,death=u32(p.death),death_tick=p.death_tick,alive_ticks=p.alive_ticks,bombs_faced=p.bombs_faced,xp_gained=p.xp_gained}
+ player_count:=0
+ for p in r.players {
+  if p.session_id==0 {continue}
+  s.round_players[player_count]={session_id=p.session_id,generation=p.generation,slot=u32(p.slot),alive=p.alive?1:0,death=u32(p.death),death_tick=p.death_tick,alive_ticks=p.alive_ticks,bombs_faced=p.bombs_faced,xp_gained=p.xp_gained}
+  player_count+=1
  }
  for c,i in r.connections {
   flags:=u32(0);if c.connected {flags|=1};if c.ready {flags|=2};if c.spectator {flags|=4};if c.restart_allowed {flags|=8}
@@ -22,7 +25,7 @@ bom_client_get_round :: proc "c" (handle,sample_sequence:u64,info:^BomRoundInfo)
   c:=r.connections[index];local=c.session_id
   if c.restart_allowed {flags|=2};if c.spectator {flags|=4}
  }
- info^=BomRoundInfo{struct_size=u32(size_of(BomRoundInfo)),version=1,epoch=r.epoch,rules_version=r.rules_version,tick=r.tick,round_id=r.id,countdown_tick=r.countdown_tick,start_tick=r.start_tick,end_tick=r.end_tick,bombs_spawned=r.bombs_spawned,winner=r.winner,local_session_id=local,mode=u32(r.mode),state=u32(r.state),draw=r.draw?1:0,reason=u32(r.reason),lethal_radius=r.lethal_radius,flags=flags,players=raw_data(s.round_players[:]),player_count=2,connections=raw_data(s.round_connections[:]),connection_count=core.MAX_PLAYERS}
+ info^=BomRoundInfo{struct_size=u32(size_of(BomRoundInfo)),version=1,epoch=r.epoch,rules_version=r.rules_version,tick=r.tick,round_id=r.id,countdown_tick=r.countdown_tick,start_tick=r.start_tick,end_tick=r.end_tick,bombs_spawned=r.bombs_spawned,winner=r.winner,local_session_id=local,mode=u32(r.mode),state=u32(r.state),draw=r.draw?1:0,reason=u32(r.reason),lethal_radius=r.lethal_radius,flags=flags,players=raw_data(s.round_players[:]),player_count=u32(player_count),connections=raw_data(s.round_connections[:]),connection_count=core.MAX_PLAYERS}
  return OK
 }
 

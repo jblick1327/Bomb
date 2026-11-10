@@ -56,6 +56,10 @@ net_rebuild_begin :: proc(ns:^Net_Server) -> string {
  job.world.settings=ns.game.world.settings
  job.world.scene.epoch=ns.game.world.scene.epoch
  job.world.scene.revision=ns.game.world.scene.revision
+ // Preserve the config identity while choosing whether a rebuilt level needs
+ // its initial radius. A same-level reset must retain authorized host tuning.
+ job.world.scene.level_policy=ns.game.world.scene.level_policy
+ job.world.scene.config_hash=ns.game.world.scene.config_hash
  job.started=time.tick_now();job.test_gate=ns.rebuild_test_gate
  job.worker=thread.create(net_rebuild_worker,.Low)
  if job.worker==nil {free(job);return "cannot start world rebuild"}

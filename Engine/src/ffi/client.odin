@@ -27,7 +27,7 @@ Action :: struct { timestamp: f64, x,y: f32 }
 Client_Slot :: struct {
  round_credentials:core.Round_Credentials,
  join_spectator:bool,
- round_players:[2]BomRoundPlayer,
+ round_players:[core.MAX_PLAYERS]BomRoundPlayer,
  round_connections:[4]BomRoundConnection,
  active,live,acquired,has_time,has_geometry: bool,
  generation: u32,

@@ -7,7 +7,6 @@ Round_State :: enum u8 { Waiting, Countdown, Playing, Finished }
 Round_Death :: enum u8 { None, Blast, Bounds, Disconnect }
 Round_End :: enum u8 { None, Elimination, Forfeit, Mixed }
 ROUND_COUNTDOWN_TICKS :: u64(180)
-ROUND_LETHAL_RADIUS :: f32(2.2)
 ROUND_SESSION_CAPACITY :: 128
 
 Round_Progress :: struct { level, xp_in_level, xp_to_next:u64 }
@@ -32,9 +31,9 @@ Round_Controller :: struct {
  winner:u64, // Zero means no winner, including a draw. Session IDs are nonzero.
  draw:bool,
  reason:Round_End,
- lethal_radius:f32,
  connections:[MAX_PLAYERS]Round_Connection,
- players:[2]Round_Player,
+ countdown_candidates:[MAX_PLAYERS]Round_Connection,
+ players:[MAX_PLAYERS]Round_Player,
  sessions:[ROUND_SESSION_CAPACITY]Round_Session,
  session_count:int,
 }
@@ -84,10 +83,9 @@ round_ready :: proc(r:^Round_Controller,slot:int,generation:u64,ready:bool) {
 // Called only after a successful world rebuild, never directly on restart intent.
 round_begin :: proc(r:^Round_Controller)->bool {
  if r.id==max(u64) {return false}
- r.id+=1;r.state=.Waiting;r.players={};r.countdown_tick=0;r.start_tick=0;r.end_tick=0
+ r.id+=1;r.state=.Waiting;r.players={};r.countdown_candidates={};r.countdown_tick=0;r.start_tick=0;r.end_tick=0
  r.winner=0;r.draw=false;r.reason=.None;r.bombs_spawned=0
  for &c in r.connections {c.ready=false}
- if r.lethal_radius==0 {r.lethal_radius=ROUND_LETHAL_RADIUS}
  return true
 }
 
@@ -103,21 +101,32 @@ round_prepare_tick :: proc(r:^Round_Controller,tick:u64) {
  if r.mode!=.Elimination || r.state==.Finished || r.state==.Playing {return}
  if r.state==.Countdown {
   valid:=true
-  for p in r.players {if !round_player_connected(r,p) || !r.connections[p.slot].ready {valid=false}}
-  if !valid {r.state=.Waiting;r.players={};r.countdown_tick=0;r.start_tick=0;return}
-  if tick>=r.start_tick {r.state=.Playing;for &p in r.players {p.alive=true}}
+  for p in r.players {if p.session_id!=0&&(!round_player_connected(r,p) || !r.connections[p.slot].ready) {valid=false}}
+  if !valid {r.state=.Waiting;r.players={};r.countdown_candidates={};r.countdown_tick=0;r.start_tick=0;return}
+  // Baselines for clients already present at countdown selection can arrive on
+  // adjacent ticks. Admit them before Playing without extending the countdown.
+  // A new connection or resumed generation after selection remains a spectator.
+  for candidate,slot in r.countdown_candidates {
+   current:=r.connections[slot]
+   if !candidate.connected || candidate.explicit_spectator || !current.connected || !current.ready || current.explicit_spectator || current.session_id!=candidate.session_id || current.generation!=candidate.generation {continue}
+   found:=false
+   for p in r.players {if p.session_id==candidate.session_id {found=true;break}}
+   if found {continue}
+   for &p in r.players {if p.session_id==0 {p={session_id=current.session_id,generation=current.generation,slot=slot};break}}
+  }
+  if tick>=r.start_tick {r.state=.Playing;for &p in r.players {p.alive=p.session_id!=0}}
   return
  }
- candidates:[2]Round_Player;count:=0
+ candidates:[MAX_PLAYERS]Round_Player;count:=0
  for c,i in r.connections {
-  if c.connected && !c.explicit_spectator && count<2 {
+  if c.connected && c.ready && !c.explicit_spectator && count<MAX_PLAYERS {
    candidates[count]={session_id=c.session_id,generation=c.generation,slot=i};count+=1
   }
  }
- // Reserve the same first two eligible connections used for Waiting bodies.
- // A faster-loading extra connection must not steal an occupied player slot.
- if count==2 && r.connections[candidates[0].slot].ready && r.connections[candidates[1].slot].ready {
-  r.players=candidates;r.state=.Countdown;r.countdown_tick=tick
+ // Capture connection generations once. Existing loading clients may finish
+ // validation during countdown; later joins spectate until the next round.
+ if count>=2 {
+  r.players=candidates;r.countdown_candidates=r.connections;r.state=.Countdown;r.countdown_tick=tick
   r.start_tick=round_add_sat(tick,ROUND_COUNTDOWN_TICKS)
  }
 }

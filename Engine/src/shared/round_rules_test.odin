@@ -117,13 +117,13 @@ round_sandbox_does_not_run_elimination_rules :: proc(test:^t.T) {
 }
 
 @(test)
-round_waiting_keeps_the_first_two_player_slots_while_one_baseline_is_loading :: proc(test:^t.T) {
+round_waiting_starts_with_validated_ready_players_without_waiting_for_a_loading_slot :: proc(test:^t.T) {
  r:=round_test_waiting();round_ready(&r,1,2,false)
  _=round_connect(&r,2,300,3);round_ready(&r,2,3,true)
- round_prepare_tick(&r,10);t.expect(test,r.state==.Waiting)
+ round_prepare_tick(&r,10);t.expect(test,r.state==.Countdown&&r.players[0].session_id==100&&r.players[1].session_id==300)
  round_ready(&r,1,2,true);round_prepare_tick(&r,11)
- t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==200)
- round_disconnect(&r,1);round_prepare_tick(&r,12);t.expect(test,r.state==.Waiting)
+ t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==300 && r.players[2].session_id==200 && r.start_tick==190,"already-connected loading player joins without replacing selected participants or extending countdown")
+ round_disconnect(&r,2);round_prepare_tick(&r,12);t.expect(test,r.state==.Waiting)
  round_prepare_tick(&r,13)
- t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==300)
+ t.expect(test,r.state==.Countdown && r.players[0].session_id==100 && r.players[1].session_id==200)
 }
