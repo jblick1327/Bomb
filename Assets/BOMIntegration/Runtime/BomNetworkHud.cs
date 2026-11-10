@@ -24,6 +24,7 @@ public sealed class BomNetworkHud:MonoBehaviour {
  ulong menuConnection;
  uint serverMode=uint.MaxValue;
  public void SetMenuVisible(bool visible){if(menu==null)return;menu.style.display=visible?DisplayStyle.Flex:DisplayStyle.None;if(!visible)(root.panel?.focusController?.focusedElement as VisualElement)?.Blur();}
+ void Start(){if(Client!=null){address.SetValueWithoutNotify(Client.Address);port.SetValueWithoutNotify(Client.Port.ToString());}}
  void OnEnable(){
   var doc=GetComponent<UIDocument>();root=doc.rootVisualElement;root.Clear();root.pickingMode=PickingMode.Ignore;
   if(ArenaHudTemplate!=null){hud=ArenaHudTemplate.CloneTree();if(ArenaHudStyle!=null)hud.styleSheets.Add(ArenaHudStyle);root.Add(hud);hud.pickingMode=PickingMode.Ignore;}

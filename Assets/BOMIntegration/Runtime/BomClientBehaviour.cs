@@ -15,6 +15,9 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  public int ExplosionVisuals {get;private set;}
  public int RunningPresentationFrames {get;private set;}
  public bool DrivenByRoundScenario {get;set;}
+ public double PresentationMilliseconds,GeometryMilliseconds;
+ public long PresentationAllocatedBytes,GeometryAllocatedBytes;
+ public bool PresentationHadTopology,PresentationHadActorChange,GeometryWorkThisFrame;
  public void VerifyRepeatedEventPresentation(){if(Array.IndexOf(Environment.GetCommandLineArgs(),"--bom-round-test")<0)throw new InvalidOperationException("Repeated-event check requires the executable test mode");int before=ExplosionVisuals;Accept(session);if(ExplosionVisuals!=before)throw new InvalidOperationException("A repeated native event spawned duplicate effects");}
  public uint Port=32000;
  public string Address="127.0.0.1";
@@ -24,6 +27,9 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  uint fallbackEpoch;ulong fallbackConnection;
  readonly HashSet<ulong> reportedRegistryMatches=new HashSet<ulong>();
  BomSession session;
+ Action<BomSession> acceptSample;
+ readonly HashSet<(uint,ulong)> seenActors=new HashSet<(uint,ulong)>();
+ readonly List<(uint,ulong)> goneActors=new List<(uint,ulong)>();
  public BomSession Session=>session;
  BomSourcePresentation sourcePresentation;public BomSourcePresentation SourcePresentation=>sourcePresentation;
  public bool AutomatedProfile {get;private set;}
@@ -35,6 +41,8 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  readonly Dictionary<(uint,ulong),Transform> bodies=new Dictionary<(uint,ulong),Transform>();
  readonly Dictionary<(uint,ulong),GameObject> actors=new Dictionary<(uint,ulong),GameObject>();
  readonly List<Mesh> meshes=new List<Mesh>();
+ readonly BomActorPool actorPool=new BomActorPool();
+ public int PooledActorCount=>actorPool.OwnedCount;public int IdleActorCount=>actorPool.IdleCount;
  readonly Dictionary<ulong,BomMeshGeometry> cellGeometry=new Dictionary<ulong,BomMeshGeometry>();
  sealed class TerrainBatch {
   public Transform Body;public uint Color;public ulong SourceId;public readonly List<Vector3> Vertices=new List<Vector3>(),Normals=new List<Vector3>();public readonly List<Vector2> UV=new List<Vector2>();public readonly List<int> Faces=new List<int>(),Sides=new List<int>();
@@ -62,7 +70,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  public void Reconnect(){if(session==null)return;if(ConnectionRequested)Disconnect();Connect();}
  void OnEnable() {
   try {
-   Application.runInBackground=true;start=BomSession.Now;inputOffset=start-InputState.currentTime;
+   Application.runInBackground=true;acceptSample=TimedAccept;start=BomSession.Now;inputOffset=start-InputState.currentTime;
    var args=Environment.GetCommandLineArgs();
    string Arg(string key,string value){int i=Array.IndexOf(args,key);return i>=0&&i+1<args.Length?args[i+1]:value;}
    Port=uint.Parse(Arg("--bom-port",Port.ToString()));smokeSeconds=double.Parse(Arg("--bom-smoke-seconds","0"),System.Globalization.CultureInfo.InvariantCulture);smoke=smokeSeconds>0;
@@ -70,10 +78,8 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    smokeStopFile=Arg("--bom-smoke-stop-file","");levelSmoke=Array.IndexOf(args,"--bom-level-smoke")>=0;reconnectSeconds=double.Parse(Arg("--bom-reconnect-seconds","8"),System.Globalization.CultureInfo.InvariantCulture);if(levelSmoke){QualitySettings.vSyncCount=0;Application.targetFrameRate=60;}
    AutomatedProfile=double.Parse(Arg("--bom-profile-seconds","0"),System.Globalization.CultureInfo.InvariantCulture)>0;
    Time.timeScale=float.Parse(Arg("--bom-time-scale",Time.timeScale.ToString(System.Globalization.CultureInfo.InvariantCulture)),System.Globalization.CultureInfo.InvariantCulture);
-   int legacy=0;foreach(var behavior in FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include,FindObjectsSortMode.None))if(behavior.enabled&&behavior.GetType().Assembly.GetName().Name=="Assembly-CSharp")legacy++;
-   foreach(var animator in FindObjectsByType<Animator>(FindObjectsInactive.Include,FindObjectsSortMode.None))if(animator.applyRootMotion)legacy++;
-   if(legacy!=0||FindObjectsByType<Rigidbody>(FindObjectsInactive.Include,FindObjectsSortMode.None).Length!=0||FindObjectsByType<CharacterController>(FindObjectsInactive.Include,FindObjectsSortMode.None).Length!=0)throw new InvalidOperationException("Legacy gameplay authority exists in the native network scene");
-   Debug.Log("BOM UNITY AUTHORITY PASS: no enabled legacy gameplay, local rigidbodies or character controllers; timeScale="+Time.timeScale);
+   BomAuthorityAudit.ValidateScene();BomAuthorityAudit.Validate(PlayerPrefab);BomAuthorityAudit.Validate(BombPrefab);BomAuthorityAudit.Validate(BlastPrefab);
+   Debug.Log("BOM UNITY AUTHORITY PASS: recursive scene and inactive prefab audit; runtime spawns use audited presentation prefabs; timeScale="+Time.timeScale);
    Prediction=Prediction&&Array.IndexOf(args,"--bom-prediction-off")<0;
    session=new BomSession();BomSession.Check(BomNative.bom_client_set_prediction(session.Handle,Prediction?1u:0u));
    if(Array.IndexOf(args,"--bom-no-visual-registry")>=0)VisualRegistry=null;
@@ -102,7 +108,7 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    smokeElapsed=elapsed;
    if(smoke&&smokeActive){float requested=(elapsed%4<2?1:-1)*(levelSmoke?.2f:1);BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,requested));smokeMove=requested;if(elapsed>3&&!blasted){BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle,now,levelSmoke?-12:-6.4f,levelSmoke?7.25f:2.3f));BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle,now));blasted=true;}}
    else if(!smoke&&!AutomatedProfile&&!DrivenByRoundScenario){BomSession.Check(BomNative.bom_client_set_held_input(session.Handle,now,Application.isFocused&&!InputBlocked?move.ReadValue<float>():0));}
-   session.Poll(now,Accept);sourcePresentation?.Pump(session);
+   session.Poll(now,acceptSample);GeometryWorkThisFrame=sourcePresentation!=null&&(sourcePresentation.Jobs.ActiveCount>0||sourcePresentation.Jobs.PendingCount>0||sourcePresentation.FallbackSources>0);long geometryStart=System.Diagnostics.Stopwatch.GetTimestamp(),geometryBytes=BomAllocationCounter.Read();sourcePresentation?.Pump(session);GeometryMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-geometryStart)*1000.0/System.Diagnostics.Stopwatch.Frequency;GeometryAllocatedBytes=BomAllocationCounter.Since(geometryBytes);
    if(fallbackEpoch!=session.Sample.epoch||fallbackConnection!=session.Sample.connection_generation){reportedVisualFallbacks.Clear();reportedRegistryMatches.Clear();fallbackEpoch=session.Sample.epoch;fallbackConnection=session.Sample.connection_generation;}
    foreach(var source in session.Sources.Values){
     if(VisualRegistry!=null&&VisualRegistry.TryFind(source.AssetKey,source.VisualHash,out var entry)){
@@ -120,17 +126,18 @@ public sealed class BomClientBehaviour : MonoBehaviour {
  void OnApplicationFocus(bool focused){if(!focused)SendInput(()=>BomSession.Check(BomNative.bom_client_clear_intent(session.Handle)));}
  void OnDisable(){move?.Dispose();jump?.Dispose();blast?.Dispose();move=jump=blast=null;Close();ClearScene();sourcePresentation?.Dispose();sourcePresentation=null;}
  void OnApplicationQuit(){Close();}
- void ClearScene(bool keepSource=false){if(!keepSource)sourcePresentation?.Clear();if(terrain!=null){terrain.SetActive(false);Destroy(terrain);terrain=null;}foreach(var actor in actors.Values)Destroy(actor);actors.Clear();bodies.Clear();foreach(var mesh in meshes)Destroy(mesh);meshes.Clear();revision=ulong.MaxValue;}
+ void ClearScene(bool keepSource=false){if(!keepSource)sourcePresentation?.Clear();if(terrain!=null){terrain.SetActive(false);Destroy(terrain);terrain=null;}foreach(var actor in actors.Values)if(!actorPool.Return(actor))Destroy(actor);actors.Clear();if(!keepSource)actorPool.Dispose();bodies.Clear();foreach(var mesh in meshes)Destroy(mesh);meshes.Clear();revision=ulong.MaxValue;}
  GameObject Visual(string name,Transform parent,Mesh mesh,uint rgba,List<Mesh> owned) {
   var obj=new GameObject(name);obj.transform.SetParent(parent,false);obj.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=obj.AddComponent<MeshRenderer>();renderer.sharedMaterials=new[]{Material,Material};
   Color color=new Color32((byte)rgba,(byte)(rgba>>8),(byte)(rgba>>16),255);var properties=new MaterialPropertyBlock();properties.SetColor("_BaseColor",color);renderer.SetPropertyBlock(properties,0);properties.SetColor("_BaseColor",new Color(color.r*0.7f,color.g*0.7f,color.b*0.7f,1));renderer.SetPropertyBlock(properties,1);owned.Add(mesh);if(Application.isPlaying)mesh.UploadMeshData(true);return obj;
  }
+ void TimedAccept(BomSession client){PresentationHadTopology=PresentationHadActorChange=false;long started=System.Diagnostics.Stopwatch.GetTimestamp(),bytes=BomAllocationCounter.Read();Accept(client);PresentationMilliseconds=(System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency;PresentationAllocatedBytes=BomAllocationCounter.Since(bytes);}
  void Accept(BomSession client) {
   var s=client.Sample;
   if((s.flags&6)!=6){if(terrain!=null&&(s.flags&2)==0)ClearScene();return;}
   if(s.to_revision!=s.revision||s.effective_tick>s.presentation_tick+0.00001)throw new InvalidOperationException("Native topology is not due at this presentation tick");
   if(generation!=s.connection_generation||epoch!=s.epoch||revision!=s.revision||((s.transaction_flags&1)!=0&&s.transaction_id!=acceptedTopology)) {
-   bool newSession=generation!=s.connection_generation||epoch!=s.epoch;
+   PresentationHadTopology=true;bool newSession=generation!=s.connection_generation||epoch!=s.epoch;
    if(newSession)cellGeometry.Clear();
    var activeCells=new HashSet<ulong>();
    sourcePresentation?.BeforeTopology();
@@ -173,14 +180,14 @@ public sealed class BomClientBehaviour : MonoBehaviour {
    terrain.SetActive(true);sourcePresentation?.SetFallbackBytes(cacheBytes*3);sourcePresentation?.SetTopology(client,bodies,nextFallbacks);generation=s.connection_generation;epoch=s.epoch;revision=s.revision;acceptedTopology=s.transaction_id;if(newSession)lastEvent=0;snapshots++;
    Debug.Log("BOM UNITY SNAPSHOT generation="+generation+" epoch="+epoch+" revision="+revision+" cells="+s.cell_count+" hash="+s.canonical_hash+" terrain_batches="+nextMeshes.Count+" geometry_cache_bytes="+cacheBytes);
   }
-  var seen=new HashSet<(uint,ulong)>();
+  var seen=seenActors;seen.Clear();
   for(int i=0;i<s.pose_count;i++) {
    var pose=client.Poses[i];var key=(pose.kind,pose.id);Transform body;
    if(pose.kind<2){if(!bodies.TryGetValue(key,out body))continue;}
    else {
-    seen.Add(key);if(!actors.TryGetValue(key,out var actor)){
+    seen.Add(key);if(!actors.TryGetValue(key,out var actor)){PresentationHadActorChange=true;
      var prefab=pose.kind==2?PlayerPrefab:BombPrefab;
-     if(prefab!=null){actor=Instantiate(prefab);actor.name=(pose.kind==2?"Player ":"Bomb ")+pose.id;var properties=new MaterialPropertyBlock();Color color=pose.kind==2?new Color32(66,174,231,255):new Color32(234,72,72,255);properties.SetColor("_BaseColor",color);actor.GetComponent<MeshRenderer>().SetPropertyBlock(properties,0);}
+     if(prefab!=null){actor=actorPool.Rent(prefab);actor.name=(pose.kind==2?"Player ":"Bomb ")+pose.id;var properties=new MaterialPropertyBlock();Color color=pose.kind==2?new Color32(66,174,231,255):new Color32(234,72,72,255);properties.SetColor("_BaseColor",color);actor.GetComponent<MeshRenderer>().SetPropertyBlock(properties,0);}
      else{actor=Visual((pose.kind==2?"Player ":"Bomb ")+pose.id,null,BomExtrusion.Build(BomUnityCoordinates.ActorOutline(pose.kind==2,shapeInfo)),pose.kind==2?0xffe7ae42u:0xff4848eau,meshes);actor.AddComponent<BomActorView>();}
      actors.Add(key,actor);
     }body=actor.transform;
@@ -192,10 +199,10 @@ public sealed class BomClientBehaviour : MonoBehaviour {
     lastLocal=new Vector2(pose.x,pose.y);hasLocal=true;metricGeneration=s.connection_generation;metricEpoch=s.epoch;
    }
   }
-  var gone=new List<(uint,ulong)>();foreach(var pair in actors)if(!seen.Contains(pair.Key))gone.Add(pair.Key);foreach(var key in gone){var filter=actors[key].GetComponent<MeshFilter>();if(meshes.Remove(filter.sharedMesh))Destroy(filter.sharedMesh);Destroy(actors[key]);actors.Remove(key);}
+  var gone=goneActors;gone.Clear();foreach(var pair in actors)if(!seen.Contains(pair.Key))gone.Add(pair.Key);foreach(var key in gone){PresentationHadActorChange=true;var filter=actors[key].GetComponent<MeshFilter>();if(meshes.Remove(filter.sharedMesh))Destroy(filter.sharedMesh);if(!actorPool.Return(actors[key]))Destroy(actors[key]);actors.Remove(key);}
   for(int i=0;i<s.event_count;i++){var e=client.Events[i];if(e.tick>s.presentation_tick+0.00001)throw new InvalidOperationException("Native event is ahead of presentation");if(e.id<=lastEvent)continue;lastEvent=e.id;events++;if(e.radius>0){
    float front=-.5f;foreach(var source in client.Sources.Values)front=Mathf.Min(front,source.Binding.depth_lo-.1f);var center=new Vector3(e.x,e.y,front);
-   if(BlastPrefab!=null){var effect=Instantiate(BlastPrefab,terrain.transform);effect.name="Native blast "+e.id;effect.GetComponent<BomLegacyBlastView>().Show(center,client.Round.mode==1?client.Round.lethal_radius:e.radius);}
+   if(BlastPrefab!=null){BomAuthorityAudit.Validate(BlastPrefab);var effect=Instantiate(BlastPrefab,terrain.transform);BomAuthorityAudit.Validate(effect);effect.name="Native blast "+e.id;effect.GetComponent<BomLegacyBlastView>().Show(center,client.Round.mode==1?client.Round.lethal_radius:e.radius);}
    else{var effect=new GameObject("Native explosion "+e.id);effect.transform.SetParent(terrain.transform,false);effect.AddComponent<BomExplosionView>().Show(Material,center,e.radius);}ExplosionVisuals++;
   }Debug.Log("BOM UNITY EVENT id="+e.id+" tick="+e.tick+" presentation="+s.presentation_tick);}
  }

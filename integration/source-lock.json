@@ -10,7 +10,7 @@
   "odin_compiler_required": "dev-2026-05 ea5175d (verified pinned compiler)",
   "game_protocol": 6,
   "game_build": "BOM-rounds-2026-11-09",
-  "native_dll_sha256": "a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25",
+  "native_dll_sha256": "4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7",
   "original_unity_changes": [
     "Deleted URP/PT_Nature_Free_URP_12.unitypackage.meta",
     "Deleted URP/PT_Nature_Free_URP_14.unitypackage.meta",
@@ -26,16 +26,22 @@
   "msvc": "14.51.36231 x64",
   "m2_first_step_binary_sha256": "886c9bc3a4f24529548bd0358d5701106795b1c7d9aa2e6c53f09a1db3ae84bf",
   "odin_import_commit": "f3ca3aa3d18a4fdc33c9b716f2f39e030a9eae89",
-  "odin_integration_commit": "57c05fd8f9de669e4c8410399c4667a4b75c45af",
+  "odin_integration_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
   "native_client": {
     "abi_major": 1,
     "abi_minor": 4,
-    "source_commit": "57c05fd8f9de669e4c8410399c4667a4b75c45af",
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
     "source_dirty": false,
-    "source_sha256": "c3915f5c1840827bee57312922e7a49cc8e5296e50401886068de320c43c7f70",
-    "build_tag": 880759347385468967,
-    "dll_sha256": "a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25",
+    "source_sha256": "88769f2b478f4e87ff98d0f0ffae60ffedca150cc99169a7c226374230976856",
+    "build_tag": 614576365290190056,
+    "dll_sha256": "4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7",
     "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "source_fingerprint_culture": "en-CA",
     "game_protocol": 6,
     "canonical_version": 3,
     "client": "shared native client, no managed codec",
@@ -66,18 +72,24 @@
   "development_native_client": {
     "abi_major": 1,
     "abi_minor": 4,
-    "source_commit": "57c05fd8f9de669e4c8410399c4667a4b75c45af",
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
     "source_dirty": false,
-    "source_sha256": "c3915f5c1840827bee57312922e7a49cc8e5296e50401886068de320c43c7f70",
-    "build_tag": 880759347385468967,
-    "dll_sha256": "a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25",
+    "source_sha256": "88769f2b478f4e87ff98d0f0ffae60ffedca150cc99169a7c226374230976856",
+    "build_tag": 614576365290190056,
+    "dll_sha256": "4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7",
     "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "source_fingerprint_culture": "en-CA",
     "game_protocol": 6,
     "canonical_version": 3,
     "client": "shared native client, no managed codec",
     "validation": "See integration/tasks.json and integration/evidence for executed gates."
   },
-  "native_artifact_note": "Current SDK, Network-Mono and M8-native use ABI 1.4/protocol 6/canonical 3. Frozen M5/M6/M7 artifacts remain separate.",
+  "native_artifact_note": "M0-M9 gates passed. Current M9 builds and exact identities are recorded; M5-M8 frozen artifacts remain preserved.",
   "m5_frozen_demo_client": {
     "abi_major": 1,
     "abi_minor": 2,
@@ -118,7 +130,7 @@
     "sha256": "a84c8b95f8be41c196250658ea46ec85c574c9ab1eafca6afd268042b83c4b1f",
     "purpose": "Overlay onto the preserved BOM archive to reproduce the exact raw source bytes used for the M7 build fingerprint, including line endings."
   },
-  "latest_completed_stage": "M8",
+  "latest_completed_stage": "M9",
   "unity_m7_checkpoint_commit": "2d09f41dd0dddc0eb47ba795489ea26eea19ae85",
   "m7_frozen_native_client": {
     "abi_major": 1,
@@ -144,5 +156,27 @@
     "files": 259,
     "sha256": "645ccf917016b8736ce5dd4510084f1ba4952b800005c4d90c478a900df919a4",
     "note": "Exact raw source bytes, including original line endings, for the raw-source fingerprint."
+  },
+  "m8_frozen_native_client": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "57c05fd8f9de669e4c8410399c4667a4b75c45af",
+    "source_dirty": false,
+    "source_sha256": "c3915f5c1840827bee57312922e7a49cc8e5296e50401886068de320c43c7f70",
+    "build_tag": 880759347385468967,
+    "dll_sha256": "a7cd642cad8c2de06aaf3f17e6dfdc04082c3911d4a1ffdac216c7625ae8de25",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "game_protocol": 6,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "unity_m8_checkpoint_commit": "18e039964ec077da017ee0621526ca649f363cdd",
+  "development_stage": "complete",
+  "m9_native_source": {
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
+    "overlay_sha256": "2ec920cac8a1b80e43fbf9229e8ff7fb8dd692ea15b350f96d02e8587d69b966",
+    "overlay_files": 297,
+    "patch_sha256": "4d4bfce12269e1f9953c739a9a6aefafb65ce2524304b9b267ccfdcc3a7ba15d"
   }
 }
