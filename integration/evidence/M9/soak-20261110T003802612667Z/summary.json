@@ -1,0 +1,972 @@
+{
+  "status": "passed_preflight",
+  "required_final_duration": false,
+  "requested_common_seconds": 120,
+  "issues": [],
+  "exit_codes": {
+    "primary": 0,
+    "guest": 0,
+    "observer": 0,
+    "host": 0,
+    "server": 0
+  },
+  "forced_stops": [],
+  "reset_requests": 15,
+  "accepted_same_tick_overlap_pairs": 47,
+  "server_resources": {
+    "box2d_baseline": 0,
+    "box2d_after": 0,
+    "no_lost_world_bytes": true
+  },
+  "hash_coverage": {
+    "status": "passed",
+    "expected_unique": 240,
+    "matching_unique": 238,
+    "missing_steady": 0,
+    "missing_tail": 2,
+    "missing_reports": [
+      {
+        "client": 3,
+        "connection": 1,
+        "epoch": 8,
+        "revision": 1070,
+        "sent_tick": 3078,
+        "classification": "disconnect-tail"
+      },
+      {
+        "client": 3,
+        "connection": 2,
+        "epoch": 17,
+        "revision": 1070,
+        "sent_tick": 8481,
+        "classification": "disconnect-tail"
+      }
+    ],
+    "bad_reports": [],
+    "unexpected_reports": [],
+    "per_client_connection": {
+      "0:1": {
+        "matched": 63,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:1": {
+        "matched": 63,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:1": {
+        "matched": 30,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:1": {
+        "matched": 12,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "3:2": {
+        "matched": 36,
+        "missing_steady": 0,
+        "missing_tail": 1
+      },
+      "2:2": {
+        "matched": 28,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:3": {
+        "matched": 6,
+        "missing_steady": 0,
+        "missing_tail": 0
+      }
+    },
+    "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+  },
+  "clients": {
+    "primary": {
+      "status": "measured",
+      "scene": "PerformanceReference",
+      "os": "Windows 11  (10.0.26200) 64bit",
+      "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+      "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "backend": "Mono",
+      "native_build_tag": "447553181265910306",
+      "cpu_threads": 16,
+      "system_ram_mb": 16087,
+      "gpu_ram_mb": 3962,
+      "width": 1920,
+      "height": 1080,
+      "frames": 7029,
+      "max_cells": 475,
+      "max_poses": 403,
+      "max_moving": 400,
+      "seconds": 120.0,
+      "warmup_seconds": 5.0,
+      "max_source_read_ms": 4.2929,
+      "max_mesh_upload_ms": 2.7038,
+      "max_measured_source_read_ms": 0.0,
+      "max_measured_upload_ms": 0.114,
+      "max_pooled_actors": 2,
+      "native_update": {
+        "samples": 6304,
+        "min": 0.007,
+        "p50": 2.2345,
+        "p95": 4.6515,
+        "p99": 7.2596,
+        "max": 16.8789,
+        "mean": 2.5293106598984765
+      },
+      "copy": {
+        "samples": 6304,
+        "min": 0.0033,
+        "p50": 0.006,
+        "p95": 0.0131,
+        "p99": 0.0256,
+        "max": 1.5676,
+        "mean": 0.00872298540609127
+      },
+      "presentation": {
+        "samples": 6304,
+        "min": 0.106,
+        "p50": 0.2137,
+        "p95": 0.3972,
+        "p99": 0.6793,
+        "max": 21.1879,
+        "mean": 0.28981824238578713
+      },
+      "geometry": {
+        "samples": 6304,
+        "min": 0.0077,
+        "p50": 0.0146,
+        "p95": 0.0341,
+        "p99": 0.0646,
+        "max": 2.4872,
+        "mean": 0.023407344543147197
+      },
+      "cpu_frame": {
+        "samples": 7029,
+        "min": 16.4066,
+        "p50": 16.6675,
+        "p95": 16.7462,
+        "p99": 17.0576,
+        "max": 69.9481,
+        "mean": 16.795798534642124
+      },
+      "gpu_frame": {
+        "samples": 6972,
+        "min": 0.954368,
+        "p50": 1.139712,
+        "p95": 2.415616,
+        "p99": 3.365888,
+        "max": 43.807744,
+        "mean": 1.319607444635682
+      },
+      "wall_frame": {
+        "samples": 7029,
+        "min": 3.630700000002207,
+        "p50": 16.67179999999746,
+        "p95": 18.700100000003772,
+        "p99": 23.06849999999372,
+        "max": 1032.5525999999882,
+        "mean": 17.075669398207392
+      },
+      "stable_pose_frames": 6264,
+      "stable_copy_max_gc": 0,
+      "stable_present_max_gc": 0,
+      "stable_geometry_max_gc": 0,
+      "stable_pose_zero_allocation": true,
+      "max_copy_gc": 1028,
+      "max_present_gc": 18918,
+      "max_geometry_gc": 2886,
+      "total_frame_gc": 201734288,
+      "thread_api_control_bytes": 0,
+      "profiler_control_events": 1,
+      "allocation_counter_valid": true,
+      "frame_allocation_counter_valid": true,
+      "allocation_counter_method": "GC.Alloc current-thread event count",
+      "allocation_counter_unit": "allocation events",
+      "stale_results": 4,
+      "stale_applications": 0,
+      "resources_drained": true,
+      "final_job_buffers": 0,
+      "final_cpu_cache": 0,
+      "final_gpu_cache": 0,
+      "final_active_jobs": 0,
+      "final_actor_views": 0,
+      "final_runtime_meshes": 0,
+      "observed_measured_span_seconds": 120.00815469999999
+    },
+    "guest": {
+      "status": "measured",
+      "scene": "PerformanceReference",
+      "os": "Windows 11  (10.0.26200) 64bit",
+      "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+      "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "backend": "IL2CPP",
+      "native_build_tag": "447553181265910306",
+      "cpu_threads": 16,
+      "system_ram_mb": 16087,
+      "gpu_ram_mb": 3962,
+      "width": 1920,
+      "height": 1080,
+      "frames": 6942,
+      "max_cells": 475,
+      "max_poses": 403,
+      "max_moving": 400,
+      "seconds": 120.0,
+      "warmup_seconds": 5.0,
+      "max_source_read_ms": 2.2221,
+      "max_mesh_upload_ms": 2.1883,
+      "max_measured_source_read_ms": 0.0,
+      "max_measured_upload_ms": 0.9656,
+      "max_pooled_actors": 2,
+      "native_update": {
+        "samples": 6270,
+        "min": 0.0056,
+        "p50": 0.1597,
+        "p95": 0.3464,
+        "p99": 0.7098,
+        "max": 2.505,
+        "mean": 0.18430677830941025
+      },
+      "copy": {
+        "samples": 6270,
+        "min": 0.0034,
+        "p50": 0.007,
+        "p95": 0.0124,
+        "p99": 0.0255,
+        "max": 1.4346,
+        "mean": 0.00976011164274361
+      },
+      "presentation": {
+        "samples": 6270,
+        "min": 0.1052,
+        "p50": 0.2258,
+        "p95": 0.4121,
+        "p99": 0.7478,
+        "max": 22.6025,
+        "mean": 0.3055736363636355
+      },
+      "geometry": {
+        "samples": 6270,
+        "min": 0.0095,
+        "p50": 0.0149,
+        "p95": 0.0318,
+        "p99": 0.2086,
+        "max": 3.6205,
+        "mean": 0.029246794258373232
+      },
+      "cpu_frame": {
+        "samples": 6942,
+        "min": 16.4567,
+        "p50": 16.6676,
+        "p95": 16.7423,
+        "p99": 17.1538,
+        "max": 79.3932,
+        "mean": 16.784384327283252
+      },
+      "gpu_frame": {
+        "samples": 6896,
+        "min": 0.83968,
+        "p50": 1.152,
+        "p95": 2.68288,
+        "p99": 5.035008,
+        "max": 43.062272,
+        "mean": 1.4126258190255225
+      },
+      "wall_frame": {
+        "samples": 6942,
+        "min": 2.0305998623371124,
+        "p50": 16.673099948093295,
+        "p95": 17.307099886238575,
+        "p99": 18.81200005300343,
+        "max": 1033.3094999659806,
+        "mean": 17.28898560930418
+      },
+      "stable_pose_frames": 6207,
+      "stable_copy_max_gc": 0,
+      "stable_present_max_gc": 0,
+      "stable_geometry_max_gc": 0,
+      "stable_pose_zero_allocation": true,
+      "max_copy_gc": 1124,
+      "max_present_gc": 29555,
+      "max_geometry_gc": 4619,
+      "total_frame_gc": 218705831,
+      "thread_api_control_bytes": 0,
+      "profiler_control_events": 1,
+      "allocation_counter_valid": true,
+      "frame_allocation_counter_valid": true,
+      "allocation_counter_method": "GC.Alloc current-thread event count",
+      "allocation_counter_unit": "allocation events",
+      "stale_results": 2,
+      "stale_applications": 0,
+      "resources_drained": true,
+      "final_job_buffers": 0,
+      "final_cpu_cache": 0,
+      "final_gpu_cache": 0,
+      "final_active_jobs": 0,
+      "final_actor_views": 0,
+      "final_runtime_meshes": 0,
+      "observed_measured_span_seconds": 120.00302339997143
+    }
+  },
+  "memory": {
+    "primary": {
+      "equivalent_initial_state_cycles": [
+        {
+          "connection": 1,
+          "epoch": 7,
+          "elapsed": 28.376390500000003,
+          "native_owned": 3352475,
+          "native_live": 6902,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 1,
+          "epoch": 8,
+          "elapsed": 38.330141499999996,
+          "native_owned": 3205747,
+          "native_live": 6899,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 1,
+          "epoch": 9,
+          "elapsed": 48.2535139,
+          "native_owned": 2997363,
+          "native_live": 6893,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 10,
+          "elapsed": 58.247551,
+          "native_owned": 3056987,
+          "native_live": 6893,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 1,
+          "epoch": 11,
+          "elapsed": 68.43179690000001,
+          "native_owned": 3416331,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 12,
+          "elapsed": 78.3043674,
+          "native_owned": 3012255,
+          "native_live": 6889,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 88.38303,
+          "native_owned": 3154575,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 98.5434923,
+          "native_owned": 3421783,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 108.33605870000001,
+          "native_owned": 3064655,
+          "native_live": 6895,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 118.36253660000001,
+          "native_owned": 3128311,
+          "native_live": 6900,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 128.2830866,
+          "native_owned": 2979935,
+          "native_live": 6892,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 18,
+          "elapsed": 138.3261991,
+          "native_owned": 3095191,
+          "native_live": 6896,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        }
+      ],
+      "last_ten": [
+        {
+          "connection": 1,
+          "epoch": 9,
+          "elapsed": 48.2535139,
+          "native_owned": 2997363,
+          "native_live": 6893,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 10,
+          "elapsed": 58.247551,
+          "native_owned": 3056987,
+          "native_live": 6893,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 1,
+          "epoch": 11,
+          "elapsed": 68.43179690000001,
+          "native_owned": 3416331,
+          "native_live": 6914,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 12,
+          "elapsed": 78.3043674,
+          "native_owned": 3012255,
+          "native_live": 6889,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 88.38303,
+          "native_owned": 3154575,
+          "native_live": 6905,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 98.5434923,
+          "native_owned": 3421783,
+          "native_live": 6912,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 108.33605870000001,
+          "native_owned": 3064655,
+          "native_live": 6895,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 118.36253660000001,
+          "native_owned": 3128311,
+          "native_live": 6900,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 128.2830866,
+          "native_owned": 2979935,
+          "native_live": 6892,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 18,
+          "elapsed": 138.3261991,
+          "native_owned": 3095191,
+          "native_live": 6896,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        }
+      ],
+      "strictly_increasing_native_bytes": false,
+      "max_native_owned": 13024447,
+      "max_cache_cpu": 6541360,
+      "max_cache_gpu": 2771712,
+      "max_job_buffers": 3981312
+    },
+    "guest": {
+      "equivalent_initial_state_cycles": [
+        {
+          "connection": 1,
+          "epoch": 7,
+          "elapsed": 18.919554200023413,
+          "native_owned": 2931015,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 1,
+          "epoch": 8,
+          "elapsed": 29.0145940000657,
+          "native_owned": 3039039,
+          "native_live": 5947,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 403
+        },
+        {
+          "connection": 2,
+          "epoch": 9,
+          "elapsed": 38.83232740010135,
+          "native_owned": 2665435,
+          "native_live": 5929,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 10,
+          "elapsed": 48.88886380009353,
+          "native_owned": 2833755,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 11,
+          "elapsed": 58.87556009995751,
+          "native_owned": 2711375,
+          "native_live": 5936,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 12,
+          "elapsed": 68.91323750000447,
+          "native_owned": 2745099,
+          "native_live": 5935,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 78.86359310010448,
+          "native_owned": 2717675,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 88.98802520008758,
+          "native_owned": 2770827,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 98.92969390004873,
+          "native_owned": 2658027,
+          "native_live": 5930,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 108.97816570010036,
+          "native_owned": 2866939,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 118.95436029997654,
+          "native_owned": 2770827,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 3,
+          "epoch": 18,
+          "elapsed": 129.0139560000971,
+          "native_owned": 2847659,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        }
+      ],
+      "last_ten": [
+        {
+          "connection": 2,
+          "epoch": 9,
+          "elapsed": 38.83232740010135,
+          "native_owned": 2665435,
+          "native_live": 5929,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 10,
+          "elapsed": 48.88886380009353,
+          "native_owned": 2833755,
+          "native_live": 5941,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 11,
+          "elapsed": 58.87556009995751,
+          "native_owned": 2711375,
+          "native_live": 5936,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 12,
+          "elapsed": 68.91323750000447,
+          "native_owned": 2745099,
+          "native_live": 5935,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 13,
+          "elapsed": 78.86359310010448,
+          "native_owned": 2717675,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 14,
+          "elapsed": 88.98802520008758,
+          "native_owned": 2770827,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 15,
+          "elapsed": 98.92969390004873,
+          "native_owned": 2658027,
+          "native_live": 5930,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        },
+        {
+          "connection": 2,
+          "epoch": 16,
+          "elapsed": 108.97816570010036,
+          "native_owned": 2866939,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 2,
+          "epoch": 17,
+          "elapsed": 118.95436029997654,
+          "native_owned": 2770827,
+          "native_live": 5934,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 290
+        },
+        {
+          "connection": 3,
+          "epoch": 18,
+          "elapsed": 129.0139560000971,
+          "native_owned": 2847659,
+          "native_live": 5944,
+          "cache_cpu": 6541360,
+          "cache_gpu": 2771712,
+          "poses": 293
+        }
+      ],
+      "strictly_increasing_native_bytes": false,
+      "max_native_owned": 12844683,
+      "max_cache_cpu": 6541360,
+      "max_cache_gpu": 2771712,
+      "max_job_buffers": 11280384
+    }
+  },
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "71189a146b131a9d4948890f10b2cb44a5ea0d44",
+    "source_dirty": false,
+    "source_sha256": "636073f43735a2231e621b83c6db7eaa4e54ba63a9ce03e01aac6d1fb3aad51a",
+    "build_tag": 447553181265910306,
+    "dll_sha256": "850b608d2c679f14bee8dee83905cfeafa8079cef0cc98e2d14948e1bc33bc4c",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "source_fingerprint_culture": "en-CA",
+    "game_protocol": 6,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "players": {
+    "primary": {
+      "backend": "Mono",
+      "executable_sha256": "611524be5112ddf5d1d6244f74eb890243581d3b096414fe6481e7f00629bc6b",
+      "native_dll_sha256": "850b608d2c679f14bee8dee83905cfeafa8079cef0cc98e2d14948e1bc33bc4c",
+      "runtime_sha256": "9a01b461c4ee7864c68ae40cce533cd1275390e79d17eba9c907b9bfcfba5d4e"
+    },
+    "guest": {
+      "backend": "IL2CPP",
+      "executable_sha256": "db663a45c5073935e57c87a4be44e0ffa196a8360904e16364fbc68366cb7e47",
+      "native_dll_sha256": "850b608d2c679f14bee8dee83905cfeafa8079cef0cc98e2d14948e1bc33bc4c",
+      "runtime_sha256": "7a520680daf4a520a92b26c20c6063108be9e99fce08e45076b82fcd02a64120"
+    }
+  },
+  "relays": {
+    "primary": {
+      "configuration": {
+        "seed": 42,
+        "rtt_ms": 100,
+        "jitter_ms": 20,
+        "random_loss": 0,
+        "duplicate_probability": 0.01,
+        "reorder_probability": 0.02,
+        "burst_interval": 120,
+        "burst_offset": 45,
+        "burst_seconds": 0.5,
+        "packet_bound": 1200,
+        "queue_bound": 10000,
+        "jitter": "positive uniform per direction",
+        "version": 1
+      },
+      "counters": {
+        "received": 24947,
+        "forwarded": 25128,
+        "random_drops": 0,
+        "burst_drops": 62,
+        "duplicates": 243,
+        "reordered": 509,
+        "max_packet": 1200,
+        "peak_queued": 66,
+        "shutdown_discarded": 0
+      },
+      "trace_sha256": "3b8bc0fb452e629b5a49278ca509fd30bf03f92ca6ba63a1cb42fcaabb542bff"
+    },
+    "guest": {
+      "configuration": {
+        "seed": 137,
+        "rtt_ms": 100,
+        "jitter_ms": 20,
+        "random_loss": 0,
+        "duplicate_probability": 0.01,
+        "reorder_probability": 0.02,
+        "burst_interval": 120,
+        "burst_offset": 45,
+        "burst_seconds": 0.5,
+        "packet_bound": 1200,
+        "queue_bound": 10000,
+        "jitter": "positive uniform per direction",
+        "version": 1
+      },
+      "counters": {
+        "received": 23041,
+        "forwarded": 23209,
+        "random_drops": 0,
+        "burst_drops": 63,
+        "duplicates": 231,
+        "reordered": 471,
+        "max_packet": 1200,
+        "peak_queued": 69,
+        "shutdown_discarded": 0
+      },
+      "trace_sha256": "19069d0fe4689dac99888af66b90b55edb3cc88c2c58e442ee2d841f21f5abd6"
+    }
+  },
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "53089",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\layout.json",
+      "--seconds",
+      "360",
+      "--host-token",
+      "[REDACTED]",
+      "--metrics",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\server-metrics.json"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\m9\\performance-host\\PerformanceHost.dll",
+      "53089",
+      "350"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:53089",
+      "--spectator",
+      "--prediction-off",
+      "--seconds",
+      "355",
+      "--stop-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\observer-stop.signal"
+    ],
+    "primary": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-performance-Mono\\BombPerformance.exe",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1920",
+      "-screen-height",
+      "1080",
+      "--bom-port",
+      "53090",
+      "--bom-perf-out",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\primary.json",
+      "--bom-perf-scene",
+      "PerformanceReference",
+      "--bom-perf-seconds",
+      "120",
+      "--bom-perf-warmup",
+      "5",
+      "--bom-perf-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\measurement-start.signal",
+      "--bom-soak",
+      "--bom-soak-role",
+      "primary",
+      "--bom-soak-join-delay",
+      "0",
+      "--bom-source-job-gate",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\release-jobs.signal",
+      "--bom-source-job-gate-asset",
+      "performance/disconnected-group-4-v1",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\primary.log"
+    ],
+    "guest": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-performance-IL2CPP\\BombPerformance.exe",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1920",
+      "-screen-height",
+      "1080",
+      "--bom-port",
+      "53091",
+      "--bom-perf-out",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\guest.json",
+      "--bom-perf-scene",
+      "PerformanceReference",
+      "--bom-perf-seconds",
+      "120",
+      "--bom-perf-warmup",
+      "5",
+      "--bom-perf-start-file",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\measurement-start.signal",
+      "--bom-soak",
+      "--bom-soak-role",
+      "guest",
+      "--bom-soak-join-delay",
+      "15",
+      "--bom-source-job-gate",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\release-jobs.signal",
+      "--bom-source-job-gate-asset",
+      "performance/disconnected-group-4-v1",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\soak-20261110T003802612667Z\\guest.log",
+      "--bom-prediction-off"
+    ]
+  },
+  "scope": "Real dedicated server, two standalone Unity clients, native host controller and independent Odin observer. Two transparent UDP relays add traced bidirectional jitter, duplication, reordering and 500 ms bursts; packets use only the native codec."
+}

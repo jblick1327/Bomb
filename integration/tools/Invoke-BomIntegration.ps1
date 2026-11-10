@@ -1,8 +1,12 @@
 [CmdletBinding()]
 param(
-    [ValidateSet('VerifyEnvironment','Build','Test')][string]$Task='VerifyEnvironment',
-    [ValidateSet('Fast','Content','NativeInterop','NativeProof')][string]$Suite='Content',
+    [ValidateSet('VerifyEnvironment','Build','Test','Launch','Package')][string]$Task='VerifyEnvironment',
+    [ValidateSet('Fast','Content','NativeInterop','NativeProof','UnitySlice','Prediction','Soak','Rounds','Performance','FullNative')][string]$Suite='Content',
     [ValidateRange(0,3600)][int]$Seconds=0,
+    [ValidateSet('Mono','IL2CPP','Both')][string]$Backend='Both',
+    [ValidateSet('Mono','IL2CPP')][string]$LaunchMode='Mono',
+    [string]$PlayerPath='', [string]$GuestPlayer='', [switch]$SkipBuild,
+    [string]$OutputDirectory='',
     [string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json')
 )
 $ErrorActionPreference='Stop'
@@ -16,7 +20,35 @@ $result=[ordered]@{task=$Task;suite=$Suite;started_utc=$stamp;exit_code=1;status
 try {
     if (!(Test-Path -LiteralPath $ConfigPath)) { throw 'Copy local.config.example.json to local.config.json and supply the source/tool paths.' }
     $config=Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
-    if ($Task -eq 'Test' -and $Suite -eq 'NativeInterop') {
+    if ($Task -eq 'Launch') {
+        & (Join-Path $PSScriptRoot 'Start-BomNetwork.ps1') -Backend $LaunchMode
+    } elseif ($Task -eq 'Package') {
+        $arguments=@{ConfigPath=$ConfigPath;OutputDirectory=$OutputDirectory}
+        if($PlayerPath){$arguments.MonoPlayer=$PlayerPath};if($GuestPlayer){$arguments.Il2CppPlayer=$GuestPlayer}
+        & (Join-Path $PSScriptRoot 'Package-BomWindows.ps1') @arguments
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'Soak') {
+        $duration=if($Seconds){$Seconds}else{1800}
+        & (Join-Path $PSScriptRoot 'Test-UnitySoak.ps1') -ConfigPath $ConfigPath -Seconds $duration -PrimaryPlayer $PlayerPath -GuestPlayer $GuestPlayer -SkipBuild:$SkipBuild
+        if($LASTEXITCODE -ne 0){throw 'Real-process soak failed.'}
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'Rounds') {
+        & (Join-Path $PSScriptRoot 'Test-NetworkRounds.ps1') -ConfigPath $ConfigPath -PlayerPath $PlayerPath -SkipBuild:$SkipBuild
+        if($LASTEXITCODE -ne 0){throw 'Native round/menu gate failed.'}
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'Performance') {
+        $kind=if($Backend -eq 'IL2CPP'){'IL2CPP'}else{'Mono'};$duration=if($Seconds){$Seconds}else{60}
+        & (Join-Path $PSScriptRoot 'Test-Performance.ps1') -ConfigPath $ConfigPath -Backend $kind -Seconds $duration -PlayerPath $PlayerPath -SkipBuild:$SkipBuild
+        if($LASTEXITCODE -ne 0){throw 'Performance measurement failed.'}
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'UnitySlice') {
+        $kinds=if($Backend -eq 'Both'){@('Mono','IL2CPP')}else{@($Backend)}
+        foreach($kind in $kinds){& (Join-Path $PSScriptRoot 'Test-UnitySlice.ps1') -ConfigPath $ConfigPath -Backend $kind -Seconds $(if($Seconds){$Seconds}else{24}) -SkipBuild:$SkipBuild;if($LASTEXITCODE -ne 0){throw 'Unity live slice failed.'}}
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'Prediction') {
+        $duration=if($Seconds){$Seconds}else{600}
+        foreach($seed in @(42,137,2026)){
+            & python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration --rtt-ms 100 --jitter-ms 10 --fps 60 --seed $seed
+            if($LASTEXITCODE -ne 0){throw 'Typical prediction profile failed.'}
+            & python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration --rtt-ms 200 --jitter-ms 30 --loss 0.05 --fps 144 --seed $seed
+            if($LASTEXITCODE -ne 0){throw 'Adverse prediction profile failed.'}
+        }
+    } elseif ($Task -eq 'Test' -and $Suite -eq 'NativeInterop') {
         & (Join-Path $PSScriptRoot 'Test-RealNativeInterop.ps1') -ConfigPath $ConfigPath -Seconds $Seconds
         if ($LASTEXITCODE -ne 0) { throw 'Real native interop failed.' }
     } elseif ($Task -eq 'Test' -and $Suite -eq 'NativeProof') {
@@ -66,13 +98,14 @@ try {
             if ($config.PSObject.Properties.Name -contains 'LibraryDirectories') { $env:LIB=(@($config.LibraryDirectories) -join ';') }
             $arguments=@()
             if ($config.PSObject.Properties.Name -contains 'CompilerArguments') { $arguments=@($config.CompilerArguments) }
-            $tasks=if($Task -eq 'Build'){@('Build','Server')}else{@('Test','NetTest')}
+            $tasks=if($Task -eq 'Build'){@('Build','Server')}elseif($Suite -eq 'FullNative'){@('Test','NetTest')}else{@('NetTest')}
             foreach($nativeTask in $tasks) {
                 $log=Join-Path $evidence "$nativeTask-$stamp.log"
                 & (Join-Path $config.OdinRoot 'scripts/bom.ps1') -Task $nativeTask -CompilerArguments $arguments 2>&1 | Tee-Object -FilePath $log
+                if($LASTEXITCODE -ne 0){throw "Native $nativeTask failed."}
                 $result.checks += @{command="scripts/bom.ps1 $nativeTask";exit_code=0;log=(Split-Path -Leaf $log)}
             }
-            if($Task -eq 'Test' -and $Suite -eq 'Fast') {
+            if($Task -eq 'Test' -and $Suite -in @('Fast','FullNative')) {
                 $clientLog=Join-Path $evidence "ClientCore-$stamp.log"
                 & (Join-Path $config.OdinRoot 'scripts/test-client-core.ps1') -ConfigPath $ConfigPath 2>&1 | Tee-Object -FilePath $clientLog
                 if($LASTEXITCODE -ne 0){throw 'Shared client/ABI focused tests failed.'}
@@ -81,6 +114,8 @@ try {
             if ($Task -eq 'Build') {
                 & (Join-Path $config.OdinRoot 'scripts/build-client.ps1') -ConfigPath $ConfigPath
                 if ($LASTEXITCODE -ne 0) { throw 'Real native client build failed.' }
+                & (Join-Path $PSScriptRoot 'Build-BomPlayers.ps1') -ConfigPath $ConfigPath -Backend $Backend
+                if($LASTEXITCODE -ne 0){throw 'Unity player build failed.'}
             }
         } finally { $env:PATH=$priorPath; $env:LIB=$priorLib }
     }

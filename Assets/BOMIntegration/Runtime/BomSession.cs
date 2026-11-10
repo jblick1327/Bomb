@@ -31,6 +31,8 @@ public sealed class BomSession : IDisposable {
  public BomPose[] Poses=Array.Empty<BomPose>();
  public BomEvent[] Events=Array.Empty<BomEvent>();
  public string Error="";
+ public double NativeUpdateMilliseconds,CopyMilliseconds;
+ public long CopyAllocatedBytes;
  public static double Now => (double)Stopwatch.GetTimestamp()/Stopwatch.Frequency;
  public static void Check(uint result) { if(result!=0)throw new InvalidOperationException("Native client status "+result); }
  public static void VerifyLayouts() {
@@ -80,19 +82,18 @@ public sealed class BomSession : IDisposable {
   info.sources=info.bindings=IntPtr.Zero;Catalog=info;Sources.Clear();foreach(var source in sources)Sources.Add(source.Key,source.Value);
   catalogConnection=sample.connection_generation;catalogEpoch=sample.epoch;catalogTopologyRevision=sample.revision;
  }
- static void Copy<T>(IntPtr source,uint count,ref T[] target) where T:struct {
-  if(count>1000000 || (count>0 && source==IntPtr.Zero))throw new InvalidOperationException("Invalid native array");
-  if(target.Length<count)Array.Resize(ref target,checked((int)count));
-  int stride=Marshal.SizeOf<T>();for(int i=0;i<count;i++)target[i]=Marshal.PtrToStructure<T>(IntPtr.Add(source,checked(i*stride)));
- }
+ static void Copy<T>(IntPtr source,uint count,ref T[] target) where T:unmanaged=>BomNativeBuffer.Copy(source,count,ref target);
  public void Poll(double now,Action<BomSession> accept) {
+  long nativeStart=Stopwatch.GetTimestamp();
   uint status=BomNative.bom_client_update(Handle,now);
+  NativeUpdateMilliseconds=(Stopwatch.GetTimestamp()-nativeStart)*1000.0/Stopwatch.Frequency;
   if(status!=0) {
    var error=new BomError{struct_size=(uint)Marshal.SizeOf<BomError>(),version=1};string reason="";
    if(BomNative.bom_client_last_error(Handle,ref error)==0&&error.message_length>0&&error.message_length<=65536){var text=new byte[error.message_length];Marshal.Copy(error.message,text,0,text.Length);reason=System.Text.Encoding.UTF8.GetString(text);}
    throw new InvalidOperationException(reason=="host left"?"The host left. Start or join a new server.":!string.IsNullOrEmpty(reason)?reason:"Connection interrupted. Reconnect to try again.");
   }
   var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Check(BomNative.bom_client_acquire_sample(Handle,ref sample));
+  long copyStart=Stopwatch.GetTimestamp(),copyBytes=BomAllocationCounter.Read();
   try {
    // Cell geometry is immutable for a native topology transaction. Copy it
    // once; poses and events continue to be copied on every sample.
@@ -106,10 +107,10 @@ public sealed class BomSession : IDisposable {
    Copy(round.players,round.player_count,ref RoundPlayers);Copy(round.connections,round.connection_count,ref RoundConnections);
    round.players=round.connections=IntPtr.Zero;Round=round;
    if(sample.error_length>65536)throw new InvalidOperationException("Invalid error length");
-   byte[] error=new byte[sample.error_length];if(error.Length>0)Marshal.Copy(sample.error_text,error,0,error.Length);Error=System.Text.Encoding.UTF8.GetString(error);
+   if(sample.error_length==0)Error="";else{byte[] error=new byte[sample.error_length];Marshal.Copy(sample.error_text,error,0,error.Length);Error=System.Text.Encoding.UTF8.GetString(error);}
    // Clear pointer fields: managed users receive only the owned copies above.
    sample.cells=sample.vertices=sample.poses=sample.events=sample.error_text=IntPtr.Zero;Sample=sample;
-  } finally {Check(BomNative.bom_client_release_sample(Handle,sample.sample_sequence));}
+  } finally {CopyMilliseconds=(Stopwatch.GetTimestamp()-copyStart)*1000.0/Stopwatch.Frequency;CopyAllocatedBytes=BomAllocationCounter.Since(copyBytes);Check(BomNative.bom_client_release_sample(Handle,sample.sample_sequence));}
   Owner=new BomOwnerState{struct_size=(uint)Marshal.SizeOf<BomOwnerState>(),version=1};Check(BomNative.bom_client_get_owner_state(Handle,ref Owner));
   Prediction=new BomPredictionStats{struct_size=(uint)Marshal.SizeOf<BomPredictionStats>(),version=1};Check(BomNative.bom_client_get_prediction_stats(Handle,ref Prediction));
   if(requestGeneration!=Sample.connection_generation){requestGeneration=Sample.connection_generation;requestCursor=0;}

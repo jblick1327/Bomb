@@ -1,0 +1,2110 @@
+{
+	"status": "passed",
+	"level_id": "bom-performancereference-v1",
+	"gameplay_manifest_hash": "1d919bff6eb8960e1e4860e9c26e7531f79734637420f88e65b83bc16d7bd07c",
+	"gameplay_config_hash": "3d1c4f66bc71b5308c17a6b219d539efce82437258b41b3e6505d9705e78a853",
+	"catalog_hash": "b32e9d3ac5bea31c9a9f6b41c71e6a6e5dae6da9d99b902725aff47d89cc4772",
+	"game_protocol": 6,
+	"canonical_version": 3,
+	"source_count": 101,
+	"part_count": 401,
+	"cell_count": 475,
+	"fixture_count": 548,
+	"bounds": {
+		"active": true,
+		"simulation": {
+			"lo": {
+				"x": -20,
+				"y": -5
+			},
+			"hi": {
+				"x": 20,
+				"y": 40
+			}
+		},
+		"kill": {
+			"lo": {
+				"x": -19,
+				"y": -4
+			},
+			"hi": {
+				"x": 19,
+				"y": 38
+			}
+		},
+		"camera": {
+			"lo": {
+				"x": -18,
+				"y": -1
+			},
+			"hi": {
+				"x": 18,
+				"y": 34
+			}
+		},
+		"aim": {
+			"lo": {
+				"x": -18,
+				"y": -1
+			},
+			"hi": {
+				"x": 18,
+				"y": 34
+			}
+		},
+		"fragment_cull": {
+			"lo": {
+				"x": -20,
+				"y": -5
+			},
+			"hi": {
+				"x": 20,
+				"y": 40
+			}
+		},
+		"spawns": [
+			{
+				"x": -15,
+				"y": 0.565
+			},
+			{
+				"x": 15,
+				"y": 0.565
+			},
+			{
+				"x": -16,
+				"y": 0.565
+			},
+			{
+				"x": 16,
+				"y": 0.565
+			}
+		],
+		"bombs": {
+			"spawn_x": {
+				"x": -13,
+				"y": 13
+			},
+			"spawn_height": 35,
+			"cleanup_bounds": {
+				"lo": {
+					"x": -20,
+					"y": -5
+				},
+				"hi": {
+					"x": 20,
+					"y": 40
+				}
+			}
+		},
+		"config": {
+			"version": 1,
+			"gravity": {
+				"x": 0,
+				"y": -9.8
+			},
+			"player": {
+				"speed": 4,
+				"acceleration": 32,
+				"jump_speed": 6.3,
+				"coyote_time": 0.1,
+				"jump_buffer": 0.1
+			},
+			"bomb_fuse": 1,
+			"bomb_drop_min": 1,
+			"bomb_drop_max": 2.5
+		}
+	},
+	"sources": [
+		{
+			"identity": 9007199254800001,
+			"identity_text": "9007199254800001",
+			"initial_cell_ids": [
+				"2",
+				"4",
+				"6",
+				"8"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800002,
+			"identity_text": "9007199254800002",
+			"initial_cell_ids": [
+				"10",
+				"12",
+				"14",
+				"16"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800003,
+			"identity_text": "9007199254800003",
+			"initial_cell_ids": [
+				"18",
+				"20",
+				"22",
+				"24"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800004,
+			"identity_text": "9007199254800004",
+			"initial_cell_ids": [
+				"26",
+				"28",
+				"30",
+				"32"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-2.1499999,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800005,
+			"identity_text": "9007199254800005",
+			"initial_cell_ids": [
+				"34",
+				"36",
+				"38",
+				"40"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062499940395355225,
+			"matrix_probe": [
+				-0.049999952,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800006,
+			"identity_text": "9007199254800006",
+			"initial_cell_ids": [
+				"42",
+				"44",
+				"46",
+				"48"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062499761581420898,
+			"matrix_probe": [
+				2.05,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800007,
+			"identity_text": "9007199254800007",
+			"initial_cell_ids": [
+				"50",
+				"52",
+				"54",
+				"56"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800008,
+			"identity_text": "9007199254800008",
+			"initial_cell_ids": [
+				"58",
+				"60",
+				"62",
+				"64"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800009,
+			"identity_text": "9007199254800009",
+			"initial_cell_ids": [
+				"66",
+				"68",
+				"70",
+				"72"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800010,
+			"identity_text": "9007199254800010",
+			"initial_cell_ids": [
+				"74",
+				"76",
+				"78",
+				"80"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				4,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800011,
+			"identity_text": "9007199254800011",
+			"initial_cell_ids": [
+				"82",
+				"84",
+				"86",
+				"88"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800012,
+			"identity_text": "9007199254800012",
+			"initial_cell_ids": [
+				"90",
+				"92",
+				"94",
+				"96"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800013,
+			"identity_text": "9007199254800013",
+			"initial_cell_ids": [
+				"98",
+				"100",
+				"102",
+				"104"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800014,
+			"identity_text": "9007199254800014",
+			"initial_cell_ids": [
+				"106",
+				"108",
+				"110",
+				"112"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062499046325683594,
+			"matrix_probe": [
+				-2.1499999,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800015,
+			"identity_text": "9007199254800015",
+			"initial_cell_ids": [
+				"114",
+				"116",
+				"118",
+				"120"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625004768371582,
+			"matrix_probe": [
+				-0.049999952,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800016,
+			"identity_text": "9007199254800016",
+			"initial_cell_ids": [
+				"122",
+				"124",
+				"126",
+				"128"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				2.05,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800017,
+			"identity_text": "9007199254800017",
+			"initial_cell_ids": [
+				"130",
+				"132",
+				"134",
+				"136"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800018,
+			"identity_text": "9007199254800018",
+			"initial_cell_ids": [
+				"138",
+				"140",
+				"142",
+				"144"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800019,
+			"identity_text": "9007199254800019",
+			"initial_cell_ids": [
+				"146",
+				"148",
+				"150",
+				"152"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250190734863281,
+			"matrix_probe": [
+				8.349999,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800020,
+			"identity_text": "9007199254800020",
+			"initial_cell_ids": [
+				"154",
+				"156",
+				"158",
+				"160"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				6.0999999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800021,
+			"identity_text": "9007199254800021",
+			"initial_cell_ids": [
+				"162",
+				"164",
+				"166",
+				"168"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800022,
+			"identity_text": "9007199254800022",
+			"initial_cell_ids": [
+				"170",
+				"172",
+				"174",
+				"176"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250381469726562,
+			"matrix_probe": [
+				-6.3499994,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800023,
+			"identity_text": "9007199254800023",
+			"initial_cell_ids": [
+				"178",
+				"180",
+				"182",
+				"184"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062498092651367188,
+			"matrix_probe": [
+				-4.25,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800024,
+			"identity_text": "9007199254800024",
+			"initial_cell_ids": [
+				"186",
+				"188",
+				"190",
+				"192"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625009536743164,
+			"matrix_probe": [
+				-2.1499999,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800025,
+			"identity_text": "9007199254800025",
+			"initial_cell_ids": [
+				"194",
+				"196",
+				"198",
+				"200"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-0.049999952,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800026,
+			"identity_text": "9007199254800026",
+			"initial_cell_ids": [
+				"202",
+				"204",
+				"206",
+				"208"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				2.05,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800027,
+			"identity_text": "9007199254800027",
+			"initial_cell_ids": [
+				"210",
+				"212",
+				"214",
+				"216"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800028,
+			"identity_text": "9007199254800028",
+			"initial_cell_ids": [
+				"218",
+				"220",
+				"222",
+				"224"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800029,
+			"identity_text": "9007199254800029",
+			"initial_cell_ids": [
+				"226",
+				"228",
+				"230",
+				"232"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				8.349999,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800030,
+			"identity_text": "9007199254800030",
+			"initial_cell_ids": [
+				"234",
+				"236",
+				"238",
+				"240"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250381469726562,
+			"matrix_probe": [
+				10.4499998,
+				8.1999998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800031,
+			"identity_text": "9007199254800031",
+			"initial_cell_ids": [
+				"242",
+				"244",
+				"246",
+				"248"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				-8.4499998,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800032,
+			"identity_text": "9007199254800032",
+			"initial_cell_ids": [
+				"250",
+				"252",
+				"254",
+				"256"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800033,
+			"identity_text": "9007199254800033",
+			"initial_cell_ids": [
+				"258",
+				"260",
+				"262",
+				"264"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800034,
+			"identity_text": "9007199254800034",
+			"initial_cell_ids": [
+				"266",
+				"268",
+				"270",
+				"272"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				-2.1499999,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800035,
+			"identity_text": "9007199254800035",
+			"initial_cell_ids": [
+				"274",
+				"276",
+				"278",
+				"280"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062499046325683594,
+			"matrix_probe": [
+				-0.049999952,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800036,
+			"identity_text": "9007199254800036",
+			"initial_cell_ids": [
+				"282",
+				"284",
+				"286",
+				"288"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062498092651367188,
+			"matrix_probe": [
+				2.05,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800037,
+			"identity_text": "9007199254800037",
+			"initial_cell_ids": [
+				"290",
+				"292",
+				"294",
+				"296"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				4.1499996,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800038,
+			"identity_text": "9007199254800038",
+			"initial_cell_ids": [
+				"298",
+				"300",
+				"302",
+				"304"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800039,
+			"identity_text": "9007199254800039",
+			"initial_cell_ids": [
+				"306",
+				"308",
+				"310",
+				"312"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250762939453125,
+			"matrix_probe": [
+				8.349999,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800040,
+			"identity_text": "9007199254800040",
+			"initial_cell_ids": [
+				"314",
+				"316",
+				"318",
+				"320"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				10.4499998,
+				10.299999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800041,
+			"identity_text": "9007199254800041",
+			"initial_cell_ids": [
+				"322",
+				"324",
+				"326",
+				"328"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				-8.4499998,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800042,
+			"identity_text": "9007199254800042",
+			"initial_cell_ids": [
+				"330",
+				"332",
+				"334",
+				"336"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250762939453125,
+			"matrix_probe": [
+				-6.3499994,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800043,
+			"identity_text": "9007199254800043",
+			"initial_cell_ids": [
+				"338",
+				"340",
+				"342",
+				"344"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800044,
+			"identity_text": "9007199254800044",
+			"initial_cell_ids": [
+				"346",
+				"348",
+				"350",
+				"352"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				-2.1499999,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800045,
+			"identity_text": "9007199254800045",
+			"initial_cell_ids": [
+				"354",
+				"356",
+				"358",
+				"360"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062499523162841797,
+			"matrix_probe": [
+				-0.049999952,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800046,
+			"identity_text": "9007199254800046",
+			"initial_cell_ids": [
+				"362",
+				"364",
+				"366",
+				"368"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062502861022949219,
+			"matrix_probe": [
+				2.05,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800047,
+			"identity_text": "9007199254800047",
+			"initial_cell_ids": [
+				"370",
+				"372",
+				"374",
+				"376"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062498092651367188,
+			"matrix_probe": [
+				4.1499996,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800048,
+			"identity_text": "9007199254800048",
+			"initial_cell_ids": [
+				"378",
+				"380",
+				"382",
+				"384"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800049,
+			"identity_text": "9007199254800049",
+			"initial_cell_ids": [
+				"386",
+				"388",
+				"390",
+				"392"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800050,
+			"identity_text": "9007199254800050",
+			"initial_cell_ids": [
+				"394",
+				"396",
+				"398",
+				"400"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250762939453125,
+			"matrix_probe": [
+				10.4499998,
+				12.3999996,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800051,
+			"identity_text": "9007199254800051",
+			"initial_cell_ids": [
+				"402",
+				"404",
+				"406",
+				"408"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800052,
+			"identity_text": "9007199254800052",
+			"initial_cell_ids": [
+				"410",
+				"412",
+				"414",
+				"416"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800053,
+			"identity_text": "9007199254800053",
+			"initial_cell_ids": [
+				"418",
+				"420",
+				"422",
+				"424"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800054,
+			"identity_text": "9007199254800054",
+			"initial_cell_ids": [
+				"426",
+				"428",
+				"430",
+				"432"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-2.1499999,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800055,
+			"identity_text": "9007199254800055",
+			"initial_cell_ids": [
+				"434",
+				"436",
+				"438",
+				"440"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625004768371582,
+			"matrix_probe": [
+				-0.049999952,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800056,
+			"identity_text": "9007199254800056",
+			"initial_cell_ids": [
+				"442",
+				"444",
+				"446",
+				"448"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				2.05,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800057,
+			"identity_text": "9007199254800057",
+			"initial_cell_ids": [
+				"450",
+				"452",
+				"454",
+				"456"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800058,
+			"identity_text": "9007199254800058",
+			"initial_cell_ids": [
+				"458",
+				"460",
+				"462",
+				"464"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800059,
+			"identity_text": "9007199254800059",
+			"initial_cell_ids": [
+				"466",
+				"468",
+				"470",
+				"472"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800060,
+			"identity_text": "9007199254800060",
+			"initial_cell_ids": [
+				"474",
+				"476",
+				"478",
+				"480"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				14.5,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800061,
+			"identity_text": "9007199254800061",
+			"initial_cell_ids": [
+				"482",
+				"484",
+				"486",
+				"488"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0624847412109375,
+			"matrix_probe": [
+				-8.4499998,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800062,
+			"identity_text": "9007199254800062",
+			"initial_cell_ids": [
+				"490",
+				"492",
+				"494",
+				"496"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800063,
+			"identity_text": "9007199254800063",
+			"initial_cell_ids": [
+				"498",
+				"500",
+				"502",
+				"504"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800064,
+			"identity_text": "9007199254800064",
+			"initial_cell_ids": [
+				"506",
+				"508",
+				"510",
+				"512"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				-2.1499999,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800065,
+			"identity_text": "9007199254800065",
+			"initial_cell_ids": [
+				"514",
+				"516",
+				"518",
+				"520"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062501430511474609,
+			"matrix_probe": [
+				-0.049999952,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800066,
+			"identity_text": "9007199254800066",
+			"initial_cell_ids": [
+				"522",
+				"524",
+				"526",
+				"528"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062502861022949219,
+			"matrix_probe": [
+				2.05,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800067,
+			"identity_text": "9007199254800067",
+			"initial_cell_ids": [
+				"530",
+				"532",
+				"534",
+				"536"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800068,
+			"identity_text": "9007199254800068",
+			"initial_cell_ids": [
+				"538",
+				"540",
+				"542",
+				"544"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800069,
+			"identity_text": "9007199254800069",
+			"initial_cell_ids": [
+				"546",
+				"548",
+				"550",
+				"552"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800070,
+			"identity_text": "9007199254800070",
+			"initial_cell_ids": [
+				"554",
+				"556",
+				"558",
+				"560"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				16.599998,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800071,
+			"identity_text": "9007199254800071",
+			"initial_cell_ids": [
+				"562",
+				"564",
+				"566",
+				"568"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800072,
+			"identity_text": "9007199254800072",
+			"initial_cell_ids": [
+				"570",
+				"572",
+				"574",
+				"576"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-6.3499994,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800073,
+			"identity_text": "9007199254800073",
+			"initial_cell_ids": [
+				"578",
+				"580",
+				"582",
+				"584"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800074,
+			"identity_text": "9007199254800074",
+			"initial_cell_ids": [
+				"586",
+				"588",
+				"590",
+				"592"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250381469726562,
+			"matrix_probe": [
+				-2.1499999,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800075,
+			"identity_text": "9007199254800075",
+			"initial_cell_ids": [
+				"594",
+				"596",
+				"598",
+				"600"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-0.049999952,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800076,
+			"identity_text": "9007199254800076",
+			"initial_cell_ids": [
+				"602",
+				"604",
+				"606",
+				"608"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				2.05,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800077,
+			"identity_text": "9007199254800077",
+			"initial_cell_ids": [
+				"610",
+				"612",
+				"614",
+				"616"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				4.1499996,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800078,
+			"identity_text": "9007199254800078",
+			"initial_cell_ids": [
+				"618",
+				"620",
+				"622",
+				"624"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800079,
+			"identity_text": "9007199254800079",
+			"initial_cell_ids": [
+				"626",
+				"628",
+				"630",
+				"632"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800080,
+			"identity_text": "9007199254800080",
+			"initial_cell_ids": [
+				"634",
+				"636",
+				"638",
+				"640"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				18.699999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800081,
+			"identity_text": "9007199254800081",
+			"initial_cell_ids": [
+				"642",
+				"644",
+				"646",
+				"648"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625152587890625,
+			"matrix_probe": [
+				-8.4499998,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800082,
+			"identity_text": "9007199254800082",
+			"initial_cell_ids": [
+				"650",
+				"652",
+				"654",
+				"656"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06249237060546875,
+			"matrix_probe": [
+				-6.3499994,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800083,
+			"identity_text": "9007199254800083",
+			"initial_cell_ids": [
+				"658",
+				"660",
+				"662",
+				"664"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800084,
+			"identity_text": "9007199254800084",
+			"initial_cell_ids": [
+				"666",
+				"668",
+				"670",
+				"672"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-2.1499999,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800085,
+			"identity_text": "9007199254800085",
+			"initial_cell_ids": [
+				"674",
+				"676",
+				"678",
+				"680"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625009536743164,
+			"matrix_probe": [
+				-0.049999952,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800086,
+			"identity_text": "9007199254800086",
+			"initial_cell_ids": [
+				"682",
+				"684",
+				"686",
+				"688"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250381469726562,
+			"matrix_probe": [
+				2.05,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800087,
+			"identity_text": "9007199254800087",
+			"initial_cell_ids": [
+				"690",
+				"692",
+				"694",
+				"696"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				4.1499996,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800088,
+			"identity_text": "9007199254800088",
+			"initial_cell_ids": [
+				"698",
+				"700",
+				"702",
+				"704"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800089,
+			"identity_text": "9007199254800089",
+			"initial_cell_ids": [
+				"706",
+				"708",
+				"710",
+				"712"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				8.349999,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800090,
+			"identity_text": "9007199254800090",
+			"initial_cell_ids": [
+				"714",
+				"716",
+				"718",
+				"720"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				20.799999,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800091,
+			"identity_text": "9007199254800091",
+			"initial_cell_ids": [
+				"722",
+				"724",
+				"726",
+				"728"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-8.4499998,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800092,
+			"identity_text": "9007199254800092",
+			"initial_cell_ids": [
+				"730",
+				"732",
+				"734",
+				"736"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0624847412109375,
+			"matrix_probe": [
+				-6.3499994,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800093,
+			"identity_text": "9007199254800093",
+			"initial_cell_ids": [
+				"738",
+				"740",
+				"742",
+				"744"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-4.25,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800094,
+			"identity_text": "9007199254800094",
+			"initial_cell_ids": [
+				"746",
+				"748",
+				"750",
+				"752"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.062496185302734375,
+			"matrix_probe": [
+				-2.1499999,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800095,
+			"identity_text": "9007199254800095",
+			"initial_cell_ids": [
+				"754",
+				"756",
+				"758",
+				"760"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				-0.049999952,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800096,
+			"identity_text": "9007199254800096",
+			"initial_cell_ids": [
+				"762",
+				"764",
+				"766",
+				"768"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.06250190734863281,
+			"matrix_probe": [
+				2.05,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800097,
+			"identity_text": "9007199254800097",
+			"initial_cell_ids": [
+				"770",
+				"772",
+				"774",
+				"776"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				4.1499996,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800098,
+			"identity_text": "9007199254800098",
+			"initial_cell_ids": [
+				"778",
+				"780",
+				"782",
+				"784"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				6.25,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800099,
+			"identity_text": "9007199254800099",
+			"initial_cell_ids": [
+				"786",
+				"788",
+				"790",
+				"792"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625152587890625,
+			"matrix_probe": [
+				8.349999,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800100,
+			"identity_text": "9007199254800100",
+			"initial_cell_ids": [
+				"794",
+				"796",
+				"798",
+				"800"
+			],
+			"parts": 4,
+			"cells": 4,
+			"pinned_cells": 0,
+			"area": 0.0625,
+			"matrix_probe": [
+				10.4499998,
+				22.9,
+				3
+			]
+		},
+		{
+			"identity": 9007199254800101,
+			"identity_text": "9007199254800101",
+			"initial_cell_ids": [
+				"913",
+				"914",
+				"915",
+				"916",
+				"917",
+				"918",
+				"919",
+				"920",
+				"921",
+				"922",
+				"923",
+				"1035",
+				"925",
+				"926",
+				"927",
+				"928",
+				"828",
+				"929",
+				"930",
+				"831",
+				"931",
+				"833",
+				"932",
+				"933",
+				"934",
+				"1021",
+				"1022",
+				"1023",
+				"1024",
+				"1025",
+				"842",
+				"1026",
+				"1027",
+				"1028",
+				"846",
+				"1029",
+				"848",
+				"1030",
+				"850",
+				"851",
+				"878",
+				"879",
+				"880",
+				"881",
+				"1031",
+				"883",
+				"884",
+				"885",
+				"886",
+				"887",
+				"888",
+				"889",
+				"890",
+				"891",
+				"892",
+				"893",
+				"894",
+				"895",
+				"896",
+				"1032",
+				"898",
+				"899",
+				"900",
+				"901",
+				"902",
+				"903",
+				"904",
+				"905",
+				"906",
+				"907",
+				"908",
+				"1033",
+				"1034",
+				"911",
+				"912"
+			],
+			"parts": 1,
+			"cells": 75,
+			"pinned_cells": 75,
+			"area": 36.00000050663948,
+			"matrix_probe": [
+				1,
+				1.5,
+				3
+			]
+		}
+	]
+}

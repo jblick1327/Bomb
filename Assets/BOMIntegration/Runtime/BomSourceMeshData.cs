@@ -39,13 +39,16 @@ public static class BomSourceMeshData {
  }
 }
 public static class BomClipMeshUpload {
- public const int TriangleChunk=4096;
- public static Mesh Upload(IReadOnlyList<BomClipTriangle> triangles,int start,int count,Vector2 origin,int materialCount,string name){
+ public const int TriangleChunk=256;
+ public static Mesh Upload(IReadOnlyList<BomClipTriangle> triangles,int start,int count,Vector2 origin,int materialCount,string name)=>Upload(triangles,start,count,origin,materialCount,name,false,out _);
+ public static Mesh UploadCompact(IReadOnlyList<BomClipTriangle> triangles,int start,int count,Vector2 origin,int materialCount,string name,out int[] materialSlots)=>Upload(triangles,start,count,origin,materialCount,name,true,out materialSlots);
+ static Mesh Upload(IReadOnlyList<BomClipTriangle> triangles,int start,int count,Vector2 origin,int materialCount,string name,bool compact,out int[] materialSlots){
   if(count<1||count>TriangleChunk||start<0||start+count>triangles.Count)throw new ArgumentOutOfRangeException(nameof(count));
   var positions=new List<Vector3>(count*3);var normals=new List<Vector3>(count*3);var tangents=new List<Vector4>(count*3);var colors=new List<Color>(count*3);var uv=new List<Vector4>[8];for(int i=0;i<8;i++)uv[i]=new List<Vector4>(count*3);var indices=new List<int>[materialCount];for(int i=0;i<indices.Length;i++)indices[i]=new List<int>();
   void Vertex(BomClipVertex v){positions.Add(v.Position-new Vector3(origin.x,origin.y,0));var normal=v.Normal.normalized;normals.Add(normal);var direction=new Vector3(v.Tangent.x,v.Tangent.y,v.Tangent.z);direction=(direction-normal*Vector3.Dot(normal,direction)).normalized;if(direction.sqrMagnitude<.5f)direction=Vector3.Cross(normal,Math.Abs(normal.y)<.9f?Vector3.up:Vector3.forward).normalized;tangents.Add(new Vector4(direction.x,direction.y,direction.z,v.Tangent.w<0?-1:1));colors.Add(v.Color);uv[0].Add(v.UV0);uv[1].Add(v.UV1);uv[2].Add(v.UV2);uv[3].Add(v.UV3);uv[4].Add(v.UV4);uv[5].Add(v.UV5);uv[6].Add(v.UV6);uv[7].Add(v.UV7);}
   for(int i=start;i<start+count;i++){var t=triangles[i];if(t.Material<0||t.Material>=materialCount)throw new InvalidOperationException("clipped surface material index exceeds palette");int first=positions.Count;Vertex(t.A);Vertex(t.B);Vertex(t.C);indices[t.Material].Add(first);indices[t.Material].Add(first+1);indices[t.Material].Add(first+2);}
-  var mesh=new Mesh{name=name,indexFormat=IndexFormat.UInt16};try{mesh.SetVertices(positions);mesh.SetNormals(normals);mesh.SetTangents(tangents);mesh.SetColors(colors);for(int i=0;i<8;i++)mesh.SetUVs(i,uv[i]);mesh.subMeshCount=materialCount;for(int i=0;i<materialCount;i++)mesh.SetTriangles(indices[i],i,false);mesh.RecalculateBounds();return mesh;}catch{UnityEngine.Object.Destroy(mesh);throw;}
+  var used=new List<int>();for(int i=0;i<materialCount;i++)if(!compact||indices[i].Count>0)used.Add(i);materialSlots=used.ToArray();
+  var mesh=new Mesh{name=name,indexFormat=IndexFormat.UInt16};try{mesh.SetVertices(positions);mesh.SetNormals(normals);mesh.SetTangents(tangents);mesh.SetColors(colors);for(int i=0;i<8;i++)mesh.SetUVs(i,uv[i]);mesh.subMeshCount=used.Count;for(int i=0;i<used.Count;i++)mesh.SetTriangles(indices[used[i]],i,false);mesh.RecalculateBounds();return mesh;}catch{UnityEngine.Object.Destroy(mesh);throw;}
  }
 }
 }

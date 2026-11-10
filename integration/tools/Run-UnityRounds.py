@@ -1,14 +1,14 @@
 """Two standalone Unity clients, one native host, one Odin round observer."""
 import argparse,datetime,hashlib,json,os,pathlib,re,secrets,shutil,socket,subprocess,time
 from hash_coverage import analyze
-p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--layout',required=True);p.add_argument('--player',required=True);p.add_argument('--draw',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--layout',required=True);p.add_argument('--player',required=True);p.add_argument('--draw',action='store_true');p.add_argument('--evidence-stage',choices=['M8','M9'],default='M8');a=p.parse_args()
 cfg=pathlib.Path(a.config).resolve();config=json.loads(cfg.read_text(encoding='utf-8-sig'));root=pathlib.Path(config['OdinRoot']);layout=pathlib.Path(a.layout).resolve();player=pathlib.Path(a.player).resolve()
 identity=json.loads((root/'build/bomcore.build.json').read_text(encoding='utf-8-sig'))
 plugin=next(player.parent.rglob('bomcore.dll'))
 sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
 if sha(plugin)!=identity['dll_sha256']:raise SystemExit('Player native library differs from the current manifest')
 host=root/'build/interop-rounds/Interop.dll';shutil.copy2(root/'build/bomcore.dll',host.parent/'bomcore.dll')
-out=cfg.parent/'evidence/M8'/('unity-rounds-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
+out=cfg.parent/'evidence'/a.evidence_stage/('unity-rounds-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
 shutil.copy2(layout,out/'layout-input.json');layout=out/'layout-input.json'
 with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
 token=secrets.token_urlsafe(24);env=os.environ.copy();env.update(BOM_TEST_HOST_TOKEN=token,BOM_TEST_UNITY_ROUNDS='1',BOM_ROUND_SIGNAL_DIR=str(out),BOM_EXPECT_BUILD_TAG=str(identity['build_tag']))
@@ -57,7 +57,7 @@ passed=not failure and len(codes)==5 and all(code==0 for code in codes.values())
 summary={'status':'passed' if passed else 'failed','scope':'two Unity menu/art clients, native host and independent Odin observer across two elimination rounds; additional M8 draw/event/visual acceptance gates remain separately required',
  'failure':failure,'exit_codes':codes,'results_agreed':agreed,'result_rows':{k:[list(row) for row in sorted(v)] for k,v in results.items()},'observer_results':[list(row) for row in sorted(observer_results)],'menu_art_disconnect_captures':captures,'hash_coverage':coverage,
  'prediction_mode':'off for the round/presentation gate; prediction profiles and dynamic-yard performance remain separate M9 requirements','fixture':'same-tick falling-bomb draw' if a.draw else 'preserved yard forfeit',
- 'native_identity':identity,'player_sha256':sha(player),'plugin_sha256':sha(plugin),'runtime_sha256':sha(player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll'),
+ 'native_identity':identity,'player_sha256':sha(player),'plugin_sha256':sha(plugin),'runtime_sha256':sha(player.parent/'GameAssembly.dll' if (player.parent/'GameAssembly.dll').exists() else player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll'),
  'server_sha256':sha(root/'build/BOM-server.exe'),'observer_sha256':sha(root/'build/BOM.exe'),
  'commands':{k:[v if v!=token else '[REDACTED]' for v in command] for k,command in commands.items()}}
 (out/'summary.json').write_text(json.dumps(summary,indent=2));print(json.dumps({k:v for k,v in summary.items() if k not in ['commands','native_identity','hash_coverage']}));print('Evidence: '+str(out));raise SystemExit(0 if passed else 1)

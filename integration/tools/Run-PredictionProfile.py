@@ -1,9 +1,9 @@
 """Real native server/DLL profile through a bounded, seeded UDP impairment relay."""
 import argparse,datetime,heapq,hashlib,json,os,pathlib,random,secrets,select,socket,subprocess,threading,time
-p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--seconds',type=int,default=600);p.add_argument('--rtt-ms',type=float,default=100);p.add_argument('--jitter-ms',type=float,default=0);p.add_argument('--loss',type=float,default=0);p.add_argument('--fps',type=int,default=60);p.add_argument('--prediction-off',action='store_true');p.add_argument('--seed',type=int,default=57291);p.add_argument('--unity-player');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--seconds',type=int,default=600);p.add_argument('--rtt-ms',type=float,default=100);p.add_argument('--jitter-ms',type=float,default=0);p.add_argument('--loss',type=float,default=0);p.add_argument('--fps',type=int,default=60);p.add_argument('--prediction-off',action='store_true');p.add_argument('--seed',type=int,default=57291);p.add_argument('--unity-player');p.add_argument('--evidence-stage',choices=['M5','M9'],default='M5');a=p.parse_args()
 if not 1<=a.seconds<=3600 or not 0<=a.loss<1 or not 0<=a.jitter_ms<=100 or not 0<=a.rtt_ms<=1000 or not 15<=a.fps<=1000:raise SystemExit('Invalid profile bounds')
 config_path=pathlib.Path(a.config).resolve();config=json.loads(config_path.read_text(encoding='utf-8-sig'));root=pathlib.Path(config['OdinRoot']);integration=config_path.parent
-out=integration/'evidence/M5'/('profile-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
+out=integration/'evidence'/a.evidence_stage/('profile-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
 identity=json.loads((root/'build/bomcore.build.json').read_text(encoding='utf-8-sig'))
 plugin=next(pathlib.Path(a.unity_player).parent.rglob('bomcore.dll')) if a.unity_player else root/'build/interop/bomcore.dll'
 plugin_hash=hashlib.sha256(plugin.read_bytes()).hexdigest();server_hash=hashlib.sha256((root/'build/BOM-server.exe').read_bytes()).hexdigest()
@@ -11,7 +11,7 @@ if plugin_hash!=identity['dll_sha256']:raise SystemExit('Build/copy the current 
 with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as reservation:reservation.bind(('127.0.0.1',0));server_port=reservation.getsockname()[1]
 relay=socket.socket(socket.AF_INET,socket.SOCK_DGRAM);relay.bind(('127.0.0.1',0));relay.setblocking(False);relay_port=relay.getsockname()[1];server_address=('127.0.0.1',server_port)
 if hasattr(socket,'SIO_UDP_CONNRESET'):relay.ioctl(socket.SIO_UDP_CONNRESET,False)
-stopping=threading.Event();relay_error=[];counters={'received':0,'forwarded':0,'dropped':0,'peak_queued':0,'max_packet':0};rng=random.Random(a.seed)
+stopping=threading.Event();relay_error=[];counters={'jitter_policy':'positive uniform per direction','received':0,'forwarded':0,'dropped':0,'peak_queued':0,'max_packet':0};rng=random.Random(a.seed)
 def pump():
  queue=[];sequence=0;client=None
  try:
@@ -33,7 +33,7 @@ def pump():
      target=client
     else:client=source;target=server_address
     if rng.random()<a.loss:counters['dropped']+=1;continue
-    delay=max(0,a.rtt_ms/2000+rng.uniform(-a.jitter_ms,a.jitter_ms)/1000)
+    delay=max(0,a.rtt_ms/2000+rng.uniform(0,a.jitter_ms)/1000)
     sequence+=1;heapq.heappush(queue,(time.monotonic()+delay,sequence,data,target));counters['peak_queued']=max(counters['peak_queued'],len(queue))
     if len(queue)>10000:raise RuntimeError('Relay queue exceeded its explicit bound')
  except Exception as error:relay_error.append(str(error))

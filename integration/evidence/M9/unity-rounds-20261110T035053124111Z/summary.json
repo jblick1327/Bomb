@@ -1,0 +1,207 @@
+{
+  "status": "passed",
+  "scope": "two Unity menu/art clients, native host and independent Odin observer across two elimination rounds; additional M8 draw/event/visual acceptance gates remain separately required",
+  "failure": "",
+  "exit_codes": {
+    "primary": 0,
+    "guest": 0,
+    "host": 0,
+    "observer": 0,
+    "server": 0
+  },
+  "results_agreed": true,
+  "result_rows": {
+    "primary": [
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        0
+      ]
+    ],
+    "guest": [
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        0
+      ]
+    ]
+  },
+  "observer_results": [
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      2,
+      2,
+      0
+    ]
+  ],
+  "menu_art_disconnect_captures": true,
+  "hash_coverage": {
+    "status": "passed",
+    "expected_unique": 43,
+    "matching_unique": 43,
+    "missing_steady": 0,
+    "missing_tail": 0,
+    "missing_reports": [],
+    "bad_reports": [],
+    "unexpected_reports": [],
+    "per_client_connection": {
+      "0:1": {
+        "matched": 17,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:1": {
+        "matched": 8,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:1": {
+        "matched": 2,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:2": {
+        "matched": 3,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "3:1": {
+        "matched": 5,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:3": {
+        "matched": 5,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:2": {
+        "matched": 1,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "2:4": {
+        "matched": 1,
+        "missing_steady": 0,
+        "missing_tail": 0
+      },
+      "1:3": {
+        "matched": 1,
+        "missing_steady": 0,
+        "missing_tail": 0
+      }
+    },
+    "tail_policy": "Reports missing within 120 network ticks before intentional epoch reset/disconnect are explicitly listed and excluded from matches."
+  },
+  "prediction_mode": "off for the round/presentation gate; prediction profiles and dynamic-yard performance remain separate M9 requirements",
+  "fixture": "preserved yard forfeit",
+  "native_identity": {
+    "abi_major": 1,
+    "abi_minor": 4,
+    "source_commit": "dc22bcb6f925d773b2735278d0165c19c06f35db",
+    "source_dirty": false,
+    "source_sha256": "88769f2b478f4e87ff98d0f0ffae60ffedca150cc99169a7c226374230976856",
+    "build_tag": 614576365290190056,
+    "dll_sha256": "4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7",
+    "compiler": "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\toolchains\\odin-dev-2026-05\\dist\\odin.exe version dev-2026-05-nightly:ea5175d",
+    "compiler_arguments": [
+      "-ignore-vs-search",
+      "-debug"
+    ],
+    "optimization": "speed",
+    "source_fingerprint_culture": "en-CA",
+    "game_protocol": 6,
+    "canonical_version": 3,
+    "client": "shared native client, no managed codec",
+    "validation": "See integration/tasks.json and integration/evidence for executed gates."
+  },
+  "player_sha256": "611524be5112ddf5d1d6244f74eb890243581d3b096414fe6481e7f00629bc6b",
+  "plugin_sha256": "4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7",
+  "runtime_sha256": "9a01b461c4ee7864c68ae40cce533cd1275390e79d17eba9c907b9bfcfba5d4e",
+  "server_sha256": "9620a179e79eca96e6039ab8a7a7771a733db4c2d54b1921a48c076937a92167",
+  "observer_sha256": "173831e07bfa14a21b15dc200df94f2acf1bd18e03821d0c371c6814b33307c1",
+  "commands": {
+    "server": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM-server.exe",
+      "--port",
+      "55757",
+      "--layout",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\unity-rounds-20261110T035053124111Z\\layout-input.json",
+      "--seconds",
+      "290",
+      "--host-token",
+      "[REDACTED]"
+    ],
+    "host": [
+      "dotnet",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\interop-rounds\\Interop.dll",
+      "55757",
+      "240"
+    ],
+    "observer": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\odin-source\\BOM\\build\\BOM.exe",
+      "--bot-client",
+      "127.0.0.1:55757",
+      "--seconds",
+      "200",
+      "--spectator",
+      "--observe-rounds",
+      "2",
+      "--prediction-off"
+    ],
+    "primary": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-performance-Mono\\BombPerformance.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-prediction-off",
+      "--bom-port",
+      "55757",
+      "--bom-round-test",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\unity-rounds-20261110T035053124111Z\\primary",
+      "--bom-round-role",
+      "primary",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\unity-rounds-20261110T035053124111Z\\primary.log"
+    ],
+    "guest": [
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\unity-performance-Mono\\BombPerformance.exe",
+      "-batchmode",
+      "-force-d3d11",
+      "-screen-fullscreen",
+      "0",
+      "-screen-width",
+      "1280",
+      "-screen-height",
+      "720",
+      "--bom-prediction-off",
+      "--bom-port",
+      "55757",
+      "--bom-round-test",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\unity-rounds-20261110T035053124111Z\\guest",
+      "--bom-round-role",
+      "guest",
+      "-logFile",
+      "C:\\Users\\rober\\Documents\\Codex\\2026-11-05\\hi\\work\\integration-stage\\evidence\\M9\\unity-rounds-20261110T035053124111Z\\guest.log"
+    ]
+  }
+}

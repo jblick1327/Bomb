@@ -4,12 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bom.Unity {
-public struct BomGeometryTicket {public ulong Session,Cell;public uint Epoch;public BomGeometryTicket(ulong session,uint epoch,ulong cell){Session=session;Epoch=epoch;Cell=cell;}}
+public struct BomGeometryTicket {public ulong Session,Cell;public uint Epoch;internal ulong CoordinatorGeneration;public BomGeometryTicket(ulong session,uint epoch,ulong cell){Session=session;Epoch=epoch;Cell=cell;CoordinatorGeneration=0;}}
 // Main-thread coordinator; worker delegates receive copied immutable value data.
 // No task creates Unity objects. Cached cap geometry is independent of membership.
 public sealed class BomGeometryJobs:IDisposable {
  public readonly int ActiveLimit,PendingLimit,CompletionLimit;public readonly long CacheLimit,BufferLimit;
- int outstandingAtDispose;long bufferBytes;public Task Drained{get;private set;}=Task.CompletedTask;
+ int outstandingAtDispose;long bufferBytes;ulong coordinatorGeneration=1;public Task Drained{get;private set;}=Task.CompletedTask;
  public int ActiveCount=>Disposed?Volatile.Read(ref outstandingAtDispose):active.Count;public int PendingCount=>pending.Count;public int CacheCount=>cache.Count;public long CacheBytes{get;private set;}public long BufferBytes{get=>Interlocked.Read(ref bufferBytes);private set=>Interlocked.Exchange(ref bufferBytes,value);}
  public long StaleResults{get;private set;}public long CacheHits{get;private set;}public long Evictions{get;private set;}public long QueueRefusals{get;private set;}public long CompletedBuilds{get;private set;}
  public ulong Session{get;private set;}public uint Epoch{get;private set;}public bool Disposed{get;private set;}
@@ -18,8 +18,8 @@ public sealed class BomGeometryJobs:IDisposable {
  public struct Completion {public BomGeometryTicket Ticket;public string Key;public BomClipResult Result;}
  readonly List<Request> pending=new List<Request>(),active=new List<Request>();readonly Queue<Completion> completed=new Queue<Completion>();readonly Dictionary<string,Record> cache=new Dictionary<string,Record>();readonly LinkedList<Record> lru=new LinkedList<Record>();readonly List<CancellationTokenSource> retired=new List<CancellationTokenSource>();CancellationTokenSource cancellation=new CancellationTokenSource();long order;
  public BomGeometryJobs(int activeLimit=2,int pendingLimit=128,long cacheBytes=256L*1024*1024,long bufferBytes=64L*1024*1024){if(activeLimit<1||pendingLimit<1||cacheBytes<1||bufferBytes<1)throw new ArgumentException("invalid geometry budget");ActiveLimit=activeLimit;PendingLimit=pendingLimit;CompletionLimit=pendingLimit;CacheLimit=cacheBytes;BufferLimit=bufferBytes;}
- public bool Current(BomGeometryTicket ticket)=>!Disposed&&ticket.Session==Session&&ticket.Epoch==Epoch;
- public void Reset(ulong session,uint epoch){if(Disposed)throw new ObjectDisposedException(nameof(BomGeometryJobs));cancellation.Cancel();retired.Add(cancellation);cancellation=new CancellationTokenSource();foreach(var request in pending)BufferBytes-=request.Bytes;pending.Clear();completed.Clear();Session=session;Epoch=epoch;ReclaimTokens();}
+ public bool Current(BomGeometryTicket ticket)=>!Disposed&&ticket.Session==Session&&ticket.Epoch==Epoch&&(ticket.CoordinatorGeneration==0||ticket.CoordinatorGeneration==coordinatorGeneration);
+ public void Reset(ulong session,uint epoch){if(Disposed)throw new ObjectDisposedException(nameof(BomGeometryJobs));if(coordinatorGeneration==ulong.MaxValue)throw new InvalidOperationException("geometry coordinator generation exhausted");coordinatorGeneration++;cancellation.Cancel();retired.Add(cancellation);cancellation=new CancellationTokenSource();foreach(var request in pending)BufferBytes-=request.Bytes;pending.Clear();completed.Clear();Session=session;Epoch=epoch;ReclaimTokens();}
  void ReclaimTokens(){for(int i=retired.Count-1;i>=0;i--){bool busy=false;foreach(var job in active)if(job.Cancellation==retired[i]){busy=true;break;}if(!busy){retired[i].Dispose();retired.RemoveAt(i);}}}
  void Touch(Record record){lru.Remove(record.Node);lru.AddFirst(record.Node);}
  public bool TryGet(string key,out BomClipResult result){if(cache.TryGetValue(key,out var record)){Touch(record);CacheHits++;result=record.Result;return true;}result=null;return false;}
@@ -27,6 +27,7 @@ public sealed class BomGeometryJobs:IDisposable {
  public void Release(string key){if(!cache.TryGetValue(key,out var record)||record.References<=0)throw new InvalidOperationException("unbalanced geometry cache release");record.References--;}
  public bool RequestBuild(BomGeometryTicket ticket,string key,long estimatedBytes,int priority,Func<CancellationToken,BomClipResult> build){
   if(!Current(ticket)||string.IsNullOrEmpty(key)||build==null)return false;
+  ticket.CoordinatorGeneration=coordinatorGeneration;
   if(cache.ContainsKey(key))return true;
   foreach(var job in active)if(Current(job.Ticket)&&job.Key==key)return true;foreach(var job in pending)if(job.Key==key){job.Priority=Math.Max(job.Priority,priority);return true;}
   if(estimatedBytes<1||estimatedBytes>BufferLimit||BufferBytes>BufferLimit-estimatedBytes||pending.Count>=PendingLimit){QueueRefusals++;return false;}

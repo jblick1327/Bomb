@@ -1,0 +1,505 @@
+BOM staging server listening on 127.0.0.1:62660; tick=60Hz
+CONNECT client=0
+HASH EXPECT client=0 connection=1 epoch=3 revision=2069 tick=20 queued=yes
+HELLO OK client=0 role=HOST
+HASH REPORT client=0 connection=1 epoch=3 revision=2069 hash=829541557802744017 tick=77 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=2071 tick=200 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=2071 hash=15317047682331982713 tick=205 result=match
+CONNECT client=1
+HASH EXPECT client=1 connection=1 epoch=3 revision=2071 tick=212 queued=yes
+HELLO OK client=1 role=player
+HASH REPORT client=1 connection=1 epoch=3 revision=2071 hash=15317047682331982713 tick=268 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=2073 tick=382 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=2073 tick=382 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=2073 hash=11367297352350925175 tick=385 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=2073 hash=11367297352350925175 tick=391 result=match
+CONNECT client=2
+CONNECT client=3
+HASH EXPECT client=2 connection=1 epoch=3 revision=2073 tick=508 queued=yes
+HELLO OK client=2 role=player
+HASH EXPECT client=3 connection=1 epoch=3 revision=2073 tick=508 queued=yes
+HELLO OK client=3 role=player
+HASH REPORT client=3 connection=1 epoch=3 revision=2073 hash=11367297352350925175 tick=554 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=2073 hash=11367297352350925175 tick=554 result=match
+HASH EXPECT client=0 connection=1 epoch=3 revision=2075 tick=561 queued=yes
+HASH EXPECT client=1 connection=1 epoch=3 revision=2075 tick=561 queued=yes
+HASH EXPECT client=2 connection=1 epoch=3 revision=2075 tick=561 queued=yes
+HASH EXPECT client=3 connection=1 epoch=3 revision=2075 tick=561 queued=yes
+HASH REPORT client=0 connection=1 epoch=3 revision=2075 hash=7187762058176596483 tick=564 result=match
+HASH REPORT client=1 connection=1 epoch=3 revision=2075 hash=7187762058176596483 tick=565 result=match
+HASH REPORT client=2 connection=1 epoch=3 revision=2075 hash=7187762058176596483 tick=574 result=match
+HASH REPORT client=3 connection=1 epoch=3 revision=2075 hash=7187762058176596483 tick=575 result=match
+SERVER time=10s tick=600 active=4 overruns=0 hashes=11 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=31ms tx=791 kbit/s
+INPUT client=0 incarnation=1 generation=3 finalized=376 applied_sequence=0 accepted=32 duplicates=93 conflicts=762 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=30ms tx=489 kbit/s
+INPUT client=1 incarnation=2 generation=3 finalized=544 applied_sequence=0 accepted=32 duplicates=93 conflicts=90 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=23ms tx=377 kbit/s
+INPUT client=2 incarnation=3 generation=3 finalized=600 applied_sequence=6 accepted=19 duplicates=50 conflicts=0 late=0 starved=12 neutralized=12
+  client=3 addr=139637976842411 RTT=25ms tx=375 kbit/s
+INPUT client=3 incarnation=4 generation=3 finalized=600 applied_sequence=6 accepted=18 duplicates=45 conflicts=0 late=0 starved=12 neutralized=12
+REBUILD START epoch=4 tick=619
+REBUILD COMMIT epoch=4 tick=629 build_ms=170.526
+HASH EXPECT client=0 connection=1 epoch=4 revision=2069 tick=630 queued=yes
+HASH EXPECT client=1 connection=1 epoch=4 revision=2069 tick=630 queued=yes
+HASH EXPECT client=2 connection=1 epoch=4 revision=2069 tick=630 queued=yes
+HASH EXPECT client=3 connection=1 epoch=4 revision=2069 tick=630 queued=yes
+HASH REPORT client=2 connection=1 epoch=4 revision=2069 hash=18357215945139081352 tick=678 result=match
+HASH REPORT client=3 connection=1 epoch=4 revision=2069 hash=18357215945139081352 tick=678 result=match
+HASH REPORT client=0 connection=1 epoch=4 revision=2069 hash=18357215945139081352 tick=681 result=match
+HASH REPORT client=1 connection=1 epoch=4 revision=2069 hash=18357215945139081352 tick=683 result=match
+server tick overrun at 12.06s: dropping 23.0ms of accumulated time
+server tick overrun at 12.26s: dropping 35.5ms of accumulated time
+server tick overrun at 12.38s: dropping 41.0ms of accumulated time
+server tick overrun at 12.54s: dropping 72.4ms of accumulated time
+server tick overrun at 12.79s: dropping 164.0ms of accumulated time
+server tick overrun at 13.05s: dropping 166.7ms of accumulated time
+server tick overrun at 13.34s: dropping 166.7ms of accumulated time
+server tick overrun at 13.63s: dropping 166.7ms of accumulated time
+server tick overrun at 13.92s: dropping 166.7ms of accumulated time
+server tick overrun at 14.18s: dropping 166.7ms of accumulated time
+server tick overrun at 14.43s: dropping 166.7ms of accumulated time
+server tick overrun at 14.68s: dropping 160.9ms of accumulated time
+server tick overrun at 14.93s: dropping 166.7ms of accumulated time
+server tick overrun at 15.22s: dropping 166.7ms of accumulated time
+server tick overrun at 15.46s: dropping 150.1ms of accumulated time
+server tick overrun at 15.69s: dropping 145.0ms of accumulated time
+server tick overrun at 15.96s: dropping 166.7ms of accumulated time
+server tick overrun at 16.30s: dropping 166.7ms of accumulated time
+server tick overrun at 16.64s: dropping 166.7ms of accumulated time
+server tick overrun at 16.93s: dropping 166.7ms of accumulated time
+server tick overrun at 17.24s: dropping 166.7ms of accumulated time
+server tick overrun at 17.53s: dropping 166.7ms of accumulated time
+server tick overrun at 17.82s: dropping 166.7ms of accumulated time
+server tick overrun at 18.09s: dropping 166.7ms of accumulated time
+server tick overrun at 18.36s: dropping 166.7ms of accumulated time
+server tick overrun at 18.62s: dropping 166.7ms of accumulated time
+server tick overrun at 18.90s: dropping 166.7ms of accumulated time
+server tick overrun at 19.16s: dropping 166.7ms of accumulated time
+server tick overrun at 19.43s: dropping 166.7ms of accumulated time
+server tick overrun at 19.62s: dropping 103.7ms of accumulated time
+server tick overrun at 19.74s: dropping 39.7ms of accumulated time
+server tick overrun at 19.85s: dropping 27.3ms of accumulated time
+server tick overrun at 20.10s: dropping 166.7ms of accumulated time
+SERVER time=20s tick=887 active=4 overruns=33 hashes=15 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=275ms tx=720 kbit/s
+INPUT client=0 incarnation=1 generation=18 finalized=872 applied_sequence=0 accepted=16 duplicates=42 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=276ms tx=714 kbit/s
+INPUT client=1 incarnation=2 generation=19 finalized=882 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=287ms tx=734 kbit/s
+INPUT client=2 incarnation=3 generation=20 finalized=887 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+  client=3 addr=139637976842411 RTT=289ms tx=736 kbit/s
+INPUT client=3 incarnation=4 generation=22 finalized=887 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+server tick overrun at 20.30s: dropping 119.8ms of accumulated time
+REBUILD START epoch=5 tick=892
+server tick overrun at 20.51s: dropping 122.6ms of accumulated time
+server tick overrun at 20.76s: dropping 161.6ms of accumulated time
+server tick overrun at 20.97s: dropping 135.4ms of accumulated time
+server tick overrun at 21.19s: dropping 132.5ms of accumulated time
+server tick overrun at 21.41s: dropping 135.3ms of accumulated time
+REBUILD COMMIT epoch=5 tick=917 build_ms=1020.238
+HASH EXPECT client=0 connection=1 epoch=5 revision=2069 tick=918 queued=yes
+HASH EXPECT client=1 connection=1 epoch=5 revision=2069 tick=918 queued=yes
+HASH EXPECT client=2 connection=1 epoch=5 revision=2069 tick=918 queued=yes
+HASH EXPECT client=3 connection=1 epoch=5 revision=2069 tick=918 queued=yes
+server tick overrun at 21.53s: dropping 39.9ms of accumulated time
+server tick overrun at 21.69s: dropping 74.1ms of accumulated time
+server tick overrun at 21.83s: dropping 55.3ms of accumulated time
+server tick overrun at 21.98s: dropping 71.3ms of accumulated time
+server tick overrun at 22.14s: dropping 77.0ms of accumulated time
+server tick overrun at 22.31s: dropping 82.0ms of accumulated time
+server tick overrun at 22.47s: dropping 78.9ms of accumulated time
+server tick overrun at 22.60s: dropping 50.6ms of accumulated time
+server tick overrun at 22.78s: dropping 87.1ms of accumulated time
+server tick overrun at 22.93s: dropping 72.7ms of accumulated time
+server tick overrun at 23.06s: dropping 40.6ms of accumulated time
+server tick overrun at 23.17s: dropping 26.6ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=5 revision=2069 hash=8449372848006564999 tick=992 result=match
+server tick overrun at 23.54s: dropping 38.4ms of accumulated time
+HASH REPORT client=0 connection=1 epoch=5 revision=2069 hash=8449372848006564999 tick=997 result=match
+HASH REPORT client=3 connection=1 epoch=5 revision=2069 hash=8449372848006564999 tick=997 result=match
+HASH REPORT client=1 connection=1 epoch=5 revision=2069 hash=8449372848006564999 tick=997 result=match
+server tick overrun at 23.72s: dropping 21.0ms of accumulated time
+server tick overrun at 23.93s: dropping 35.3ms of accumulated time
+server tick overrun at 24.09s: dropping 75.6ms of accumulated time
+server tick overrun at 24.27s: dropping 102.3ms of accumulated time
+server tick overrun at 24.49s: dropping 131.6ms of accumulated time
+server tick overrun at 24.73s: dropping 165.4ms of accumulated time
+server tick overrun at 25.02s: dropping 166.7ms of accumulated time
+server tick overrun at 25.30s: dropping 166.7ms of accumulated time
+server tick overrun at 25.50s: dropping 120.0ms of accumulated time
+server tick overrun at 25.73s: dropping 143.1ms of accumulated time
+server tick overrun at 25.94s: dropping 133.2ms of accumulated time
+server tick overrun at 26.21s: dropping 166.7ms of accumulated time
+server tick overrun at 26.45s: dropping 156.1ms of accumulated time
+server tick overrun at 26.74s: dropping 166.7ms of accumulated time
+server tick overrun at 27.01s: dropping 166.7ms of accumulated time
+server tick overrun at 27.29s: dropping 166.7ms of accumulated time
+server tick overrun at 27.62s: dropping 166.7ms of accumulated time
+server tick overrun at 27.90s: dropping 166.7ms of accumulated time
+server tick overrun at 28.15s: dropping 165.7ms of accumulated time
+server tick overrun at 28.44s: dropping 166.7ms of accumulated time
+server tick overrun at 28.73s: dropping 166.7ms of accumulated time
+server tick overrun at 29.01s: dropping 166.7ms of accumulated time
+server tick overrun at 29.27s: dropping 166.7ms of accumulated time
+server tick overrun at 29.50s: dropping 146.9ms of accumulated time
+server tick overrun at 29.75s: dropping 166.7ms of accumulated time
+server tick overrun at 29.99s: dropping 153.3ms of accumulated time
+server tick overrun at 30.21s: dropping 132.8ms of accumulated time
+SERVER time=30s tick=1142 active=4 overruns=79 hashes=19 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=461ms tx=777 kbit/s
+INPUT client=0 incarnation=1 generation=37 finalized=1137 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=461ms tx=723 kbit/s
+INPUT client=1 incarnation=2 generation=40 finalized=1137 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=454ms tx=809 kbit/s
+INPUT client=2 incarnation=3 generation=44 finalized=1142 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+  client=3 addr=139637976842411 RTT=457ms tx=781 kbit/s
+INPUT client=3 incarnation=4 generation=42 finalized=1142 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+REBUILD START epoch=6 tick=1142
+server tick overrun at 30.41s: dropping 124.6ms of accumulated time
+server tick overrun at 30.61s: dropping 111.9ms of accumulated time
+server tick overrun at 30.84s: dropping 150.9ms of accumulated time
+REBUILD COMMIT epoch=6 tick=1161 build_ms=786.925
+HASH EXPECT client=0 connection=1 epoch=6 revision=2069 tick=1162 queued=yes
+HASH EXPECT client=1 connection=1 epoch=6 revision=2069 tick=1162 queued=yes
+HASH EXPECT client=2 connection=1 epoch=6 revision=2069 tick=1162 queued=yes
+HASH EXPECT client=3 connection=1 epoch=6 revision=2069 tick=1162 queued=yes
+server tick overrun at 31.05s: dropping 121.0ms of accumulated time
+server tick overrun at 31.28s: dropping 151.8ms of accumulated time
+server tick overrun at 31.42s: dropping 56.4ms of accumulated time
+server tick overrun at 31.53s: dropping 27.0ms of accumulated time
+server tick overrun at 31.66s: dropping 41.9ms of accumulated time
+server tick overrun at 31.80s: dropping 55.5ms of accumulated time
+server tick overrun at 31.95s: dropping 70.9ms of accumulated time
+server tick overrun at 32.08s: dropping 42.7ms of accumulated time
+server tick overrun at 32.22s: dropping 56.3ms of accumulated time
+server tick overrun at 32.36s: dropping 56.4ms of accumulated time
+server tick overrun at 32.47s: dropping 26.8ms of accumulated time
+HASH REPORT client=3 connection=1 epoch=6 revision=2069 hash=15966783534282571374 tick=1230 result=match
+HASH REPORT client=2 connection=1 epoch=6 revision=2069 hash=15966783534282571374 tick=1235 result=match
+HASH REPORT client=1 connection=1 epoch=6 revision=2069 hash=15966783534282571374 tick=1240 result=match
+HASH REPORT client=0 connection=1 epoch=6 revision=2069 hash=15966783534282571374 tick=1240 result=match
+server tick overrun at 33.04s: dropping 25.2ms of accumulated time
+server tick overrun at 33.24s: dropping 34.5ms of accumulated time
+server tick overrun at 33.37s: dropping 43.1ms of accumulated time
+server tick overrun at 33.54s: dropping 88.8ms of accumulated time
+server tick overrun at 33.77s: dropping 149.0ms of accumulated time
+server tick overrun at 34.00s: dropping 148.1ms of accumulated time
+server tick overrun at 34.24s: dropping 151.9ms of accumulated time
+server tick overrun at 34.46s: dropping 132.4ms of accumulated time
+server tick overrun at 34.74s: dropping 166.7ms of accumulated time
+server tick overrun at 35.00s: dropping 166.7ms of accumulated time
+server tick overrun at 35.23s: dropping 148.1ms of accumulated time
+server tick overrun at 35.48s: dropping 163.3ms of accumulated time
+server tick overrun at 35.69s: dropping 121.5ms of accumulated time
+server tick overrun at 35.89s: dropping 121.7ms of accumulated time
+server tick overrun at 36.14s: dropping 162.7ms of accumulated time
+server tick overrun at 36.44s: dropping 166.7ms of accumulated time
+server tick overrun at 36.75s: dropping 166.7ms of accumulated time
+server tick overrun at 37.03s: dropping 166.7ms of accumulated time
+server tick overrun at 37.34s: dropping 166.7ms of accumulated time
+server tick overrun at 37.60s: dropping 166.7ms of accumulated time
+server tick overrun at 37.89s: dropping 166.7ms of accumulated time
+server tick overrun at 38.20s: dropping 166.7ms of accumulated time
+server tick overrun at 38.47s: dropping 166.7ms of accumulated time
+server tick overrun at 38.77s: dropping 166.7ms of accumulated time
+server tick overrun at 39.03s: dropping 166.7ms of accumulated time
+server tick overrun at 39.30s: dropping 166.7ms of accumulated time
+server tick overrun at 39.58s: dropping 166.7ms of accumulated time
+server tick overrun at 39.85s: dropping 166.7ms of accumulated time
+server tick overrun at 40.12s: dropping 166.7ms of accumulated time
+SERVER time=40s tick=1390 active=4 overruns=122 hashes=23 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=358ms tx=738 kbit/s
+INPUT client=0 incarnation=1 generation=55 finalized=1380 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=533ms tx=779 kbit/s
+INPUT client=1 incarnation=2 generation=61 finalized=1380 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=546ms tx=755 kbit/s
+INPUT client=2 incarnation=3 generation=64 finalized=1390 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+  client=3 addr=139637976842411 RTT=310ms tx=752 kbit/s
+INPUT client=3 incarnation=4 generation=64 finalized=1390 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+REBUILD START epoch=7 tick=1390
+server tick overrun at 40.40s: dropping 166.7ms of accumulated time
+server tick overrun at 40.66s: dropping 166.7ms of accumulated time
+server tick overrun at 40.90s: dropping 156.0ms of accumulated time
+server tick overrun at 41.15s: dropping 160.8ms of accumulated time
+server tick overrun at 41.36s: dropping 134.9ms of accumulated time
+server tick overrun at 41.62s: dropping 166.7ms of accumulated time
+REBUILD COMMIT epoch=7 tick=1420 build_ms=1336.644
+HASH EXPECT client=0 connection=1 epoch=7 revision=2069 tick=1421 queued=yes
+HASH EXPECT client=1 connection=1 epoch=7 revision=2069 tick=1421 queued=yes
+HASH EXPECT client=2 connection=1 epoch=7 revision=2069 tick=1421 queued=yes
+HASH EXPECT client=3 connection=1 epoch=7 revision=2069 tick=1421 queued=yes
+server tick overrun at 41.74s: dropping 39.7ms of accumulated time
+server tick overrun at 41.92s: dropping 100.8ms of accumulated time
+server tick overrun at 42.09s: dropping 82.8ms of accumulated time
+server tick overrun at 42.22s: dropping 44.7ms of accumulated time
+server tick overrun at 42.36s: dropping 59.3ms of accumulated time
+server tick overrun at 42.53s: dropping 90.0ms of accumulated time
+server tick overrun at 42.74s: dropping 126.2ms of accumulated time
+server tick overrun at 42.91s: dropping 83.4ms of accumulated time
+server tick overrun at 43.08s: dropping 83.9ms of accumulated time
+server tick overrun at 43.25s: dropping 85.5ms of accumulated time
+server tick overrun at 43.42s: dropping 86.6ms of accumulated time
+server tick overrun at 43.55s: dropping 54.0ms of accumulated time
+server tick overrun at 43.66s: dropping 25.4ms of accumulated time
+server tick overrun at 43.77s: dropping 28.0ms of accumulated time
+server tick overrun at 43.88s: dropping 24.2ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=7 revision=2069 hash=8809508202073826581 tick=1495 result=match
+HASH REPORT client=3 connection=1 epoch=7 revision=2069 hash=8809508202073826581 tick=1495 result=match
+HASH REPORT client=0 connection=1 epoch=7 revision=2069 hash=8809508202073826581 tick=1500 result=match
+HASH REPORT client=2 connection=1 epoch=7 revision=2069 hash=8809508202073826581 tick=1500 result=match
+server tick overrun at 44.10s: dropping 53.1ms of accumulated time
+server tick overrun at 44.21s: dropping 24.9ms of accumulated time
+server tick overrun at 44.33s: dropping 42.4ms of accumulated time
+HASH EXPECT client=0 connection=1 epoch=7 revision=2071 tick=1516 queued=yes
+HASH EXPECT client=1 connection=1 epoch=7 revision=2071 tick=1516 queued=yes
+HASH EXPECT client=2 connection=1 epoch=7 revision=2071 tick=1516 queued=yes
+HASH EXPECT client=3 connection=1 epoch=7 revision=2071 tick=1516 queued=yes
+server tick overrun at 44.46s: dropping 44.5ms of accumulated time
+server tick overrun at 44.74s: dropping 166.7ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=7 revision=2071 hash=4277137655471912769 tick=1525 result=match
+HASH REPORT client=3 connection=1 epoch=7 revision=2071 hash=4277137655471912769 tick=1525 result=match
+HASH REPORT client=0 connection=1 epoch=7 revision=2071 hash=4277137655471912769 tick=1525 result=match
+server tick overrun at 44.93s: dropping 105.0ms of accumulated time
+server tick overrun at 45.12s: dropping 108.3ms of accumulated time
+server tick overrun at 45.31s: dropping 108.5ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=7 revision=2071 hash=4277137655471912769 tick=1540 result=match
+server tick overrun at 45.48s: dropping 84.8ms of accumulated time
+server tick overrun at 45.63s: dropping 67.0ms of accumulated time
+server tick overrun at 45.88s: dropping 166.7ms of accumulated time
+server tick overrun at 46.15s: dropping 166.7ms of accumulated time
+server tick overrun at 46.44s: dropping 166.7ms of accumulated time
+server tick overrun at 46.69s: dropping 166.7ms of accumulated time
+server tick overrun at 46.95s: dropping 166.7ms of accumulated time
+server tick overrun at 47.19s: dropping 149.1ms of accumulated time
+server tick overrun at 47.42s: dropping 151.1ms of accumulated time
+server tick overrun at 47.69s: dropping 166.7ms of accumulated time
+server tick overrun at 47.95s: dropping 166.7ms of accumulated time
+server tick overrun at 48.18s: dropping 151.2ms of accumulated time
+server tick overrun at 48.46s: dropping 166.7ms of accumulated time
+server tick overrun at 48.74s: dropping 166.7ms of accumulated time
+server tick overrun at 49.02s: dropping 166.7ms of accumulated time
+server tick overrun at 49.29s: dropping 166.7ms of accumulated time
+server tick overrun at 49.53s: dropping 164.7ms of accumulated time
+server tick overrun at 49.78s: dropping 165.4ms of accumulated time
+server tick overrun at 50.03s: dropping 166.5ms of accumulated time
+SERVER time=50s tick=1635 active=4 overruns=170 hashes=31 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=484ms tx=776 kbit/s
+INPUT client=0 incarnation=1 generation=74 finalized=1630 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=491ms tx=713 kbit/s
+INPUT client=1 incarnation=2 generation=80 finalized=1625 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=498ms tx=730 kbit/s
+INPUT client=2 incarnation=3 generation=86 finalized=1635 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+  client=3 addr=139637976842411 RTT=496ms tx=820 kbit/s
+INPUT client=3 incarnation=4 generation=87 finalized=1635 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+server tick overrun at 50.28s: dropping 164.7ms of accumulated time
+REBUILD START epoch=8 tick=1640
+server tick overrun at 50.54s: dropping 166.7ms of accumulated time
+server tick overrun at 50.79s: dropping 166.1ms of accumulated time
+server tick overrun at 51.04s: dropping 165.8ms of accumulated time
+server tick overrun at 51.31s: dropping 166.7ms of accumulated time
+server tick overrun at 51.61s: dropping 166.7ms of accumulated time
+server tick overrun at 51.85s: dropping 159.6ms of accumulated time
+server tick overrun at 52.06s: dropping 128.9ms of accumulated time
+REBUILD COMMIT epoch=8 tick=1675 build_ms=1729.987
+HASH EXPECT client=0 connection=1 epoch=8 revision=2069 tick=1676 queued=yes
+HASH EXPECT client=1 connection=1 epoch=8 revision=2069 tick=1676 queued=yes
+HASH EXPECT client=2 connection=1 epoch=8 revision=2069 tick=1676 queued=yes
+HASH EXPECT client=3 connection=1 epoch=8 revision=2069 tick=1676 queued=yes
+server tick overrun at 52.27s: dropping 124.8ms of accumulated time
+server tick overrun at 52.49s: dropping 135.2ms of accumulated time
+server tick overrun at 52.66s: dropping 84.8ms of accumulated time
+server tick overrun at 52.84s: dropping 94.8ms of accumulated time
+server tick overrun at 53.02s: dropping 99.3ms of accumulated time
+server tick overrun at 53.23s: dropping 130.7ms of accumulated time
+server tick overrun at 53.43s: dropping 116.7ms of accumulated time
+server tick overrun at 53.62s: dropping 103.8ms of accumulated time
+server tick overrun at 53.82s: dropping 118.8ms of accumulated time
+server tick overrun at 54.06s: dropping 154.1ms of accumulated time
+server tick overrun at 54.21s: dropping 69.7ms of accumulated time
+server tick overrun at 54.32s: dropping 25.8ms of accumulated time
+server tick overrun at 54.45s: dropping 42.1ms of accumulated time
+server tick overrun at 54.57s: dropping 40.1ms of accumulated time
+server tick overrun at 54.69s: dropping 41.0ms of accumulated time
+HASH REPORT client=1 connection=1 epoch=8 revision=2069 hash=14691273389080408076 tick=1750 result=match
+server tick overrun at 54.80s: dropping 27.2ms of accumulated time
+HASH REPORT client=3 connection=1 epoch=8 revision=2069 hash=14691273389080408076 tick=1755 result=match
+server tick overrun at 54.93s: dropping 41.6ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=8 revision=2069 hash=14691273389080408076 tick=1760 result=match
+HASH REPORT client=0 connection=1 epoch=8 revision=2069 hash=14691273389080408076 tick=1760 result=match
+server tick overrun at 55.07s: dropping 55.1ms of accumulated time
+server tick overrun at 55.19s: dropping 40.5ms of accumulated time
+server tick overrun at 55.32s: dropping 40.5ms of accumulated time
+server tick overrun at 55.46s: dropping 57.3ms of accumulated time
+server tick overrun at 55.65s: dropping 106.3ms of accumulated time
+server tick overrun at 55.84s: dropping 108.3ms of accumulated time
+server tick overrun at 56.05s: dropping 130.8ms of accumulated time
+server tick overrun at 56.28s: dropping 147.9ms of accumulated time
+server tick overrun at 56.53s: dropping 165.5ms of accumulated time
+server tick overrun at 56.78s: dropping 166.7ms of accumulated time
+server tick overrun at 57.05s: dropping 166.7ms of accumulated time
+server tick overrun at 57.29s: dropping 163.1ms of accumulated time
+server tick overrun at 57.55s: dropping 166.7ms of accumulated time
+server tick overrun at 57.79s: dropping 164.9ms of accumulated time
+server tick overrun at 58.08s: dropping 166.7ms of accumulated time
+server tick overrun at 58.40s: dropping 166.7ms of accumulated time
+server tick overrun at 58.69s: dropping 166.7ms of accumulated time
+server tick overrun at 58.98s: dropping 166.7ms of accumulated time
+server tick overrun at 59.30s: dropping 166.7ms of accumulated time
+server tick overrun at 59.58s: dropping 166.7ms of accumulated time
+server tick overrun at 59.89s: dropping 166.7ms of accumulated time
+server tick overrun at 60.19s: dropping 166.7ms of accumulated time
+SERVER time=60s tick=1870 active=4 overruns=217 hashes=35 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=603ms tx=728 kbit/s
+INPUT client=0 incarnation=1 generation=92 finalized=1860 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=551ms tx=711 kbit/s
+INPUT client=1 incarnation=2 generation=100 finalized=1865 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=575ms tx=764 kbit/s
+INPUT client=2 incarnation=3 generation=106 finalized=1870 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=5 neutralized=5
+  client=3 addr=139637976842411 RTT=604ms tx=750 kbit/s
+INPUT client=3 incarnation=4 generation=105 finalized=1870 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+REBUILD START epoch=9 tick=1870
+server tick overrun at 60.50s: dropping 166.7ms of accumulated time
+server tick overrun at 60.76s: dropping 166.7ms of accumulated time
+server tick overrun at 61.04s: dropping 166.7ms of accumulated time
+server tick overrun at 61.31s: dropping 166.7ms of accumulated time
+REBUILD COMMIT epoch=9 tick=1892 build_ms=1170.747
+HASH EXPECT client=0 connection=1 epoch=9 revision=2069 tick=1893 queued=yes
+HASH EXPECT client=1 connection=1 epoch=9 revision=2069 tick=1893 queued=yes
+HASH EXPECT client=2 connection=1 epoch=9 revision=2069 tick=1893 queued=yes
+HASH EXPECT client=3 connection=1 epoch=9 revision=2069 tick=1893 queued=yes
+server tick overrun at 61.57s: dropping 166.7ms of accumulated time
+server tick overrun at 61.84s: dropping 166.7ms of accumulated time
+server tick overrun at 61.98s: dropping 55.8ms of accumulated time
+server tick overrun at 62.13s: dropping 73.5ms of accumulated time
+server tick overrun at 62.32s: dropping 102.3ms of accumulated time
+server tick overrun at 62.51s: dropping 107.6ms of accumulated time
+server tick overrun at 62.71s: dropping 116.0ms of accumulated time
+server tick overrun at 62.91s: dropping 118.3ms of accumulated time
+server tick overrun at 63.12s: dropping 122.7ms of accumulated time
+server tick overrun at 63.28s: dropping 85.5ms of accumulated time
+server tick overrun at 63.39s: dropping 25.3ms of accumulated time
+server tick overrun at 63.50s: dropping 24.2ms of accumulated time
+server tick overrun at 63.69s: dropping 18.9ms of accumulated time
+server tick overrun at 63.80s: dropping 25.9ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=9 revision=2069 hash=11843704011382793403 tick=1965 result=match
+server tick overrun at 63.91s: dropping 27.1ms of accumulated time
+HASH REPORT client=3 connection=1 epoch=9 revision=2069 hash=11843704011382793403 tick=1970 result=match
+HASH REPORT client=1 connection=1 epoch=9 revision=2069 hash=11843704011382793403 tick=1970 result=match
+HASH REPORT client=0 connection=1 epoch=9 revision=2069 hash=11843704011382793403 tick=1970 result=match
+server tick overrun at 64.01s: dropping 24.7ms of accumulated time
+server tick overrun at 64.12s: dropping 25.1ms of accumulated time
+server tick overrun at 64.23s: dropping 24.2ms of accumulated time
+server tick overrun at 64.34s: dropping 26.6ms of accumulated time
+server tick overrun at 64.49s: dropping 72.0ms of accumulated time
+server tick overrun at 64.72s: dropping 142.5ms of accumulated time
+server tick overrun at 64.97s: dropping 162.8ms of accumulated time
+server tick overrun at 65.21s: dropping 161.2ms of accumulated time
+server tick overrun at 65.50s: dropping 166.7ms of accumulated time
+server tick overrun at 65.74s: dropping 158.5ms of accumulated time
+server tick overrun at 66.01s: dropping 166.7ms of accumulated time
+server tick overrun at 66.25s: dropping 162.9ms of accumulated time
+server tick overrun at 66.52s: dropping 166.7ms of accumulated time
+server tick overrun at 66.82s: dropping 166.7ms of accumulated time
+server tick overrun at 67.10s: dropping 166.7ms of accumulated time
+server tick overrun at 67.42s: dropping 166.7ms of accumulated time
+server tick overrun at 67.71s: dropping 166.7ms of accumulated time
+server tick overrun at 68.01s: dropping 166.7ms of accumulated time
+server tick overrun at 68.35s: dropping 166.7ms of accumulated time
+server tick overrun at 68.66s: dropping 166.7ms of accumulated time
+server tick overrun at 68.97s: dropping 166.7ms of accumulated time
+server tick overrun at 69.23s: dropping 166.7ms of accumulated time
+server tick overrun at 69.54s: dropping 166.7ms of accumulated time
+server tick overrun at 69.85s: dropping 166.7ms of accumulated time
+server tick overrun at 70.15s: dropping 166.7ms of accumulated time
+SERVER time=70s tick=2095 active=4 overruns=261 hashes=39 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=606ms tx=676 kbit/s
+INPUT client=0 incarnation=1 generation=110 finalized=2085 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=552ms tx=662 kbit/s
+INPUT client=1 incarnation=2 generation=120 finalized=2090 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=2 addr=139637976842410 RTT=588ms tx=672 kbit/s
+INPUT client=2 incarnation=3 generation=125 finalized=2095 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=20 neutralized=20
+  client=3 addr=139637976842411 RTT=342ms tx=697 kbit/s
+INPUT client=3 incarnation=4 generation=127 finalized=2095 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=10 neutralized=10
+REBUILD START epoch=10 tick=2095
+server tick overrun at 70.48s: dropping 166.7ms of accumulated time
+server tick overrun at 70.78s: dropping 166.7ms of accumulated time
+server tick overrun at 71.09s: dropping 166.7ms of accumulated time
+server tick overrun at 71.42s: dropping 166.7ms of accumulated time
+server tick overrun at 71.74s: dropping 166.7ms of accumulated time
+server tick overrun at 72.06s: dropping 166.7ms of accumulated time
+server tick overrun at 72.38s: dropping 166.7ms of accumulated time
+server tick overrun at 72.66s: dropping 166.7ms of accumulated time
+server tick overrun at 72.97s: dropping 166.7ms of accumulated time
+REBUILD COMMIT epoch=10 tick=2142 build_ms=2983.068
+HASH EXPECT client=0 connection=1 epoch=10 revision=2069 tick=2143 queued=yes
+HASH EXPECT client=1 connection=1 epoch=10 revision=2069 tick=2143 queued=yes
+HASH EXPECT client=2 connection=1 epoch=10 revision=2069 tick=2143 queued=yes
+HASH EXPECT client=3 connection=1 epoch=10 revision=2069 tick=2143 queued=yes
+server tick overrun at 73.31s: dropping 166.7ms of accumulated time
+server tick overrun at 73.66s: dropping 166.7ms of accumulated time
+server tick overrun at 73.87s: dropping 130.8ms of accumulated time
+server tick overrun at 74.09s: dropping 132.8ms of accumulated time
+server tick overrun at 74.32s: dropping 149.2ms of accumulated time
+server tick overrun at 74.55s: dropping 148.9ms of accumulated time
+server tick overrun at 74.81s: dropping 166.7ms of accumulated time
+server tick overrun at 75.07s: dropping 166.7ms of accumulated time
+server tick overrun at 75.32s: dropping 161.8ms of accumulated time
+server tick overrun at 75.59s: dropping 166.7ms of accumulated time
+server tick overrun at 75.69s: dropping 21.3ms of accumulated time
+server tick overrun at 75.82s: dropping 37.6ms of accumulated time
+server tick overrun at 76.00s: dropping 20.7ms of accumulated time
+server tick overrun at 76.24s: dropping 69.5ms of accumulated time
+HASH REPORT client=2 connection=1 epoch=10 revision=2069 hash=6225281219579355282 tick=2220 result=match
+HASH REPORT client=3 connection=1 epoch=10 revision=2069 hash=6225281219579355282 tick=2220 result=match
+HASH REPORT client=0 connection=1 epoch=10 revision=2069 hash=6225281219579355282 tick=2220 result=match
+HASH REPORT client=1 connection=1 epoch=10 revision=2069 hash=6225281219579355282 tick=2220 result=match
+server tick overrun at 76.44s: dropping 118.5ms of accumulated time
+server tick overrun at 76.59s: dropping 71.1ms of accumulated time
+server tick overrun at 76.76s: dropping 85.3ms of accumulated time
+server tick overrun at 76.93s: dropping 87.2ms of accumulated time
+server tick overrun at 77.19s: dropping 166.7ms of accumulated time
+server tick overrun at 77.46s: dropping 166.7ms of accumulated time
+server tick overrun at 77.76s: dropping 166.7ms of accumulated time
+server tick overrun at 78.04s: dropping 166.7ms of accumulated time
+server tick overrun at 78.38s: dropping 166.7ms of accumulated time
+server tick overrun at 78.69s: dropping 166.7ms of accumulated time
+server tick overrun at 79.03s: dropping 166.7ms of accumulated time
+server tick overrun at 79.38s: dropping 166.7ms of accumulated time
+DISCONNECT client=2 reason=Client_Disconnect
+HASH CLOSED client=2 connection=1 tick=2280
+DISCONNECT client=3 reason=Client_Disconnect
+HASH CLOSED client=3 connection=1 tick=2280
+server tick overrun at 79.64s: dropping 166.7ms of accumulated time
+server tick overrun at 79.83s: dropping 99.6ms of accumulated time
+server tick overrun at 80.02s: dropping 115.8ms of accumulated time
+SERVER time=80s tick=2295 active=2 overruns=299 hashes=43 mismatches=0 unrecorded=0
+  client=0 addr=139637976855749 RTT=372ms tx=603 kbit/s
+INPUT client=0 incarnation=1 generation=125 finalized=2290 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+  client=1 addr=139637976855752 RTT=373ms tx=635 kbit/s
+INPUT client=1 incarnation=2 generation=135 finalized=2290 applied_sequence=0 accepted=0 duplicates=0 conflicts=0 late=0 starved=0 neutralized=0
+server tick overrun at 80.19s: dropping 79.6ms of accumulated time
+server tick overrun at 80.33s: dropping 55.5ms of accumulated time
+REBUILD START epoch=11 tick=2305
+server tick overrun at 80.47s: dropping 59.0ms of accumulated time
+server tick overrun at 80.62s: dropping 70.8ms of accumulated time
+server tick overrun at 80.76s: dropping 57.9ms of accumulated time
+REBUILD COMMIT epoch=11 tick=2320 build_ms=613.107
+HASH EXPECT client=0 connection=1 epoch=11 revision=2069 tick=2321 queued=yes
+HASH EXPECT client=1 connection=1 epoch=11 revision=2069 tick=2321 queued=yes
+server tick overrun at 81.08s: dropping 166.7ms of accumulated time
+server tick overrun at 81.26s: dropping 96.4ms of accumulated time
+server tick overrun at 81.79s: dropping 31.9ms of accumulated time
+server tick overrun at 82.06s: dropping 166.7ms of accumulated time
+DISCONNECT client=0 reason=Client_Disconnect
+HOST left; server will exit in 5s
+HASH CLOSED client=0 connection=1 tick=2365
+server tick overrun at 82.17s: dropping 29.8ms of accumulated time
+server tick overrun at 82.39s: dropping 36.7ms of accumulated time
+server tick overrun at 82.50s: dropping 24.1ms of accumulated time
+server tick overrun at 82.64s: dropping 57.9ms of accumulated time
+DISCONNECT client=1 reason=Client_Disconnect
+HASH CLOSED client=1 connection=1 tick=2411
+SERVER host-left shutdown
+SERVER final hashes=43 mismatches=0 unrecorded=0
+SERVER RESOURCES box2d_baseline=0 box2d_after=0 no_lost_world_bytes=true

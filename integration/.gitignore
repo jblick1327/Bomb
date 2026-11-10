@@ -5,4 +5,10 @@ __pycache__/
 *.pyc
 native-proof/managed/obj/
 native-proof/managed/bin/
+soak-host/obj/
+soak-host/bin/
 !evidence/**/*.log
+
+# Raw large soak rows remain local; lossless .json.gz copies are committed.
+/evidence/M9/soak-20261110T034348062557Z/guest.json
+/evidence/M9/soak-20261110T034348062557Z/primary.json

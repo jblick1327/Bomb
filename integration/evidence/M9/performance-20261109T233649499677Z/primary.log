@@ -1,0 +1,1610 @@
+Mono path[0] = 'C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-performance-Mono/BombPerformance_Data/Managed'
+Mono config path = 'C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-performance-Mono/MonoBleedingEdge/etc'
+Found 2 interfaces on host : 0) 192.168.56.1 1) 192.168.2.29
+Player connection [12292]  Target information:
+
+Player connection [12292]  * "[IP] 192.168.56.1 [Port] 55000 [Flags] 2 [Guid] 358493294 [EditorId] 2037632412 [Version] 1048832 [Id] WindowsPlayer(2,MSI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Bomb" 
+
+Player connection [12292]  * "[IP] 192.168.2.29 [Port] 55000 [Flags] 2 [Guid] 358493294 [EditorId] 2037632412 [Version] 1048832 [Id] WindowsPlayer(2,MSI) [Debug] 0 [PackageName] WindowsPlayer [ProjectName] Bomb" 
+
+Player connection [12292] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.2.14f1 (589824c1fc31)
+[Subsystems] Discovering subsystems at path C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-performance-Mono/BombPerformance_Data/UnitySubsystems
+Forcing GfxDevice: Direct3D 11
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a2)
+    Vendor:   NVIDIA
+    VRAM:     3962 MB
+    Driver:   32.0.16.1656
+[D3D12 Device Filter] Vendor Name: NVIDIA
+[D3D12 Device Filter] Device Name: NVIDIA GeForce RTX 3050 Laptop GPU
+[D3D12 Device Filter] Driver Version: 32.0.16.1656
+[D3D12 Device Filter] Feature Level: 12.1
+[D3D12 Device Filter] Graphics Memory: 3962 MB
+[D3D12 Device Filter] Processor Count: 16
+[D3D12 Device Filter] Device Type: Discrete
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  0.129 seconds
+- Finished resetting the current domain, in  0.002 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+UnloadTime: 0.722400 ms
+BOM UNITY AUTHORITY PASS: recursive scene and inactive prefab audit; runtime spawns use audited presentation prefabs; timeScale=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:81)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM SOURCE ART ON
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomSourcePresentation:.ctor (Bom.Unity.BomVisualRegistry,UnityEngine.Material,bool) (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomSourcePresentation.cs:36)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:86)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+BOM UNITY ABI PASS: 23 layouts, offsets, alignment; Native 1013526651255488412 / protocol 6
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+Bom.Unity.BomClientBehaviour:OnEnable () (at C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs:89)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 17.949100 ms
+BOM UNITY AUTHORITY PASS: recursive scene and inactive prefab audit; runtime spawns use audited presentation prefabs; timeScale=1
+BOM SOURCE ART ON
+BOM UNITY ABI PASS: 23 layouts, offsets, alignment; Native 1013526651255488412 / protocol 6
+Unloading 70 unused Assets / (35.4 MB). Loaded Objects now: 7613.
+Memory consumption went from 136.9 MB to 101.5 MB.
+Total: 5.998800 ms (FindLiveObjects: 0.190800 ms CreateObjectMapping: 0.091300 ms MarkObjects: 1.792600 ms  DeleteObjects: 3.923600 ms)
+
+RenderGraph is now enabled.
+Camera Main Camera does not contain an additional camera data component. Open the Game Object in the inspector to add additional camera data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at C:/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at C:/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at C:/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:213)
+UnityEngine.Rendering.DebugUI/CameraSelector:get_cameras () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugUI.Fields.cs:578)
+UnityEngine.Rendering.DebugUI/CameraSelector:<.ctor>b__0_0 () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugUI.Fields.cs:542)
+UnityEngine.Rendering.DebugDisplaySettingsVolume/SettingsPanel:.ctor (UnityEngine.Rendering.DebugDisplaySettingsVolume) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:701)
+UnityEngine.Rendering.DebugDisplaySettingsVolume:CreatePanel () (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsVolumes.cs:763)
+UnityEngine.Rendering.DebugDisplaySettingsUI/<>c__DisplayClass3_0:<RegisterDebug>b__0 (UnityEngine.Rendering.IDebugDisplaySettingsData) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsUI.cs:47)
+UnityEngine.Rendering.DebugDisplaySettings`1<UnityEngine.Rendering.Universal.UniversalRenderPipelineDebugDisplaySettings>:ForEach (System.Action`1<UnityEngine.Rendering.IDebugDisplaySettingsData>) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettings.cs:132)
+UnityEngine.Rendering.DebugDisplaySettingsUI:RegisterDebug (UnityEngine.Rendering.IDebugDisplaySettings) (at ./Library/PackageCache/com.unity.render-pipelines.core@615f7ded20c5/Runtime/Debugging/DebugDisplaySettingsUI.cs:66)
+UnityEngine.Rendering.Universal.UniversalRenderPipeline:.ctor (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset) (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/UniversalRenderPipeline.cs:281)
+UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset:CreatePipeline () (at ./Library/PackageCache/com.unity.render-pipelines.universal@8a8bcae6893e/Runtime/Data/UniversalRenderPipelineAsset.cs:800)
+UnityEngine.Rendering.RenderPipelineAsset:InternalCreatePipeline () (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineAsset.cs:15)
+UnityEngine.Rendering.RenderPipelineManager:TryPrepareRenderPipeline (UnityEngine.Rendering.RenderPipelineAsset) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:172)
+UnityEngine.Rendering.RenderPipelineManager:DoRenderLoop_Internal (UnityEngine.Rendering.RenderPipelineAsset,intptr,UnityEngine.Object) (at C:/build/output/unity/unity/Runtime/Export/RenderPipeline/RenderPipelineManager.cs:146)
+
+(Filename: C:/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 213)
+
+ROUND SNAPSHOT id=0 epoch=3 state=Waiting tick=434 winner=0 draw=false
+BOM REGISTRY MATCH source=9007199254800001 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800002 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800003 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800004 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800005 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800006 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800007 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800008 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800009 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800010 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800011 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800012 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800013 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800014 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800015 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800016 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800017 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800018 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800019 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800020 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800021 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800022 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800023 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800024 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800025 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800026 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800027 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800028 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800029 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800030 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800031 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800032 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800033 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800034 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800035 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800036 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800037 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800038 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800039 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800040 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800041 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800042 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800043 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800044 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800045 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800046 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800047 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800048 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800049 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800050 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800051 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800052 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800053 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800054 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800055 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800056 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800057 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800058 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800059 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800060 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800061 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800062 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800063 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800064 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800065 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800066 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800067 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800068 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800069 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800070 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800071 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800072 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800073 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800074 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800075 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800076 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800077 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800078 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800079 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800080 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800081 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800082 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800083 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800084 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800085 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800086 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800087 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800088 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800089 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800090 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800091 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800092 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800093 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800094 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800095 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800096 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800097 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800098 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800099 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800100 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800101 groups=1 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM UNITY SNAPSHOT generation=1 epoch=3 revision=2073 cells=741 hash=10290565747954579109 terrain_batches=667 geometry_cache_bytes=724272
+BOM PERF BASELINE READY epoch=3
+BOM SOURCE PREPARED source=9007199254800005 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800006 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800007 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800008 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800010 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800011 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800012 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800013 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800014 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800015 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800016 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800017 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800018 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800001 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800002 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800003 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800004 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800020 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800021 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800022 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800023 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800024 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800025 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800026 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800027 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800028 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800030 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800031 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800032 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800033 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800034 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800035 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800036 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800037 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800038 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800040 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800041 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800042 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800043 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800044 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800101 triangles=12 bytes=19760
+BOM SOURCE PRESENTATION source=9007199254800101 mode=intact cells=75 batches=1 epoch=3 revision=2073 cpu_cache=2899120 gpu_reserved=6912
+BOM SOURCE PRESENTATION source=9007199254800007 mode=fragments cells=9 batches=9 epoch=3 revision=2073 cpu_cache=3291920 gpu_reserved=69120
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=1 batches=1 epoch=3 revision=2073 cpu_cache=3291920 gpu_reserved=76032
+BOM SOURCE PREPARED source=9007199254800048 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=2 batches=2 epoch=3 revision=2073 cpu_cache=3435888 gpu_reserved=89856
+BOM SOURCE PREPARED source=9007199254800050 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800051 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800045 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800046 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800047 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800055 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800052 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800053 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800056 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800057 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=9 batches=9 epoch=3 revision=2073 cpu_cache=4094704 gpu_reserved=152064
+BOM SOURCE PREPARED source=9007199254800062 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800012 mode=fragments cells=9 batches=9 epoch=3 revision=2073 cpu_cache=4382640 gpu_reserved=214272
+BOM SOURCE PREPARED source=9007199254800063 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800064 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800054 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800068 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800070 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800071 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800058 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800075 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800076 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800077 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=9 batches=9 epoch=3 revision=2073 cpu_cache=5658800 gpu_reserved=276480
+BOM SOURCE PREPARED source=9007199254800082 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800083 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800084 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800014 mode=fragments cells=9 batches=9 epoch=3 revision=2073 cpu_cache=5946736 gpu_reserved=338688
+BOM UNITY SNAPSHOT generation=1 epoch=3 revision=2074 cells=652 hash=17382044031777280577 terrain_batches=578 geometry_cache_bytes=643104
+BOM UNITY EVENT id=1 tick=553 presentation=553.627236680585
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=4 batches=4 epoch=3 revision=2074 cpu_cache=5960560 gpu_reserved=338688
+BOM SOURCE PREPARED source=9007199254800060 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800088 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800091 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800092 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800095 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800096 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800097 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800061 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800065 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=6934960 gpu_reserved=400896
+BOM SOURCE PRESENTATION source=9007199254800016 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=6962608 gpu_reserved=463104
+BOM SOURCE PREPARED source=9007199254800066 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800067 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800020 mode=fragments cells=1 batches=1 epoch=3 revision=2074 cpu_cache=7017904 gpu_reserved=470016
+BOM SOURCE PREPARED source=9007199254800072 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800028 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7100848 gpu_reserved=483840
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7114672 gpu_reserved=497664
+BOM SOURCE PREPARED source=9007199254800074 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800078 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800080 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800081 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7225264 gpu_reserved=511488
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7252912 gpu_reserved=525312
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7308208 gpu_reserved=539136
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=1 batches=1 epoch=3 revision=2074 cpu_cache=7308208 gpu_reserved=546048
+BOM SOURCE PREPARED source=9007199254800085 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800086 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800087 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800094 triangles=108 bytes=71984
+ROUND SNAPSHOT id=0 epoch=4 state=Waiting tick=616 winner=0 draw=false
+BOM SOURCE PREPARED source=9007199254800098 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800099 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7598512 gpu_reserved=559872
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7778224 gpu_reserved=622080
+BOM SOURCE PRESENTATION source=9007199254800006 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7833520 gpu_reserved=684288
+BOM SOURCE PRESENTATION source=9007199254800017 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7861168 gpu_reserved=746496
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=3 batches=3 epoch=3 revision=2074 cpu_cache=7874992 gpu_reserved=767232
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7944112 gpu_reserved=829440
+BOM SOURCE PRESENTATION source=9007199254800022 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7957936 gpu_reserved=891648
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=2 batches=2 epoch=3 revision=2074 cpu_cache=7957936 gpu_reserved=905472
+BOM SOURCE PRESENTATION source=9007199254800024 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7985584 gpu_reserved=967680
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=9 batches=9 epoch=3 revision=2074 cpu_cache=7999408 gpu_reserved=1029888
+PREDICTION mode=Disabled reason=None tick=0
+BOM REGISTRY MATCH source=9007199254800001 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800002 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800003 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800004 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800005 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800006 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800007 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800008 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800009 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800010 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800011 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800012 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800013 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800014 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800015 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800016 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800017 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800018 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800019 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800020 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800021 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800022 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800023 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800024 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800025 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800026 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800027 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800028 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800029 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800030 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800031 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800032 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800033 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800034 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800035 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800036 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800037 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800038 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800039 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800040 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800041 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800042 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800043 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800044 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800045 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800046 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800047 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800048 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800049 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800050 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800051 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800052 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800053 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800054 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800055 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800056 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800057 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800058 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800059 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800060 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800061 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800062 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800063 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800064 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800065 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800066 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800067 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800068 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800069 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800070 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800071 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800072 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800073 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800074 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800075 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800076 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800077 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800078 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800079 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800080 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800081 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800082 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800083 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800084 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800085 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800086 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800087 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800088 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800089 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800090 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800091 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800092 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800093 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800094 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800095 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800096 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800097 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800098 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800099 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800100 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800101 groups=1 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=2069 cells=975 hash=18357215945139081352 terrain_batches=901 geometry_cache_bytes=937680
+BOM SOURCE STALE DROP count=2 applies=0 epoch=4 session=1
+BOM SOURCE PREPARED source=9007199254800081 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800082 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800083 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800084 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800085 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800086 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800087 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800088 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800091 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800092 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800094 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800095 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800096 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800097 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800098 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800099 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800101 triangles=12 bytes=19760
+BOM SOURCE PRESENTATION source=9007199254800101 mode=intact cells=75 batches=1 epoch=4 revision=2069 cpu_cache=8054704 gpu_reserved=1029888
+BOM SOURCE PREPARED source=9007199254800001 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800002 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800003 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800004 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800089 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800090 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800093 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800005 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800006 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800007 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800008 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800010 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800011 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800012 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800013 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800014 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8291392 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800006 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8291392 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800007 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8291392 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8291392 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800012 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8319040 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8319040 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800014 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8319040 gpu_reserved=1029888
+BOM SOURCE PREPARED source=9007199254800015 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800016 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800017 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800018 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8332864 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800016 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8332864 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800017 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8332864 gpu_reserved=1029888
+BOM SOURCE PREPARED source=9007199254800020 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800021 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800022 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8360512 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800022 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8360512 gpu_reserved=1029888
+BOM SOURCE PREPARED source=9007199254800023 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800024 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800025 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800024 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8374336 gpu_reserved=1029888
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=8374336 gpu_reserved=1029888
+BOM SOURCE PREPARED source=9007199254800026 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800027 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800028 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800030 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800031 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800032 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800033 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800034 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800035 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800036 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800037 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800038 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800040 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800041 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800042 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800043 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800044 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800045 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800046 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800047 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800048 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800050 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800051 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800052 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800053 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800054 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800055 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800056 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800057 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800058 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800060 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800061 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800062 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800063 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800064 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800065 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800066 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800067 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800019 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800068 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800070 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800071 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800072 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800073 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800074 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800075 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800076 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800077 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800078 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800080 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800082 mode=fragments cells=9 batches=9 epoch=4 revision=2069 cpu_cache=9515312 gpu_reserved=1092096
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=2071 cells=900 hash=12777881141780561012 terrain_batches=826 geometry_cache_bytes=869280
+BOM UNITY EVENT id=2 tick=733 presentation=733.604443577234
+BOM UNITY EVENT id=3 tick=733 presentation=733.604443577234
+BOM SOURCE PRESENTATION source=9007199254800083 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9621856 gpu_reserved=1154304
+BOM SOURCE PRESENTATION source=9007199254800084 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9635680 gpu_reserved=1216512
+BOM SOURCE PRESENTATION source=9007199254800085 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9663328 gpu_reserved=1278720
+BOM SOURCE PRESENTATION source=9007199254800086 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9677152 gpu_reserved=1340928
+BOM SOURCE PRESENTATION source=9007199254800087 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9704800 gpu_reserved=1403136
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9718624 gpu_reserved=1451520
+BOM SOURCE PRESENTATION source=9007199254800089 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9811344 gpu_reserved=1513728
+BOM SOURCE PRESENTATION source=9007199254800091 mode=fragments cells=4 batches=4 epoch=4 revision=2071 cpu_cache=9825168 gpu_reserved=1541376
+BOM SOURCE PRESENTATION source=9007199254800092 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9825168 gpu_reserved=1603584
+BOM SOURCE PRESENTATION source=9007199254800094 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9852816 gpu_reserved=1686528
+BOM SOURCE PRESENTATION source=9007199254800095 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9866640 gpu_reserved=1728000
+BOM SOURCE PRESENTATION source=9007199254800096 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9880464 gpu_reserved=1790208
+BOM SOURCE PREPARED source=9007199254800100 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800097 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=9894288 gpu_reserved=1852416
+BOM SOURCE PREPARED source=9007199254800009 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800001 mode=fragments cells=2 batches=2 epoch=4 revision=2071 cpu_cache=9908112 gpu_reserved=1866240
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=10000832 gpu_reserved=1921536
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=3 batches=3 epoch=4 revision=2071 cpu_cache=10000832 gpu_reserved=1921536
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=1 batches=1 epoch=4 revision=2071 cpu_cache=10000832 gpu_reserved=1921536
+BOM SOURCE PREPARED source=9007199254800029 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800031 mode=fragments cells=1 batches=1 epoch=4 revision=2071 cpu_cache=10000832 gpu_reserved=1928448
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=10014656 gpu_reserved=1969920
+BOM SOURCE PREPARED source=9007199254800039 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800049 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800059 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=10097600 gpu_reserved=2018304
+BOM SOURCE PRESENTATION source=9007199254800026 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=10125248 gpu_reserved=2080512
+BOM SOURCE PREPARED source=9007199254800069 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800079 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800090 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=10992112 gpu_reserved=2142720
+BOM SOURCE PRESENTATION source=9007199254800093 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11047408 gpu_reserved=2204928
+BOM SOURCE PRESENTATION source=9007199254800098 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11088880 gpu_reserved=2267136
+BOM SOURCE PRESENTATION source=9007199254800099 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11144176 gpu_reserved=2329344
+BOM SOURCE PRESENTATION source=9007199254800100 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11171824 gpu_reserved=2391552
+BOM SOURCE PRESENTATION source=9007199254800002 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11227120 gpu_reserved=2453760
+BOM SOURCE PRESENTATION source=9007199254800003 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11254768 gpu_reserved=2515968
+BOM SOURCE PRESENTATION source=9007199254800004 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11268592 gpu_reserved=2578176
+BOM SOURCE PRESENTATION source=9007199254800009 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11296240 gpu_reserved=2640384
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11310064 gpu_reserved=2688768
+BOM SOURCE PRESENTATION source=9007199254800019 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11351536 gpu_reserved=2750976
+BOM SOURCE PRESENTATION source=9007199254800020 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11365360 gpu_reserved=2806272
+BOM SOURCE PRESENTATION source=9007199254800027 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11393008 gpu_reserved=2868480
+BOM SOURCE PRESENTATION source=9007199254800028 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11406832 gpu_reserved=2916864
+BOM SOURCE PRESENTATION source=9007199254800029 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11434480 gpu_reserved=2979072
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11448304 gpu_reserved=3027456
+BOM SOURCE PRESENTATION source=9007199254800032 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11475952 gpu_reserved=3089664
+BOM SOURCE PRESENTATION source=9007199254800033 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11489776 gpu_reserved=3151872
+BOM SOURCE PRESENTATION source=9007199254800034 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11531248 gpu_reserved=3214080
+BOM SOURCE PRESENTATION source=9007199254800035 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11572720 gpu_reserved=3276288
+BOM SOURCE PRESENTATION source=9007199254800036 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11586544 gpu_reserved=3338496
+BOM SOURCE PRESENTATION source=9007199254800037 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11628016 gpu_reserved=3400704
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11655664 gpu_reserved=3449088
+BOM SOURCE PRESENTATION source=9007199254800039 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11738608 gpu_reserved=3511296
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=11752432 gpu_reserved=3559680
+BOM SOURCE PRESENTATION source=9007199254800041 mode=fragments cells=3 batches=3 epoch=4 revision=2071 cpu_cache=11752432 gpu_reserved=3580416
+BOM SOURCE PRESENTATION source=9007199254800051 mode=fragments cells=1 batches=1 epoch=4 revision=2071 cpu_cache=11890672 gpu_reserved=3587328
+BOM SOURCE PRESENTATION source=9007199254800062 mode=fragments cells=9 batches=9 epoch=4 revision=2071 cpu_cache=12042736 gpu_reserved=3649536
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=2073 cells=752 hash=12388509846661262790 terrain_batches=678 geometry_cache_bytes=734304
+BOM UNITY EVENT id=4 tick=914 presentation=914.246266492504
+BOM UNITY EVENT id=5 tick=914 presentation=914.246266492504
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800035 mode=fragments cells=5 batches=5 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800082 mode=fragments cells=8 batches=8 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800083 mode=fragments cells=7 batches=7 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800085 mode=fragments cells=5 batches=5 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800093 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12194800 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800095 mode=fragments cells=4 batches=4 epoch=4 revision=2073 cpu_cache=12208624 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800003 mode=fragments cells=8 batches=8 epoch=4 revision=2073 cpu_cache=12208624 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=7 batches=7 epoch=4 revision=2073 cpu_cache=12208624 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12236272 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=7 batches=7 epoch=4 revision=2073 cpu_cache=12236272 gpu_reserved=3649536
+BOM SOURCE PRESENTATION source=9007199254800042 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12319216 gpu_reserved=3711744
+BOM SOURCE PRESENTATION source=9007199254800043 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12333040 gpu_reserved=3773952
+BOM SOURCE PRESENTATION source=9007199254800045 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12388336 gpu_reserved=3815424
+BOM SOURCE PRESENTATION source=9007199254800046 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12443632 gpu_reserved=3877632
+BOM SOURCE PRESENTATION source=9007199254800047 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12457456 gpu_reserved=3939840
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12498928 gpu_reserved=3988224
+BOM SOURCE PRESENTATION source=9007199254800049 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12526576 gpu_reserved=4050432
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12568048 gpu_reserved=4105728
+BOM SOURCE PRESENTATION source=9007199254800052 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12581872 gpu_reserved=4167936
+BOM SOURCE PRESENTATION source=9007199254800053 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=12609520 gpu_reserved=4209408
+BOM SOURCE PRESENTATION source=9007199254800055 mode=fragments cells=5 batches=5 epoch=4 revision=2073 cpu_cache=12664816 gpu_reserved=4243968
+BOM SOURCE PRESENTATION source=9007199254800056 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12706288 gpu_reserved=4306176
+BOM SOURCE PRESENTATION source=9007199254800057 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12720112 gpu_reserved=4368384
+BOM SOURCE PRESENTATION source=9007199254800058 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12761584 gpu_reserved=4430592
+BOM SOURCE PRESENTATION source=9007199254800059 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12789232 gpu_reserved=4492800
+BOM SOURCE PRESENTATION source=9007199254800060 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12816880 gpu_reserved=4555008
+BOM SOURCE PRESENTATION source=9007199254800063 mode=fragments cells=7 batches=7 epoch=4 revision=2073 cpu_cache=12830704 gpu_reserved=4603392
+BOM SOURCE PRESENTATION source=9007199254800065 mode=fragments cells=4 batches=4 epoch=4 revision=2073 cpu_cache=12886000 gpu_reserved=4631040
+BOM SOURCE PRESENTATION source=9007199254800066 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12927472 gpu_reserved=4693248
+BOM SOURCE PRESENTATION source=9007199254800067 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12955120 gpu_reserved=4755456
+BOM SOURCE PRESENTATION source=9007199254800068 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=12982768 gpu_reserved=4817664
+BOM SOURCE PRESENTATION source=9007199254800069 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13024240 gpu_reserved=4879872
+BOM SOURCE PRESENTATION source=9007199254800070 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13038064 gpu_reserved=4942080
+BOM SOURCE PRESENTATION source=9007199254800072 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13065712 gpu_reserved=5004288
+BOM SOURCE PRESENTATION source=9007199254800073 mode=fragments cells=6 batches=6 epoch=4 revision=2073 cpu_cache=13079536 gpu_reserved=5045760
+BOM SOURCE PRESENTATION source=9007199254800075 mode=fragments cells=4 batches=4 epoch=4 revision=2073 cpu_cache=13093360 gpu_reserved=5073408
+BOM SOURCE PRESENTATION source=9007199254800076 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13134832 gpu_reserved=5135616
+BOM SOURCE PRESENTATION source=9007199254800077 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13148656 gpu_reserved=5197824
+BOM SOURCE PRESENTATION source=9007199254800078 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13190128 gpu_reserved=5260032
+BOM SOURCE PRESENTATION source=9007199254800079 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13217776 gpu_reserved=5322240
+BOM SOURCE PRESENTATION source=9007199254800080 mode=fragments cells=9 batches=9 epoch=4 revision=2073 cpu_cache=13231600 gpu_reserved=5384448
+BOM UNITY SNAPSHOT generation=1 epoch=4 revision=2075 cells=611 hash=17501578652497756789 terrain_batches=537 geometry_cache_bytes=605712
+BOM UNITY EVENT id=6 tick=1095 presentation=1095
+BOM UNITY EVENT id=7 tick=1095 presentation=1095
+BOM SOURCE PRESENTATION source=9007199254800100 mode=fragments cells=5 batches=5 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=7 batches=7 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=8 batches=8 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=8 batches=8 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800020 mode=fragments cells=6 batches=6 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=7 batches=7 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=7 batches=7 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=7 batches=7 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=8 batches=8 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=3 batches=3 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800060 mode=fragments cells=5 batches=5 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800068 mode=fragments cells=8 batches=8 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800070 mode=fragments cells=5 batches=5 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800078 mode=fragments cells=6 batches=6 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800080 mode=fragments cells=4 batches=4 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=7 batches=7 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800090 mode=fragments cells=5 batches=5 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800098 mode=fragments cells=5 batches=5 epoch=4 revision=2075 cpu_cache=13231600 gpu_reserved=5384448
+ROUND SNAPSHOT id=0 epoch=5 state=Waiting tick=1220 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+BOM UNITY SNAPSHOT generation=1 epoch=5 revision=2069 cells=975 hash=8449372848006564999 terrain_batches=901 geometry_cache_bytes=937680
+BOM SOURCE PREPARED source=9007199254800059 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800060 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800061 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800062 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800063 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800064 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800065 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800066 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800067 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800068 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800069 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800070 triangles=108 bytes=71984
+BOM REGISTRY MATCH source=9007199254800001 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800002 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800003 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800004 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800005 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800006 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800007 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800008 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800009 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800010 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800011 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800012 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800013 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800014 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800015 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800016 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800017 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800018 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800019 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800020 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800021 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800022 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800023 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800024 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800025 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800026 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800027 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800028 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800029 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800030 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800031 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800032 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800033 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800034 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800035 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800036 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800037 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800038 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800039 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800040 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800041 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800042 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800043 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800044 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800045 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800046 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800047 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800048 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800049 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800050 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800051 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800052 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800053 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800054 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800055 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800056 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800057 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800058 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800059 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800060 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800061 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800062 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800063 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800064 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800065 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800066 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800067 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800068 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800069 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800070 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800071 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800072 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800073 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800074 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800075 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800076 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800077 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800078 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800079 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800080 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800081 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800082 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800083 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800084 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800085 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800086 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800087 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800088 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800089 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800090 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800091 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800092 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800093 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800094 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800095 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800096 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800097 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800098 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800099 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800100 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800101 groups=1 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM SOURCE PRESENTATION source=9007199254800060 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800062 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13231600 gpu_reserved=5384448
+BOM SOURCE PRESENTATION source=9007199254800063 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13245424 gpu_reserved=5398272
+BOM SOURCE PRESENTATION source=9007199254800064 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13245424 gpu_reserved=5460480
+BOM SOURCE PRESENTATION source=9007199254800065 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13273072 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800066 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13273072 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800067 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13273072 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800068 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13273072 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800069 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13286896 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800070 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13286896 gpu_reserved=5495040
+BOM SOURCE PREPARED source=9007199254800071 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800072 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800073 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800074 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800075 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800072 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13293808 gpu_reserved=5495040
+BOM SOURCE PRESENTATION source=9007199254800075 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13293808 gpu_reserved=5529600
+BOM SOURCE PREPARED source=9007199254800076 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800077 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800076 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13321456 gpu_reserved=5529600
+BOM SOURCE PRESENTATION source=9007199254800077 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13321456 gpu_reserved=5529600
+BOM SOURCE PREPARED source=9007199254800078 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800079 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800078 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13335280 gpu_reserved=5529600
+BOM SOURCE PRESENTATION source=9007199254800079 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13335280 gpu_reserved=5529600
+BOM SOURCE PREPARED source=9007199254800080 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800081 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800082 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800080 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13349104 gpu_reserved=5529600
+BOM SOURCE PRESENTATION source=9007199254800082 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13349104 gpu_reserved=5529600
+BOM SOURCE PREPARED source=9007199254800083 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800084 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800071 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13376752 gpu_reserved=5591808
+BOM SOURCE PRESENTATION source=9007199254800073 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13376752 gpu_reserved=5612544
+BOM SOURCE PRESENTATION source=9007199254800083 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13376752 gpu_reserved=5612544
+BOM SOURCE PRESENTATION source=9007199254800084 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5612544
+BOM SOURCE PREPARED source=9007199254800085 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800086 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800087 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800088 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800089 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800090 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800091 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800074 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5674752
+BOM SOURCE PRESENTATION source=9007199254800081 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800085 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800086 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800087 mode=fragments cells=9 batches=9 epoch=5 revision=2069 cpu_cache=13390576 gpu_reserved=5736960
+BOM UNITY SNAPSHOT generation=1 epoch=5 revision=2071 cells=928 hash=17601573345157817427 terrain_batches=854 geometry_cache_bytes=894816
+BOM UNITY EVENT id=8 tick=1275 presentation=1275.48425379471
+BOM UNITY EVENT id=9 tick=1275 presentation=1275.48425379471
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800089 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800090 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5736960
+BOM SOURCE PRESENTATION source=9007199254800091 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PREPARED source=9007199254800092 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800093 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800094 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800095 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800096 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800097 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800098 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800099 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800100 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800092 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800093 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800094 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800095 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800096 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800097 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800098 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800099 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PRESENTATION source=9007199254800100 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PREPARED source=9007199254800101 triangles=12 bytes=19760
+BOM SOURCE PRESENTATION source=9007199254800101 mode=intact cells=75 batches=1 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5771520
+BOM SOURCE PREPARED source=9007199254800001 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800002 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800001 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800002 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800003 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800004 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800005 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800006 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800003 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800004 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800006 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800007 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800008 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800010 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800011 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800012 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800013 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800007 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=1 batches=1 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800012 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800014 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800015 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800016 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800014 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800016 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800017 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800018 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800017 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800021 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800022 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800023 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800024 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800022 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800024 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800025 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800026 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800027 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800026 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800027 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PREPARED source=9007199254800028 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800029 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800030 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800031 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800032 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800033 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800028 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800029 mode=fragments cells=1 batches=1 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=5 batches=5 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5819904
+BOM SOURCE PRESENTATION source=9007199254800031 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800032 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800033 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PREPARED source=9007199254800034 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800035 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800036 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800034 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800035 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800036 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PREPARED source=9007199254800037 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800038 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800039 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800040 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800041 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800042 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800037 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800039 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13390576 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13404400 gpu_reserved=5875200
+BOM SOURCE PRESENTATION source=9007199254800042 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13404400 gpu_reserved=5875200
+BOM SOURCE PREPARED source=9007199254800043 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800044 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800045 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800046 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800047 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800041 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5916672
+BOM SOURCE PRESENTATION source=9007199254800043 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5916672
+BOM SOURCE PRESENTATION source=9007199254800044 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5978880
+BOM SOURCE PRESENTATION source=9007199254800045 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PRESENTATION source=9007199254800046 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PRESENTATION source=9007199254800047 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PREPARED source=9007199254800048 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800049 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PRESENTATION source=9007199254800049 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PREPARED source=9007199254800050 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800051 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800052 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PRESENTATION source=9007199254800052 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13418224 gpu_reserved=5999616
+BOM SOURCE PREPARED source=9007199254800053 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800053 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13432048 gpu_reserved=6020352
+BOM SOURCE PREPARED source=9007199254800054 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800055 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800056 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800057 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800051 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6075648
+BOM SOURCE PRESENTATION source=9007199254800054 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6137856
+BOM SOURCE PRESENTATION source=9007199254800055 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6165504
+BOM SOURCE PRESENTATION source=9007199254800056 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6165504
+BOM SOURCE PRESENTATION source=9007199254800057 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6165504
+BOM SOURCE PREPARED source=9007199254800058 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800059 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6165504
+BOM SOURCE PRESENTATION source=9007199254800058 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6165504
+BOM SOURCE PRESENTATION source=9007199254800061 mode=fragments cells=9 batches=9 epoch=5 revision=2071 cpu_cache=13438960 gpu_reserved=6227712
+ROUND SNAPSHOT id=0 epoch=6 state=Waiting tick=1820 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+BOM UNITY SNAPSHOT generation=1 epoch=6 revision=2069 cells=975 hash=15966783534282571374 terrain_batches=901 geometry_cache_bytes=937680
+BOM SOURCE PREPARED source=9007199254800022 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800023 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800024 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800025 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800026 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800027 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800028 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800029 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800030 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800031 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800032 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800033 triangles=108 bytes=71984
+BOM REGISTRY MATCH source=9007199254800001 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800002 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800003 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800004 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800005 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800006 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800007 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800008 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800009 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800010 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800011 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800012 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800013 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800014 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800015 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800016 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800017 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800018 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800019 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800020 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800021 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800022 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800023 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800024 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800025 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800026 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800027 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800028 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800029 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800030 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800031 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800032 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800033 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800034 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800035 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800036 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800037 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800038 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800039 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800040 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800041 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800042 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800043 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800044 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800045 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800046 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800047 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800048 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800049 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800050 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800051 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800052 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800053 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800054 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800055 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800056 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800057 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800058 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800059 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800060 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800061 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800062 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800063 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800064 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800065 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800066 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800067 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800068 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800069 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800070 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800071 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800072 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800073 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800074 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800075 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800076 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800077 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800078 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800079 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800080 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800081 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800082 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800083 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800084 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800085 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800086 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800087 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800088 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800089 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800090 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800091 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800092 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800093 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800094 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800095 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800096 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800097 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800098 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800099 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800100 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800101 groups=1 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800024 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800026 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800027 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800028 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800029 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800031 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800032 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800033 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800034 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800035 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800036 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800037 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800038 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800039 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800040 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800041 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800034 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800035 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800036 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800037 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800039 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800041 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800042 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800043 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800044 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800045 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800046 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800047 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800048 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800049 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800050 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800042 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800043 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800044 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800045 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800046 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800047 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800049 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800051 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800052 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800053 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800054 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800055 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800056 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800057 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800051 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800052 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800053 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800054 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800055 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800056 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800057 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800058 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800059 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800060 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800058 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800059 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800060 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800061 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800061 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800062 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800063 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800064 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800065 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800066 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800062 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800063 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800064 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800065 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800066 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800067 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800068 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800069 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800070 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800067 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800068 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800069 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800070 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800071 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800072 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800073 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800071 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800072 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800073 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800074 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800075 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800076 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800077 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800078 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800079 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800080 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800074 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800075 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800076 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800077 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800078 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800079 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800080 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800081 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800082 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800083 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800081 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800082 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800083 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800084 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800085 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800086 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800087 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800084 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800085 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800086 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800087 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800088 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800089 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800090 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800091 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800092 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800089 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800090 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800091 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800092 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800093 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800094 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800095 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800093 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800094 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800095 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800096 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800097 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800098 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800099 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800100 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800096 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800097 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800098 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800099 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800100 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800101 triangles=12 bytes=19760
+BOM SOURCE PRESENTATION source=9007199254800101 mode=intact cells=75 batches=1 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800001 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800002 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800001 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800002 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800003 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800003 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800004 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800005 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800006 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800007 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800004 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800006 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800007 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800008 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800009 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800009 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800010 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800011 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800012 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800013 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800014 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800015 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800016 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800012 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800014 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800016 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800017 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800018 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800019 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800020 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800017 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800019 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800020 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800021 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800022 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=9 batches=9 epoch=6 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+ROUND SNAPSHOT id=0 epoch=7 state=Waiting tick=2409 winner=0 draw=false
+PREDICTION mode=Disabled reason=None tick=0
+BOM REGISTRY MATCH source=9007199254800001 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800002 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800003 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800004 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800005 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800006 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800007 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800008 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800009 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800010 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800011 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800012 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800013 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800014 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800015 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800016 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800017 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800018 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800019 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800020 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800021 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800022 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800023 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800024 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800025 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800026 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800027 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800028 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800029 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800030 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800031 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800032 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800033 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800034 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800035 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800036 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800037 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800038 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800039 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800040 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800041 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800042 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800043 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800044 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800045 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800046 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800047 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800048 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800049 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800050 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800051 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800052 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800053 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800054 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800055 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800056 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800057 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800058 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800059 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800060 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800061 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800062 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800063 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800064 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800065 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800066 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800067 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800068 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800069 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800070 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800071 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800072 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800073 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800074 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800075 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800076 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800077 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800078 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800079 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800080 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800081 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800082 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800083 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800084 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800085 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800086 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800087 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800088 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800089 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800090 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800091 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800092 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800093 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800094 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800095 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800096 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800097 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800098 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800099 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800100 groups=9 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM REGISTRY MATCH source=9007199254800101 groups=1 mesh_vertices=24 native_gameplay=3750e9bad0930f1fe7b465d75836ed3f366d9e0a9d824f599aac82e4ee4a7229
+BOM UNITY SNAPSHOT generation=1 epoch=7 revision=2069 cells=975 hash=8809508202073826581 terrain_batches=901 geometry_cache_bytes=937680
+BOM SOURCE PREPARED source=9007199254800066 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800067 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800068 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800069 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800070 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800071 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800072 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800073 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800074 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800075 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800076 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800077 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800067 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800068 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800069 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800070 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800071 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800072 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800073 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800074 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800075 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800076 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800077 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800078 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800079 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800080 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800078 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800079 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800080 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800081 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800082 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800083 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800081 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800082 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800083 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800084 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800085 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800086 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800087 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800088 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800089 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800090 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800084 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800085 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800086 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800087 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800088 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800089 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800090 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800091 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800092 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800093 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800091 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800092 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800093 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800094 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800095 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800094 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800095 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800096 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800097 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800098 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800099 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800100 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800096 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800097 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800098 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800099 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800100 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800101 triangles=12 bytes=19760
+BOM SOURCE PRESENTATION source=9007199254800101 mode=intact cells=75 batches=1 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800001 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800002 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800003 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800001 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800002 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800003 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800004 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800005 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800006 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800007 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800008 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800009 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800004 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800005 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800006 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800007 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800008 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800009 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800010 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800011 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800012 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800013 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800014 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800015 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800016 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800010 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800011 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800012 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800013 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800014 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800015 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800016 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800017 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800018 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800019 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800020 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800021 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800017 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800018 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800019 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800020 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800021 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800022 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800023 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800024 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800022 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800023 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800024 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800025 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800026 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800027 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800028 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800025 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800026 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800027 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800028 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800029 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800030 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800031 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800029 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800030 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800031 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800032 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800032 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800033 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800034 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800035 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800036 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800037 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800033 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800034 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800035 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800036 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800037 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800038 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800038 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800039 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800040 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800041 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800039 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800040 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800041 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800042 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800043 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800044 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800045 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800042 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800043 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800044 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800045 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800046 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800046 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800047 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800048 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800049 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800047 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800048 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800049 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800050 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800051 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800052 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800053 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800050 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800051 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800052 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800053 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800054 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800054 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800055 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800055 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800056 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800057 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800056 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800057 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800058 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800058 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800059 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800060 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800061 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800062 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800059 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800060 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800061 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800062 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800063 triangles=108 bytes=71984
+BOM SOURCE PREPARED source=9007199254800064 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800063 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800064 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PREPARED source=9007199254800065 triangles=108 bytes=71984
+BOM SOURCE PRESENTATION source=9007199254800066 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM SOURCE PRESENTATION source=9007199254800065 mode=fragments cells=9 batches=9 epoch=7 revision=2069 cpu_cache=13438960 gpu_reserved=6227712
+BOM PERF MEASURED frames=1468 cells=975 poses=903 moving=894 native_p95_ms=1.9921 native_p99_ms=3.1321 present_gc_max=27054 path=C:\Users\rober\Documents\Codex\2026-11-05\hi\work\integration-stage\evidence\M9\performance-20261109T233649499677Z\primary.json
+NullReferenceException: Object reference not set to an instance of an object.
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00018] in C:\build\output\unity\unity\Runtime\Export\Scripting\BindingsHelpers.cs:62 
+  at UnityEngine.GameObject.SetActive (System.Boolean value) [0x00006] in <dc07278ef99242b5a91366bdcd3e95e6>:0 
+  at Bom.Unity.BomActorPool.Return (UnityEngine.GameObject obj) [0x0003a] in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\unity-baseline\Assets\BOMIntegration\Runtime\BomActorPool.cs:25 
+  at Bom.Unity.BomClientBehaviour.ClearScene (System.Boolean keepSource) [0x00069] in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\unity-baseline\Assets\BOMIntegration\Runtime\BomClientBehaviour.cs:128 
+  at Bom.Unity.BomClientBehaviour.OnDisable () [0x00057] in C:\Users\rober\Documents\Codex\2026-11-05\hi\work\unity-baseline\Assets\BOMIntegration\Runtime\BomClientBehaviour.cs:126 
+
+(Filename: C:/Users/rober/Documents/Codex/2026-11-05/hi/work/unity-baseline/Assets/BOMIntegration/Runtime/BomClientBehaviour.cs Line: 128)
+
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+PlayerConnection::CleanupInternal: There are remaining Allocations on the JobTempAlloc. This is a leak, and will impact performance
+To Debug, run app with -diag-job-temp-memory-leak-validation cmd line argument. This will output the callstacks of the leaked allocations.
+Internal: There are remaining Allocations on the JobTempAlloc. This is a leak, and will impact performance
+To Debug, run app with -diag-job-temp-memory-leak-validation cmd line argument. This will output the callstacks of the leaked allocations.
+##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1794267452971,"processId":19700,"allocatedMemory":839148,"memoryLabels":[{"Default":136},{"NewDelete":136},{"Thread":14336},{"Manager":539923},{"VFX":-104},{"GfxDevice":72},{"GfxThread":43008},{"Serialization":520},{"JobScheduler":32768},{"String":683},{"HashMap":3584},{"PoolAlloc":288},{"CloudService":144},{"WebRequest":3766},{"VR":1864},{"Video":144},{"NativeArray":197664},{"Subsystems":96},{"CoreBusinessMetrics":120}]}
+Internal: There are remaining Allocations on the JobTempAlloc. This is a leak, and will impact performance
+To Debug, run app with -diag-job-temp-memory-leak-validation cmd line argument. This will output the callstacks of the leaked allocations.

@@ -7,6 +7,7 @@ public sealed class BomActorView : MonoBehaviour {
  public bool Running=>animator!=null&&animator.GetBool("Running");
  Animator animator;bool hasPosition;Vector2 previous;double previousTime;
  public BomPose Pose {get;private set;}
+ public void ResetPresentation(){hasPosition=false;previous=default;previousTime=0;Pose=default;if(animator!=null)animator.SetBool("Running",false);if(visual!=null){visual.localPosition=Vector3.zero;if(AuthoredVisual!=null){var scale=visual.localScale;scale.x=Mathf.Abs(scale.x);visual.localScale=scale;}}}
  public Vector3 VisualPosition=>visual!=null?visual.position:transform.position;
  Transform visual;MeshRenderer sourceRenderer,visualRenderer;int materialCount;MaterialPropertyBlock properties;
  void EnsureVisual(){

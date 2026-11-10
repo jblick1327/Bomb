@@ -1,0 +1,18 @@
+{
+  "final_soak": "soak-20261110T034348062557Z",
+  "concurrent_checks": [
+    {
+      "run": "unity-rounds-20261110T034618927521Z",
+      "load": "two additional hidden IL2CPP draw clients and a tiny native server"
+    },
+    {
+      "run": "unity-rounds-20261110T035053124111Z",
+      "load": "two additional hidden Mono original-yard clients and native server"
+    },
+    {
+      "run": "performance-20261110T040315593081Z",
+      "load": "two additional visible 975-cell stress clients; performance values are combined-load measurements"
+    }
+  ],
+  "reference_acceptance": "Use a separate reference run after the soak; do not present the combined-load stress runs as isolated reference timing."
+}

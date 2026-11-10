@@ -1,0 +1,43 @@
+{
+  "phase": "passed",
+  "elapsed_seconds": 1846.84,
+  "measured_seconds": 1810.7,
+  "pids": {
+    "server": 32628,
+    "host": 16648,
+    "primary": 31044,
+    "guest": 21816,
+    "observer": 23592
+  },
+  "exit_codes": {
+    "server": 0,
+    "host": 0,
+    "primary": 0,
+    "guest": 0,
+    "observer": 0
+  },
+  "relays": {
+    "primary": {
+      "received": 310671,
+      "forwarded": 312423,
+      "random_drops": 0,
+      "burst_drops": 1283,
+      "duplicates": 3035,
+      "reordered": 6283,
+      "max_packet": 1200,
+      "peak_queued": 84,
+      "shutdown_discarded": 0
+    },
+    "guest": {
+      "received": 308115,
+      "forwarded": 309892,
+      "random_drops": 0,
+      "burst_drops": 1308,
+      "duplicates": 3085,
+      "reordered": 6155,
+      "max_packet": 1200,
+      "peak_queued": 93,
+      "shutdown_discarded": 0
+    }
+  }
+}

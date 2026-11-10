@@ -1,9 +1,9 @@
 [CmdletBinding()]
-param([ValidateRange(1,65535)][int]$Port=47380,[ValidateRange(1,2)][int]$Clients=2)
+param([ValidateRange(1,65535)][int]$Port=47380,[ValidateRange(1,2)][int]$Clients=2,[ValidateSet('Mono','IL2CPP')][string]$Backend='Mono',[ValidateSet('127.0.0.1','0.0.0.0')][string]$Bind='127.0.0.1')
 $ErrorActionPreference='Stop'
 $integration=Split-Path -Parent $PSScriptRoot
-$serverPath=Join-Path $integration 'build/M8-native/BOM-server.exe'
-$playerPath=Join-Path $integration 'build/Network-Mono/BombNetwork.exe'
+$serverPath=Join-Path $integration 'build/M9-native/BOM-server.exe'
+$playerPath=Join-Path $integration "build/M9-$Backend/BombPerformance.exe"
 $layoutPath=Join-Path $integration 'fixtures/network-yard/yard.json'
 foreach($path in @($serverPath,$playerPath,$layoutPath)){if(!(Test-Path -LiteralPath $path)){throw "Missing local build: $path"}}
 $session=Join-Path $integration ('build/sessions/'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ'))
@@ -11,7 +11,7 @@ $null=New-Item -ItemType Directory -Path $session -Force
 $key=[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(24))
 $server=$null;$players=@()
 try{
- $server=Start-Process -FilePath $serverPath -ArgumentList @('--port',"$Port",'--layout',('"'+$layoutPath+'"'),'--host-token',$key) -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'server.log') -RedirectStandardError (Join-Path $session 'server-errors.log') -PassThru
+ $server=Start-Process -FilePath $serverPath -ArgumentList @('--bind',$Bind,'--port',"$Port",'--layout',('"'+$layoutPath+'"'),'--host-token',$key) -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'server.log') -RedirectStandardError (Join-Path $session 'server-errors.log') -PassThru
  $deadline=[DateTime]::UtcNow.AddSeconds(60)
  while(!((Get-Content (Join-Path $session 'server.log') -Raw -ErrorAction SilentlyContinue) -match 'BOM staging server listening')){
   if($server.HasExited){throw "Server could not start. Check $session"}
