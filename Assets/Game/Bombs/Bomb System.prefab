@@ -45,19 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba0136f90303be4181b2bbc2fe0ce41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BombDropper
-  craterShape: 0
-  craterRadius: 1.6
-  craterShapeScale: {x: 1, y: 1}
-  craterSegments: 40
-  craterRotation: 0
-  lethalRadius: 2
+  lethalRadius: 2.2
+  oneShotRadius: 1.2
   innerDestructionRadius: 1.25
-  outerShatterRadius: 2
+  outerShatterRadius: 2.2
   shatterImpulse: 4
   rubblePieces: 4
   rubblePieceSize: 0.35
   rubbleImpulse: 2.5
-  enableCrater: 1
   enableRubble: 1
   enableSpawning: 0
   minimumDropInterval: 2
@@ -85,15 +80,10 @@ MonoBehaviour:
   bombVisualPrefab: {fileID: 9021979860543945138, guid: e02b31792a067c74a81e275fcda3930b, type: 3}
   bombMaterial: {fileID: 2100000, guid: dd8718130aa44a44cb76011b06045805, type: 2}
   blastMaterial: {fileID: 2100000, guid: f6d173ef94c686445a8da4d4d6f8d2da, type: 2}
-  yardGrassMaterial: {fileID: 2100000, guid: 3cad3c1828da6e446b09c575fdcfbb14, type: 2}
-  yardDirtMaterial: {fileID: 2100000, guid: 28c6c861b7033cc43a84c7d1ae833e0f, type: 2}
   blastDuration: 0.35
   showSizePreviews: 0
   layout: {fileID: 0}
   session: {fileID: 0}
-  ground: {fileID: 0}
-  gameplayGround: {fileID: 0}
-  gameplayGroundCollider: {fileID: 0}
   player: {fileID: 0}
   upperBoundary: {fileID: 0}
 --- !u!114 &2460104084145582379

@@ -33,6 +33,8 @@ public sealed class ArenaSession : MonoBehaviour
 
     public ArenaRoundState State { get; private set; } = ArenaRoundState.Playing;
     public bool IsPlaying => State == ArenaRoundState.Playing;
+    public bool IsPaused { get; private set; }
+    public event Action<bool> PausedChanged;
     public float TimeSurvived { get; private set; }
     public int BombsDodged => bombs != null ? bombs.DroppedBombCount : 0;
     public int CoinsCollected { get; private set; }
@@ -112,7 +114,45 @@ public sealed class ArenaSession : MonoBehaviour
     {
         if (IsPlaying)
             TimeSurvived += Time.deltaTime;
-        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) RestartRound();
+
+        // Only Player 1 controls pausing and restarting.
+        Keyboard keyboard = MatchMenuUI.IsKeyboardEnabledForPlayer(1) ? Keyboard.current : null;
+        if (IsPlaying && PausePressed(keyboard))
+            SetPaused(!IsPaused);
+        // R only restarts once the round is over, so it can't be hit by accident mid-match.
+        if (!IsPlaying && keyboard != null && keyboard.rKey.wasPressedThisFrame)
+            RestartRound();
+    }
+
+    private static bool PausePressed(Keyboard keyboard)
+    {
+        if (keyboard != null && keyboard.pKey.wasPressedThisFrame) return true;
+        Gamepad gamepad = MenuCursor.PlayerOneGamepad();
+        return gamepad != null && gamepad.startButton.wasPressedThisFrame;
+    }
+
+    // Freezes the round by stopping game time. Bombs, players and timers all
+    // run on scaled time, so they stop with it.
+    public void SetPaused(bool paused)
+    {
+        if (paused && !IsPlaying) paused = false;
+        if (IsPaused == paused) return;
+        IsPaused = paused;
+        Time.timeScale = paused ? 0f : 1f;
+        PausedChanged?.Invoke(paused);
+    }
+
+    // Leaves the match. Time must be restarted first or the menu would be frozen.
+    public void LeaveMatch()
+    {
+        SetPaused(false);
+        SceneManager.LoadScene("MainMenuScene");
+    }
+
+    private void OnDestroy()
+    {
+        // Never leave the game frozen if this scene unloads while paused.
+        if (IsPaused) Time.timeScale = 1f;
     }
 
     public void KillPlayer(ArenaPlayerController deadPlayer)
@@ -172,16 +212,12 @@ public sealed class ArenaSession : MonoBehaviour
 
     public void RestartRound()
     {
+        SetPaused(false);
         if (bombs != null) bombs.ClearTransientObjects();
         if (bombs != null) bombs.ResetSpawnRamp();
 
-        foreach (DestructibleGround terrain in FindObjectsByType<DestructibleGround>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            terrain.ResetGround();
-        foreach (ArenaGameplayGround terrain in FindObjectsByType<ArenaGameplayGround>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            terrain.ResetGround();
         DestructibleObject.ResetAllObjects();
-        foreach (DestructibleMultiMesh target in FindObjectsByType<DestructibleMultiMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            target.ResetTarget();
+        GroundRubble.ClearAll();
 
         if (winnerText != null)
             winnerText.gameObject.SetActive(false);
@@ -191,6 +227,7 @@ public sealed class ArenaSession : MonoBehaviour
             float xOffset = (i - (players.Count - 1) * 0.5f) * playerSpawnSpacing;
             players[i].ResetCollectibleEffects();
             players[i].ResetRoundStats();
+            players[i].RestoreBody();
             ResetPlayer(players[i], xOffset);
         }
 
@@ -216,17 +253,6 @@ public sealed class ArenaSession : MonoBehaviour
 
         Vector3 spawn = layout.PlayerSpawn;
         spawn.x += xOffset;
-
-        Collider gameplayGround = bombs != null ? bombs.GameplayGroundCollider : null;
-        if (gameplayGround != null && gameplayGround.enabled)
-        {
-            Bounds bounds = gameplayGround.bounds;
-            Vector3 rayOrigin = new Vector3(spawn.x, Mathf.Max(spawn.y, bounds.max.y) + 2f, spawn.z);
-            Ray ray = new Ray(rayOrigin, Vector3.down);
-
-            if (gameplayGround.Raycast(ray, out RaycastHit groundHit, bounds.size.y + 4f))
-                spawn.y = groundHit.point.y + controller.height * 0.5f + controller.skinWidth;
-        }
 
         if (useScenePlayerSpawnHeight)
             spawn.y = scenePlayerSpawnHeight;

@@ -3718,121 +3718,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &498952998
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 498953000}
-  - component: {fileID: 498952999}
-  - component: {fileID: 498953001}
-  m_Layer: 0
-  m_Name: Bomb System
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &498952999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 498952998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eba0136f90303be4181b2bbc2fe0ce41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BombDropper
-  craterShape: 0
-  craterRadius: 1.6
-  craterShapeScale: {x: 1, y: 1}
-  craterSegments: 40
-  craterRotation: 0
-  lethalRadius: 2.2
-  innerDestructionRadius: 1.25
-  outerShatterRadius: 2.2
-  shatterImpulse: 4
-  rubblePieces: 4
-  rubblePieceSize: 0.35
-  rubbleImpulse: 2.5
-  enableCrater: 1
-  enableRubble: 1
-  enableSpawning: 0
-  minimumDropInterval: 2
-  maximumDropInterval: 5
-  fastestDropInterval: 0.75
-  timeToFastestRate: 60
-  bombRadius: 0.5
-  spawnEdgePadding: 0.75
-  dropHeightAboveArena: 2
-  fallAcceleration: 8
-  bombLifetime: 15
-  enableItemSpawning: 1
-  minimumItemInterval: 2
-  maximumItemInterval: 6
-  itemRadius: 0.35
-  itemVisualScale: 0.5
-  itemLifetime: 15
-  silverCoinChance: 0.25
-  goldCoinChance: 0.15
-  coinVisualPrefab: {fileID: 6954758372675618198, guid: 6a301d09debaf1e4a8d3e2657cc44a96, type: 3}
-  starCoinVisualPrefab: {fileID: 3664100224609117633, guid: a73eca55382651c449497eca9a2be0be, type: 3}
-  timeVisualPrefab: {fileID: 8864624805005668522, guid: 05c1bb08d5c7e3b40a87536483a89f10, type: 3}
-  speedBoostVisualPrefab: {fileID: 7370043300670028658, guid: 19b7e95a091652640b4df605bec6a161, type: 3}
-  shieldVisualPrefab: {fileID: 8475833574052523601, guid: a1614f0cf649e3a4e894d20bda9008e7, type: 3}
-  bombVisualPrefab: {fileID: 9021979860543945138, guid: e02b31792a067c74a81e275fcda3930b, type: 3}
-  bombMaterial: {fileID: 2100000, guid: dd8718130aa44a44cb76011b06045805, type: 2}
-  blastMaterial: {fileID: 2100000, guid: f6d173ef94c686445a8da4d4d6f8d2da, type: 2}
-  yardGrassMaterial: {fileID: 2100000, guid: 3cad3c1828da6e446b09c575fdcfbb14, type: 2}
-  yardDirtMaterial: {fileID: 2100000, guid: 28c6c861b7033cc43a84c7d1ae833e0f, type: 2}
-  blastDuration: 0.35
-  showSizePreviews: 0
-  layout: {fileID: 295586448}
-  session: {fileID: 0}
-  ground: {fileID: 0}
-  gameplayGround: {fileID: 0}
-  gameplayGroundCollider: {fileID: 0}
-  player: {fileID: 214312344}
-  upperBoundary: {fileID: 0}
---- !u!4 &498953000
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 498952998}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &498953001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 498952998}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f5c25520a8d33647af32ac60b9074dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ArenaSession
-  layout: {fileID: 295586448}
-  player1: {fileID: 214312344}
-  player2: {fileID: 0}
-  bombs: {fileID: 498952999}
-  playerSpawnSpacing: 2
-  useScenePlayerSpawnHeight: 1
-  winnerText: {fileID: 0}
 --- !u!1 &510415492
 GameObject:
   m_ObjectHideFlags: 0
@@ -18435,6 +18320,83 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2144931241}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1683943490229548768
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1043447604842457144, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_Name
+      value: Bomb System
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1724268411530060119, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2460104084145582379, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: layout
+      value: 
+      objectReference: {fileID: 295586448}
+    - target: {fileID: 2460104084145582379, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: player1
+      value: 
+      objectReference: {fileID: 214312344}
+    - target: {fileID: 2460104084145582379, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: useScenePlayerSpawnHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4652308615210171915, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: layout
+      value: 
+      objectReference: {fileID: 295586448}
+    - target: {fileID: 4652308615210171915, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 214312344}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9ef216116f30f924797ab2a2ab01adf2, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -18445,7 +18407,7 @@ SceneRoots:
   - {fileID: 706443163}
   - {fileID: 1769111392}
   - {fileID: 1050701815}
-  - {fileID: 498953000}
+  - {fileID: 1683943490229548768}
   - {fileID: 1849354821}
   - {fileID: 1080850797}
   - {fileID: 1975012249}

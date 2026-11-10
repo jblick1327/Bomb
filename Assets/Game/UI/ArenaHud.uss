@@ -11,3 +11,10 @@
 .result-buttons { flex-direction: row; justify-content: space-between; margin-top: 20px; }
 .menu-button { width: 48%; min-height: 42px; background-color: rgb(255,171,47); color: rgb(30,24,30); -unity-font-style: bold; font-size: 17px; }
 .menu-button:hover { background-color: rgb(255,204,91); }
+.menu-button:focus { background-color: rgb(255,204,91); }
+.pause-panel { width: 340px; border-left-color: rgb(104,210,190); }
+.pause-button { width: 100%; margin: 6px 0 0 0; }
+.pause-hint { margin-top: 14px; opacity: .7; font-size: 14px; -unity-text-align: middle-center; }
+.menu-button.cursor-hover { background-color: rgb(255,204,91); }
+.menu-cursor { display: none; position: absolute; width: 54px; height: 54px; translate: -50% -50%; border-width: 4px; border-radius: 27px; justify-content: center; align-items: center; }
+.menu-cursor-label { color: rgb(255,255,255); font-size: 14px; -unity-font-style: bold; -unity-text-align: middle-center; padding: 0; margin: 0; }

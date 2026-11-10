@@ -2,29 +2,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// The polygon shape used when cutting a crater from the ground.
-public enum CraterShape { Circle, Ellipse, Box }
-
 // Creates falling bombs and coordinates their crater, blast, and cleanup effects.
 [AddComponentMenu("Arena/Bomb Dropper")]
 public sealed class BombDropper : MonoBehaviour
 {
-    [SerializeField] private CraterShape craterShape = CraterShape.Circle;
-    [Tooltip("Size of the ground cut. For Box this is the base half-width and half-height, before shape scale.")]
-    [SerializeField, Min(0.05f), InspectorName("Crater radius (units)")]
-    private float craterRadius = 1.6f;
-    [Tooltip("Width and height multipliers for Ellipse and Box. Circle ignores this setting.")]
-    [SerializeField] private Vector2 craterShapeScale = Vector2.one;
-    [Tooltip("Number of polygon edges for Circle and Ellipse. Box always uses four edges.")]
-    [SerializeField, Range(8, 96)] private int craterSegments = 40;
-    [SerializeField, InspectorName("Crater rotation (degrees)")]
-    private float craterRotation;
-
-    [Tooltip("Kills when the circle touches any part of the player's capsule. The blast ring grows to this radius.")]
+    [Tooltip("Reach of the blast on players. A player touched by it loses a limb; the blast ring grows to this radius.")]
     [SerializeField, Min(0f), InspectorName("Lethal radius (units)")]
     private float lethalRadius = 2.2f;
+    [Tooltip("Players this close to the bomb are killed outright instead of losing a limb.")]
+    [SerializeField, Min(0f), InspectorName("One-shot radius (units)")]
+    private float oneShotRadius = 1.2f;
     [SerializeField, Min(0f), InspectorName("Inner destruction radius (units)")]
     private float innerDestructionRadius = 1.25f;
+    [Tooltip("Blocks inside this radius are carved; breakable blocks it touches fall apart.")]
     [SerializeField, Min(0f), InspectorName("Outer shatter radius (units)")]
     private float outerShatterRadius = 2.2f;
     [SerializeField, Min(0f), InspectorName("Shatter impulse")]
@@ -35,7 +25,6 @@ public sealed class BombDropper : MonoBehaviour
     private float rubblePieceSize = 0.35f;
     [SerializeField, Min(0f), InspectorName("Rubble impulse")]
     private float rubbleImpulse = 2.5f;
-    [SerializeField] private bool enableCrater = true;
     [SerializeField] private bool enableRubble = true;
     [SerializeField, Tooltip("Development shortcut: allow B to drop an extra bomb.")]
     private bool enableSpawning = false;
@@ -91,40 +80,23 @@ public sealed class BombDropper : MonoBehaviour
     private float itemWaveTimer;
     [SerializeField] private Material bombMaterial;
     [SerializeField] private Material blastMaterial;
-    [SerializeField] private Material yardGrassMaterial;
-    [SerializeField] private Material yardDirtMaterial;
     [SerializeField, Min(0.05f), InspectorName("Blast duration (seconds)")]
     private float blastDuration = 0.35f;
-    [Tooltip("Draw spawn range, crater outline and lethal radius when selected in the Scene view.")]
+    [Tooltip("Draw the spawn range, carve radius and lethal radius when selected in the Scene view.")]
     [SerializeField] private bool showSizePreviews;
 
     [SerializeField] private ArenaLayout layout;
     [SerializeField] private ArenaSession session;
-    [SerializeField] private DestructibleGround ground;
-    [SerializeField] private ArenaGameplayGround gameplayGround;
-    [SerializeField] private Collider gameplayGroundCollider;
     [SerializeField] private ArenaPlayerController player;
     [SerializeField, Tooltip("Bombs ignore this collider so they can fall into the arena from above.")]
     private Collider upperBoundary;
 
     private Transform transientRoot;
-    private bool groundResolutionFailureReported;
-    private bool yardLayersConfigured;
-    private float pendingYardGrassDepth;
     public bool CanRun => session == null || session.IsPlaying;
-    public Collider GameplayGroundCollider
-    {
-        get
-        {
-            ResolveGround();
-            return gameplayGroundCollider;
-        }
-    }
 
     private void Awake()
     {
         if (session == null) session = FindFirstObjectByType<ArenaSession>();
-        ResolveGround();
         roundElapsedTime = 0f;
         ResetItemTimer(true);
         ResetDropTimer();
@@ -189,9 +161,8 @@ public sealed class BombDropper : MonoBehaviour
         if (!CanRun || layout == null)
             return null;
 
-        ResolveGround();
-        float leftEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.min.x : layout.LeftEdge;
-        float rightEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.max.x : layout.RightEdge;
+        float leftEdge = layout.LeftEdge;
+        float rightEdge = layout.RightEdge;
         float minX = leftEdge + itemRadius + spawnEdgePadding;
         float maxX = rightEdge - itemRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
@@ -206,6 +177,7 @@ public sealed class BombDropper : MonoBehaviour
         }
 
         Collider collider = PreparePhysicsCollider(body, itemRadius);
+        FitColliderToVisual(body, (SphereCollider)collider, itemRadius);
         Rigidbody rigidbody = body.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
@@ -245,6 +217,27 @@ public sealed class BombDropper : MonoBehaviour
         collider.isTrigger = false;
         collider.radius = radius;
         return collider;
+    }
+
+    // Centre the sphere on the visible model and make it as tall as the model,
+    // so the item rests on its bottom edge instead of sinking into surfaces.
+    // Collider radius is in local space, so world sizes are divided by the scale.
+    private static void FitColliderToVisual(GameObject body, SphereCollider collider, float fallbackWorldRadius)
+    {
+        Bounds visual = default;
+        bool found = false;
+        foreach (Renderer renderer in body.GetComponentsInChildren<Renderer>())
+        {
+            if (!renderer.enabled || !(renderer is MeshRenderer || renderer is SkinnedMeshRenderer)) continue;
+            if (found) visual.Encapsulate(renderer.bounds);
+            else { visual = renderer.bounds; found = true; }
+        }
+        Vector3 lossy = body.transform.lossyScale;
+        float scale = Mathf.Max(Mathf.Abs(lossy.x), Mathf.Abs(lossy.y), Mathf.Abs(lossy.z));
+        if (scale < 0.0001f) return;
+        bool useVisual = found && visual.extents.y > 0.01f;
+        collider.center = useVisual ? body.transform.InverseTransformPoint(visual.center) : Vector3.zero;
+        collider.radius = (useVisual ? visual.extents.y : fallbackWorldRadius) / scale;
     }
 
     private static GameObject SpawnPrefab(UnityEngine.Object prefab, Transform parent, Vector3 position, float scale, string name)
@@ -299,9 +292,8 @@ public sealed class BombDropper : MonoBehaviour
     public FallingBomb DropBomb()
     {
         if (!CanRun || layout == null) return null;
-        ResolveGround();
-        float leftEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.min.x : layout.LeftEdge;
-        float rightEdge = gameplayGroundCollider != null ? gameplayGroundCollider.bounds.max.x : layout.RightEdge;
+        float leftEdge = layout.LeftEdge;
+        float rightEdge = layout.RightEdge;
         float minX = leftEdge + bombRadius + spawnEdgePadding;
         float maxX = rightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
@@ -325,11 +317,8 @@ public sealed class BombDropper : MonoBehaviour
         rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         if (upperBoundary != null) Physics.IgnoreCollision(collider, upperBoundary);
-        foreach (GroundRubble rubble in FindObjectsByType<GroundRubble>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            Collider rubbleCollider = rubble.GetComponent<Collider>();
-            if (rubbleCollider != null) Physics.IgnoreCollision(collider, rubbleCollider);
-        }
+        foreach (GroundRubble rubble in GroundRubble.Active)
+            if (rubble.Collider != null) Physics.IgnoreCollision(collider, rubble.Collider);
 
         var fuse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         fuse.name = "Fuse";
@@ -351,64 +340,58 @@ public sealed class BombDropper : MonoBehaviour
     public void Explode(Vector2 center)
     {
         if (!CanRun) return;
-        ResolveGround();
-        if (enableCrater)
-        {
-            Vector2[] outline = CreateCraterOutline(center);
-            GameObject grassObject = GameObject.Find("Grass_Mesh");
-            DestructibleGround grass = grassObject != null ? grassObject.GetComponent<DestructibleGround>() : null;
-            if (ground != null && ground.gameObject != grassObject
-                && BlastOutlineTouchesSurface(outline, ground.GetComponent<Renderer>()))
-                ground.Carve(outline);
-            if (grass != null && BlastOutlineTouchesSurface(outline, grass.GetComponent<Renderer>()))
-                grass.Carve(outline);
-            if (gameplayGround != null) gameplayGround.ApplyCrater(center, craterRadius);
-        }
+        List<DestructibleObject> supportedPieces = DestructibleObject.FindSupportedPieces();
         DestroyDebrisInBlast(center);
-        AffectBlastReceivers(center);
-        if (enableRubble) SpawnRubble(center);
+        Material cutMaterial = AffectBlastReceivers(center);
+        DestructibleObject.DropUnsupportedPieces(supportedPieces);
+        WakeRestingBodies();
+        // Rubble takes the colour of the block the bomb dug into, so a blast
+        // in open air makes none.
+        if (enableRubble && cutMaterial != null) SpawnRubble(center, cutMaterial);
         if (session != null)
         {
             List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
             foreach (ArenaPlayerController target in session.Players)
-            {
-                if (target == null || !target.gameObject.activeInHierarchy) continue;
-                if (target.IsInvincible) continue;
-                if (target.DistanceToBody(center) > lethalRadius) continue;
-                hitPlayers.Add(target);
-            }
+                if (HitPlayer(target, center)) hitPlayers.Add(target);
             session.KillPlayers(hitPlayers);
         }
-        else if (player != null && player.gameObject.activeInHierarchy
-                 && !player.IsInvincible
-                 && player.DistanceToBody(center) <= lethalRadius)
+        else if (HitPlayer(player, center))
             player.gameObject.SetActive(false);
 
         ShowBlast(center);
     }
 
-    // A 2D outline can carve every XY layer it crosses. Only apply it to a
-    // terrain surface when the outline actually reaches that layer's height.
-    private static bool BlastOutlineTouchesSurface(IReadOnlyList<Vector2> outline, Renderer surface)
+    // Close hits kill; hits from the edge of the blast knock a limb off, and
+    // kill only once the player has taken too many. Killed players burst into
+    // chunks. Returns true if the player should be removed.
+    private bool HitPlayer(ArenaPlayerController target, Vector2 center)
     {
-        if (outline == null || outline.Count < 3 || surface == null) return true;
-        float minY = outline[0].y;
-        float maxY = minY;
-        for (int i = 1; i < outline.Count; i++)
-        {
-            minY = Mathf.Min(minY, outline[i].y);
-            maxY = Mathf.Max(maxY, outline[i].y);
-        }
-        float surfaceY = surface.bounds.max.y;
-        return minY <= surfaceY && maxY >= surfaceY;
+        if (target == null || !target.gameObject.activeInHierarchy || target.IsInvincible) return false;
+        float distance = target.DistanceToBody(center);
+        if (distance > lethalRadius) return false;
+        bool killed = distance <= oneShotRadius || target.TakeGraze(center);
+        if (killed) target.Burst(center);
+        return killed;
+    }
+
+    // Unity does not wake a sleeping rigidbody when the surface under it is cut
+    // or removed, so fallen pieces and landed items would hang in the air.
+    private static void WakeRestingBodies()
+    {
+        foreach (FallingCollectibleItem item in FindObjectsByType<FallingCollectibleItem>(FindObjectsSortMode.None))
+            item.ResumeFalling();
+        foreach (Rigidbody body in FindObjectsByType<Rigidbody>(FindObjectsSortMode.None))
+            if (!body.isKinematic) body.WakeUp();
     }
 
     private void DestroyDebrisInBlast(Vector2 center)
     {
         DestructibleObject.DestroyFragmentsWithin(center, outerShatterRadius);
-        foreach (GroundRubble rubble in FindObjectsByType<GroundRubble>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        // Copy first: deactivating rubble removes it from the active list.
+        var rubbleList = new List<GroundRubble>(GroundRubble.Active);
+        foreach (GroundRubble rubble in rubbleList)
         {
-            Collider collider = rubble.GetComponent<Collider>();
+            Collider collider = rubble.Collider;
             if (collider == null) continue;
             Bounds bounds = collider.bounds;
             Vector2 closest = new Vector2(
@@ -444,138 +427,20 @@ public sealed class BombDropper : MonoBehaviour
         visual.AddComponent<BombBlastVisual>().Initialize(lethalRadius, blastDuration);
     }
 
-    // Resolve both the visual terrain and the collider used for bomb placement and landing.
-    private void ResolveGround()
-    {
-        ConfigureYardLayers();
-        if (ground == null)
-            ground = FindFirstObjectByType<DestructibleGround>(FindObjectsInactive.Include);
-        if (ground == null)
-        {
-            foreach (MeshFilter filter in FindObjectsByType<MeshFilter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            {
-                if (filter.gameObject.name != "Grass_Mesh" || filter.sharedMesh == null) continue;
-                ground = filter.GetComponent<DestructibleGround>();
-                if (ground == null) ground = filter.gameObject.AddComponent<DestructibleGround>();
-                ground.SetCollisionEnabled(true);
-                break;
-            }
-        }
-        if (pendingYardGrassDepth > 0f && ground != null)
-        {
-            ground.SetExtrusionDepth(pendingYardGrassDepth);
-            pendingYardGrassDepth = 0f;
-        }
-
-        if (gameplayGround == null)
-            gameplayGround = FindFirstObjectByType<ArenaGameplayGround>(FindObjectsInactive.Include);
-        if (gameplayGround == null)
-        {
-            foreach (MeshFilter filter in FindObjectsByType<MeshFilter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            {
-                if (filter.gameObject.name != "Ground_Mesh" || filter.sharedMesh == null) continue;
-                gameplayGround = filter.GetComponent<ArenaGameplayGround>();
-                if (gameplayGround == null) gameplayGround = filter.gameObject.AddComponent<ArenaGameplayGround>();
-                break;
-            }
-        }
-        if (gameplayGround != null)
-        {
-            gameplayGround.Initialize();
-            gameplayGroundCollider = gameplayGround.GameplayCollider;
-        }
-        else if (gameplayGroundCollider == null)
-        {
-            foreach (MeshCollider candidate in FindObjectsByType<MeshCollider>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            {
-                if (candidate.gameObject.name != "Ground_Mesh" || !candidate.enabled || candidate.isTrigger) continue;
-                gameplayGroundCollider = candidate;
-                Debug.Log($"[BombDropper] Gameplay ground collider resolved to {candidate.name} on {candidate.gameObject.name}, mesh={candidate.sharedMesh?.name}, layer={candidate.gameObject.layer}");
-                break;
-            }
-        }
-        if (gameplayGroundCollider == null && ground != null)
-        {
-            Collider legacyCollider = ground.GetComponent<Collider>();
-            if (legacyCollider != null && legacyCollider.enabled && !legacyCollider.isTrigger)
-                gameplayGroundCollider = legacyCollider;
-        }
-        if (gameplayGroundCollider == null)
-        {
-            if (!groundResolutionFailureReported)
-            {
-                groundResolutionFailureReported = true;
-                Debug.LogWarning("[BombDropper] No dedicated gameplay ground found; using tiled terrain collisions.", this);
-            }
-        }
-    }
-
-    private void ConfigureYardLayers()
-    {
-        if (yardLayersConfigured || UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "YardLevel") return;
-
-        MeshRenderer grassRenderer = null;
-        MeshRenderer dirtRenderer = null;
-        foreach (MeshRenderer renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            if (renderer.gameObject.name == "Grass_Mesh") grassRenderer = renderer;
-            else if (renderer.gameObject.name == "Ground_Mesh") dirtRenderer = renderer;
-        }
-        if (grassRenderer == null || dirtRenderer == null) return;
-
-        grassRenderer.gameObject.SetActive(true);
-        dirtRenderer.gameObject.SetActive(true);
-        grassRenderer.enabled = true;
-        dirtRenderer.enabled = true;
-        if (yardGrassMaterial != null) grassRenderer.sharedMaterial = yardGrassMaterial;
-        if (yardDirtMaterial != null) dirtRenderer.sharedMaterial = yardDirtMaterial;
-
-        Vector3 grassPosition = grassRenderer.transform.position;
-
-        // Span the dirt's full depth so turf is also present at the player's Z,
-        // instead of appearing only on the distant camera-facing edge.
-        float cameraZ = Camera.main != null ? Camera.main.transform.position.z : grassRenderer.bounds.min.z - 1f;
-        float towardCamera = cameraZ < dirtRenderer.bounds.center.z ? -1f : 1f;
-        pendingYardGrassDepth = dirtRenderer.bounds.size.z + 0.2f;
-        grassPosition.z = dirtRenderer.bounds.center.z + towardCamera * 0.1f;
-        grassRenderer.transform.position = grassPosition;
-        yardLayersConfigured = true;
-    }
-
-    public bool IsGameplayGroundCollider(Collider collider)
-    {
-        ResolveGround();
-        if (gameplayGround != null) return collider == gameplayGround.GameplayCollider;
-        return collider == gameplayGroundCollider;
-    }
-
     public bool IsBelowArena(Vector3 position)
     {
         return layout != null && position.y < layout.Origin.y + layout.GroundBottom - itemRadius * 2f;
     }
 
     // Use a broad phase query, then deduplicate receiver components found on overlapping colliders.
-    private void AffectBlastReceivers(Vector2 center)
+    // Returns the material of a block the blast cut into, or null if it cut nothing.
+    private Material AffectBlastReceivers(Vector2 center)
     {
         Vector3 queryCenter = new Vector3(center.x, center.y, layout != null ? layout.Origin.z : transform.position.z);
         float halfDepth = layout != null ? layout.Depth * 0.5f + 0.5f : 10f;
         float receiverRadius = Mathf.Max(lethalRadius, outerShatterRadius);
         Collider[] colliders = Physics.OverlapBox(queryCenter, new Vector3(receiverRadius, receiverRadius, halfDepth));
         var receivers = new HashSet<IBlastReceiver>();
-        DestructibleMultiMesh[] multiMeshes = FindObjectsByType<DestructibleMultiMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        if (multiMeshes.Length == 0)
-        {
-            foreach (Transform candidate in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            {
-                if (candidate.parent != null || !HasTerrainChildren(candidate)) continue;
-                candidate.gameObject.AddComponent<DestructibleMultiMesh>();
-            }
-            multiMeshes = FindObjectsByType<DestructibleMultiMesh>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        }
-        foreach (DestructibleMultiMesh target in multiMeshes)
-        {
-            if (target.isActiveAndEnabled) receivers.Add(target);
-        }
         foreach (Collider collider in colliders)
         {
             foreach (MonoBehaviour component in collider.GetComponentsInParent<MonoBehaviour>(true))
@@ -586,58 +451,37 @@ public sealed class BombDropper : MonoBehaviour
         }
 
         var blast = new BlastPayload(center, innerDestructionRadius, outerShatterRadius, shatterImpulse);
+        Material groundMaterial = null;
+        Material anyMaterial = null;
         foreach (IBlastReceiver receiver in receivers)
-            receiver.ReceiveBlast(blast);
-    }
-
-    private static bool HasTerrainChildren(Transform root)
-    {
-        bool grass = false;
-        bool ground = false;
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
         {
-            grass |= child.name == "Grass_Mesh";
-            ground |= child.name == "Ground_Mesh";
+            receiver.ReceiveBlast(blast);
+            if (!(receiver is DestructibleObject block) || !block.WasCutThisFrame || block.SurfaceMaterial == null) continue;
+            if (anyMaterial == null) anyMaterial = block.SurfaceMaterial;
+            if (groundMaterial == null && !block.BreaksApart) groundMaterial = block.SurfaceMaterial;
         }
-        return grass && ground;
+        // Prefer ground blocks so a hit on a bench next to the ground still throws dirt.
+        return groundMaterial != null ? groundMaterial : anyMaterial;
     }
 
-    private void SpawnRubble(Vector2 center)
+    private void SpawnRubble(Vector2 center, Material material)
     {
         if (rubblePieces <= 0) return;
-        Material material = FindTerrainMaterial();
-        if (material == null) return;
+        float planeZ = layout != null ? layout.Origin.z : transform.position.z;
         for (int index = 0; index < rubblePieces; index++)
         {
             float angle = index * Mathf.PI * 2f / rubblePieces + Random.Range(-0.25f, 0.25f);
-            float distance = Random.Range(Mathf.Max(innerDestructionRadius, craterRadius) * 0.8f, outerShatterRadius);
+            float distance = Random.Range(innerDestructionRadius * 0.8f, Mathf.Max(innerDestructionRadius, outerShatterRadius));
             Vector2 position = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
             Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * 0.6f).normalized;
-            Vector2 impulse = direction * Random.Range(rubbleImpulse * 0.7f, rubbleImpulse * 1.3f) + Vector2.up * 0.5f;
+            Vector2 flat = direction * Random.Range(rubbleImpulse * 0.7f, rubbleImpulse * 1.3f) + Vector2.up * 0.5f;
+            // Some sideways push in Z, so pieces fly toward and away from the camera too.
+            Vector3 impulse = new Vector3(flat.x, flat.y, Random.Range(-0.8f, 0.8f) * rubbleImpulse);
             float pieceSize = rubblePieceSize * Random.Range(0.8f, 1.25f);
             position.y += pieceSize * 0.8f;
-            GroundRubble rubble = GroundRubble.Spawn(position, pieceSize, impulse,
+            GroundRubble.Spawn(new Vector3(position.x, position.y, planeZ), pieceSize, impulse,
                 material, GetTransientRoot());
-            Collider rubbleCollider = rubble != null ? rubble.GetComponent<Collider>() : null;
-            if (rubbleCollider != null)
-            {
-                foreach (FallingBomb fallingBomb in FindObjectsByType<FallingBomb>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                {
-                    Collider bombCollider = fallingBomb.GetComponent<Collider>();
-                    if (bombCollider != null) Physics.IgnoreCollision(rubbleCollider, bombCollider);
-                }
-            }
         }
-    }
-
-    private static Material FindTerrainMaterial()
-    {
-        foreach (MeshRenderer renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-        {
-            if (renderer.transform.name == "Ground_Mesh" && renderer.sharedMaterial != null)
-                return renderer.sharedMaterial;
-        }
-        return null;
     }
 
     public void ClearTransientObjects()
@@ -658,29 +502,6 @@ public sealed class BombDropper : MonoBehaviour
         return transientRoot;
     }
 
-    // Return a counterclockwise outline in world XY so the terrain clipper can subtract it.
-    public Vector2[] CreateCraterOutline(Vector2 center)
-    {
-        int count = craterShape == CraterShape.Box ? 4 : Mathf.Clamp(craterSegments, 8, 96);
-        var outline = new Vector2[count];
-        Vector2 scale = craterShape == CraterShape.Circle ? Vector2.one
-            : new Vector2(Mathf.Max(0.05f, craterShapeScale.x), Mathf.Max(0.05f, craterShapeScale.y));
-        Quaternion rotation = Quaternion.Euler(0f, 0f, craterRotation);
-        for (int i = 0; i < count; i++)
-        {
-            Vector2 point;
-            if (craterShape == CraterShape.Box)
-                point = new Vector2(i == 0 || i == 3 ? -1f : 1f, i < 2 ? -1f : 1f);
-            else
-            {
-                float angle = i * Mathf.PI * 2f / count;
-                point = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            }
-            outline[i] = center + (Vector2)(rotation * (Vector3)(Vector2.Scale(point, scale) * Mathf.Max(0.05f, craterRadius)));
-        }
-        return outline;
-    }
-
     private void OnDrawGizmosSelected()
     {
         if (!showSizePreviews || layout == null) return;
@@ -691,17 +512,20 @@ public sealed class BombDropper : MonoBehaviour
         float y = layout.CameraBounds.max.y + dropHeightAboveArena;
         Gizmos.DrawLine(new Vector3(minX, y, origin.z), new Vector3(maxX, y, origin.z));
         Vector2 center = (Vector2)origin + Vector2.up * layout.GroundTop;
-        Vector2[] outline = CreateCraterOutline(center);
         Gizmos.color = Color.cyan;
-        for (int i = 0; i < outline.Length; i++)
-            Gizmos.DrawLine(new Vector3(outline[i].x, outline[i].y, origin.z), new Vector3(outline[(i + 1) % outline.Length].x, outline[(i + 1) % outline.Length].y, origin.z));
+        DrawCircleGizmo(center, outerShatterRadius, origin.z);
         Gizmos.color = Color.red;
+        DrawCircleGizmo(center, lethalRadius, origin.z);
+    }
+
+    private static void DrawCircleGizmo(Vector2 center, float radius, float z)
+    {
         for (int i = 0; i < 64; i++)
         {
             float a = i * Mathf.PI * 2f / 64f;
             float b = (i + 1) * Mathf.PI * 2f / 64f;
-            Gizmos.DrawLine(new Vector3(center.x + Mathf.Cos(a) * lethalRadius, center.y + Mathf.Sin(a) * lethalRadius, origin.z),
-                new Vector3(center.x + Mathf.Cos(b) * lethalRadius, center.y + Mathf.Sin(b) * lethalRadius, origin.z));
+            Gizmos.DrawLine(new Vector3(center.x + Mathf.Cos(a) * radius, center.y + Mathf.Sin(a) * radius, z),
+                new Vector3(center.x + Mathf.Cos(b) * radius, center.y + Mathf.Sin(b) * radius, z));
         }
     }
 }

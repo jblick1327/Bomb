@@ -52,6 +52,9 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private ArenaSession session;
     private MaterialPropertyBlock characterColorProperties;
     private TextMeshPro playerLabel;
+    private Collider lastPlainCollider;
+    private PlayerBodyDamage bodyDamage;
+    private static readonly int RunningParameter = Animator.StringToHash("Running");
 
     // Used to remember the player's original scale.
     private Vector3 originalScale;
@@ -60,9 +63,16 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private float speedEffectRemaining;
     private float invincibilityRemaining;
 
+    // Which speed item is currently changing this player's speed.
+    public enum SpeedEffect { None, Boost, Slow }
+
     public int PlayerNumber => playerNumber;
     public int Coins { get; private set; }
     public bool IsInvincible => invincibilityRemaining > 0f;
+    public float InvincibilityRemaining => invincibilityRemaining;
+    public float SpeedEffectRemaining => speedEffectRemaining;
+    public SpeedEffect ActiveSpeedEffect { get; private set; }
+    public Color CharacterColor { get; private set; } = Color.white;
     public event Action<int> CoinsChanged;
 
     private void Awake()
@@ -76,6 +86,24 @@ public sealed class ArenaPlayerController : MonoBehaviour
         originalScale = transform.localScale;
         fixedZPosition = transform.position.z;
         ApplyCharacterColor();
+        // Shows a glow while an item effect is active.
+        if (!TryGetComponent(out PlayerItemGlow _)) gameObject.AddComponent<PlayerItemGlow>();
+        // Knocks limbs off on blast grazes and bursts the body on death.
+        if (!TryGetComponent(out bodyDamage)) bodyDamage = gameObject.AddComponent<PlayerBodyDamage>();
+    }
+
+    // A hit from the edge of a blast. Returns true if it should kill.
+    public bool TakeGraze(Vector2 blastCenter) => bodyDamage == null || bodyDamage.TakeGraze(blastCenter);
+
+    // Throws the body out as chunks; the caller then removes the player.
+    public void Burst(Vector2 blastCenter)
+    {
+        if (bodyDamage != null) bodyDamage.Burst(blastCenter);
+    }
+
+    public void RestoreBody()
+    {
+        if (bodyDamage != null) bodyDamage.RestoreBody();
     }
 
     private void Start()
@@ -87,15 +115,17 @@ public sealed class ArenaPlayerController : MonoBehaviour
     {
         UpdateCollectibleEffects();
 
+        if (session != null && session.IsPaused)
+            return;
         if (session != null && !session.IsPlaying)
         {
-            if (animator != null) animator.SetBool("Running", false);
+            if (animator != null) animator.SetBool(RunningParameter, false);
             return;
         }
         float input = ReadMovement();
 
         if (animator != null)
-            animator.SetBool("Running", Mathf.Abs(input) > 0.01f);
+            animator.SetBool(RunningParameter, Mathf.Abs(input) > 0.01f);
 
         // Flip the player depending on movement direction.
         UpdateFacing(input);
@@ -215,10 +245,12 @@ public sealed class ArenaPlayerController : MonoBehaviour
             case CollectibleItemType.Slow:
                 speedMultiplier = Mathf.Max(0.01f, slowSpeedMultiplier);
                 speedEffectRemaining = collectibleEffectDuration;
+                ActiveSpeedEffect = SpeedEffect.Slow;
                 break;
             case CollectibleItemType.SpeedBoost:
                 speedMultiplier = Mathf.Max(0.01f, boostSpeedMultiplier);
                 speedEffectRemaining = collectibleEffectDuration;
+                ActiveSpeedEffect = SpeedEffect.Boost;
                 break;
         }
     }
@@ -228,6 +260,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
         speedMultiplier = 1f;
         speedEffectRemaining = 0f;
         invincibilityRemaining = 0f;
+        ActiveSpeedEffect = SpeedEffect.None;
     }
 
     public void ResetRoundStats()
@@ -252,7 +285,10 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
         speedEffectRemaining = Mathf.Max(0f, speedEffectRemaining - Time.deltaTime);
         if (speedEffectRemaining <= 0f)
+        {
             speedMultiplier = 1f;
+            ActiveSpeedEffect = SpeedEffect.None;
+        }
     }
 
     private void UpdateFacing(float input)
@@ -363,6 +399,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
             characterColorProperties = new MaterialPropertyBlock();
 
         Color color = MatchMenuUI.GetCharacterColorForPlayer(playerNumber);
+        CharacterColor = color;
         foreach (Renderer targetRenderer in GetComponentsInChildren<Renderer>(true))
         {
             targetRenderer.GetPropertyBlock(characterColorProperties);
@@ -387,18 +424,33 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.collider.GetComponentInParent<EliminationBound>() != null)
+        // This runs every frame for the ground under the player. Skip the
+        // hierarchy searches below for a collider already known to be plain.
+        Collider hitCollider = hit.collider;
+        if (hitCollider == lastPlainCollider)
+            return;
+
+        if (hitCollider.GetComponentInParent<EliminationBound>() != null)
         {
-            session.KillPlayer(this);
+            if (session != null) session.KillPlayer(this);
+            else gameObject.SetActive(false);
             return;
         }
 
-        FallingCollectibleItem collectible = hit.collider.GetComponentInParent<FallingCollectibleItem>();
-        if (collectible != null && collectible.TryCollect(this))
+        FallingCollectibleItem collectible = hitCollider.GetComponentInParent<FallingCollectibleItem>();
+        if (collectible != null)
+        {
+            collectible.TryCollect(this);
             return;
+        }
 
-        Rigidbody body = hit.collider.attachedRigidbody;
-        if (body == null || hit.collider.GetComponentInParent<GroundRubble>() == null || body.isKinematic) return;
+        Rigidbody body = hitCollider.attachedRigidbody;
+        if (body == null || hitCollider.GetComponentInParent<GroundRubble>() == null)
+        {
+            if (body == null) lastPlainCollider = hitCollider;
+            return;
+        }
+        if (body.isKinematic) return;
         Vector3 push = new Vector3(hit.moveDirection.x, 0.15f, 0f);
         body.AddForce(push * Mathf.Max(1f, moveSpeed), ForceMode.VelocityChange);
     }

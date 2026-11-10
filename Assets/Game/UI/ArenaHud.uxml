@@ -2,7 +2,14 @@
     <ui:VisualElement name="hud-root" class="hud-root">
         <ui:Label name="timer" text="00:00" class="timer" />
         <ui:Label name="bomb-counter" text="Bombs dropped: 0" class="bomb-counter" />
-        <ui:Label name="controls" text="A/D or arrows: move    Space: jump    R: restart" class="controls" />
+        <ui:Label name="controls" text="A/D or arrows: move    Space: jump    P: pause" class="controls" />
+        <ui:VisualElement name="pause-panel" class="death-panel pause-panel">
+            <ui:Label text="PAUSED" class="death-title" />
+            <ui:Button name="resume-button" text="RESUME" class="menu-button pause-button" />
+            <ui:Button name="restart-button" text="RESTART" class="menu-button pause-button" />
+            <ui:Button name="leave-button" text="LEAVE GAME" class="menu-button pause-button" />
+            <ui:Label text="P / Start: resume    A: select" class="pause-hint" />
+        </ui:VisualElement>
         <ui:VisualElement name="death-panel" class="death-panel">
             <ui:Label name="game-header" text="Game" class="game-header" />
             <ui:Label name="winner" text="GAME OVER" class="death-title" />

@@ -5,10 +5,19 @@ using UnityEngine;
 [AddComponentMenu("Arena/Falling Bomb")]
 public sealed class FallingBomb : MonoBehaviour
 {
+    private static readonly System.Collections.Generic.List<FallingBomb> active =
+        new System.Collections.Generic.List<FallingBomb>();
+
+    // Bombs currently in the scene, so callers do not need to search for them.
+    public static System.Collections.Generic.IReadOnlyList<FallingBomb> Active => active;
+
     private BombDropper owner;
     private Rigidbody body;
     private float fallAcceleration;
     private bool exploded;
+
+    private void OnEnable() => active.Add(this);
+    private void OnDisable() => active.Remove(this);
 
     public void Initialize(BombDropper dropper, float acceleration, float lifetime)
     {
@@ -27,19 +36,10 @@ public sealed class FallingBomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (exploded || owner == null || !owner.CanRun) return;
-        bool isRubble = collision.collider.GetComponentInParent<GroundRubble>() != null;
-        bool isGround = owner.IsGameplayGroundCollider(collision.collider);
-        ContactPoint contact = collision.contactCount > 0 ? collision.GetContact(0) : default;
-        Debug.Log($"[FallingBomb] collision gameObject={collision.collider.gameObject.name} collider={collision.collider.name} "
-            + $"layer={LayerMask.LayerToName(collision.collider.gameObject.layer)}({collision.collider.gameObject.layer}) "
-            + $"type={collision.collider.GetType().Name} enabled={collision.collider.enabled} trigger={collision.collider.isTrigger} "
-            + $"convex={(collision.collider is MeshCollider mesh && mesh.convex)} mesh={(collision.collider is MeshCollider meshCollider && meshCollider.sharedMesh != null ? meshCollider.sharedMesh.name : "n/a")} "
-            + $"point={contact.point} normal={contact.normal} validGround={isGround} rubble={isRubble}");
-        // Bombs detonate on any solid impact. Requiring a ground collider or a
-        // receiver here lets the bomb sit on ordinary objects without exploding.
-        if (isRubble) return;
+        // Bombs detonate on any solid impact except loose rubble.
+        if (collision.collider.GetComponentInParent<GroundRubble>() != null) return;
         exploded = true;
-        Vector3 point = collision.contactCount > 0 ? contact.point : transform.position;
+        Vector3 point = collision.contactCount > 0 ? collision.GetContact(0).point : transform.position;
         GameAudio.PlayBombExplosion(point);
         owner.Explode(new Vector2(point.x, point.y));
         Destroy(gameObject);

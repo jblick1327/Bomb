@@ -72,7 +72,6 @@ public sealed class MatchMenuUI : MonoBehaviour
         new Color(.70f, .43f, .26f), new Color(.52f, .58f, .72f), new Color(.90f, .66f, .26f),
         new Color(.36f, .68f, .60f), new Color(.75f, .39f, .88f), new Color(.90f, .36f, .38f)
     };
-    private static Sprite cursorSprite;
     private const int FirstRowCharacterPrice = 100;
     private const int SecondRowCharacterPrice = 500;
     private const int LastRowCharacterPrice = 1000;
@@ -174,22 +173,6 @@ public sealed class MatchMenuUI : MonoBehaviour
 
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name == "MainMenuScene"
-            && !secondaryMenuOpen && !shopMenuOpen && !settingsMenuOpen && !isTransitioning)
-        {
-            foreach (Gamepad gamepad in Gamepad.all)
-            {
-                if (gamepad.buttonSouth.wasPressedThisFrame)
-                {
-                    ResetMatchRoster();
-                    if (inputMode == MatchInputMode.AllControllers)
-                        playerGamepadDeviceIds[0] = gamepad.deviceId;
-                    StartSetupMenu();
-                    break;
-                }
-            }
-        }
-
         if ((secondaryMenuOpen || SceneManager.GetActiveScene().name == "LevelSetupScene")
             && setupCanvasObject != null && !isTransitioning)
         {
@@ -239,6 +222,11 @@ public sealed class MatchMenuUI : MonoBehaviour
     }
 
     public static int MatchPlayerCount => matchRosterConfigured ? matchPlayerCount : 2;
+    // The setup screen draws its own P1-P4 cursors, so the shared menu cursor hides.
+    public static bool IsSetupScreenOpen => instance != null && instance.setupCanvasObject != null;
+    // Each player's cursor colour, by player index (0 = Player 1).
+    public static Color GetPlayerCursorColor(int playerIndex) =>
+        characterColors[Mathf.Clamp(playerIndex, 0, characterColors.Length - 1)];
     public static bool HasConfiguredMatchRoster => matchRosterConfigured;
     public static MatchInputMode CurrentInputMode => inputMode;
 
@@ -517,6 +505,15 @@ public sealed class MatchMenuUI : MonoBehaviour
             return;
 
         ResetMatchRoster();
+        // In controller-only mode, whoever pressed Play with a controller is Player 1.
+        Gamepad clicker = MenuCursor.LastSubmitGamepad;
+        if (inputMode == MatchInputMode.AllControllers && clicker != null && clicker.added)
+        {
+            for (int i = 1; i < MaxLocalPlayers; i++)
+                if (playerGamepadDeviceIds[i] == clicker.deviceId) playerGamepadDeviceIds[i] = playerGamepadDeviceIds[0];
+            playerGamepadDeviceIds[0] = clicker.deviceId;
+            RefreshRosterForInputMode();
+        }
         StartSetupMenu();
     }
 
@@ -1265,21 +1262,6 @@ public sealed class MatchMenuUI : MonoBehaviour
 
     private void CreatePlayerCursors(RectTransform root)
     {
-        if (cursorSprite == null)
-        {
-            Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-            Color[] pixels = new Color[64 * 64];
-            for (int y = 0; y < 64; y++)
-                for (int x = 0; x < 64; x++)
-                {
-                    float distance = Vector2.Distance(new Vector2(x, y), new Vector2(31.5f, 31.5f));
-                    pixels[y * 64 + x] = distance <= 30f && distance >= 25f ? Color.white : Color.clear;
-                }
-            texture.SetPixels(pixels);
-            texture.Apply();
-            cursorSprite = Sprite.Create(texture, new Rect(0f, 0f, 64f, 64f), new Vector2(.5f, .5f));
-        }
-
         for (int i = 0; i < MaxLocalPlayers; i++)
         {
             GameObject cursorObject = new GameObject("P" + (i + 1) + " Cursor", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
@@ -1287,7 +1269,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             RectTransform cursor = cursorObject.GetComponent<RectTransform>();
             cursor.sizeDelta = new Vector2(72f, 72f);
             Image image = cursorObject.GetComponent<Image>();
-            image.sprite = cursorSprite;
+            image.sprite = MenuCursor.RingSprite;
             image.color = characterColors[i];
             image.raycastTarget = false;
             TextMeshProUGUI label = AddText(cursor, "P" + (i + 1), Vector2.zero, Vector2.one, 18f, Color.white, FontStyles.Bold);
@@ -1380,6 +1362,20 @@ public sealed class MatchMenuUI : MonoBehaviour
             null);
     }
 
+    // True when the player's cursor is over a setup button other than a character tile.
+    private bool IsCursorOverMenuButton(int playerIndex)
+    {
+        if (setupCanvasObject == null || playerCursors == null || playerCursors[playerIndex] == null)
+            return false;
+        Vector2 point = playerCursors[playerIndex].position;
+        foreach (Button button in setupCanvasObject.GetComponentsInChildren<Button>())
+        {
+            if (System.Array.IndexOf(characterButtons, button) >= 0) continue;
+            if (IsCursorOverButton(playerIndex, button)) return true;
+        }
+        return false;
+    }
+
     private void UpdateSetupInput()
     {
         UpdateMouseCursor();
@@ -1411,8 +1407,10 @@ public sealed class MatchMenuUI : MonoBehaviour
 
             if (gamepad.buttonSouth.wasPressedThisFrame)
             {
-                if (playerIndex == 0 && inputMode == MatchInputMode.AllControllers && IsCursorOverButton(0, startButton))
-                    StartGame();
+                // Only Player 1 can press the screen's buttons (level arrows,
+                // mode, start, back). Everyone else picks characters.
+                if (playerIndex == 0 && IsCursorOverMenuButton(0))
+                    MenuCursor.ClickAt(playerCursors[0].position);
                 else
                     SelectCharacterForPlayer(playerIndex, playerCharacterCursors[playerIndex]);
             }
@@ -1629,6 +1627,8 @@ public sealed class MatchMenuUI : MonoBehaviour
         portraitCamera.Render();
         portraitCamera.targetTexture = null;
         portraitCamera.enabled = false;
+        // The image is kept in the texture, so stop the model animating offscreen.
+        rig.SetActive(false);
         portraitRigs.Add(rig);
         return texture;
     }

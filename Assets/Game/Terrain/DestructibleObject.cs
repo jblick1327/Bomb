@@ -7,6 +7,8 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
 {
     public enum DestructionBehavior { Carve, CarveAndFragment }
     [SerializeField] private DestructionBehavior behavior = DestructionBehavior.Carve;
+    [SerializeField, Tooltip("Carve And Fragment only: fall when a blast removes what this piece rests on.")]
+    private bool fallWhenUnsupported = true;
 
     private const float Epsilon = 0.00001f;
     private const float MinimumSurvivingWidth = 0.18f;
@@ -19,8 +21,11 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
     private Mesh originalMesh;
     private MeshCollider rockMeshCollider;
     private Mesh generatedMesh;
-    private List<List<Vector2>> carvedPieces;
     private readonly List<List<Vector2>> meshCutters = new List<List<Vector2>>();
+    // XY bounds of each cutter, used to skip cutters that miss a shape.
+    private readonly List<Rect> cutterBounds = new List<Rect>();
+    private int lastCutFrame = -1;
+    private static readonly List<DestructibleObject> Enabled = new List<DestructibleObject>();
     private bool originalStateCached;
     private static readonly HashSet<DestructibleObject> ActiveFragments = new HashSet<DestructibleObject>();
     private DestructibleObject fragmentOwner;
@@ -70,7 +75,6 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
             rockMeshCollider.sharedMesh = originalMesh;
         if (!originalStateCached) originalBounds = rockCollider.bounds;
         originalStateCached = true;
-        carvedPieces = new List<List<Vector2>> { BoundsPolygon(originalBounds) };
         foreach (Renderer renderer in rockRenderers)
         {
             if (renderer.sharedMaterial != null)
@@ -86,13 +90,13 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         if (broken || rockCollider == null || !rockCollider.enabled) return;
 
         Vector2 center = blast.Center;
-        Vector3 closestPoint = rockCollider.ClosestPoint(new Vector3(center.x, center.y, originalBounds.center.z));
-        Vector2 closestPointXY = new Vector2(closestPoint.x, closestPoint.y);
-        float distance = Vector2.Distance(center, closestPointXY);
-        if (distance > blast.OuterRadius) return;
+        if (DistanceInPlane(center) > blast.OuterRadius) return;
+        lastCutFrame = Time.frameCount;
 
         var cutter = CreateCircle(center, blast.OuterRadius, 32);
         meshCutters.Add(cutter);
+        cutterBounds.Add(new Rect(center.x - blast.OuterRadius, center.y - blast.OuterRadius,
+            blast.OuterRadius * 2f, blast.OuterRadius * 2f));
 
         if (behavior == DestructionBehavior.Carve)
         {
@@ -106,8 +110,101 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         rockCollider.enabled = false;
         foreach (Renderer renderer in rockRenderers) renderer.enabled = false;
         if (generatedMesh != null && generatedMesh.vertexCount > 0)
-            CreateMeshFragment(center, blast.Impulse);
+            CreateMeshFragment(generatedMesh, center, blast.Impulse);
         if (fragmentOwner != null) Destroy(gameObject);
+    }
+
+    // True when a blast cut into this object during the current frame.
+    public bool WasCutThisFrame => lastCutFrame == Time.frameCount;
+    // The object's main material, used to colour rubble thrown from it.
+    public Material SurfaceMaterial => rockMaterial;
+    public bool BreaksApart => behavior == DestructionBehavior.CarveAndFragment;
+
+    // Distance in the XY play plane from a point to this object's collider.
+    private float DistanceInPlane(Vector2 point)
+    {
+        // ClosestPoint does not support concave mesh colliders, so use their
+        // bounds instead. For the box-shaped blocks the bounds are exact.
+        Vector3 closest;
+        if (rockCollider is MeshCollider mesh && !mesh.convex)
+        {
+            Bounds bounds = rockCollider.bounds;
+            closest = new Vector3(Mathf.Clamp(point.x, bounds.min.x, bounds.max.x),
+                Mathf.Clamp(point.y, bounds.min.y, bounds.max.y), 0f);
+        }
+        else closest = rockCollider.ClosestPoint(new Vector3(point.x, point.y, originalBounds.center.z));
+        return Vector2.Distance(point, new Vector2(closest.x, closest.y));
+    }
+
+    private bool CanFall => behavior == DestructionBehavior.CarveAndFragment && fallWhenUnsupported
+        && !broken && fragmentOwner == null && isActiveAndEnabled
+        && rockCollider != null && rockCollider.enabled && rockFilter != null && originalMesh != null;
+
+    // Breakable pieces resting on something solid right now. Taken before a
+    // blast, so pieces built to float in the level are never dropped.
+    public static List<DestructibleObject> FindSupportedPieces()
+    {
+        Physics.SyncTransforms();
+        var supported = new List<DestructibleObject>();
+        foreach (DestructibleObject piece in Enabled)
+            if (piece.CanFall && piece.IsSupported()) supported.Add(piece);
+        return supported;
+    }
+
+    private void OnEnable() => Enabled.Add(this);
+    private void OnDisable() => Enabled.Remove(this);
+
+    // Drops pieces that lost their support in a blast. Repeats so a piece
+    // resting on another falling piece comes down with it.
+    public static void DropUnsupportedPieces(List<DestructibleObject> previouslySupported)
+    {
+        bool droppedAny = true;
+        while (droppedAny)
+        {
+            droppedAny = false;
+            Physics.SyncTransforms();
+            for (int i = previouslySupported.Count - 1; i >= 0; i--)
+            {
+                DestructibleObject piece = previouslySupported[i];
+                if (piece != null && piece.CanFall && piece.IsSupported()) continue;
+                previouslySupported.RemoveAt(i);
+                if (piece == null || !piece.CanFall) continue;
+                piece.Fall();
+                droppedAny = true;
+            }
+        }
+    }
+
+    private static readonly Collider[] SupportHits = new Collider[32];
+
+    // Looks in a thin slab just under the piece for a solid, non-moving collider.
+    private bool IsSupported()
+    {
+        const float probeHeight = 0.08f;
+        Bounds bounds = rockCollider.bounds;
+        Vector3 center = new Vector3(bounds.center.x, bounds.min.y - probeHeight * 0.5f, bounds.center.z);
+        Vector3 halfSize = new Vector3(Mathf.Max(0.01f, bounds.extents.x * 0.9f), probeHeight * 0.5f,
+            Mathf.Max(0.01f, bounds.extents.z * 0.9f));
+        int count = Physics.OverlapBoxNonAlloc(center, halfSize, SupportHits, Quaternion.identity,
+            Physics.AllLayers, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < count; i++)
+        {
+            Collider hit = SupportHits[i];
+            // Players, items, bombs and falling pieces all have rigidbodies and never hold anything up.
+            if (hit == rockCollider || hit.attachedRigidbody != null || hit.transform.IsChildOf(transform)) continue;
+            return true;
+        }
+        return false;
+    }
+
+    // Swaps the intact piece for a physics copy that drops under gravity.
+    private void Fall()
+    {
+        broken = true;
+        rockCollider.enabled = false;
+        foreach (Renderer renderer in rockRenderers) renderer.enabled = false;
+        Mesh mesh = generatedMesh != null && generatedMesh.vertexCount > 0 ? generatedMesh : originalMesh;
+        CreateMeshFragment(mesh, rockFilter.transform.position, 0f);
     }
 
     public void ResetObject()
@@ -127,8 +224,8 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
             Destroy(fragment.gameObject);
         }
         broken = false;
-        carvedPieces = new List<List<Vector2>> { BoundsPolygon(originalBounds) };
         meshCutters.Clear();
+        cutterBounds.Clear();
         if (generatedMesh != null) { Destroy(generatedMesh); generatedMesh = null; }
         if (rockFilter != null) rockFilter.sharedMesh = originalMesh;
         // Reacquire the collider from the source mesh object every reset. The
@@ -151,12 +248,6 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         foreach (Renderer renderer in rockRenderers) renderer.enabled = true;
     }
 
-    private static List<Vector2> BoundsPolygon(Bounds bounds) => new List<Vector2>
-    {
-        new Vector2(bounds.min.x, bounds.min.y), new Vector2(bounds.max.x, bounds.min.y),
-        new Vector2(bounds.max.x, bounds.max.y), new Vector2(bounds.min.x, bounds.max.y)
-    };
-
     // Clip source mesh triangles in world XY so the surviving rock keeps its
     // authored silhouette and facets instead of becoming an extruded bounds box.
     private void RebuildCarvedObject()
@@ -167,7 +258,7 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         var vertices = new List<Vector3>();
         var uvs = new List<Vector2>();
         var submeshTriangles = new List<int>[originalMesh.subMeshCount];
-        var cutWalls = new List<CutWall>();
+        var wallSpans = new Dictionary<(int cutter, int edge, int submesh), List<Vector2>>();
         for (int s = 0; s < submeshTriangles.Length; s++) submeshTriangles[s] = new List<int>();
         Transform meshTransform = rockFilter != null ? rockFilter.transform : transform;
         for (int submesh = 0; submesh < originalMesh.subMeshCount; submesh++)
@@ -183,17 +274,24 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
                         sourceUvs != null && sourceUvs.Length == sourceVertices.Length ? sourceUvs[index] : Vector2.zero));
                 }
                 var pieces = new List<List<CutVertex>> { polygon };
-                foreach (List<Vector2> cutter in meshCutters)
+                for (int c = 0; c < meshCutters.Count; c++)
                 {
+                    // Only split pieces the cutter can reach. Clipping a piece
+                    // against a distant cutter still slices it along the
+                    // cutter's edge lines, which multiplies pieces for nothing.
                     var nextPieces = new List<List<CutVertex>>();
-                    foreach (List<CutVertex> sourcePiece in pieces) SubtractCutter(sourcePiece, cutter, nextPieces);
+                    foreach (List<CutVertex> sourcePiece in pieces)
+                    {
+                        if (PieceBounds(sourcePiece).Overlaps(cutterBounds[c])) SubtractCutter(sourcePiece, meshCutters[c], nextPieces);
+                        else nextPieces.Add(sourcePiece);
+                    }
                     pieces = nextPieces;
                     if (pieces.Count == 0) break;
                 }
                 foreach (List<CutVertex> survivingPiece in pieces)
                 {
                     if (survivingPiece.Count < 3) continue;
-                    AddCutWalls(survivingPiece, submesh, cutWalls);
+                    CollectWallSpans(survivingPiece, submesh, wallSpans);
                     int start = vertices.Count;
                     foreach (CutVertex vertex in survivingPiece)
                     {
@@ -209,7 +307,7 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
                 }
             }
         }
-        AddCutWallGeometry(meshTransform, vertices, uvs, submeshTriangles, cutWalls);
+        AddCutWallGeometry(meshTransform, vertices, uvs, submeshTriangles, MergeWallSpans(wallSpans));
         if (generatedMesh == null) generatedMesh = new Mesh { name = "Carved Destructible Object" };
         generatedMesh.Clear();
         generatedMesh.indexFormat = vertices.Count > 65535
@@ -236,61 +334,87 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         else rockCollider.enabled = false;
     }
 
-    private void AddCutWalls(List<CutVertex> polygon, int submesh, List<CutWall> cutWalls)
+    private const float WallTolerance = 0.001f;
+
+    private static Rect PieceBounds(List<CutVertex> polygon)
     {
+        Vector2 min = polygon[0].position;
+        Vector2 max = min;
+        for (int i = 1; i < polygon.Count; i++)
+        {
+            Vector2 point = polygon[i].position;
+            min = Vector2.Min(min, point);
+            max = Vector2.Max(max, point);
+        }
+        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+    }
+
+    // Records which part of each cutter edge borders surviving material.
+    // A clipped piece's edge often runs along a cutter edge's line and past its
+    // ends, so only the overlap with the cutter edge itself becomes a wall.
+    private void CollectWallSpans(List<CutVertex> polygon, int submesh,
+        Dictionary<(int cutter, int edge, int submesh), List<Vector2>> wallSpans)
+    {
+        Rect bounds = PieceBounds(polygon);
+        bounds.min -= Vector2.one * WallTolerance;
+        bounds.max += Vector2.one * WallTolerance;
         for (int edge = 0; edge < polygon.Count; edge++)
         {
-            CutVertex a = polygon[edge];
-            CutVertex b = polygon[(edge + 1) % polygon.Count];
+            Vector2 a = polygon[edge].position;
+            Vector2 b = polygon[(edge + 1) % polygon.Count].position;
+            if ((b - a).sqrMagnitude < Epsilon * Epsilon) continue;
             for (int cutterIndex = 0; cutterIndex < meshCutters.Count; cutterIndex++)
             {
+                if (!bounds.Overlaps(cutterBounds[cutterIndex])) continue;
                 List<Vector2> cutter = meshCutters[cutterIndex];
                 for (int cutterEdge = 0; cutterEdge < cutter.Count; cutterEdge++)
                 {
                     Vector2 cutterA = cutter[cutterEdge];
-                    Vector2 cutterB = cutter[(cutterEdge + 1) % cutter.Count];
-                    if (!IsOnSegment(a.position, cutterA, cutterB)
-                        || !IsOnSegment(b.position, cutterA, cutterB))
-                        continue;
-
-                    Vector2 start = a.position;
-                    Vector2 end = b.position;
-                    if (Vector2.Dot(end - start, cutterB - cutterA) < 0f)
-                    {
-                        Vector2 swap = start;
-                        start = end;
-                        end = swap;
-                    }
-                    AddUniqueCutWall(new CutWall(start, end, submesh), cutWalls);
-                    break;
+                    Vector2 delta = cutter[(cutterEdge + 1) % cutter.Count] - cutterA;
+                    float lengthSquared = delta.sqrMagnitude;
+                    if (lengthSquared < Epsilon * Epsilon) continue;
+                    float length = Mathf.Sqrt(lengthSquared);
+                    if (Mathf.Abs(Cross(delta, a - cutterA)) > WallTolerance * length) continue;
+                    if (Mathf.Abs(Cross(delta, b - cutterA)) > WallTolerance * length) continue;
+                    float ta = Vector2.Dot(a - cutterA, delta) / lengthSquared;
+                    float tb = Vector2.Dot(b - cutterA, delta) / lengthSquared;
+                    float low = Mathf.Max(0f, Mathf.Min(ta, tb));
+                    float high = Mathf.Min(1f, Mathf.Max(ta, tb));
+                    if ((high - low) * length <= WallTolerance) continue;
+                    var key = (cutterIndex, cutterEdge, submesh);
+                    if (!wallSpans.TryGetValue(key, out List<Vector2> spans))
+                        wallSpans.Add(key, spans = new List<Vector2>());
+                    spans.Add(new Vector2(low, high));
                 }
             }
         }
     }
 
-    private static bool IsOnSegment(Vector3 point, Vector2 a, Vector2 b)
+    // Joins overlapping spans so the front and back faces share one wall.
+    private List<CutWall> MergeWallSpans(Dictionary<(int cutter, int edge, int submesh), List<Vector2>> wallSpans)
     {
-        Vector2 pointXY = point;
-        Vector2 delta = b - a;
-        float lengthSquared = delta.sqrMagnitude;
-        if (lengthSquared < Epsilon * Epsilon) return false;
-        float parameter = Mathf.Clamp01(Vector2.Dot(pointXY - a, delta) / lengthSquared);
-        Vector2 closest = Vector2.Lerp(a, b, parameter);
-        return (pointXY - closest).sqrMagnitude <= 0.0001f;
-    }
-
-    private static void AddUniqueCutWall(CutWall wall, List<CutWall> cutWalls)
-    {
-        if (wall.start == wall.end) return;
-        foreach (CutWall existing in cutWalls)
+        var walls = new List<CutWall>();
+        foreach (var entry in wallSpans)
         {
-            bool sameDirection = (existing.start - wall.start).sqrMagnitude <= 0.0001f
-                && (existing.end - wall.end).sqrMagnitude <= 0.0001f;
-            bool reverseDirection = (existing.start - wall.end).sqrMagnitude <= 0.0001f
-                && (existing.end - wall.start).sqrMagnitude <= 0.0001f;
-            if ((sameDirection || reverseDirection) && existing.submesh == wall.submesh) return;
+            List<Vector2> cutter = meshCutters[entry.Key.cutter];
+            Vector2 cutterA = cutter[entry.Key.edge];
+            Vector2 delta = cutter[(entry.Key.edge + 1) % cutter.Count] - cutterA;
+            float gap = WallTolerance / delta.magnitude;
+            List<Vector2> spans = entry.Value;
+            spans.Sort((x, y) => x.x.CompareTo(y.x));
+            Vector2 current = spans[0];
+            for (int i = 1; i <= spans.Count; i++)
+            {
+                if (i < spans.Count && spans[i].x <= current.y + gap)
+                {
+                    current.y = Mathf.Max(current.y, spans[i].y);
+                    continue;
+                }
+                walls.Add(new CutWall(cutterA + delta * current.x, cutterA + delta * current.y, entry.Key.submesh));
+                if (i < spans.Count) current = spans[i];
+            }
         }
-        cutWalls.Add(wall);
+        return walls;
     }
 
     private void AddCutWallGeometry(
@@ -414,74 +538,6 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         }
     }
 
-    // Keep each outside slice while clipping the remaining polygon through every cutter edge.
-    private void AddOutsidePieces(List<Vector2> piece, List<Vector2> cutter, List<List<Vector2>> output)
-    {
-        var remaining = piece;
-        for (int edge = 0; edge < cutter.Count && remaining.Count >= 3; edge++)
-        {
-            Vector2 a = cutter[edge];
-            Vector2 b = cutter[(edge + 1) % cutter.Count];
-            List<Vector2> outside = Clip(remaining, a, b, false);
-            if (outside.Count >= 3 && Mathf.Abs(Area(outside)) > Epsilon)
-                output.Add(outside);
-            remaining = Clip(remaining, a, b, true);
-        }
-    }
-
-    // Extrude a surviving polygon into a convex physics fragment and push it away from the blast.
-    private void CreateFragment(List<Vector2> polygon, Vector2 center, float radius, float impulse)
-    {
-        var fragment = new GameObject("Rock Fragment");
-        fragment.transform.position = Vector3.zero;
-        var mesh = new Mesh { name = "Rock Fragment Mesh" };
-        var vertices = new List<Vector3>();
-        var triangles = new List<int>();
-        float front = originalBounds.min.z;
-        float back = originalBounds.max.z;
-        foreach (Vector2 point in polygon) vertices.Add(new Vector3(point.x, point.y, front));
-        foreach (Vector2 point in polygon) vertices.Add(new Vector3(point.x, point.y, back));
-        for (int i = 1; i < polygon.Count - 1; i++)
-        {
-            triangles.Add(0); triangles.Add(i + 1); triangles.Add(i);
-            triangles.Add(polygon.Count); triangles.Add(polygon.Count + i); triangles.Add(polygon.Count + i + 1);
-        }
-        for (int i = 0; i < polygon.Count; i++)
-        {
-            int next = (i + 1) % polygon.Count;
-            int frontA = vertices.Count;
-            vertices.Add(new Vector3(polygon[i].x, polygon[i].y, front));
-            vertices.Add(new Vector3(polygon[next].x, polygon[next].y, front));
-            vertices.Add(new Vector3(polygon[next].x, polygon[next].y, back));
-            vertices.Add(new Vector3(polygon[i].x, polygon[i].y, back));
-            triangles.Add(frontA); triangles.Add(frontA + 1); triangles.Add(frontA + 2);
-            triangles.Add(frontA); triangles.Add(frontA + 2); triangles.Add(frontA + 3);
-        }
-        mesh.SetVertices(vertices);
-        mesh.SetTriangles(triangles, 0);
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        var filter = fragment.AddComponent<MeshFilter>();
-        filter.sharedMesh = mesh;
-        var renderer = fragment.AddComponent<MeshRenderer>();
-        renderer.sharedMaterial = rockMaterial;
-        var collider = fragment.AddComponent<MeshCollider>();
-        collider.sharedMesh = mesh;
-        collider.convex = true;
-        var receiver = fragment.AddComponent<DestructibleObject>();
-        receiver.fragmentOwner = fragmentOwner != null ? fragmentOwner : this;
-        ActiveFragments.Add(receiver);
-        var body = fragment.AddComponent<Rigidbody>();
-        body.mass = Mathf.Max(0.1f, Mathf.Abs(Area(polygon)) * 0.2f);
-        body.constraints = RigidbodyConstraints.FreezePositionZ
-            | RigidbodyConstraints.FreezeRotationX
-            | RigidbodyConstraints.FreezeRotationY;
-        Vector2 direction = ((Vector2)polygon[0] - center).normalized;
-        if (direction.sqrMagnitude < Epsilon) direction = Vector2.up;
-        body.AddForce(new Vector3(direction.x, direction.y, 0f) * impulse, ForceMode.Impulse);
-    }
-
     public static void DestroyFragmentsWithin(Vector2 center, float radius)
     {
         var toDestroy = new List<DestructibleObject>();
@@ -503,19 +559,19 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         }
     }
 
-    private void CreateMeshFragment(Vector2 center, float impulse)
+    private void CreateMeshFragment(Mesh mesh, Vector2 center, float impulse)
     {
         Transform sourceTransform = rockFilter.transform;
         var fragment = new GameObject("Rock Mesh Fragment");
         fragment.transform.SetPositionAndRotation(sourceTransform.position, sourceTransform.rotation);
         fragment.transform.localScale = sourceTransform.lossyScale;
-        fragment.AddComponent<MeshFilter>().sharedMesh = generatedMesh;
+        fragment.AddComponent<MeshFilter>().sharedMesh = mesh;
         var renderer = fragment.AddComponent<MeshRenderer>();
         MeshRenderer sourceRenderer = rockFilter.GetComponent<MeshRenderer>();
         if (sourceRenderer == null) sourceRenderer = GetComponentInChildren<MeshRenderer>(true);
         if (sourceRenderer != null) renderer.sharedMaterials = sourceRenderer.sharedMaterials;
         var collider = fragment.AddComponent<MeshCollider>();
-        collider.sharedMesh = generatedMesh;
+        collider.sharedMesh = mesh;
         collider.convex = true;
         DestructibleObject receiver = fragment.AddComponent<DestructibleObject>();
         receiver.fragmentOwner = fragmentOwner != null ? fragmentOwner : this;
@@ -540,42 +596,7 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         return points;
     }
 
-    private static List<Vector2> Clip(List<Vector2> polygon, Vector2 a, Vector2 b, bool inside)
-    {
-        var output = new List<Vector2>();
-        Vector2 previous = polygon[polygon.Count - 1];
-        float previousDistance = Cross(b - a, previous - a);
-        bool previousKept = inside ? previousDistance >= 0f : previousDistance <= 0f;
-        foreach (Vector2 current in polygon)
-        {
-            float distance = Cross(b - a, current - a);
-            bool kept = inside ? distance >= 0f : distance <= 0f;
-            if (kept != previousKept)
-                AddUnique(output, Vector2.Lerp(previous, current, previousDistance / (previousDistance - distance)));
-            if (kept) AddUnique(output, current);
-            previous = current;
-            previousDistance = distance;
-            previousKept = kept;
-        }
-        if (output.Count > 1 && (output[0] - output[output.Count - 1]).sqrMagnitude < Epsilon * Epsilon)
-            output.RemoveAt(output.Count - 1);
-        return output;
-    }
-
-    private static void AddUnique(List<Vector2> points, Vector2 point)
-    {
-        if (points.Count == 0 || (points[points.Count - 1] - point).sqrMagnitude > Epsilon * Epsilon)
-            points.Add(point);
-    }
-
     private static float Cross(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
-
-    private static float Area(List<Vector2> polygon)
-    {
-        float area = 0f;
-        for (int i = 0; i < polygon.Count; i++) area += Cross(polygon[i], polygon[(i + 1) % polygon.Count]);
-        return area * 0.5f;
-    }
 
     private void OnDestroy()
     {

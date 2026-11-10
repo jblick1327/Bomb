@@ -62,6 +62,16 @@ public sealed class FallingCollectibleItem : MonoBehaviour
         }
     }
 
+    // Called after a blast. A landed item is frozen in place, so let it fall
+    // again; if its surface is still there it lands again straight away.
+    public void ResumeFalling()
+    {
+        if (!landed || collected || body == null) return;
+        landed = false;
+        body.isKinematic = false;
+        body.WakeUp();
+    }
+
     public bool TryCollect(ArenaPlayerController player)
     {
         if (collected || owner == null || !owner.CanRun
