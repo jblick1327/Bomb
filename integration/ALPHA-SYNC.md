@@ -383,5 +383,5 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   count 0 in the gate. Each presented change logs `BOM UNITY GRAZE player= round= session= count= presented= limbs_lost=n/m`; look for it in
   the owner play. The Claymate rig gives limbs from `Bone.003.L/R` and `Bone.006.L/R` chains (mesh is Read/Write enabled). A live graze takes
   the limb nearest the last blast; a rebuilt or late-seen actor takes limbs in a fixed order and throws no chunks.
-- 2026-11-11 Claude (E1-N3): `Get-Process`/`Start-Process -Wait` on the Unity editor can outlive Unity (it waits for child processes);
+- 2026-11-11 Claude (E1-N3): my first by-hand export with `Start-Process -Wait` hung for 10+ min after Unity had exited (likely waiting on a child process; not proven);
   use `$p.WaitForExit()` on the returned process instead when running `CreateAndExport` by hand.
