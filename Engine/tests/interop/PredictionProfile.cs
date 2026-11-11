@@ -27,24 +27,29 @@ static class PredictionProfile {
    Ok(BomNative.bom_client_set_prediction(handle,enabled?1u:0u),"profile prediction switch");
    string secret=Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN")??"";if(secret.Length>0)token=Marshal.StringToCoTaskMemUTF8(secret);
    var connect=new BomConnectInfo{struct_size=(uint)Marshal.SizeOf<BomConnectInfo>(),version=1,ipv4=0x7f000001,port=port,token=token,token_length=(uint)System.Text.Encoding.UTF8.GetByteCount(secret)};
-   Ok(BomNative.bom_client_connect(handle,ref connect),"connect profile");int lastJump=-1;
+   Ok(BomNative.bom_client_connect(handle,ref connect),"connect profile");int lastJump=-1;uint dStatus=uint.MaxValue;ulong dResets=0,dSnaps=0;
    while(true){
     frameTimer.Until(next);double now=Now;next+=1.0/fps;if(next<=now)next=now+1.0/fps;
     if(measurement==0&&now-started>45)throw new TimeoutException("Static prediction did not become ready");
     double elapsed=measurement==0?0:now-measurement;
     if(measurement!=0&&elapsed>=seconds)break;
-    float requested=measurement==0?0:(elapsed%4<1?1:elapsed%4<2?0:elapsed%4<3?-1:0);
+    // Fixture choreography (fixture policy, N1b 2026-11-11): 0.5 s full-speed phases keep the excursion near the legacy floor's
+    // pre-N1 range (3.5 units at speed 7; 1 s at speed 7 walked off the floor and forced respawns), and one jump per direction keeps drift symmetric.
+    float requested=measurement==0?0:(elapsed%4<.5?1:elapsed%4<2?0:elapsed%4<2.5?-1:0);
     if(requested!=held){
      if(awaitMotion){expiredResponses++;awaitMotion=false;}
      held=requested;
      if(requested!=0&&hasPosition){awaitMotion=true;motionOrigin=lastX;inputAt=now;}
     }
     Ok(BomNative.bom_client_set_held_input(handle,now,requested),"profile held snapshot");
-    int jump=(int)(elapsed/4);
-    if(measurement!=0&&elapsed%4>.5&&elapsed%4<1&&jump!=lastJump){Ok(BomNative.bom_client_enqueue_jump(handle,now),"profile jump");lastJump=jump;}
+    int jump=(int)(elapsed/2);
+    if(measurement!=0&&elapsed%2>.2&&elapsed%2<.45&&jump!=lastJump){Ok(BomNative.bom_client_enqueue_jump(handle,now),"profile jump");lastJump=jump;}
     Ok(BomNative.bom_client_update(handle,now),"profile update");
     var owner=new BomOwnerState{struct_size=(uint)Marshal.SizeOf<BomOwnerState>(),version=1};Ok(BomNative.bom_client_get_owner_state(handle,ref owner),"profile owner");
     Ok(BomNative.bom_client_get_prediction_stats(handle,ref stats),"profile stats");
+    // Diagnostic: every mode transition, reset and snap with its reason and positions (Prediction_Reason order in prediction_static.odin).
+    if(measurement!=0&&(stats.status!=dStatus||stats.reset_count!=dResets||stats.snap_count!=dSnaps))Console.WriteLine($"PROFILE TRANSITION t={now-measurement:F2} status={dStatus}->{stats.status} reason={stats.reason} resets={stats.reset_count} snaps={stats.snap_count} owner=({owner.position_x:F2},{owner.position_y:F2}) presentation_x={lastX:F2} lead={stats.lead_ticks} pending={stats.pending_commands} teleport={owner.teleport_serial}");
+    dStatus=stats.status;dResets=stats.reset_count;dSnaps=stats.snap_count;
     var sample=new BomSample{struct_size=(uint)Marshal.SizeOf<BomSample>(),version=1};Ok(BomNative.bom_client_acquire_sample(handle,ref sample),"profile sample");
     try {
      for(uint i=0;i<sample.pose_count;i++){
