@@ -91,7 +91,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
    - set `Time.timeScale`, or add Rigidbody, CharacterController or Unity physics to Odin scenes;
    - weaken or delete a test, or hand-edit `bomcore.dll`, `BomNative.cs` or `BomExpectedNativeIdentity.cs`.
 3. **Before any Unity run:** `Get-Process Unity -ErrorAction SilentlyContinue` must return nothing. Free RAM
-   must be ≥ 2 GB and C: must have ≥ 15 GB free. If not, wait or stop with `[!]`. Run one Unity process at a time.
+   must be ≥ 4 GB and C: must have ≥ 15 GB free. If not, wait or stop with `[!]`. Run one Unity process at a time.
 4. **Configs.** Use `integration/local.config.owner-validation.json` for build and test tools (A1 creates it).
    Use `integration/local.config.json` only for `Build-OwnerNative.py`. Always pass `-ConfigPath` explicitly.
 5. **Unity code in this repo is dense, single-line style.** Keep each edit small. New code goes in new files
@@ -106,7 +106,16 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
    - **Content**: `powershell -File integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite Content -ConfigPath integration/local.config.json`
    - **Build**: `powershell -File integration/tools/Build-BomPlayers.ps1 -Backend Mono -ConfigPath integration/local.config.owner-validation.json`.
      The player is written to `integration/build/validation/Mono/BombPerformance.exe`. On failure, read `error CS` lines in that folder's `editor-*.log`.
-   - **Rounds**: `powershell -File integration/tools/Test-NetworkRounds.ps1 -SkipBuild -PlayerPath integration/build/validation/Mono/BombPerformance.exe -ConfigPath integration/local.config.owner-validation.json`
+   - **Rounds**: `powershell -File integration/tools/Test-NetworkRounds.ps1 -ConfigPath integration/local.config.owner-validation.json`
+     (no `-SkipBuild`). It builds its own `integration/build/validation/Network-Mono/BombNetwork.exe` and runs two clients for two rounds. Evidence lands in `integration/evidence/M8/unity-rounds-*`.
+   - **Native DLL trap** (cost an hour on 2026-11-11): the NativeInterop suite *rebuilds* `bomcore.dll` and rewrites
+     `bomcore.build.json` inside the native stage (`OdinRoot` in the owner-validation config). The bytes differ even from
+     the same source, so later player builds fail the identity guard ("Native DLL SHA-256 differs"). After running NativeInterop,
+     restore both files from `Assets/BOMIntegration/Plugins/x86_64/` into `<OdinRoot>/build/`.
+   - **Level trap**: a level's `VisualRegistry.asset` holds the manifest hash the client sends. If gameplay config or the layout
+     changes, re-export the level in the validation project (`-executeMethod BomYardBuilder.CreateAndExport` with
+     `BOM_YARD_LAYOUT_OUT` and `BOM_NATIVE_SERVER_EXE` set). Then copy the changed registry and scene back into the repo and commit them,
+     or the server answers "gameplay level/config manifest mismatch".
    - **Sync**: `Build-BomPlayers.ps1` only copies `Assets/BOMIntegration` into an existing validation copy.
      If you changed files outside it, mirror them first. From the repo root, run
      `robocopy Assets <validation>\Assets /MIR /XD BOMIntegration Library`, then
@@ -125,7 +134,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   3. `powershell -File integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite NativeInterop -ConfigPath integration/local.config.owner-validation.json`
   - Done when: the script prints `built-and-copied` with `source_dirty: false`, NativeInterop passes, and the 4 changed SDK files are committed.
   - Don't: edit Odin source. If `source_dirty` is true, stop and report `git -C C:\Users\jblic\Documents\BOM status`.
-- [~] **A2 First build after the merge** (T1, Opus, M) claimed: Claude Opus 5.5 2026-11-10
+- [x] **A2 First build after the merge** (T1, Opus, M) done: Claude Opus 5.5 2026-11-11 1d65bc0 — Build, Content (1562), Rounds Yard+Draw pass; logs clean incl. exit; stale yard/draw registries re-exported (see Findings)
   1. Run Build (rule 7). The first run creates `Documents\BOM-validation\alpha-merge` and imports ~7 GB,
      including Darryn's NGO packages (needs internet). Allow 30+ minutes; run it in the background.
   2. Run Content, then Rounds.
@@ -270,3 +279,13 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
   `PlayerItemGlow` adds point lights, which will press on the shadow atlas (see D10).
+- 2026-11-11 Claude (A2): the committed yard and draw `VisualRegistry.asset` files were stale (pre gameplay config 2). The working
+  ones existed only in the deleted validation copy, so every fresh checkout failed with "manifest mismatch". They are re-exported
+  and committed now. See the "Level trap" in rule 7.
+- 2026-11-11 Claude (A2): the NativeInterop suite overwrites the stage DLL and its manifest. See the "Native DLL trap" in rule 7.
+  The A1 stage is `integration/build/owner-native/20261111T042359-125d1539`; its overwritten copies are kept as `*.interop-rebuild-90b247bc.*`.
+- 2026-11-11 Claude (A2): the Rounds gate fails from memory starvation when free RAM is ~2.4 GB at start (server stalled 120 s, clients
+  timed out). The same build passed with 5.5 GB free. A WSL/Docker VM (`vmmem`, ~1.6 GB) was running. Start Unity gates with ≥ 4 GB free.
+- 2026-11-11 Claude (A2): Darryn's auto-start scripts in our scenes. `GameAudio` loads but plays nothing (its music switch only
+  knows his scene names), so C3 must start music itself. `MatchMenuUI` only acts in `MainMenuScene`/`LevelSetupScene`; elsewhere it only
+  fades. `MenuCursor` adds a gamepad cursor canvas in every scene (not seen in our logs; check visually in C5). None of them logged errors.
