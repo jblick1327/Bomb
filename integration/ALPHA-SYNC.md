@@ -161,7 +161,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Add a shake on native explosion events. Amplitude falls off with the distance to the local player:
     at most 0.35 units, 0.25 s, nothing beyond 3× the blast radius.
   - Done when: Build and Rounds pass and the zoom values are serialized fields. [ ] Owner check: framing feels right with 1, 2 and 4 players.
-- [ ] **C2 Player look** (T2, Sonnet, M)
+- [~] **C2 Player look** (T2, Sonnet, M) claimed: Claude Sonnet 5.5 2026-11-11
   - Slot colours (D7): use Darryn's first 4 colours from `MatchMenuUI.characterColors`; copy the values.
   - Floating `P1`–`P4` labels, the way `ArenaPlayerController.CreatePlayerLabel` does it.
   - Facing flip and the Animator `Running` bool from native velocity. First check whether `BomActorView` already does this.
