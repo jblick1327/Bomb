@@ -29,7 +29,7 @@
 - Freeze a separate demo server path before M6 changes the development wire format.
 
 
-- M8: protocol 6 and additive ABI 1.4 carry native spectator/resume admission,
+- M8 (historical; protocol 7 later widened the round roster to four records): protocol 6 and additive ABI 1.4 carry native spectator/resume admission,
   persistent round/results snapshots and acquired-sample roster getters. Existing
   ABI strides and canonical topology 3 are unchanged. Native session credentials
   remain private to the library; reconnect never resurrects a participant.

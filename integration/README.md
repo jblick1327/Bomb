@@ -9,7 +9,7 @@ Original Unity assets, GUIDs, prefabs, scenes and packages remain protected.
 
 ## Play the network yard
 
-From the Unity repository, using PowerShell 7:
+From the Unity repository, using Windows PowerShell 5.1 or PowerShell 7:
 
 ```powershell
 ./integration/tools/Start-BomNetwork.ps1
@@ -23,8 +23,8 @@ five-second server shutdown policy. Use `-Clients 1` or `-Port 47381` if needed.
 
 The standalone menu covers endpoint/port, host key, spectator role, loading,
 rejection, disconnect, reconnect, game mode, host restart and quit. The server
-starts in sandbox. Elimination waits for two validated player baselines, counts
-down 180 server ticks, resolves all deaths on a tick together, and awards session
+starts in sandbox. Elimination admits 2-4 natively validated ready players (it
+starts once at least two are ready), counts down 180 server ticks, resolves all deaths on a tick together, and awards session
 XP once. Rejoining during play spectates until a later round. Results survive a
 reconnect; account persistence is outside scope.
 
@@ -54,7 +54,8 @@ The pinned environment is Windows x64, Unity 6000.2.14f1, Odin May 2026 ea5175d,
 MSVC/Windows SDK, .NET 10 and Python 3. See `local.config.example.json` for paths,
 `source-lock.json` for exact inputs/build identities, and `STATUS.md` for next work.
 
-Current SDK/players use ABI 1.4, game protocol 6 and canonical topology 3.
+Current SDK/players use ABI 1.4, game protocol 7 (round snapshot format 2, gameplay config 2),
+level format 4 and canonical topology 3.
 `build/Network-Mono` and `build/M8-native` form one compatible checkpoint. Frozen
 M5, M6 and M7 artifacts retain their original versions; never mix their servers
 and DLLs. The older `Start-BomDemo.ps1` remains the frozen M5 demonstration.
@@ -64,13 +65,15 @@ two-Unity forfeit and simultaneous-draw runs, an independent Odin observer,
 repeated event presentation, native-driven movement/jumps and rendered captures.
 See `contracts/round-rules.md` and `contracts/source-mesh-rendering.md` for rules
 and ownership. M8 presentation tests disable prediction; static prediction was
-validated separately in M5. Dynamic-yard prediction and performance remain M9
-work and are not implied by the round correctness gates.
+validated separately in M5. Dynamic-yard prediction and performance were validated
+in M9 (six 600-second prediction profiles and the 30-minute reset-under-load soak)
+and rerun on protocol 7 after the owner follow-up; see `evidence/M9/`.
 
 
 ## Unified build, test and package commands
 
-Use PowerShell 7 and the pinned local.config.json paths. Keep UnityValidationProject
+Use Windows PowerShell 5.1 or PowerShell 7 and the pinned local.config.json paths. When a tool is
+started with `-File` from another shell, pass `-ConfigPath` explicitly. Keep UnityValidationProject
 as a separate copy; build tools do not change the source project's build settings.
 Native source is maintained on integration/odin-unity-20261105 in the extracted
 BOM repository. The native patch and raw-byte source overlay are retained under
@@ -190,3 +193,24 @@ root, and verifies every restored file. It does not delete archive files or edit
 Git history. Use a dedicated source copy because the overlay deliberately replaces
 integration source paths. The raw overlay preserves line endings for the native
 source tag; the Git patch is also included for review.
+
+## Rebuilding the native library
+
+Run this whenever the Odin source (`C:\Users\jblic\Documents\BOM`) changes in `src/shared`, `src/netcode`, `src/ffi`
+or `bindings`, or before any player build that must match the current server:
+
+```powershell
+python integration/tools/Build-OwnerNative.py --config integration/local.config.json
+```
+
+It builds the server, dev client and `bomcore.dll` from a fresh copy of the Odin source (the source repo is never
+written), writes `bomcore.build.json`, copies the DLL, `BomNative.cs`, the build record and the generated
+`BomExpectedNativeIdentity.cs` into `Assets/BOMIntegration`, verifies the copied DLL's SHA-256, and writes
+`local.config.owner-validation.json` for the test tools. **Close every Unity Editor that has this project open before
+running it, and restart the Editor afterwards**: a loaded native plugin cannot be replaced by a domain reload.
+Rebuild the Mono/IL2CPP players after it (`Build-BomPlayers.ps1`).
+
+Identity guard: before connecting, `BomNativeIdentity.Verify()` compares the loaded library's ABI, protocol, canonical
+version, build tag and the file's SHA-256 with `BomExpectedNativeIdentity`. On a mismatch Unity refuses to connect and
+reports: "Cannot connect: bomcore.dll does not match this client. Run the native rebuild command, rebuild the player if
+needed, and restart the Unity Editor after changing the DLL."

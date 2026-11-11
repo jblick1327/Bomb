@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Passed" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:25:16Z" duration="33.7436025">
+  <test-suite type="TestSuite" id="1011" name="Bomb" fullname="Bomb" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:25:16Z" duration="33.743603" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1007" name="OriginalSceneSmoke.dll" fullname="C:/Users/jblic/Downloads/BOM-Windows-Game/validation/owner-followup/Library/ScriptAssemblies/OriginalSceneSmoke.dll" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:25:16Z" duration="33.733701" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="10840" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestFixture" id="1001" name="OriginalSceneSmoke" fullname="OriginalSceneSmoke" classname="OriginalSceneSmoke" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:25:16Z" duration="33.732010" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="ParameterizedMethod" id="1006" name="EachOriginalSceneLoadsAndPlays" fullname="OriginalSceneSmoke.EachOriginalSceneLoadsAndPlays" classname="OriginalSceneSmoke" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:25:16Z" duration="33.727832" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+          </properties>
+          <test-case id="1002" name="EachOriginalSceneLoadsAndPlays(&quot;Arena&quot;)" fullname="OriginalSceneSmoke.EachOriginalSceneLoadsAndPlays(&quot;Arena&quot;)" methodname="EachOriginalSceneLoadsAndPlays" classname="OriginalSceneSmoke" runstate="Runnable" seed="1458680499" result="Passed" start-time="2026-11-11 00:24:42Z" end-time="2026-11-11 00:24:50Z" duration="8.492730" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+            <output><![CDATA[
+IgnoreFailingMessages:true
+Problem detected while opening the Scene file: 'Assets/Game/Scenes/Arena.unity'.
+Check the following logs for more details.
+Prefab instance problem. Missing Prefab Asset: 'Rock (1) (Missing Prefab with guid: 33021fe8476194840bc5a563ed8efc91)'
+[FallingBomb] collision gameObject=Floor collider=Floor layer=Default(0) type=MeshCollider enabled=True trigger=False convex=False mesh=Destructible Ground point=(7.93, 6.00, 0.00) normal=(0.00, 1.00, 0.00) validGround=True rubble=False
+[FallingBomb] collision gameObject=Floor collider=Floor layer=Default(0) type=MeshCollider enabled=True trigger=False convex=False mesh=Destructible Ground point=(8.79, 4.65, 0.00) normal=(-0.52, 0.85, 0.00) validGround=True rubble=False
+]]></output>
+          </test-case>
+          <test-case id="1003" name="EachOriginalSceneLoadsAndPlays(&quot;MainMenuScene&quot;)" fullname="OriginalSceneSmoke.EachOriginalSceneLoadsAndPlays(&quot;MainMenuScene&quot;)" methodname="EachOriginalSceneLoadsAndPlays" classname="OriginalSceneSmoke" runstate="Runnable" seed="74127140" result="Passed" start-time="2026-11-11 00:24:50Z" end-time="2026-11-11 00:24:59Z" duration="8.397797" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+            <output><![CDATA[
+IgnoreFailingMessages:true
+Problem detected while opening the Scene file: 'Assets/Game/Scenes/MainMenuScene.unity'.
+Check the following logs for more details.
+Prefab instance problem. Missing Prefab Asset: 'Cube (Missing Prefab with guid: 58135906fd768a040a2b15a9e684d2c9)'
+]]></output>
+          </test-case>
+          <test-case id="1004" name="EachOriginalSceneLoadsAndPlays(&quot;YardLevel&quot;)" fullname="OriginalSceneSmoke.EachOriginalSceneLoadsAndPlays(&quot;YardLevel&quot;)" methodname="EachOriginalSceneLoadsAndPlays" classname="OriginalSceneSmoke" runstate="Runnable" seed="1347766571" result="Passed" start-time="2026-11-11 00:24:59Z" end-time="2026-11-11 00:25:07Z" duration="8.485623" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+            <output><![CDATA[
+IgnoreFailingMessages:true
+[FallingBomb] collision gameObject=Cube (8) collider=Cube (8) layer=Default(0) type=MeshCollider enabled=True trigger=False convex=False mesh=Cube point=(-3.98, 12.94, 0.00) normal=(-0.37, 0.93, 0.00) validGround=False rubble=False
+Physics.ClosestPoint can only be used with a BoxCollider, SphereCollider, CapsuleCollider and a convex MeshCollider.
+Physics.ClosestPoint can only be used with a BoxCollider, SphereCollider, CapsuleCollider and a convex MeshCollider.
+]]></output>
+          </test-case>
+          <test-case id="1005" name="EachOriginalSceneLoadsAndPlays(&quot;menu&quot;)" fullname="OriginalSceneSmoke.EachOriginalSceneLoadsAndPlays(&quot;menu&quot;)" methodname="EachOriginalSceneLoadsAndPlays" classname="OriginalSceneSmoke" runstate="Runnable" seed="1571954599" result="Passed" start-time="2026-11-11 00:25:07Z" end-time="2026-11-11 00:25:16Z" duration="8.338303" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+            <output><![CDATA[
+IgnoreFailingMessages:true
+Saving results to: C:/Users/jblic/AppData/LocalLow/DefaultCompany/Bomb\TestResults.xml
+]]></output>
+          </test-case>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
