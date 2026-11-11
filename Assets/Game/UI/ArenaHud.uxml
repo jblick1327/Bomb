@@ -3,22 +3,22 @@
         <ui:Label name="timer" text="00:00" class="timer" />
         <ui:Label name="bomb-counter" text="Bombs dropped: 0" class="bomb-counter" />
         <ui:Label name="controls" text="A/D or arrows: move    Space: jump    P: pause" class="controls" />
+        <ui:Label name="round-message" text="Waiting for players..." class="round-message" />
         <ui:VisualElement name="pause-panel" class="death-panel pause-panel">
             <ui:Label text="PAUSED" class="death-title" />
             <ui:Button name="resume-button" text="RESUME" class="menu-button pause-button" />
             <ui:Button name="restart-button" text="RESTART" class="menu-button pause-button" />
             <ui:Button name="leave-button" text="LEAVE GAME" class="menu-button pause-button" />
-            <ui:Label text="P / Start: resume    A: select" class="pause-hint" />
+            <ui:Label name="pause-hint" text="P / Start: resume    A: select" class="pause-hint" />
         </ui:VisualElement>
-        <ui:VisualElement name="death-panel" class="death-panel">
-            <ui:Label name="game-header" text="Game" class="game-header" />
-            <ui:Label name="winner" text="GAME OVER" class="death-title" />
-            <ui:Label name="result-coins" text="Coins Collected: 0" class="result-item" />
-            <ui:Label name="result-bombs" text="Bombs Dodged: 0" class="result-item" />
-            <ui:Label name="result-time" text="Time Survived: 00:00" class="result-item" />
-            <ui:Label name="result-total-coins" text="Total Coins: 0" class="result-item total-coins" />
+        <ui:VisualElement name="death-panel" class="death-panel results-panel">
+            <ui:Label name="winner" text="GAME OVER" class="results-title" />
+            <ui:VisualElement name="result-cards" class="result-cards" />
+            <ui:VisualElement name="result-timeline" class="result-timeline" />
+            <ui:Label name="result-wallet" text="" class="result-wallet" />
             <ui:VisualElement class="result-buttons">
                 <ui:Button name="replay-button" text="REPLAY" class="menu-button" />
+                <ui:Label name="result-waiting" text="Waiting for the host..." class="result-waiting" />
                 <ui:Button name="return-button" text="RETURN" class="menu-button" />
             </ui:VisualElement>
         </ui:VisualElement>

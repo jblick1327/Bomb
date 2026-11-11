@@ -24,6 +24,9 @@ public static class OnlineSession
     private static Task initializeTask;
     private static NetworkManager networkManager;
 
+    // The game connection, or null before Online is first used.
+    public static NetworkManager Network => networkManager;
+
     // The current online game, or null when not connected.
     public static ISession Current { get; private set; }
     public static bool IsActive => Current != null;
@@ -127,9 +130,11 @@ public static class OnlineSession
             networkManager.NetworkConfig = new NetworkConfig
             {
                 NetworkTransport = transport,
-                EnableSceneManagement = true,
-                ConnectionApproval = false,
+                // OnlineMatch loads levels itself and tells everyone when.
+                EnableSceneManagement = false,
+                ConnectionApproval = true,
             };
+            networkManager.ConnectionApprovalCallback = ApproveConnection;
             // Keep the game running when the browser tab loses focus.
             networkManager.RunInBackground = true;
             root.SetActive(true);
@@ -139,9 +144,35 @@ public static class OnlineSession
         Application.runInBackground = true;
     }
 
+    // Host: lets a player in only while in the lobby and while there's room.
+    private static void ApproveConnection(NetworkManager.ConnectionApprovalRequest request,
+        NetworkManager.ConnectionApprovalResponse response)
+    {
+        bool isHostItself = request.ClientNetworkId == networkManager.LocalClientId;
+        bool full = networkManager.ConnectedClientsIds.Count >= MaxPlayers;
+        response.CreatePlayerObject = false;
+        response.Approved = isHostItself || (!OnlineMatch.IsRunning && !full);
+        if (!response.Approved)
+            response.Reason = OnlineMatch.IsRunning ? "That game has already started." : "That game is full.";
+    }
+
+    // Host: a locked game can't be joined with its code.
+    public static async Task SetLockedAsync(bool locked)
+    {
+        if (Current == null || !Current.IsHost) return;
+        try
+        {
+            IHostSession host = Current.AsHost();
+            host.IsLocked = locked;
+            await host.SavePropertiesAsync();
+        }
+        catch (Exception e) { Debug.LogWarning($"[Online] Couldn't update the game: {e.Message}"); }
+    }
+
     private static void Attach(ISession session)
     {
         Current = session;
+        OnlineMatch.EnsureRunner();
         session.PlayerJoined += OnPlayerListChanged;
         session.PlayerHasLeft += OnPlayerListChanged;
         session.Changed += OnSessionChanged;
@@ -177,7 +208,8 @@ public static class OnlineSession
     {
         // A client losing its own connection means the host is gone.
         if (networkManager == null || networkManager.IsServer || clientId != networkManager.LocalClientId) return;
-        End("Lost connection to the host.");
+        string reason = networkManager.DisconnectReason;
+        End(string.IsNullOrEmpty(reason) ? "Lost connection to the host." : reason);
     }
 
     private static void OnTransportFailure() => End("The network connection failed.");

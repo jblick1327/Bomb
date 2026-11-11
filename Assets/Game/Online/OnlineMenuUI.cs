@@ -2,10 +2,12 @@ using System;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // The Online screen on the main menu: Host Game (shows the join code), Join
-// Game (enter a code), and a lobby listing everyone connected.
+// Game (enter a code), a lobby listing everyone connected, and the level
+// picker. Everyone sees the picker; only the host can change it and start.
 public sealed class OnlineMenuUI : MonoBehaviour
 {
     private static readonly Color PanelColor = new Color(.13f, .14f, .22f, .97f);
@@ -15,8 +17,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
     private static readonly Color DarkText = new Color(.15f, .16f, .22f);
     private static readonly Color LightText = new Color(.98f, .88f, .77f);
     private static readonly Color ErrorText = new Color(1f, .45f, .40f);
+    private static readonly string[] LevelPreviewNames = { "YardLevelPreview", "BridgeLevelPreview", "TowerLevelPreview" };
 
-    private enum MenuScreen { Choose, Busy, Lobby }
+    private enum MenuScreen { Choose, Busy, Lobby, Level }
 
     private Action onClosed;
     private RectTransform content;
@@ -24,6 +27,10 @@ public sealed class OnlineMenuUI : MonoBehaviour
     private TextMeshProUGUI playerListText;
     private TextMeshProUGUI networkText;
     private TMP_InputField codeField;
+    private Button chooseLevelButton;
+    private Button startButton;
+    private RawImage levelPreview;
+    private TextMeshProUGUI levelNameText;
     private MenuScreen screen;
     private bool busy;
     private float nextRefresh;
@@ -61,28 +68,45 @@ public sealed class OnlineMenuUI : MonoBehaviour
         content.anchorMax = new Vector2(.95f, .79f);
         content.offsetMin = Vector2.zero;
         content.offsetMax = Vector2.zero;
-        ShowChooseScreen(string.Empty);
+
+        // Coming back from a match: go straight to the lobby, or show why the
+        // game ended.
+        string message = OnlineMatch.PendingMenuMessage;
+        OnlineMatch.PendingMenuMessage = null;
+        if (OnlineSession.IsActive) ShowLobbyOrLevel();
+        else if (!string.IsNullOrEmpty(message)) ShowChooseScreen(message, true);
+        else ShowChooseScreen(string.Empty);
     }
 
     private void OnEnable()
     {
         OnlineSession.Changed += RefreshLobby;
         OnlineSession.Ended += OnSessionEnded;
+        OnlineMatch.LobbyChanged += OnLobbyChanged;
     }
 
     private void OnDisable()
     {
         OnlineSession.Changed -= RefreshLobby;
         OnlineSession.Ended -= OnSessionEnded;
+        OnlineMatch.LobbyChanged -= OnLobbyChanged;
     }
 
     private void Update()
     {
         // The game connection comes up a moment after the session, so poll it.
-        if (screen == MenuScreen.Lobby && Time.unscaledTime >= nextRefresh)
+        if ((screen == MenuScreen.Lobby || screen == MenuScreen.Level) && Time.unscaledTime >= nextRefresh)
         {
             nextRefresh = Time.unscaledTime + 0.5f;
-            RefreshLobby();
+            if (screen == MenuScreen.Lobby) RefreshLobby();
+            else RefreshLevel();
+        }
+        // The host can also flip levels with the controller's shoulder buttons.
+        Gamepad gamepad = Gamepad.current;
+        if (screen == MenuScreen.Level && OnlineSession.IsHost && gamepad != null)
+        {
+            if (gamepad.leftShoulder.wasPressedThisFrame) ChangeLevel(-1);
+            if (gamepad.rightShoulder.wasPressedThisFrame) ChangeLevel(1);
         }
     }
 
@@ -92,6 +116,10 @@ public sealed class OnlineMenuUI : MonoBehaviour
         playerListText = null;
         networkText = null;
         codeField = null;
+        chooseLevelButton = null;
+        startButton = null;
+        levelPreview = null;
+        levelNameText = null;
     }
 
     private void SetStatus(string message, bool error = false)
@@ -119,6 +147,23 @@ public sealed class OnlineMenuUI : MonoBehaviour
         SetStatus(message);
     }
 
+    private void ShowLobbyOrLevel()
+    {
+        if (OnlineMatch.Screen == OnlineMatch.LobbyScreen.ChooseLevel) ShowLevelScreen();
+        else ShowLobbyScreen();
+    }
+
+    // The host moved everyone between the player list and the level picker,
+    // or changed the level.
+    private void OnLobbyChanged()
+    {
+        if (screen != MenuScreen.Lobby && screen != MenuScreen.Level) return;
+        bool wantLevel = OnlineMatch.Screen == OnlineMatch.LobbyScreen.ChooseLevel;
+        if (wantLevel != (screen == MenuScreen.Level)) ShowLobbyOrLevel();
+        else if (screen == MenuScreen.Level) RefreshLevel();
+        else RefreshLobby();
+    }
+
     private void ShowLobbyScreen()
     {
         screen = MenuScreen.Lobby;
@@ -137,7 +182,16 @@ public sealed class OnlineMenuUI : MonoBehaviour
         playerListText.alignment = TextAlignmentOptions.TopLeft;
         playerListText.enableAutoSizing = false;
         networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .22f), new Vector2(.9f, .30f), 18, LightText, FontStyles.Normal);
-        MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+        if (OnlineSession.IsHost)
+        {
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+            chooseLevelButton = MatchMenuUI.AddButton(content, "CHOOSE LEVEL", new Vector2(.45f, .04f), new Vector2(.9f, .2f),
+                ButtonColor, () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.ChooseLevel, OnlineMatch.SelectedLevel), 28, DarkText);
+        }
+        else
+        {
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+        }
         RefreshLobby();
     }
 
@@ -146,7 +200,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         if (screen != MenuScreen.Lobby || playerListText == null) return;
         SetStatus(OnlineSession.IsHost
             ? "Share the code with your friends."
-            : "Waiting for the host to start.");
+            : "Waiting for the host to choose a level.");
 
         var list = new StringBuilder();
         list.Append("PLAYERS (").Append(OnlineSession.Players.Count).Append('/').Append(OnlineSession.MaxPlayers).Append(")\n");
@@ -160,6 +214,79 @@ public sealed class OnlineMenuUI : MonoBehaviour
         }
         playerListText.text = list.ToString();
         networkText.text = OnlineSession.IsNetworkConnected ? "Game connection: ready" : "Game connection: connecting...";
+        if (chooseLevelButton != null)
+        {
+            bool enoughPlayers = OnlineMatch.ConnectedPlayerCount >= 2;
+            chooseLevelButton.interactable = enoughPlayers;
+            if (!enoughPlayers) SetStatus("Share the code. You can choose a level once someone joins.");
+        }
+    }
+
+    private void ShowLevelScreen()
+    {
+        screen = MenuScreen.Level;
+        ClearContent();
+        RectTransform frame = MatchMenuUI.AddPanel(content, "Level Preview", new Vector2(.1f, .40f), new Vector2(.9f, .97f), new Color(.08f, .09f, .14f));
+        var imageObject = new GameObject("Level Preview Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(AspectRatioFitter));
+        RectTransform imageRect = imageObject.GetComponent<RectTransform>();
+        imageRect.SetParent(frame, false);
+        imageRect.anchorMin = Vector2.zero;
+        imageRect.anchorMax = Vector2.one;
+        imageRect.offsetMin = new Vector2(6f, 6f);
+        imageRect.offsetMax = new Vector2(-6f, -6f);
+        levelPreview = imageObject.GetComponent<RawImage>();
+        levelPreview.raycastTarget = false;
+        AspectRatioFitter fitter = imageObject.GetComponent<AspectRatioFitter>();
+        fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+        fitter.aspectRatio = 16f / 9f;
+        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .28f), new Vector2(.9f, .38f), 30, Color.white, FontStyles.Bold);
+
+        if (OnlineSession.IsHost)
+        {
+            MatchMenuUI.AddButton(content, "<", new Vector2(0f, .58f), new Vector2(.09f, .78f), SecondaryButtonColor, () => ChangeLevel(-1), 44, DarkText);
+            MatchMenuUI.AddButton(content, ">", new Vector2(.91f, .58f), new Vector2(1f, .78f), SecondaryButtonColor, () => ChangeLevel(1), 44, DarkText);
+            MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonColor,
+                () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.Players, OnlineMatch.SelectedLevel), 28, DarkText);
+            startButton = MatchMenuUI.AddButton(content, "START", new Vector2(.45f, .04f), new Vector2(.9f, .2f), ButtonColor, StartMatch, 32, DarkText);
+        }
+        else
+        {
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+        }
+        RefreshLevel();
+    }
+
+    private void RefreshLevel()
+    {
+        if (screen != MenuScreen.Level || levelNameText == null) return;
+        int level = Mathf.Clamp(OnlineMatch.SelectedLevel, 0, MatchMenuUI.LevelNames.Length - 1);
+        levelNameText.text = MatchMenuUI.LevelNames[level];
+        if (levelPreview != null) levelPreview.texture = Resources.Load<Texture2D>(LevelPreviewNames[level]);
+        if (OnlineSession.IsHost)
+        {
+            bool enoughPlayers = OnlineMatch.ConnectedPlayerCount >= 2;
+            if (startButton != null) startButton.interactable = enoughPlayers;
+            if (enoughPlayers) SetStatus("Pick a level, then press START.  (LB / RB also change it)");
+            else SetStatus("Waiting for another player to connect...", true);
+        }
+        else
+        {
+            SetStatus("The host is choosing a level...");
+        }
+    }
+
+    private void ChangeLevel(int direction)
+    {
+        int count = MatchMenuUI.LevelSceneNames.Length;
+        OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.ChooseLevel, (OnlineMatch.SelectedLevel + direction + count) % count);
+    }
+
+    private void StartMatch()
+    {
+        if (busy || OnlineMatch.ConnectedPlayerCount < 2) return;
+        busy = true;
+        ShowBusyScreen("Starting " + MatchMenuUI.LevelNames[OnlineMatch.SelectedLevel] + "...");
+        OnlineMatch.HostStartMatch();
     }
 
     private async void HostGame()
@@ -171,6 +298,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             await OnlineSession.HostAsync();
             if (this == null) return;
+            OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.Players, 0);
             ShowLobbyScreen();
         }
         catch (Exception e)
@@ -196,7 +324,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             await OnlineSession.JoinAsync(code);
             if (this == null) return;
-            ShowLobbyScreen();
+            ShowLobbyOrLevel();
         }
         catch (Exception e)
         {
@@ -216,7 +344,11 @@ public sealed class OnlineMenuUI : MonoBehaviour
         if (this != null) ShowChooseScreen(string.Empty);
     }
 
-    private void OnSessionEnded(string reason) => ShowChooseScreen(reason, true);
+    private void OnSessionEnded(string reason)
+    {
+        busy = false;
+        ShowChooseScreen(reason, true);
+    }
 
     private async void Close()
     {

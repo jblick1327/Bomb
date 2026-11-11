@@ -16,6 +16,9 @@ public sealed class FallingBomb : MonoBehaviour
     private float fallAcceleration;
     private bool exploded;
 
+    // Online: the number the host gave this bomb.
+    public int NetworkId { get; set; }
+
     private void OnEnable() => active.Add(this);
     private void OnDisable() => active.Remove(this);
 
@@ -36,11 +39,15 @@ public sealed class FallingBomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (exploded || owner == null || !owner.CanRun) return;
+        // Online, only the host's bombs explode on impact; the others wait
+        // for the host's message.
+        if (OnlineMatch.IsRunning && !OnlineMatch.IsHost) return;
         // Bombs detonate on any solid impact except loose rubble.
         if (collision.collider.GetComponentInParent<GroundRubble>() != null) return;
         exploded = true;
         Vector3 point = collision.contactCount > 0 ? collision.GetContact(0).point : transform.position;
         GameAudio.PlayBombExplosion(point);
+        if (OnlineMatch.IsRunning) OnlineMatch.SendExplosion(NetworkId, new Vector2(point.x, point.y));
         owner.Explode(new Vector2(point.x, point.y));
         Destroy(gameObject);
     }

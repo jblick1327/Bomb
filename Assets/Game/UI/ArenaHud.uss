@@ -2,13 +2,10 @@
 .timer { position: absolute; top: 18px; left: 50%; translate: -50% 0; padding: 8px 20px; background-color: rgba(10,14,24,.88); font-size: 22px; -unity-font-style: bold; -unity-text-align: middle-center; }
 .bomb-counter { position: absolute; left: 18px; bottom: 12px; padding: 10px 14px; background-color: rgba(10,14,24,.88); border-left-width: 3px; border-left-color: rgb(104,210,190); font-size: 16px; }
 .controls { position: absolute; left: 50%; bottom: 12px; translate: -50% 0; padding: 10px 18px; background-color: rgba(10,14,24,.9); border-left-width: 3px; border-left-color: rgb(104,210,190); font-size: 15px; -unity-text-align: middle-center; }
+.round-message { display: none; position: absolute; left: 50%; top: 38%; translate: -50% -50%; padding: 14px 28px; background-color: rgba(10,14,24,.9); font-size: 26px; -unity-font-style: bold; -unity-text-align: middle-center; }
 .death-panel { display: none; position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: 430px; padding: 22px 28px; background-color: rgba(10,14,24,.97); border-left-width: 4px; border-left-color: rgb(244,116,102); }
-.game-header { margin-bottom: 12px; color: rgb(255,199,82); font-size: 24px; -unity-font-style: bold; -unity-text-align: middle-center; }
 .death-title { margin-bottom: 14px; font-size: 30px; -unity-font-style: bold; -unity-text-align: middle-center; }
-.result-item { opacity: 0; translate: -36px 0; margin-top: 8px; padding: 8px 10px; background-color: rgba(255,255,255,.06); font-size: 18px; transition-property: opacity, translate; transition-duration: 300ms; }
-.result-item.shown { opacity: 1; translate: 0 0; }
-.total-coins { color: rgb(255,199,82); -unity-font-style: bold; }
-.result-buttons { flex-direction: row; justify-content: space-between; margin-top: 20px; }
+.result-buttons { flex-direction: row; justify-content: space-between; align-items: center; margin-top: 14px; }
 .menu-button { width: 48%; min-height: 42px; background-color: rgb(255,171,47); color: rgb(30,24,30); -unity-font-style: bold; font-size: 17px; }
 .menu-button:hover { background-color: rgb(255,204,91); }
 .menu-button:focus { background-color: rgb(255,204,91); }
@@ -18,3 +15,32 @@
 .menu-button.cursor-hover { background-color: rgb(255,204,91); }
 .menu-cursor { display: none; position: absolute; width: 54px; height: 54px; translate: -50% -50%; border-width: 4px; border-radius: 27px; justify-content: center; align-items: center; }
 .menu-cursor-label { color: rgb(255,255,255); font-size: 14px; -unity-font-style: bold; -unity-text-align: middle-center; padding: 0; margin: 0; }
+
+/* Game Over panel: one card per player, a summary card, then a time line. */
+.results-panel { width: 92%; max-width: 1060px; padding: 16px 22px 14px 22px; border-left-width: 0; border-width: 3px; border-color: rgba(240,244,255,.85); }
+.results-title { align-self: center; margin-bottom: 12px; padding: 4px 34px; border-width: 3px; border-color: rgb(240,244,255); font-size: 26px; -unity-font-style: bold; -unity-text-align: middle-center; }
+.result-cards { flex-direction: column; }
+.result-card { flex-direction: row; align-items: center; height: 74px; padding: 4px 12px; border-width: 3px; border-color: rgba(240,244,255,.35); overflow: hidden; opacity: 0; translate: -30px 0; transition-property: opacity, translate; transition-duration: 300ms; }
+.result-card.shown { opacity: 1; translate: 0 0; }
+.result-card.winner { border-color: rgb(255,199,82); }
+.result-card.summary { border-color: rgb(255,199,82); background-color: rgba(255,199,82,.08); }
+.result-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; transition-property: width; transition-duration: 900ms; transition-timing-function: ease-out; }
+.result-who { width: 120px; flex-direction: column; align-items: flex-start; justify-content: center; }
+.result-name { margin: 0; padding: 0; font-size: 16px; -unity-font-style: bold; }
+.result-portrait { width: 46px; height: 46px; -unity-background-scale-mode: scale-to-fit; }
+.result-stats { flex-grow: 1; flex-direction: row; justify-content: space-around; align-items: center; }
+.result-stat { flex-direction: row; align-items: center; }
+.result-icon { width: 32px; height: 32px; margin-right: 4px; }
+.result-value { margin: 0; padding: 0; font-size: 19px; -unity-font-style: bold; }
+.result-total { width: 130px; flex-direction: row; justify-content: flex-end; align-items: center; }
+.result-total-value { margin: 0; padding: 0; color: rgb(255,199,82); font-size: 21px; -unity-font-style: bold; }
+.result-dots { flex-direction: row; justify-content: space-between; height: 3px; margin: 7px 6px; }
+.result-dot { width: 4px; height: 3px; background-color: rgba(240,244,255,.5); }
+.result-timeline { margin-top: 12px; }
+.timeline-caption { margin: 0 0 4px 0; padding: 0; font-size: 14px; -unity-font-style: bold; }
+.timeline-track { height: 28px; }
+.timeline-line { position: absolute; left: 0; right: 0; top: 0; height: 3px; background-color: rgb(240,244,255); }
+.timeline-tick { position: absolute; top: 0; width: 2px; height: 9px; background-color: rgb(240,244,255); }
+.timeline-label { position: absolute; top: 9px; margin: 0; padding: 0; translate: -50% 0; font-size: 14px; -unity-font-style: bold; }
+.result-wallet { margin-top: 4px; color: rgb(255,199,82); font-size: 16px; -unity-font-style: bold; -unity-text-align: middle-center; }
+.result-waiting { display: none; width: 48%; font-size: 16px; opacity: .8; -unity-text-align: middle-center; }

@@ -62,6 +62,11 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private float speedMultiplier = 1f;
     private float speedEffectRemaining;
     private float invincibilityRemaining;
+    private readonly int[] itemCounts = new int[5];
+    // Online: another computer moves this player; this one only shows it.
+    private bool isRemote;
+    // Online, the local player always uses Player 1's keys and controller.
+    private bool usePlayerOneControls;
 
     // Which speed item is currently changing this player's speed.
     public enum SpeedEffect { None, Boost, Slow }
@@ -74,6 +79,46 @@ public sealed class ArenaPlayerController : MonoBehaviour
     public SpeedEffect ActiveSpeedEffect { get; private set; }
     public Color CharacterColor { get; private set; } = Color.white;
     public event Action<int> CoinsChanged;
+
+    // Online: true for players controlled from another computer.
+    public bool IsRemote => isRemote;
+    public bool IsRunning { get; private set; }
+
+    // Round results, filled in when the player is knocked out or the round ends.
+    public float TimeSurvived { get; private set; }
+    public int BombsDodged { get; private set; }
+    public bool HasLeftGame { get; set; }
+    public int ItemCount(CollectibleItemType type) => itemCounts[(int)type];
+    // Coins picked up plus the survival bonus. This is what the wallet receives.
+    public int RoundTotal => Coins + BombsDodged * ArenaSession.CoinsPerBomb
+        + Mathf.FloorToInt(TimeSurvived) * ArenaSession.CoinsPerSecond;
+
+    public void RecordRoundResult(float timeSurvived, int bombsDodged)
+    {
+        TimeSurvived = timeSurvived;
+        BombsDodged = bombsDodged;
+    }
+
+    // Online: marks this player as the one this computer controls, or as a
+    // remote player whose position arrives over the network.
+    public void SetOnlineRole(bool local)
+    {
+        isRemote = !local;
+        usePlayerOneControls = local;
+        RemotePlayerSmoother smoother = GetComponent<RemotePlayerSmoother>();
+        if (isRemote && smoother == null) gameObject.AddComponent<RemotePlayerSmoother>();
+        else if (!isRemote && smoother != null) Destroy(smoother);
+    }
+
+    // Online: facing and running animation for a remote player.
+    public void ApplyNetworkPose(bool facingLeft, bool running)
+    {
+        UpdateFacing(facingLeft ? -1f : 1f);
+        IsRunning = running;
+        if (animator != null) animator.SetBool(RunningParameter, running);
+    }
+
+    public bool FacingLeft => transform.localScale.x < 0f;
 
     private void Awake()
     {
@@ -114,15 +159,22 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private void Update()
     {
         UpdateCollectibleEffects();
+        // A remote player is moved by RemotePlayerSmoother.
+        if (isRemote) return;
 
-        if (session != null && session.IsPaused)
+        // Offline pause freezes time. Online the game keeps going, so the
+        // player just stops taking input while the pause menu is open.
+        bool onlinePause = session != null && session.IsPaused && OnlineMatch.IsRunning;
+        if (session != null && session.IsPaused && !onlinePause)
             return;
         if (session != null && !session.IsPlaying)
         {
+            IsRunning = false;
             if (animator != null) animator.SetBool(RunningParameter, false);
             return;
         }
-        float input = ReadMovement();
+        float input = onlinePause ? 0f : ReadMovement();
+        IsRunning = Mathf.Abs(input) > 0.01f;
 
         if (animator != null)
             animator.SetBool(RunningParameter, Mathf.Abs(input) > 0.01f);
@@ -139,7 +191,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
         else
             coyoteRemaining -= Time.deltaTime;
 
-        if (JumpPressed())
+        if (!onlinePause && JumpPressed())
             jumpBufferRemaining = jumpBufferTime + Time.deltaTime;
         else
             jumpBufferRemaining -= Time.deltaTime;
@@ -231,6 +283,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     public void ApplyCollectible(CollectibleItemType itemType)
     {
+        itemCounts[(int)itemType]++;
         switch (itemType)
         {
             case CollectibleItemType.SilverCoin:
@@ -266,6 +319,9 @@ public sealed class ArenaPlayerController : MonoBehaviour
     public void ResetRoundStats()
     {
         Coins = 0;
+        TimeSurvived = 0f;
+        BombsDodged = 0;
+        System.Array.Clear(itemCounts, 0, itemCounts.Length);
         CoinsChanged?.Invoke(Coins);
     }
 
@@ -316,12 +372,16 @@ public sealed class ArenaPlayerController : MonoBehaviour
         transform.localScale = scale;
     }
 
+    // The player number whose keys and controller move this player.
+    private int ControlNumber => usePlayerOneControls ? 1 : playerNumber;
+
     private float ReadMovement()
     {
         float input = 0f;
         Keyboard keyboard = Keyboard.current;
+        int playerNumber = ControlNumber;
 
-        if (keyboard != null && MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber))
+        if (keyboard != null && (usePlayerOneControls || MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber)))
         {
             if (playerNumber == 1)
             {
@@ -357,8 +417,9 @@ public sealed class ArenaPlayerController : MonoBehaviour
     {
         Keyboard keyboard = Keyboard.current;
         bool keyboardJump = false;
+        int playerNumber = ControlNumber;
 
-        if (keyboard != null && MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber))
+        if (keyboard != null && (usePlayerOneControls || MatchMenuUI.IsKeyboardEnabledForPlayer(playerNumber)))
         {
             if (playerNumber == 1)
             {
@@ -379,6 +440,8 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private Gamepad GetPlayerGamepad()
     {
+        // Online there is one player per computer, so any controller works.
+        if (usePlayerOneControls) return Gamepad.current;
         return MatchMenuUI.GetGamepadForPlayer(playerNumber);
     }
 
@@ -398,7 +461,10 @@ public sealed class ArenaPlayerController : MonoBehaviour
         if (characterColorProperties == null)
             characterColorProperties = new MaterialPropertyBlock();
 
-        Color color = MatchMenuUI.GetCharacterColorForPlayer(playerNumber);
+        // Online players get the standard colour for their player number.
+        Color color = OnlineMatch.IsRunning
+            ? MatchMenuUI.GetPlayerCursorColor(playerNumber - 1)
+            : MatchMenuUI.GetCharacterColorForPlayer(playerNumber);
         CharacterColor = color;
         foreach (Renderer targetRenderer in GetComponentsInChildren<Renderer>(true))
         {
@@ -436,6 +502,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
             else gameObject.SetActive(false);
             return;
         }
+
 
         FallingCollectibleItem collectible = hitCollider.GetComponentInParent<FallingCollectibleItem>();
         if (collectible != null)

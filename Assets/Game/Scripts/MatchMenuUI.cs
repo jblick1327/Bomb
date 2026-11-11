@@ -91,7 +91,6 @@ public sealed class MatchMenuUI : MonoBehaviour
     private RenderTexture shopLockedPortrait;
     private TextMeshProUGUI[] shopCardLockedLabels;
     private Image[] shopCardBackgrounds;
-    private readonly List<GameObject> portraitRigs = new List<GameObject>();
     private readonly List<RenderTexture> portraitTextures = new List<RenderTexture>();
     private Button[] characterButtons;
     private Outline[] characterOutlines;
@@ -103,8 +102,8 @@ public sealed class MatchMenuUI : MonoBehaviour
     private Texture2D towerLevelPreviewTexture;
     private AspectRatioFitter levelPreviewAspect;
 
-    private static readonly string[] LevelNames = { "THE YARD", "THE BRIDGE", "THE TOWER" };
-    private static readonly string[] LevelSceneNames = { "YardLevel", "BridgeLevel", "TowerLevel" };
+    internal static readonly string[] LevelNames = { "THE YARD", "THE BRIDGE", "THE TOWER" };
+    internal static readonly string[] LevelSceneNames = { "YardLevel", "BridgeLevel", "TowerLevel" };
     private const int CharacterCount = 15;
     private static readonly string[] InputModeLabels =
     {
@@ -161,6 +160,9 @@ public sealed class MatchMenuUI : MonoBehaviour
             HookShopButton();
             HookSettingsButton();
             HookQuitButton();
+            // Back from an online match: reopen the lobby, or show why the game ended.
+            if (OnlineSession.IsActive || !string.IsNullOrEmpty(OnlineMatch.PendingMenuMessage))
+                ShowOnlineMenu();
         }
 
         if (scene.name == "LevelSetupScene")
@@ -1612,77 +1614,11 @@ public sealed class MatchMenuUI : MonoBehaviour
             return null;
         }
 
-        int portraitIndex = portraitRigs.Count;
-        const int portraitLayer = 31;
-        GameObject rig = new GameObject("Character Portrait Rig " + (portraitIndex + 1));
-        rig.transform.SetParent(transform, false);
-        Vector3 rigOffset = new Vector3(10000f + portraitIndex * 20f, 0f, 0f);
-        GameObject model = Instantiate(prefab, rigOffset, Quaternion.identity, rig.transform);
-        model.name = "Character Portrait Model";
-        ArenaPlayerController controller = model.GetComponent<ArenaPlayerController>();
-        if (controller != null) controller.enabled = false;
-        CharacterController characterController = model.GetComponent<CharacterController>();
-        if (characterController != null) characterController.enabled = false;
-
-        Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
-        Bounds bounds = new Bounds(model.transform.position, Vector3.one);
-        bool hasBounds = false;
-        foreach (Renderer renderer in renderers)
-        {
-            SetLayerRecursively(renderer.gameObject, portraitLayer);
-            if (renderer is ParticleSystemRenderer) continue;
-            if (!hasBounds)
-            {
-                bounds = renderer.bounds;
-                hasBounds = true;
-            }
-            else
-            {
-                bounds.Encapsulate(renderer.bounds);
-            }
-
-            MaterialPropertyBlock properties = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(properties);
-            Color materialColor = silhouette ? Color.black : tint;
-            properties.SetColor("_BaseColor", materialColor);
-            properties.SetColor("_Color", materialColor);
-            if (silhouette)
-            {
-                properties.SetColor("_SpecColor", Color.black);
-                properties.SetColor("_EmissionColor", Color.black);
-            }
-            renderer.SetPropertyBlock(properties);
-        }
-
-        if (!hasBounds)
-            bounds = new Bounds(model.transform.position + Vector3.up, new Vector3(1f, 2f, 1f));
-
-        RenderTexture texture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
-        texture.name = silhouette ? "Locked Character Silhouette" : "Unlocked Character Portrait " + (portraitIndex + 1);
-        texture.Create();
+        RenderTexture texture = ModelSnapshot.Render(prefab, 256, silhouette ? Color.black : tint,
+            ModelSnapshot.Framing.Head, silhouette);
+        if (texture == null) return null;
+        texture.name = silhouette ? "Locked Character Silhouette" : "Unlocked Character Portrait " + (portraitTextures.Count + 1);
         portraitTextures.Add(texture);
-
-        GameObject cameraObject = new GameObject("Character Portrait Camera");
-        cameraObject.transform.SetParent(rig.transform, false);
-        Camera portraitCamera = cameraObject.AddComponent<Camera>();
-        portraitCamera.clearFlags = CameraClearFlags.SolidColor;
-        portraitCamera.backgroundColor = new Color(0f, 0f, 0f, 0f);
-        portraitCamera.cullingMask = 1 << portraitLayer;
-        portraitCamera.orthographic = true;
-        portraitCamera.orthographicSize = Mathf.Max(bounds.extents.y * .48f, .1f);
-        portraitCamera.aspect = 1f;
-        portraitCamera.nearClipPlane = .01f;
-        portraitCamera.farClipPlane = 20f;
-        Vector3 focus = bounds.center + Vector3.up * bounds.extents.y * .53f;
-        portraitCamera.transform.position = focus + Vector3.back * 5f;
-        portraitCamera.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-        portraitCamera.targetTexture = texture;
-        portraitCamera.Render();
-        portraitCamera.targetTexture = null;
-        portraitCamera.enabled = false;
-        // The image is kept in the texture, so stop the model animating offscreen.
-        rig.SetActive(false);
-        portraitRigs.Add(rig);
         return texture;
     }
 
@@ -1705,18 +1641,8 @@ public sealed class MatchMenuUI : MonoBehaviour
         return image;
     }
 
-    private void SetLayerRecursively(GameObject target, int layer)
-    {
-        target.layer = layer;
-        foreach (Transform child in target.transform)
-            SetLayerRecursively(child.gameObject, layer);
-    }
-
     private void ClearPortraits()
     {
-        foreach (GameObject rig in portraitRigs)
-            if (rig != null) Destroy(rig);
-        portraitRigs.Clear();
         foreach (RenderTexture texture in portraitTextures)
         {
             if (texture == null) continue;
