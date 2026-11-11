@@ -29,7 +29,7 @@ round_snapshot :: proc(ns:^Net_Server)->Round_Snapshot {
  result:=Round_Snapshot{epoch=ns.game.world.scene.epoch,rules_version=ROUND_RULES_VERSION,
   tick=ns.tick,id=r.id,countdown_tick=r.countdown_tick,start_tick=r.start_tick,end_tick=r.end_tick,
   bombs_spawned=r.bombs_spawned,winner=r.winner,mode=r.mode,state=r.state,draw=r.draw,reason=r.reason,
-  lethal_radius=ns.game.world.settings.blast_radius,players=r.players}
+  lethal_radius=min(ns.game.world.settings.blast_radius,scene_gameplay_config(&ns.game.world.scene).lethal_radius),players=r.players}
  for c,i in r.connections {
   v:=&result.connections[i]
   v.session_id=c.session_id;v.generation=c.generation;v.connected=c.connected;v.ready=c.ready

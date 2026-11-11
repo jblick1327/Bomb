@@ -58,7 +58,7 @@ owner_zero_resistance_solid_blocks_players_without_changing_destruction_attenuat
 @(test)
 owner_detonation_uses_cover_before_damage_and_only_the_next_blast_can_reach_player :: proc(test:^t.T) {
  w:=round_test_world();defer round_test_world_destroy(&w);w.elimination_playing=true
- b2.Body_SetTransform(w.players[0].body,{2,1},b2.MakeRot(0));_=world_remove_player(&w,1)
+ b2.Body_SetTransform(w.players[0].body,{1.4,1},b2.MakeRot(0));_=world_remove_player(&w,1)
  wall:=owner_rule_rectangle(&w.scene,{.9,0},{1.1,3},.Destructible,.Fixed,.5)
  physics_sync_structure(&w.scene)
  events:Tick_Events;defer delete(events.explosions)
@@ -159,7 +159,7 @@ owner_elimination_bomb_pacing_is_tick_based_bounded_seeded_and_resets :: proc(te
 @(test)
 owner_config_migrates_old_tuning_and_fingerprints_pacing_and_radius :: proc(test:^t.T) {
  legacy:=DEFAULT_GAMEPLAY_CONFIG;legacy.version=1;legacy.player.speed=7;legacy.bomb_drop_min=1.2
- upgraded:=gameplay_config_upgrade(legacy);t.expect(test,upgraded.version==3&&upgraded.player.speed==7&&upgraded.player.gravity_scale==1&&upgraded.bomb_drop_min==1.2&&gameplay_config_valid(upgraded))
+ upgraded:=gameplay_config_upgrade(legacy);t.expect(test,upgraded.version==4&&upgraded.player.speed==7&&upgraded.player.gravity_scale==1&&upgraded.bomb_drop_min==1.2&&gameplay_config_valid(upgraded))
  original:=gameplay_config_hash(upgraded);upgraded.bomb_radius=4;t.expect(test,gameplay_config_hash(upgraded)!=original)
  upgraded=gameplay_config_upgrade(legacy);upgraded.elimination_ramp_seconds=60;t.expect(test,gameplay_config_hash(upgraded)!=original)
  upgraded=gameplay_config_upgrade(legacy);upgraded.elimination_end_interval.x=.5;t.expect(test,gameplay_config_hash(upgraded)!=original)

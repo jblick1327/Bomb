@@ -83,9 +83,10 @@ world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
   // This snapshot is read before this explosion can fracture any cover. It is
   // separate from destruction's resistance snapshot, so zero-resistance solids
   // still block players without altering material attenuation or damage.
-  cover:=cover_begin(&w.scene,radius,true)
+  lethal_radius:=min(radius,scene_gameplay_config(&w.scene).lethal_radius)
+  cover:=cover_begin(&w.scene,lethal_radius,true)
   for player,i in w.players {
-   if player.active && blast_capsule_visible(&cover,from_b2(b2.Body_GetPosition(player.body)),Blast{point,radius}) {events.deaths[i]=.Blast}
+   if player.active && blast_capsule_visible(&cover,from_b2(b2.Body_GetPosition(player.body)),Blast{point,lethal_radius}) {events.deaths[i]=.Blast}
   }
   cover_destroy(&cover)
  }
