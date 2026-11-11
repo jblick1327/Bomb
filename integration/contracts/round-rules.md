@@ -1,20 +1,29 @@
 # Native elimination rules (owner follow-up)
 
-Current native source: protocol 7 / round snapshot format 2 / gameplay config 4 /
-ABI 1.4 / canonical topology 3. Protocol 7 changes the round wire roster from
+Current native source: protocol 8 / round snapshot format 3 / gameplay config 5 /
+ABI 1.5 / canonical topology 3. Protocol 7 changed the round wire roster from
 two to four records. Config 2 adds actual blast radius and the Elimination
 interval ramp; config 3 adds player-only gravity scaling; config 4 adds separate
-lethal and graze radii. Level format remains 4.
+lethal and graze radii. Config 5 adds `grazes_to_die` (default 3, valid integer
+range 1..255). Protocol 8 and round format 3 add each player's `graze_count` as
+a little-endian u32 to the native round wire roster. ABI 1.5 exposes that count
+in the former reserved u32 of `BomRoundPlayer`, retaining its 64-byte stride.
+Level format remains 4.
 Explicit config-1/2 levels retain authored player/gravity/fuse/Sandbox interval
 tuning and gain player gravity scale 1. Config 1 also receives the established
 default radius and Elimination pacing. Config 3 retains all authored fields,
-including player gravity scale. All three migrate to config 4 with lethal radius
+including player gravity scale. Configs 1..3 gain lethal radius
 1.2 and graze radius 2.2 under approved D1, preserving authored crater radius.
-Current config 4 is validated without silently repairing missing fields.
+All configs 1..4 migrate to config 5 with `grazes_to_die` 3. Explicit config 4
+retains every authored field, including both damage radii, movement, gravity,
+destruction radius, fuse and pacing. Current config 5 is validated without
+silently repairing missing fields. Omitted native default IDs v1..v5 resolve
+to current defaults. Unknown versions remain invalid.
 Historical M8/M9 protocol-6 binaries and M7 protocol-5 binaries must not be mixed
-with these builds. E1-N1 completed the Unity config-3 checkpoint; E1-N2 must update
-the exporter and native SDK to config 4 and re-export level manifests before N2
-is used in Unity.
+with these builds. E1-N1 and E1-N2 completed the Unity config-3 and config-4
+checkpoints. E1-N3 must update the exporter and native SDK to config 5 and ABI
+1.5, re-export level manifests, and implement limb-loss presentation. Until
+E1-N3, existing Unity binaries remain on their previous native checkpoint.
 
 N1 movement (D2, approved 2026-11-10): new native defaults are speed 7,
 acceleration 70 (standing start reaches full speed in six 60 Hz ticks, 0.100 s),
@@ -50,18 +59,32 @@ config lethal_radius), default 1.2 units. Distance is to the capsule surface,
 not the player center; tangency alone is not a hit (positive blast reach is
 required). A small diagnostic explosion never gains a larger lethal zone.
 Destruction and explosion presentation still use the full actual radius,
-default bomb_radius 5. Config graze_radius defaults to 2.2; N2 stores and hashes
-it, while graze counting and damage remain task N3. Until N3, exposure outside
-the lethal zone produces no damage.
+default bomb_radius 5.
+
+N3 grazes (D1): an exposed capsule outside the effective lethal radius and
+inside or tangent to min(actual explosion radius, config `graze_radius`),
+default 2.2, receives exactly one graze per detonation. Distance is measured
+to the capsule surface. The annulus is strictly outside the lethal zone;
+N2's harmless lethal tangency remains harmless. Outer graze tangency is
+included using an inclusive distance gate and one-ULP expansion of the
+read-only visibility query radius; shared blast loads are unchanged.
+Full pre-damage cover, including zero-resistance physical solids, protects;
+partial exposure in the annulus counts. The graze that reaches `grazes_to_die`
+kills with death reason Blast, retaining the final count. Pending or committed
+deaths cannot accumulate further grazes. Same-tick third-graze deaths use the
+existing simultaneous winner/draw rules. Every rebuilt round clears the body
+and roster counts; disconnects retain the last copied count in the result.
+Sandbox has no grazes. The world still destroys and presents the full actual
+explosion radius, and material, physics and bomb scheduling are unchanged.
 Both damage-zone values must be finite: lethal_radius in [0.1, 6], and
 graze_radius in [lethal_radius, 6]. They are independent of bomb_radius.
 Both are included in config and level gameplay manifests, and catalog JSON
 retains their exact float bits. The existing round snapshot lethal_radius
-field now reports the effective falling-bomb lethal radius, including the
-actual-radius cap. Its layout is unchanged, so round format, protocol and ABI
-versions are unchanged.
+field reports the effective falling-bomb lethal radius, including the
+actual-radius cap. The damage threshold also participates in config and level
+gameplay manifests and exact catalog JSON round trips.
 
-A capsule dies only when a nonzero part of the lethal blast reaches it without
+An immediate lethal-zone death occurs only when part of the lethal blast reaches the capsule without
 crossing a solid cell. The read-only blast_capsule_visible query uses
 destruction's cover grid and ray/polygon chord intersection code; it also
 includes physical solids whose destruction resistance is zero. Destruction's
@@ -91,7 +114,7 @@ hashing include all config-2 fields. Unity authoring exports those values;
 Unity does not implement the timing rule.
 
 Round state, participant session IDs/generations, survival ticks, bombs faced,
-result XP, winner/draw/reason, session totals, wins, level progress and restart
+graze counts, result XP, winner/draw/reason, session totals, wins, level progress and restart
 permission are persistent snapshot data. XP is `10 * bombs_faced + alive_ticks/60`
 using integer division and saturating counters. A round/session award is applied
 once. The first level requires 100 XP; each subsequent level adds 50 to the cost.
@@ -107,9 +130,15 @@ passed to Unity. There is no account persistence or authentication service.
 Only Odin implements the application codec. Welcome/Hello exchange native resume
 credentials and explicit spectator intent. Native Ready confirms a validated
 canonical baseline. The reliable round snapshot is sent on state changes and
-once per second. Duplicate or older snapshots do not award XP in the frontend.
+once per second. Graze changes also dirty the round snapshot for reliable
+publication on that tick, including nonlethal hits. `BomRoundPlayer.graze_count`
+is persistent authoritative state: Unity can compare it within the same round
+and session/generation to present one lost limb per increment, including
+multiple grazes on one server tick. Late observers can reconstruct the current
+look without a transient event; round-ID changes reset it. Duplicate or older
+snapshots do not award XP in the frontend.
 
-ABI additions are separate structs/getters, preserving existing struct strides.
+The ABI preserves existing struct strides.
 `bom_client_get_round` requires an acquired sample and matching sample sequence;
 its actual 0–4 participant rows and four connection rows are borrowed until release.
 `BomSession` copies them before releasing and clears all pointers. Join flags

@@ -242,7 +242,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
     snaps 0, correction p99 ≤ 0.002 — identical to pre-N1.
 - [x] **N2 Lethal radius** (D1, M) done: GPT-6 Codex 2026-11-11 b8b1074 — game 220, transport 27, shared 101, FFI 20, Content 1562 PASS; lethal 1.2 / graze config 2.2 / crater 5; config v4 migration; evidence: Documents/BOM/evidence/N2/REPORT.md; E1-N2 pending. Scope: add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
   `bomb_radius`. Kill only inside `lethal_radius`, still using `blast_capsule_visible` cover.
-- [~] **N3 Grazes** (D1, L); claimed: Codex GPT-6 2026-11-11
+- [x] **N3 Grazes** (D1, L); claimed: Codex GPT-6 2026-11-11; done: Codex GPT-6 2026-11-11 9eb164e — exposed grazes, third-hit death, round reset and native limb state; game 220 / shared 112 / FFI 21 / transport 27 / C+.NET ABI pass / Content 1562; evidence: Documents/BOM/evidence/N3/REPORT.md; E1-N3 pending
   - Inside `graze_radius` with cover visible, a player gets +1 graze; on the 3rd graze they die.
   - Expose the graze count per player in the round snapshot. Bump the round format, and bump the protocol if the wire changes.
   - E1 then shows lost limbs in Unity (port the `PlayerBodyDamage` limb look).
@@ -362,3 +362,9 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   two per client), so the explosion sound is not yet confirmed in logs. Owner check: listen for it.
 - 2026-11-11 Haiku (C3): `Get-Process Unity` also matches Unity Hub's helper `C:\Program Files\Unity Hub\resources\unity.exe` (about 1 MB,
   parent Unity Hub). I treated it as Unity Hub under rule 3. Editors run from `C:\Program Files\Unity\Hub\Editor\6000.2.14f1\Editor\Unity.exe`.
+- 2026-11-11 Codex (N3): native `9eb164e` adds persistent `graze_count` per round participant; default third graze kills. Versions are
+  protocol 8 / round format 3 / config 5 / ABI 1.5. `BomRoundPlayer.graze_count` replaces its reserved u32 at offset 28, retaining stride 64.
+  E1-N3 must build the clean native checkpoint, refresh generated SDK/identity, export config 5 with `grazes_to_die=3`, re-export level
+  manifests (including yard), and port `PlayerBodyDamage` presentation from copied counts within the round/session/generation.
+  All N3 gates passed: game 220, shared 112, FFI 21, transport 27, real C/.NET layouts/lifetimes, Content 1562. Raw evidence and fixtures:
+  `C:/Users/jblic/Documents/BOM/evidence/N3/REPORT.md`. No Unity build, Editor or soak was run; E1-N3 remains pending.
