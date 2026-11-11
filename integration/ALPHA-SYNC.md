@@ -174,7 +174,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
   - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
     and Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11).
-- [~] **C3 Audio** (T3 can do this; Haiku, S) claimed: Claude Haiku 5.5 2026-11-11
+- [x] **C3 Audio** (T3 can do this; Haiku, S) claimed: Claude Haiku 5.5 2026-11-11; done: Claude Haiku 5.5 2026-11-11 6beaeac — Build and Rounds Yard+Draw pass; no "Game audio prefab" error; whistle once per round state (4 per client per run); NetworkMenu/NetworkYard: no music (GameAudio's scene list has neither); owner check still open
   - Call Darryn's public statics in `Assets/Game/Scripts/GameAudio.cs` without editing that file:
     `PlayBombExplosion(pos)` on each native explosion, `PlayWhistle()` when a round goes Playing and again when it goes Finished,
     and `PlayButtonPopSound()` on our UI Toolkit buttons in `BomNetworkHud`.
@@ -348,3 +348,17 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - 2026-11-11 Claude (E1-N2): in elimination rounds `BomClientBehaviour` sizes Darryn's blast ring by the round snapshot's `lethal_radius`,
   so after N2 the ring shows the 1.2 kill zone, not the 5-unit crater. No code changed (N2 named no presentation change). Owner: judge it at
   the next play; N3 may want a second ring for the 2.2 graze zone.
+- 2026-11-11 Haiku (C3): `Bom.Unity.Runtime` (asmdef) cannot reference Assembly-CSharp, where Darryn's `GameAudio` compiles. C3 therefore calls
+  the three statics through `Runtime/BomGameAudio.cs` (bound once by name; one warning if missing). C4's `MatchMenuUI.AddShopCoins` call hits
+  the same wall: use the same bridge pattern, or keep that call outside the asmdef.
+- 2026-11-11 Haiku (C3): IL2CPP risk for F4. Reflection can lose methods that managed stripping removes, and the bridge then logs
+  `BOM AUDIO could not bind`. Before packaging IL2CPP, add a `link.xml` that preserves `GameAudio` (its three statics).
+- 2026-11-11 Haiku (C3): music gap. A2 said C3 must start music itself, but C3's steps do not include it, so C3 does not. `GameAudio` only
+  switches music for MainMenuScene, LevelSetupScene, Arena, YardLevel, BridgeLevel and TowerLevel. NetworkMenu and NetworkYard get no track
+  from it. Owner: decide whether a menu or game track belongs there, and whether C5 covers it.
+- 2026-11-11 Haiku (C3): the first Build run returned exit 1 with no script output, while its batch Unity (PID 26852) was still running. That
+  Unity later logged `BOM PERFORMANCE BUILD PASS Mono`. Cause not found. The rerun returned `BUILD_EXIT=0`. The failed attempt's log is kept at
+  `integration/evidence/M8/c3-build-failed-20261111T184229Z`. Separately, the Yard run logged no `BOM UNITY EVENT` lines (the draw run logged
+  two per client), so the explosion sound is not yet confirmed in logs. Owner check: listen for it.
+- 2026-11-11 Haiku (C3): `Get-Process Unity` also matches Unity Hub's helper `C:\Program Files\Unity Hub\resources\unity.exe` (about 1 MB,
+  parent Unity Hub). I treated it as Unity Hub under rule 3. Editors run from `C:\Program Files\Unity\Hub\Editor\6000.2.14f1\Editor\Unity.exe`.
