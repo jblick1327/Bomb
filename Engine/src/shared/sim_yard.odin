@@ -83,10 +83,27 @@ world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
   // This snapshot is read before this explosion can fracture any cover. It is
   // separate from destruction's resistance snapshot, so zero-resistance solids
   // still block players without altering material attenuation or damage.
-  lethal_radius:=min(radius,scene_gameplay_config(&w.scene).lethal_radius)
-  cover:=cover_begin(&w.scene,lethal_radius,true)
-  for player,i in w.players {
-   if player.active && blast_capsule_visible(&cover,from_b2(b2.Body_GetPosition(player.body)),Blast{point,lethal_radius}) {events.deaths[i]=.Blast}
+  config:=scene_gameplay_config(&w.scene)
+  lethal_radius:=min(radius,config.lethal_radius)
+  graze_radius:=min(radius,config.graze_radius)
+  cover:=cover_begin(&w.scene,graze_radius,true)
+  for &player,i in w.players {
+   // Bodies remain until tick-end winner selection. A lethal hit earlier on
+   // this tick must not accumulate additional damage from later detonations.
+   if !player.active || events.deaths[i]!=.None || player.graze_count>=config.grazes_to_die {continue}
+   center:=from_b2(b2.Body_GetPosition(player.body))
+   if blast_capsule_visible(&cover,center,Blast{point,lethal_radius}) {
+    events.deaths[i]=.Blast
+   }else if graze_radius>lethal_radius && !round_capsule_hit(center,point,lethal_radius) && round_capsule_hit(center,point,graze_radius) {
+    // N3 includes outer tangency. Advance the positive query radius by one
+    // float ULP after the inclusive distance gate; leave the shared blast
+    // load/visibility implementation and N2's lethal tangency unchanged.
+    reach:=transmute(f32)(transmute(u32)graze_radius+1)
+    if blast_capsule_visible(&cover,center,Blast{point,reach}) {
+     player.graze_count+=1
+     if player.graze_count>=config.grazes_to_die {events.deaths[i]=.Blast}
+    }
+   }
   }
   cover_destroy(&cover)
  }

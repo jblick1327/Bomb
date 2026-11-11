@@ -88,6 +88,13 @@ round_server_prepare :: proc(ns:^Net_Server) {
 round_server_finish :: proc(ns:^Net_Server,events:Tick_Events) {
  if ns.rounds.mode!=.Elimination {return}
  old:=ns.rounds.state
+ if old==.Playing {
+  for &p in ns.rounds.players {
+   if !p.alive || !ns.game.world.players[p.slot].active {continue}
+   count:=ns.game.world.players[p.slot].graze_count
+   if count!=p.graze_count {p.graze_count=count;ns.round_dirty=true}
+  }
+ }
  round_finish_tick(&ns.rounds,ns.tick+1,events.deaths,events.bombs_spawned)
  if old!=ns.rounds.state {
   ns.round_dirty=true

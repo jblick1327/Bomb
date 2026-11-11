@@ -2,7 +2,7 @@
 package ffi
 
 BOM_ABI_MAJOR :: u32(1)
-BOM_ABI_MINOR :: u32(4)
+BOM_ABI_MINOR :: u32(5)
 
 BomCreateInfo :: struct {
  struct_size: u32,
@@ -369,7 +369,7 @@ BomRoundPlayer :: struct {
  slot: u32,
  alive: u32,
  death: u32,
- reserved: u32,
+ graze_count: u32,
  death_tick: u64,
  alive_ticks: u64,
  bombs_faced: u64,
@@ -824,7 +824,7 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 4: return u32(offset_of(BomRoundPlayer,slot))
   case 5: return u32(offset_of(BomRoundPlayer,alive))
   case 6: return u32(offset_of(BomRoundPlayer,death))
-  case 7: return u32(offset_of(BomRoundPlayer,reserved))
+  case 7: return u32(offset_of(BomRoundPlayer,graze_count))
   case 8: return u32(offset_of(BomRoundPlayer,death_tick))
   case 9: return u32(offset_of(BomRoundPlayer,alive_ticks))
   case 10: return u32(offset_of(BomRoundPlayer,bombs_faced))

@@ -5,7 +5,7 @@ import nc "../netcode"
 import fmt "core:fmt"
 import strings "core:strings"
 
-GAME_PROTOCOL_VERSION :: u32(7)
+GAME_PROTOCOL_VERSION :: u32(8)
 
 GAME_BUILD_ID :: "BOM-owner-rules-2026-11-10"
 

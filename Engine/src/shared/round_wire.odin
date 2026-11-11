@@ -4,7 +4,7 @@ import "core:fmt"
 
 NET_APP_ROUND :: u8(0xCA)
 NET_APP_READY :: u8(0xCB)
-ROUND_RULES_VERSION :: u32(2)
+ROUND_RULES_VERSION :: u32(3)
 
 Round_Connection_View :: struct {
  session_id,generation,total_xp,wins:u64,
@@ -47,6 +47,7 @@ round_encode :: proc(w:^nc.Writer,s:Round_Snapshot) {
  nc.write_u8(w,u8(s.mode));nc.write_u8(w,u8(s.state));nc.write_bool(w,s.draw);nc.write_u8(w,u8(s.reason));nc.write_f32(w,s.lethal_radius)
  for p in s.players {
   nc.write_u64(w,p.session_id);nc.write_u64(w,p.generation);nc.write_u8(w,u8(p.slot));nc.write_bool(w,p.alive);nc.write_u8(w,u8(p.death))
+  nc.write_u32(w,p.graze_count)
   nc.write_u64(w,p.death_tick);nc.write_u64(w,p.alive_ticks);nc.write_u64(w,p.bombs_faced);nc.write_u64(w,p.xp_gained)
  }
  for c in s.connections {
@@ -70,6 +71,7 @@ round_decode :: proc(data:[]u8)->(s:Round_Snapshot,ok:bool) {
   p.session_id=nc.read_u64(&r);p.generation=nc.read_u64(&r);p.slot=int(nc.read_u8(&r));p.alive=nc.read_bool(&r);death:=nc.read_u8(&r)
   if death>u8(Round_Death.Disconnect) || p.slot>=MAX_PLAYERS {return {},false}
   p.death=Round_Death(death)
+  p.graze_count=nc.read_u32(&r)
   p.death_tick=nc.read_u64(&r);p.alive_ticks=nc.read_u64(&r);p.bombs_faced=nc.read_u64(&r);p.xp_gained=nc.read_u64(&r)
  }
  for &c in s.connections {

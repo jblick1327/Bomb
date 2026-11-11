@@ -13,7 +13,7 @@ bom_client_get_round :: proc "c" (handle,sample_sequence:u64,info:^BomRoundInfo)
  player_count:=0
  for p in r.players {
   if p.session_id==0 {continue}
-  s.round_players[player_count]={session_id=p.session_id,generation=p.generation,slot=u32(p.slot),alive=p.alive?1:0,death=u32(p.death),death_tick=p.death_tick,alive_ticks=p.alive_ticks,bombs_faced=p.bombs_faced,xp_gained=p.xp_gained}
+  s.round_players[player_count]={session_id=p.session_id,generation=p.generation,slot=u32(p.slot),alive=p.alive?1:0,death=u32(p.death),graze_count=p.graze_count,death_tick=p.death_tick,alive_ticks=p.alive_ticks,bombs_faced=p.bombs_faced,xp_gained=p.xp_gained}
   player_count+=1
  }
  for c,i in r.connections {

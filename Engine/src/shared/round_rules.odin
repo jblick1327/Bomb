@@ -22,6 +22,7 @@ Round_Player :: struct {
  slot:int,
  alive:bool,
  death:Round_Death,
+ graze_count:u32,
  death_tick, alive_ticks, bombs_faced, xp_gained:u64,
 }
 Round_Controller :: struct {

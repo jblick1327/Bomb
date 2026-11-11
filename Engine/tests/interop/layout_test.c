@@ -351,7 +351,7 @@ int main(void) {
  CHECK(bom_debug_layout(20,4)==OFFSET(BomRoundPlayer,slot));
  CHECK(bom_debug_layout(20,5)==OFFSET(BomRoundPlayer,alive));
  CHECK(bom_debug_layout(20,6)==OFFSET(BomRoundPlayer,death));
- CHECK(bom_debug_layout(20,7)==OFFSET(BomRoundPlayer,reserved));
+ CHECK(bom_debug_layout(20,7)==OFFSET(BomRoundPlayer,graze_count));
  CHECK(bom_debug_layout(20,8)==OFFSET(BomRoundPlayer,death_tick));
  CHECK(bom_debug_layout(20,9)==OFFSET(BomRoundPlayer,alive_ticks));
  CHECK(bom_debug_layout(20,10)==OFFSET(BomRoundPlayer,bombs_faced));

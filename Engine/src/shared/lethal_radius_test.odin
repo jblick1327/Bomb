@@ -16,7 +16,8 @@ lethal_radius_separates_capsule_death_from_full_crater_and_graze_zone :: proc(te
  physics_sync_structure(&w.scene)
  events:Tick_Events;defer delete(events.explosions)
  world_explode(&w,{0,1},5,&events)
- t.expect(test,events.deaths==[MAX_PLAYERS]Round_Death{.Blast,.None,.None,.None},"only capsules inside 1.2 die; grazes await N3")
+ t.expect(test,events.deaths==[MAX_PLAYERS]Round_Death{.Blast,.None,.None,.None},"only capsules inside 1.2 die immediately")
+ for count,i in ([4]u32{0,1,1,0}) {t.expect(test,w.players[i].graze_count==count,"N3 records exposed annulus damage separately")}
  t.expect(test,!is_live_subdivision(&w.scene,target),"destruction beyond both damage zones still receives the full radius")
  t.expect(test,len(events.explosions)==1&&events.explosions[0].radius==5,"presentation retains the crater radius")
 }
@@ -52,10 +53,10 @@ lethal_radius_keeps_full_zero_resistance_cover_and_partial_capsule_visibility ::
 }
 
 @(test)
-lethal_radius_round_snapshot_reports_effective_damage_radius_without_layout_change :: proc(test:^t.T) {
+lethal_radius_round_snapshot_reports_effective_damage_radius :: proc(test:^t.T) {
  ns:Net_Server;ns.game.world.settings=DEFAULT_SANDBOX_SETTINGS
  ns.game.world.settings.blast_radius=5
- result:=round_snapshot(&ns);t.expect(test,result.lethal_radius==1.2&&result.rules_version==2)
+ result:=round_snapshot(&ns);t.expect(test,result.lethal_radius==1.2&&result.rules_version==3)
  ns.game.world.scene.level_policy.active=true;ns.game.world.scene.level_policy.config=DEFAULT_GAMEPLAY_CONFIG
  ns.game.world.scene.level_policy.config.lethal_radius=.9
  result=round_snapshot(&ns);t.expect(test,result.lethal_radius==.9)
@@ -69,7 +70,7 @@ lethal_radius_round_snapshot_reports_effective_damage_radius_without_layout_chan
 lethal_radius_config_v3_json_migration_preserves_authored_fields_and_adds_damage_zones :: proc(test:^t.T) {
  legacy_json :: `{"version":3,"gravity":{"x":0,"y":-12},"player":{"speed":6,"acceleration":50,"jump_speed":9,"coyote_time":0.2,"jump_buffer":0.3,"gravity_scale":1.75},"bomb_fuse":2,"bomb_drop_min":1.2,"bomb_drop_max":3,"bomb_radius":4,"elimination_start_interval":{"x":2,"y":3},"elimination_end_interval":{"x":0.5,"y":1.5},"elimination_ramp_seconds":120}`
  old:Gameplay_Config;t.expect(test,json.unmarshal(transmute([]u8)string(legacy_json),&old)==nil)
- expected:=old;expected.version=4;expected.lethal_radius=1.2;expected.graze_radius=2.2
+ expected:=old;expected.version=5;expected.lethal_radius=1.2;expected.graze_radius=2.2;expected.grazes_to_die=3
  current:=gameplay_config_upgrade(old)
  t.expect(test,current==expected&&gameplay_config_valid(current)&&gameplay_config_upgrade(current)==current)
  level,ok,reason:=decode_level_layout(transmute([]u8)string(LEVEL_V4_TEST));t.expect(test,ok,reason);if !ok {return};defer destroy_level_layout(&level)
@@ -106,5 +107,5 @@ lethal_radius_config_validation_hashing_and_catalog_preserve_both_zones :: proc(
  }
  level.gameplay_config=DEFAULT_GAMEPLAY_CONFIG;level.gameplay_config.lethal_radius=0
  bytes,encoded:=exact_json_encode(level,false);t.expect(test,encoded);defer delete(bytes)
- bad,valid,_:=decode_level_layout(bytes);t.expect(test,!valid,"v4 must reject missing damage zones rather than silently migrating them");if valid {destroy_level_layout(&bad)}
+ bad,valid,_:=decode_level_layout(bytes);t.expect(test,!valid,"the current config must reject missing damage zones rather than silently migrating them");if valid {destroy_level_layout(&bad)}
 }

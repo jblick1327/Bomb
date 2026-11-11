@@ -173,7 +173,7 @@ decode_level_layout :: proc(data:[]u8) -> (level:Level_Layout,ok:bool,problem:st
  arena:mem.Arena;mem.arena_init(&arena,storage)
  wire:Level_Layout
  if json.unmarshal(data,&wire,allocator=mem.arena_allocator(&arena))!=nil { return {},false,"Invalid version 4 layout JSON" }
- if wire.gameplay_config.version==0&&(wire.gameplay_config_id=="bom-default-v1"||wire.gameplay_config_id=="bom-default-v2"||wire.gameplay_config_id=="bom-default-v3"||wire.gameplay_config_id=="bom-default-v4") { wire.gameplay_config=DEFAULT_GAMEPLAY_CONFIG }
+ if wire.gameplay_config.version==0&&(wire.gameplay_config_id=="bom-default-v1"||wire.gameplay_config_id=="bom-default-v2"||wire.gameplay_config_id=="bom-default-v3"||wire.gameplay_config_id=="bom-default-v4"||wire.gameplay_config_id=="bom-default-v5") { wire.gameplay_config=DEFAULT_GAMEPLAY_CONFIG }
  wire.gameplay_config=gameplay_config_upgrade(wire.gameplay_config)
  if reason:=level_layout_problem(&wire);reason!="" { return {},false,reason }
  canonical,canonical_ok:=exact_json_encode(wire,false);defer delete(canonical)

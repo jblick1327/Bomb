@@ -6,6 +6,7 @@ import b2 "vendor:box2d"
 Player :: struct {
  tuning:Player_Tuning `json:"-"`,
 	active: bool,
+ graze_count:u32, // Authoritative Elimination damage, reset with the round body.
 	body: b2.BodyId,
 	grounded: bool,
 	coyote, buffered_jump: f32,
