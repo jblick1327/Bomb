@@ -360,7 +360,7 @@ public static class BomLevelExporter
             .Append(",\"catalog_id\":")
             .Append(Q(level.LevelId + "-visual-v1"));
         var tuning = level.Gameplay ?? new BomGameplayTuning();
-        json.Append(",\"gameplay_config\":{\"version\":2,\"gravity\":")
+        json.Append(",\"gameplay_config\":{\"version\":3,\"gravity\":")
             .Append(V(tuning.Gravity))
             .Append(",\"player\":{\"speed\":")
             .Append(F(tuning.PlayerSpeed))
@@ -372,6 +372,8 @@ public static class BomLevelExporter
             .Append(F(tuning.PlayerCoyoteTime))
             .Append(",\"jump_buffer\":")
             .Append(F(tuning.PlayerJumpBuffer))
+            .Append(",\"gravity_scale\":")
+            .Append(F(tuning.PlayerGravityScale))
             .Append("},\"bomb_radius\":")
             .Append(F(tuning.BombRadius))
             .Append(",\"bomb_fuse\":")

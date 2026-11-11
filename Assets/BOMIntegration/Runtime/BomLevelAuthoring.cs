@@ -58,11 +58,14 @@ namespace Bom.Unity
     public sealed class BomGameplayTuning
     {
         public Vector2 Gravity = new Vector2(0, -9.8f);
-        public float PlayerSpeed = 4,
-            PlayerAcceleration = 32,
-            PlayerJumpSpeed = 6.3f,
+        // Gameplay config v3 defaults (owner decision D2, native N1 35482a8): speed 7, jump height 2.5
+        // under player-only gravity 25 (world gravity stays 9.8, so debris is unchanged).
+        public float PlayerSpeed = 7,
+            PlayerAcceleration = 70,
+            PlayerJumpSpeed = 11.18034f,
             PlayerCoyoteTime = .1f,
-            PlayerJumpBuffer = .1f;
+            PlayerJumpBuffer = .1f,
+            PlayerGravityScale = 25f / 9.8f;
         public float BombRadius = 5,
             BombFuse = 1;
         public Vector2 SandboxBombInterval = new Vector2(1, 2.5f);
@@ -87,7 +90,7 @@ namespace Bom.Unity
         [HideInInspector]
         public List<BomIdentityRecord> IdentityRegistry = new List<BomIdentityRecord>();
         public int Seed = 42;
-        public string GameplayConfigId = "bom-default-v2";
+        public string GameplayConfigId = "bom-default-v3";
         public BomGameplayTuning Gameplay = new BomGameplayTuning();
         public BomBounds2 SimulationBounds = new BomBounds2(
             new Vector2(-8, -3),

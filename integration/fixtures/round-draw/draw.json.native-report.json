@@ -1,9 +1,9 @@
 {
 	"status": "passed",
 	"level_id": "bom-elimination-draw-fixture-v1",
-	"gameplay_manifest_hash": "d3f96c31e0511546a1ee6f1046a35f01d6b444b7332596cff2a670d94db061a1",
-	"gameplay_config_hash": "1402a12361198fe32c988bb883232159591eb9cdc8e8422e9ea08e33882e0c7f",
-	"catalog_hash": "14b6bc67bdb2fd9b319c63b470934d6b30c85a2143489a0bfcb6b31d26429e99",
+	"gameplay_manifest_hash": "1496c0387258a284ad39501ae26c339b32674b9e835826d77dc22507bc1feb78",
+	"gameplay_config_hash": "4fd5565a1cf7e631f61d0a769943a3d7d8dd004115154f4cbf55287357a835b3",
+	"catalog_hash": "646248f5ac33500ac34d659fcb7ef179ea23a6a7336e657f50978e6075e75b62",
 	"game_protocol": 7,
 	"canonical_version": 3,
 	"source_count": 1,
@@ -98,17 +98,18 @@
 			}
 		},
 		"config": {
-			"version": 2,
+			"version": 3,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
 			},
 			"player": {
-				"speed": 4,
-				"acceleration": 32,
-				"jump_speed": 6.3,
+				"speed": 7,
+				"acceleration": 70,
+				"jump_speed": 11.1803398,
 				"coyote_time": 0.1,
-				"jump_buffer": 0.1
+				"jump_buffer": 0.1,
+				"gravity_scale": 2.5510204
 			},
 			"bomb_fuse": 1,
 			"bomb_drop_min": 1,

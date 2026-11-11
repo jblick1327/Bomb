@@ -1,9 +1,9 @@
 {
 	"status": "passed",
 	"level_id": "bomb-yard-network-v1",
-	"gameplay_manifest_hash": "873303e4999f1c77b70b5b6a972a8083e33574931921e1ee9a62202f515382e1",
-	"gameplay_config_hash": "1402a12361198fe32c988bb883232159591eb9cdc8e8422e9ea08e33882e0c7f",
-	"catalog_hash": "115164c3e11a134eedadae2fad42ca5f509a7765ad139c186cc0adeb7dbc61c8",
+	"gameplay_manifest_hash": "8f2b0e8a6159d3342de73d2bcfad8273091ce577d4ac6d67e2c770b4a5a3424d",
+	"gameplay_config_hash": "4fd5565a1cf7e631f61d0a769943a3d7d8dd004115154f4cbf55287357a835b3",
+	"catalog_hash": "e52496b74d3612b43bdbcd4a38c5bd3ab52500d56b420fec7c18c693b54497f0",
 	"game_protocol": 7,
 	"canonical_version": 3,
 	"source_count": 16,
@@ -98,17 +98,18 @@
 			}
 		},
 		"config": {
-			"version": 2,
+			"version": 3,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
 			},
 			"player": {
-				"speed": 4,
-				"acceleration": 32,
-				"jump_speed": 6.3,
+				"speed": 7,
+				"acceleration": 70,
+				"jump_speed": 11.1803398,
 				"coyote_time": 0.1,
-				"jump_buffer": 0.1
+				"jump_buffer": 0.1,
+				"gravity_scale": 2.5510204
 			},
 			"bomb_fuse": 1,
 			"bomb_drop_min": 1,

@@ -33,8 +33,16 @@ namespace Bom.Unity
         bool drawScenario;
         ulong drawReconnectedRound,
             eventRepeatRound;
-        ulong jumpRound;
+        ulong jumpRound,
+            lastJumpTick;
         bool sawNativeJump;
+
+        // Test choreography (fixture timing, not an assertion). Re-tuned in E1-N1 for N1 movement:
+        // a jump pressed while airborne can expire in the 0.1 s buffer, so it is retried until seen; the
+        // guest forfeits before the first bomb can land (~200 server ticks; the guest view lags ~40 ticks).
+        const ulong JumpStartTicks = 30,
+            JumpRetryTicks = 20,
+            GuestForfeitTicks = 150;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void SelectFixture()
@@ -228,14 +236,16 @@ namespace Bom.Unity
                     );
                     if (
                         playing
-                        && r.tick >= r.start_tick + 90
-                        && jumpRound != r.round_id
+                        && r.tick >= r.start_tick + JumpStartTicks
+                        && !sawNativeJump
+                        && (jumpRound != r.round_id || r.tick >= lastJumpTick + JumpRetryTicks)
                         && (session.Owner.flags & 1) != 0
                         && session.Owner.state_tick >= r.start_tick
                     )
                     {
                         BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle, now));
                         jumpRound = r.round_id;
+                        lastJumpTick = r.tick;
                     }
                     if (
                         playing
@@ -270,6 +280,15 @@ namespace Bom.Unity
                             + ((r.flags & 4) != 0)
                     );
                     StartCoroutine(Capture("round-" + r.round_id + "-state-" + r.state));
+                    if (r.state == 3)
+                        foreach (var p in session.RoundPlayers)
+                            // death: 0 none, 1 blast, 2 bounds, 3 disconnect (native Round_Death)
+                            Debug.Log(
+                                "BOM ROUND PLAYER role=" + role + " round=" + r.round_id
+                                    + " session=" + p.session_id + " slot=" + p.slot
+                                    + " alive=" + p.alive + " death=" + p.death
+                                    + " death_tick=" + p.death_tick + " alive_ticks=" + p.alive_ticks
+                            );
                 }
                 if (role == "guest" && r.round_id == firstRound && r.state == 1 && !interrupted)
                 {
@@ -300,7 +319,7 @@ namespace Bom.Unity
                         guestRestartRejected = true;
                     if (
                         !drawScenario
-                        && r.tick >= r.start_tick + 180
+                        && r.tick >= r.start_tick + GuestForfeitTicks
                         && forfeitedRound != r.round_id
                     )
                     {
