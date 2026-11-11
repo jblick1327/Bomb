@@ -54,6 +54,7 @@ namespace Bom.Unity
         readonly List<(uint, ulong)> goneActors = new List<(uint, ulong)>();
         public BomSession Session => session;
         BomSourcePresentation sourcePresentation;
+        BomCameraRig cameraRig;
         public BomSourcePresentation SourcePresentation => sourcePresentation;
         public bool AutomatedProfile { get; private set; }
 
@@ -64,7 +65,9 @@ namespace Bom.Unity
                 return false;
             if (!actors.TryGetValue((2, session.Sample.local_player_id), out var actor))
                 return false;
-            position = actor.GetComponent<BomActorView>().VisualPosition;
+            position = actor.TryGetComponent<BomActorView>(out var look)
+                ? look.VisualPosition
+                : actor.transform.position;
             return true;
         }
 
@@ -880,13 +883,9 @@ namespace Bom.Unity
                             min = Vector2.Min(min, new Vector2(v.x, v.y));
                             max = Vector2.Max(max, new Vector2(v.x, v.y));
                         }
-                    Vector2 center = (min + max) / 2;
-                    View.transform.position = new Vector3(center.x, center.y, -40);
-                    View.orthographicSize = Mathf.Max(
-                        6,
-                        (max.y - min.y) / 2 + 2,
-                        (max.x - min.x) / 2 / Mathf.Max(0.1f, View.aspect) + 2
-                    );
+                    if (cameraRig == null && !View.TryGetComponent(out cameraRig))
+                        cameraRig = View.gameObject.AddComponent<BomCameraRig>();
+                    cameraRig.Configure(min, max);
                 }
                 ClearScene(true);
                 terrain = next;
@@ -1019,6 +1018,17 @@ namespace Bom.Unity
                     Destroy(actors[key]);
                 actors.Remove(key);
             }
+            if (cameraRig != null)
+            {
+                cameraRig.Targets.Clear();
+                foreach (var pair in actors)
+                    if (pair.Key.Item1 == 2)
+                        cameraRig.Targets.Add(
+                            pair.Value.TryGetComponent<BomActorView>(out var look)
+                                ? (Vector2)look.VisualPosition
+                                : (Vector2)pair.Value.transform.position
+                        );
+            }
             for (int i = 0; i < s.event_count; i++)
             {
                 var e = client.Events[i];
@@ -1054,6 +1064,12 @@ namespace Bom.Unity
                         effect.AddComponent<BomExplosionView>().Show(Material, center, e.radius);
                     }
                     ExplosionVisuals++;
+                    cameraRig?.Shake(
+                        new Vector2(e.x, e.y),
+                        e.radius,
+                        TryLocalVisualPosition(out var localAt),
+                        localAt
+                    );
                 }
                 Debug.Log(
                     "BOM UNITY EVENT id="
