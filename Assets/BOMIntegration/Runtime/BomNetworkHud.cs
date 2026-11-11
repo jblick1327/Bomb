@@ -101,6 +101,12 @@ namespace Bom.Unity
             nextLevel = L("next-level");
             levelFill = hud.Q("level-fill");
             death = hud.Q("death-panel");
+            // Darryn's pause and game-over panels are hidden only by his stylesheet. Hide them inline so they
+            // never cover the game; the death panel is shown again on a finished round. C4 maps the pause panel.
+            if (hud.Q("pause-panel") is VisualElement pausePanel)
+                pausePanel.style.display = DisplayStyle.None;
+            if (death != null)
+                death.style.display = DisplayStyle.None;
             if (L("controls") is Label controls)
                 controls.text = "A/D or arrows: move    Space: jump    Esc: connection menu";
             // The legacy subtitle assumes local restart authority. Replace that text in
