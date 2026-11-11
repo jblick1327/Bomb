@@ -60,6 +60,8 @@ namespace Bom.Unity
         void Start()
         {
             DisableDuplicateArenaHud(GetComponent<UIDocument>());
+            if (!TryGetComponent<BomCursorGuard>(out _))
+                gameObject.AddComponent<BomCursorGuard>();
             if (Client != null)
             {
                 address.SetValueWithoutNotify(Client.Address);
