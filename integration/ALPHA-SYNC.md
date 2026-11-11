@@ -192,7 +192,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - New code goes in a new file under `Runtime/` with a fresh-GUID `.meta`; edit `BomClientBehaviour.cs` minimally. No colliders, no Rigidbody, no Unity-side outcome decisions.
   - Done when: Build, Content (1562) and Rounds Yard+Draw pass, and the Rounds primary and guest logs contain a `BOM UNITY BURST` line for the round-ending death of each run and none for a quit.
     [ ] Owner check: the last death of a two-player round bursts; quitting a window does not; a limb drops as its blast is drawn.
-- [~] **C2d Pointer stays visible in the network scenes** (T2, Sonnet, S; owner report 2026-11-11) claimed: Claude Sonnet 5.5 2026-11-11
+- [x] **C2d Pointer stays visible in the network scenes** (T2, Sonnet, S; owner report 2026-11-11) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 4202ffc — Build, Content (1562) and Rounds Yard+Draw pass, 0 Exception lines; pointer not yet seen on screen
   - Darryn's `Assets/Game/UI/MenuCursor.cs` sets `Cursor.visible = false` every frame and draws its own ring only when an `ArenaSession` menu is open; the network scenes have no `ArenaSession`,
     so the pointer vanished (the connection menu and the host's click-to-blast were hard to use). Do not edit his script: new `Runtime/BomCursorGuard.cs` shows the OS pointer in `LateUpdate`, added by `BomNetworkHud`.
   - Done when: Build and Rounds pass. [ ] Owner check: the pointer is visible in NetworkMenu and NetworkYard, over the Esc menu, and the host can click to blast.
