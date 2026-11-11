@@ -39,7 +39,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   already identical: 10 per bomb faced + 1 per second. The shop stays cosmetic and local.
 - [ ] **D6 Items.** Coins, invincibility, speed and slow become native Odin items, using Darryn's
   durations and chances. Do this after N1–N2.
-- [ ] **D7 Network cosmetics.** For now every player gets a slot colour (P1 blue, P2 red, P3 yellow,
+- [x] **D7 Network cosmetics.** (approved by owner 2026-11-11) For now every player gets a slot colour (P1 blue, P2 red, P3 yellow,
   P4 green). Sending each player's chosen character over the wire comes later.
 - [ ] **D8 Solo.** Add a native Survival mode (1–4 players; the round ends when all are dead), with
   optional native bots.
