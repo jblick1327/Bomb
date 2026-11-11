@@ -799,6 +799,13 @@ MonoBehaviour:
   PlayerPrefab: {fileID: 3914388416614864481, guid: 0776f098973e40e4b86885d83fc35229, type: 3}
   BombPrefab: {fileID: 8642442638985349948, guid: 9bb20eb5d8bd286499f54fadf5448b4e, type: 3}
   BlastPrefab: {fileID: 643950438087958761, guid: db0ee267936605e41b2a8f46a519ecb3, type: 3}
+  PresentationMilliseconds: 0
+  GeometryMilliseconds: 0
+  PresentationAllocatedBytes: 0
+  GeometryAllocatedBytes: 0
+  PresentationHadTopology: 0
+  PresentationHadActorChange: 0
+  GeometryWorkThisFrame: 0
   Port: 47380
   Address: 127.0.0.1
   Prediction: 1
@@ -1078,6 +1085,19 @@ MonoBehaviour:
     IdentityDecimal: 9007199254741020
   Seed: 42
   GameplayConfigId: bom-default-v1
+  Gameplay:
+    Gravity: {x: 0, y: -9.8}
+    PlayerSpeed: 4
+    PlayerAcceleration: 32
+    PlayerJumpSpeed: 6.3
+    PlayerCoyoteTime: 0.1
+    PlayerJumpBuffer: 0.1
+    BombRadius: 5
+    BombFuse: 1
+    SandboxBombInterval: {x: 1, y: 2.5}
+    EliminationStartInterval: {x: 1, y: 2.5}
+    EliminationEndInterval: {x: 0.4, y: 1}
+    EliminationRampSeconds: 90
   SimulationBounds:
     Minimum: {x: -22, y: -28}
     Maximum: {x: 22, y: 38}
