@@ -2,7 +2,7 @@
 namespace Bom.Unity {
 public static class BomExpectedNativeIdentity {
  public const uint AbiMajor=1,AbiMinor=4,GameProtocol=7,CanonicalVersion=3;
- public const ulong BuildTag=217136225208817073UL;
- public const string DllSha256="9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f";
+ public const ulong BuildTag=1072309867234513910UL;
+ public const string DllSha256="bdd32cf5665d3e033995b14ca43c7e3b5894f87d9b5ba35ba967c559f3b0d49a";
 }
 }
