@@ -152,7 +152,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 
 ## Phase C: presentation synthesis (Lane U, in order; T2 unless marked)
 In every C task, read native state from `BomClientBehaviour`/`BomSession` and draw it. Never decide outcomes in Unity.
-- [~] **C1 Camera rig** (T2, Sonnet, M) claimed: Claude Sonnet 5.5 2026-11-11
+- [x] **C1 Camera rig** (T2, Sonnet, M) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 9bb7780 — Build, Content (1562) and Rounds Yard+Draw pass with the rig active (guest running_frames=516, native_jump=True); owner check still open
   - New `Runtime/BomCameraRig.cs`. It replaces the static framing in `BomClientBehaviour` (search `orthographicSize=`).
   - Frame every living player's native position with Darryn's defaults: padding 0.5, smooth time 0.12,
     minimum view height 16, maximum = the whole `camera_bounds`, tilt 10° (an inspector field), clamped
@@ -288,3 +288,12 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - 2026-11-11 Claude (A2): Darryn's auto-start scripts in our scenes. `GameAudio` loads but plays nothing (its music switch only
   knows his scene names), so C3 must start music itself. `MatchMenuUI` only acts in `MainMenuScene`/`LevelSetupScene`; elsewhere it only
   fades. `MenuCursor` adds a gamepad cursor canvas in every scene (not seen in our logs; check visually in C5). None of them logged errors.
+- 2026-11-11 Claude (C1): the Yard Rounds gate failed 3 times in a row at ~07:47–08:01 with "native movement/jump did not drive the
+  original Claymate animation" (guest exit 4, host 0xE0434352 timeout), then passed 3 times from ~08:07. Same code, same hashes. A/B
+  evidence kept: with C1 (`unity-rounds-…T124723`, `…T125344`), without C1 at HEAD (`…T130041`, identical failure), A2-era
+  `Assets/BOMIntegration` (`…T130719` pass), C1 again (`…T131117` pass). So neither C1 nor the A3 reformat caused it. The owner pulled a
+  power cable in that window and free RAM sat at 3.3–4.1 GB (below rule 3's 4 GB), so the cause is most likely machine load/throttling
+  (not proven). Only the guest fails: it dies early in both rounds, so a small slowdown means it never sees its native jump.
+  If this check flakes again, re-run once and keep both evidence folders; do not edit the check.
+- 2026-11-11 Claude (C1): `BomCameraRig` needs `sceneHalfDepth` (default 1) to keep a tilted view from clipping the scene's depth. If the
+  owner check shows the top or bottom cut off, raise it. Both players are still the same blue until C2 adds slot colours.
