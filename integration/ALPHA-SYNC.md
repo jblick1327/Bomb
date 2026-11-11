@@ -268,7 +268,11 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - [x] **E1-N2** claimed: Claude Opus 5.5 2026-11-11; done: Claude Opus 5.5 2026-11-11 2090459 — native b8b1074 (DLL ffe2d206…), exporter/tuning config v4
   (lethal 1.2, graze 2.2), yard + draw re-exported; Build, Content (1562), Rounds Yard+Draw and Prediction 6/6 (`evidence/M0/Test-Prediction-20261111T172644051Z.json`)
   pass. First Rounds run failed on a stale yard manifest (kept: `evidence/M8/unity-rounds-20261111T171928558289Z`); see Findings.
-- [~] **E1-N3** claimed: Claude Opus 5.5 2026-11-11
+- [x] **E1-N3** claimed: Claude Opus 5.5 2026-11-11; done: Claude Opus 5.5 2026-11-11 d090f83 — native 9eb164e (227baf9, DLL 0887c0b1…), config v5
+  (grazes_to_die 3), yard + draw re-exported, limb loss from `graze_count` (`Runtime/BomLimbLoss.cs`); Build, Content (1562), Rounds Yard+Draw
+  and Prediction 6/6 (`evidence/M0/Test-Prediction-20261111T194433351Z.json`) pass, 0 Exception lines. No graze occurred in the Rounds runs, so limb removal
+  is unverified in a player (see Findings). Failed first export kept: `evidence/M8/e1-n3-yard-export-20261111T142922`.
+  [ ] Owner check: a graze visibly removes a limb; two grazes remove two; the third kills; limbs are back next round.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -369,3 +373,15 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   manifests (including yard), and port `PlayerBodyDamage` presentation from copied counts within the round/session/generation.
   All N3 gates passed: game 220, shared 112, FFI 21, transport 27, real C/.NET layouts/lifetimes, Content 1562. Raw evidence and fixtures:
   `C:/Users/jblic/Documents/BOM/evidence/N3/REPORT.md`. No Unity build, Editor or soak was run; E1-N3 remains pending.
+- 2026-11-11 Claude (E1-N3): player `pose.id` and `BomRoundPlayer.slot` are the same native server client index (native keys player poses
+  `ent_key(.Player, i)` and reads grazes from `world.players[p.slot]`), so no offset. Rounds shows slots 1 and 2 because the observer
+  connection holds slot 0 (guest logs `local=2` and `slot=2`). Note `BomPlayerLook` labels id 0 as P1, so Rounds players read P2/P3.
+- 2026-11-11 Claude (E1-N3): no graze ring. `BomRoundInfo` (ABI 1.5) carries `lethal_radius` only; `graze_radius` is not exposed natively,
+  so `BomClientBehaviour` cannot read it and I did not guess it from Unity tuning. A Lane N task would need to add `graze_radius` to
+  `BomRoundInfo` (ABI 1.6) before a second, fainter ring can be drawn.
+- 2026-11-11 Claude (E1-N3): neither Rounds run produced a graze (yard deaths reason 3, draw deaths reason 1), so `BomLimbLoss` ran only with
+  count 0 in the gate. Each presented change logs `BOM UNITY GRAZE player= round= session= count= presented= limbs_lost=n/m`; look for it in
+  the owner play. The Claymate rig gives limbs from `Bone.003.L/R` and `Bone.006.L/R` chains (mesh is Read/Write enabled). A live graze takes
+  the limb nearest the last blast; a rebuilt or late-seen actor takes limbs in a fixed order and throws no chunks.
+- 2026-11-11 Claude (E1-N3): `Get-Process`/`Start-Process -Wait` on the Unity editor can outlive Unity (it waits for child processes);
+  use `$p.WaitForExit()` on the returned process instead when running `CreateAndExport` by hand.
