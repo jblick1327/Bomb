@@ -152,7 +152,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 
 ## Phase C: presentation synthesis (Lane U, in order; T2 unless marked)
 In every C task, read native state from `BomClientBehaviour`/`BomSession` and draw it. Never decide outcomes in Unity.
-- [ ] **C1 Camera rig** (T2, Sonnet, M)
+- [~] **C1 Camera rig** (T2, Sonnet, M) claimed: Claude Sonnet 5.5 2026-11-11
   - New `Runtime/BomCameraRig.cs`. It replaces the static framing in `BomClientBehaviour` (search `orthographicSize=`).
   - Frame every living player's native position with Darryn's defaults: padding 0.5, smooth time 0.12,
     minimum view height 16, maximum = the whole `camera_bounds`, tilt 10° (an inspector field), clamped
