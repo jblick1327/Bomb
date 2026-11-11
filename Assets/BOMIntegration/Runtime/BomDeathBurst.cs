@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Bom.Unity
 {
-    // Presentation only. Clay chunks thrown out when a native player dies, like PlayerBodyDamage.Burst.
+    // Presentation only. Clay chunks thrown out when a native player dies, like PlayerBodyDamage.Burst,
+    // or (fewer chunks, via BomLimbLoss) when a native graze takes a limb.
     // No colliders and no Rigidbody: the chunks are animated here and removed when their time is up.
     public sealed class BomDeathBurst : MonoBehaviour
     {
@@ -10,37 +11,43 @@ namespace Bom.Unity
         const float Lifetime = 1.2f;
         const float Gravity = 18f;
         static Mesh chunkMesh;
-        readonly Transform[] chunks = new Transform[ChunkCount];
-        readonly Vector3[] velocity = new Vector3[ChunkCount];
-        readonly Vector3[] spin = new Vector3[ChunkCount];
-        readonly float[] baseSize = new float[ChunkCount];
+        Transform[] chunks = new Transform[0];
+        Vector3[] velocity = new Vector3[0];
+        Vector3[] spin = new Vector3[0];
+        float[] baseSize = new float[0];
         float age;
 
-        public int ChunkTotal => ChunkCount;
+        public int ChunkTotal => chunks.Length;
 
         public static BomDeathBurst Spawn(
             Transform parent,
             Material material,
             Vector3 center,
             Color color,
-            Vector2 awayFrom
+            Vector2 awayFrom,
+            int count = ChunkCount,
+            string name = "Native death burst"
         )
         {
-            var root = new GameObject("Native death burst");
+            var root = new GameObject(name);
             root.transform.SetParent(parent, false);
             var burst = root.AddComponent<BomDeathBurst>();
-            burst.Build(material, center, color, awayFrom);
+            burst.Build(material, center, color, awayFrom, Mathf.Max(1, count));
             return burst;
         }
 
-        void Build(Material material, Vector3 center, Color color, Vector2 awayFrom)
+        void Build(Material material, Vector3 center, Color color, Vector2 awayFrom, int count)
         {
+            chunks = new Transform[count];
+            velocity = new Vector3[count];
+            spin = new Vector3[count];
+            baseSize = new float[count];
             var properties = new MaterialPropertyBlock();
             properties.SetColor("_BaseColor", color);
             // Presentation randomness only; it never feeds back into the native simulation.
             var random = new System.Random(unchecked((int)(center.x * 1000) ^ (int)(center.y * 7919)));
             float Next() => (float)random.NextDouble();
-            for (int i = 0; i < ChunkCount; i++)
+            for (int i = 0; i < count; i++)
             {
                 var chunk = new GameObject("Chunk " + i);
                 chunk.transform.SetParent(transform, false);
@@ -73,7 +80,7 @@ namespace Bom.Unity
                 return;
             }
             float shrink = Mathf.Clamp01((Lifetime - age) / .4f);
-            for (int i = 0; i < ChunkCount; i++)
+            for (int i = 0; i < chunks.Length; i++)
             {
                 velocity[i].y -= Gravity * dt;
                 chunks[i].position += velocity[i] * dt;

@@ -84,6 +84,10 @@ namespace Bom.Unity
             new Dictionary<(uint, ulong), GameObject>();
         readonly List<Mesh> meshes = new List<Mesh>();
         readonly BomActorPool actorPool = new BomActorPool();
+        // Last native blast centre, so a graze takes the limb nearest the bomb (presentation only).
+        Vector2 lastBlast;
+        ulong lastBlastRound;
+        bool hasLastBlast;
         public int PooledActorCount => actorPool.OwnedCount;
         public int IdleActorCount => actorPool.IdleCount;
         readonly Dictionary<ulong, BomMeshGeometry> cellGeometry =
@@ -954,6 +958,9 @@ namespace Bom.Unity
                                 if (!actor.TryGetComponent<BomPlayerLook>(out var look))
                                     look = actor.AddComponent<BomPlayerLook>();
                                 look.Configure((int)pose.id);
+                                if (!actor.TryGetComponent<BomLimbLoss>(out var limbLoss))
+                                    limbLoss = actor.AddComponent<BomLimbLoss>();
+                                limbLoss.ResetBody();
                             }
                         }
                         else
@@ -1062,6 +1069,9 @@ namespace Bom.Unity
                     foreach (var source in client.Sources.Values)
                         front = Mathf.Min(front, source.Binding.depth_lo - .1f);
                     var center = new Vector3(e.x, e.y, front);
+                    lastBlast = new Vector2(e.x, e.y);
+                    lastBlastRound = client.Round.round_id;
+                    hasLastBlast = true;
                     BomGameAudio.BombExplosion(center);
                     if (BlastPrefab != null)
                     {
@@ -1098,6 +1108,65 @@ namespace Bom.Unity
                         + " presentation="
                         + s.presentation_tick
                 );
+            }
+            PresentLimbLoss(client);
+        }
+
+        // Limb loss from the copied native graze counts (N3). A player pose id is the native server client
+        // index, and BomRoundPlayer.slot is that same index (no offset): in Rounds the observer holds slot 0,
+        // so the two players are slots/pose ids 1 and 2 (guest logs local=2 and slot=2).
+        void PresentLimbLoss(BomSession client)
+        {
+            var round = client.Round;
+            var players = client.RoundPlayers;
+            int playerCount = Mathf.Min((int)round.player_count, players.Length);
+            foreach (var pair in actors)
+            {
+                if (pair.Key.Item1 != 2 || !pair.Value.TryGetComponent<BomLimbLoss>(out var limbLoss))
+                    continue;
+                uint count = 0;
+                ulong session = 0,
+                    playerGeneration = 0;
+                for (int i = 0; i < playerCount; i++)
+                    if (players[i].slot == pair.Key.Item2)
+                    {
+                        count = players[i].graze_count;
+                        session = players[i].session_id;
+                        playerGeneration = players[i].generation;
+                        break;
+                    }
+                uint before = limbLoss.ShownCount;
+                var tint = pair.Value.TryGetComponent<BomPlayerLook>(out var look)
+                    ? look.Color
+                    : BomPlayerLook.SlotColor(0);
+                int presented = limbLoss.Present(
+                    round.round_id,
+                    session,
+                    playerGeneration,
+                    count,
+                    Material,
+                    terrain != null ? terrain.transform : null,
+                    tint,
+                    lastBlast,
+                    hasLastBlast && lastBlastRound == round.round_id
+                );
+                if (presented > 0 || before != limbLoss.ShownCount)
+                    Debug.Log(
+                        "BOM UNITY GRAZE player="
+                            + pair.Key.Item2
+                            + " round="
+                            + round.round_id
+                            + " session="
+                            + session
+                            + " count="
+                            + count
+                            + " presented="
+                            + presented
+                            + " limbs_lost="
+                            + limbLoss.LostLimbs
+                            + "/"
+                            + limbLoss.LimbCount
+                    );
             }
         }
 

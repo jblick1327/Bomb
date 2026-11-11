@@ -72,6 +72,9 @@ namespace Bom.Unity
         // the crater stays BombRadius. Both are capsule-surface distances, independent of the crater.
         public float LethalRadius = 1.2f,
             GrazeRadius = 2.2f;
+        // Gameplay config v5 (native N3 9eb164e): each exposed blast inside GrazeRadius (outside LethalRadius)
+        // adds one graze; the GrazesToDie-th graze kills. Native validates 1..255.
+        public int GrazesToDie = 3;
         public Vector2 SandboxBombInterval = new Vector2(1, 2.5f);
         public Vector2 EliminationStartInterval = new Vector2(1, 2.5f),
             EliminationEndInterval = new Vector2(.4f, 1);
@@ -94,7 +97,7 @@ namespace Bom.Unity
         [HideInInspector]
         public List<BomIdentityRecord> IdentityRegistry = new List<BomIdentityRecord>();
         public int Seed = 42;
-        public string GameplayConfigId = "bom-default-v4";
+        public string GameplayConfigId = "bom-default-v5";
         public BomGameplayTuning Gameplay = new BomGameplayTuning();
         public BomBounds2 SimulationBounds = new BomBounds2(
             new Vector2(-8, -3),

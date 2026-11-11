@@ -1,10 +1,10 @@
 {
 	"status": "passed",
 	"level_id": "bomb-yard-network-v1",
-	"gameplay_manifest_hash": "dbc269522921be6fdd9f18486f0b332b90e572ddd717a360af2bceb434c5ec27",
-	"gameplay_config_hash": "82dd8db883181c841c03ab9d2e5f7a0f1105ee9ad05d4b8deb1b37d080126f47",
-	"catalog_hash": "2f85cc638fe9614fc4e8a02ee816cc5a101e85ee1d445bd010a5de8cb04f1467",
-	"game_protocol": 7,
+	"gameplay_manifest_hash": "d17c4b360e9e93fa9c85f6f26e9bb34ff7f9ba2ccdf3965b8c40aa812c7dd928",
+	"gameplay_config_hash": "134e5ae57149a6ee24f11a528a30d93dfb4efbe1397a4aff084ea056adfa9b4a",
+	"catalog_hash": "0551314d5200799ace2232ff69a5233c0ec1a1c1149f132b94b52358e4434701",
+	"game_protocol": 8,
 	"canonical_version": 3,
 	"source_count": 16,
 	"part_count": 17,
@@ -98,7 +98,7 @@
 			}
 		},
 		"config": {
-			"version": 4,
+			"version": 5,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
@@ -117,6 +117,7 @@
 			"bomb_radius": 5,
 			"lethal_radius": 1.2,
 			"graze_radius": 2.2,
+			"grazes_to_die": 3,
 			"elimination_start_interval": {
 				"x": 1,
 				"y": 2.5
