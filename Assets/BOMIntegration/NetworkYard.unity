@@ -1024,7 +1024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
   LevelId: bomb-yard-network-v1
-  YardBuilderVersion: 3
+  YardBuilderVersion: 4
   NextIdentityDecimal: 9007199254741021
   StoredSceneGuid: 21955e4276bdc8046b756157dbcb4387
   StoredRootGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-447945284-0
@@ -1113,23 +1113,7 @@ MonoBehaviour:
   Glue:
   - A: {fileID: 1859489744}
     B: {fileID: 734677335}
-  AllowedOverlaps:
-  - A: {fileID: 637504424}
-    B: {fileID: 1859489744}
-    Reason: The explicit side wall continues through the earth/grass edge. Both opted-in
-      XY solids intentionally overlap; Z depth provides no collision exception.
-  - A: {fileID: 637504424}
-    B: {fileID: 734677335}
-    Reason: The explicit side wall continues through the earth/grass edge. Both opted-in
-      XY solids intentionally overlap; Z depth provides no collision exception.
-  - A: {fileID: 1709001292}
-    B: {fileID: 1859489744}
-    Reason: The explicit side wall continues through the earth/grass edge. Both opted-in
-      XY solids intentionally overlap; Z depth provides no collision exception.
-  - A: {fileID: 1709001292}
-    B: {fileID: 734677335}
-    Reason: The explicit side wall continues through the earth/grass edge. Both opted-in
-      XY solids intentionally overlap; Z depth provides no collision exception.
+  AllowedOverlaps: []
   Materials:
   - Name: earth
     Base: stone
@@ -2059,8 +2043,8 @@ MonoBehaviour:
   PartIdDecimal: 2
   MaterialKey: grass
   Shape: 0
-  Minimum: {x: -20.5, y: 5}
-  Maximum: {x: 20.5, y: 6}
+  Minimum: {x: -18, y: 5}
+  Maximum: {x: 18, y: 6}
   Outline: []
   Anchors: []
   WorldRestCoordinates: 1
@@ -5667,12 +5651,12 @@ MonoBehaviour:
   PartIdDecimal: 1
   MaterialKey: earth
   Shape: 0
-  Minimum: {x: -20, y: -25}
-  Maximum: {x: 20, y: 5}
+  Minimum: {x: -18, y: -25}
+  Maximum: {x: 18, y: 5}
   Outline: []
   Anchors:
-  - A: {x: -20, y: -25}
-    B: {x: 20, y: -25}
+  - A: {x: -18, y: -25}
+    B: {x: 18, y: -25}
   WorldRestCoordinates: 1
   ApproximationNote: Rectangular ground proxy chosen explicitly from the inspected
     mesh bounds

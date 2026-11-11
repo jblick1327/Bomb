@@ -471,6 +471,47 @@ public static class BomYardBuilder
             EditorUtility.SetDirty(level);
             EditorSceneManager.SaveScene(level.gameObject.scene, ScenePath);
         }
+        if (level.YardBuilderVersion == 3)
+        {
+            // The ground proxies (x -20..20 and -20.5..20.5) cut through the side walls (x 18..18.6). Odin
+            // ejects the overlapped dynamic ground cells on tick 4; the impact shock cracks the ground and
+            // topples the slab stack within a second, with no player or bomb involved. Trim the ground to the
+            // walls' inner faces and drop the overlap allowance. Players can never reach beyond the walls.
+            BomPhysicsPart leftWall = null,
+                rightWall = null;
+            var ground = new List<BomPhysicsPart>();
+            foreach (var source in level.GetComponentsInChildren<BomAssetInstance>(true))
+            {
+                if (source.OriginalObjectPath == "Arena/Left Wall")
+                    leftWall = source.GetComponentInChildren<BomPhysicsPart>(true);
+                if (source.OriginalObjectPath == "Arena/Right Wall")
+                    rightWall = source.GetComponentInChildren<BomPhysicsPart>(true);
+                if (source.OriginalObjectPath == "YardLevel")
+                    ground.AddRange(source.GetComponentsInChildren<BomPhysicsPart>(true));
+            }
+            if (leftWall == null || rightWall == null || ground.Count == 0)
+                throw new InvalidOperationException("Missing yard walls or terrain parts");
+            float lo = leftWall.Maximum.x,
+                hi = rightWall.Minimum.x;
+            foreach (var part in ground)
+            {
+                part.Minimum = new Vector2(Mathf.Max(part.Minimum.x, lo), part.Minimum.y);
+                part.Maximum = new Vector2(Mathf.Min(part.Maximum.x, hi), part.Maximum.y);
+                for (int i = 0; i < part.Anchors.Length; i++)
+                {
+                    part.Anchors[i].A.x = Mathf.Clamp(part.Anchors[i].A.x, lo, hi);
+                    part.Anchors[i].B.x = Mathf.Clamp(part.Anchors[i].B.x, lo, hi);
+                }
+                EditorUtility.SetDirty(part);
+            }
+            level.AllowedOverlaps.RemoveAll(o =>
+                (o.A == leftWall || o.A == rightWall) && ground.Contains(o.B)
+                || (o.B == leftWall || o.B == rightWall) && ground.Contains(o.A)
+            );
+            level.YardBuilderVersion = 4;
+            EditorUtility.SetDirty(level);
+            EditorSceneManager.SaveScene(level.gameObject.scene, ScenePath);
+        }
         var registry = BomLevelExporter.Export(level, output);
         var client = UnityEngine.Object.FindFirstObjectByType<BomClientBehaviour>();
         if (client == null)
