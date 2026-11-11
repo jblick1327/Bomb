@@ -265,6 +265,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - [x] **E1-N1** done: Claude Opus 5.5 2026-11-11. Native checkpoint 35482a8 (+ N1b harness ef08405, same DLL f591e8a1…), exporter v3,
   yard/draw re-export, Build, Content (1562), Rounds Yard+Draw and the full Prediction suite (6/6, `evidence/M0/Test-Prediction-20261111T143426524Z.json`)
   all pass. Rounds was not re-run after N1b: neither the DLL nor any Unity file changed. Pre-fix failure kept at `evidence/M9/profile-20261111T140152557313Z`.
+- [~] **E1-N2** claimed: Claude Opus 5.5 2026-11-11
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
