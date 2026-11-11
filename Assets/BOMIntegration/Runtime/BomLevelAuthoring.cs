@@ -68,6 +68,10 @@ namespace Bom.Unity
             PlayerGravityScale = 25f / 9.8f;
         public float BombRadius = 5,
             BombFuse = 1;
+        // Gameplay config v4 (owner decision D1, native N2 b8b1074): kill inside 1.2, graze zone to 2.2;
+        // the crater stays BombRadius. Both are capsule-surface distances, independent of the crater.
+        public float LethalRadius = 1.2f,
+            GrazeRadius = 2.2f;
         public Vector2 SandboxBombInterval = new Vector2(1, 2.5f);
         public Vector2 EliminationStartInterval = new Vector2(1, 2.5f),
             EliminationEndInterval = new Vector2(.4f, 1);
@@ -90,7 +94,7 @@ namespace Bom.Unity
         [HideInInspector]
         public List<BomIdentityRecord> IdentityRegistry = new List<BomIdentityRecord>();
         public int Seed = 42;
-        public string GameplayConfigId = "bom-default-v3";
+        public string GameplayConfigId = "bom-default-v4";
         public BomGameplayTuning Gameplay = new BomGameplayTuning();
         public BomBounds2 SimulationBounds = new BomBounds2(
             new Vector2(-8, -3),
