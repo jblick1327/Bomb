@@ -183,7 +183,7 @@ namespace Bom.Unity
             body.Add(token);
             body.Add(spectator);
             connect = new Button(() =>
-                Act(() =>
+                Click(() =>
                 {
                     if (!uint.TryParse(port.value, out uint number) || number < 1 || number > 65535)
                         throw new ArgumentException("Enter a port from 1 to 65535.");
@@ -196,7 +196,7 @@ namespace Bom.Unity
             };
             body.Add(connect);
             disconnect = new Button(() =>
-                Act(() =>
+                Click(() =>
                 {
                     Client.Disconnect();
                     message = "Disconnected. You can reconnect to this session.";
@@ -207,7 +207,7 @@ namespace Bom.Unity
             };
             body.Add(disconnect);
             reconnect = new Button(() =>
-                Act(() =>
+                Click(() =>
                 {
                     Client.Reconnect();
                     message = "Reconnecting…";
@@ -227,7 +227,7 @@ namespace Bom.Unity
             body.Add(setMode);
             restart = new Button(() => Intent(1, 0)) { text = "Start next round" };
             body.Add(restart);
-            body.Add(new Button(() => Application.Quit()) { text = "Quit" });
+            body.Add(new Button(() => Click(() => Application.Quit())) { text = "Quit" });
             roundState = new Label();
             roundState.style.position = Position.Absolute;
             roundState.style.left = 20;
@@ -252,8 +252,14 @@ namespace Bom.Unity
             }
         }
 
+        void Click(Action action)
+        {
+            BomGameAudio.ButtonPop();
+            Act(action);
+        }
+
         void Intent(uint op, uint modeValue) =>
-            Act(() =>
+            Click(() =>
             {
                 if (Client.Session == null)
                     throw new InvalidOperationException("Connect first.");

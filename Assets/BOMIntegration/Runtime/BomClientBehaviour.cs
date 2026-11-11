@@ -1046,6 +1046,7 @@ namespace Bom.Unity
                                 : (Vector2)pair.Value.transform.position
                         );
             }
+            BomGameAudio.RoundState(client.Round.flags, client.Round.round_id, client.Round.state);
             for (int i = 0; i < s.event_count; i++)
             {
                 var e = client.Events[i];
@@ -1061,6 +1062,7 @@ namespace Bom.Unity
                     foreach (var source in client.Sources.Values)
                         front = Mathf.Min(front, source.Binding.depth_lo - .1f);
                     var center = new Vector3(e.x, e.y, front);
+                    BomGameAudio.BombExplosion(center);
                     if (BlastPrefab != null)
                     {
                         BomAuthorityAudit.Validate(BlastPrefab);
