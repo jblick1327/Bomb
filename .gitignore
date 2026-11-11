@@ -44,3 +44,7 @@ sysinfo.txt
 /integration/identity-tests/bin/
 /integration/identity-tests/obj/
 /integration/local.config.owner-validation.json
+
+# Web builds are build outputs, not source (Odin uses UDP; WebGL is not a target)
+/WebGLBuild*/
+/WebGLBuild*.zip
