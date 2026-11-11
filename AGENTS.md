@@ -36,6 +36,9 @@ identity guard (`BomNativeIdentity.Verify`) fails builds and players on a mismat
 Any push or pull request; merging into the default branch; anything that edits protected content; owner-only machine
 actions (system settings, closing their apps).
 
+## Current work queue
+`integration/ALPHA-SYNC.md`: catch-up with Darryn's AlphaV0.1 (merged 2026-11-10). One task per session; claim and
+tick boxes there. Its rules add to the rules above. The protected baseline now covers Darryn's AlphaV0.1 originals (1562 files).
+
 ## Open items
-Unity authority audit and original-scene play logs, artist guide, LAN guide, release launcher check on PowerShell 5.1
-and 7, human checks (game feel, two-machine LAN, an artist adding an object).
+Human checks (game feel, two-machine LAN, an artist adding an object). Everything else is tracked in `integration/ALPHA-SYNC.md`.
