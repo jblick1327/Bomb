@@ -167,13 +167,13 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Facing flip and the Animator `Running` bool from native velocity. First check whether `BomActorView` already does this.
   - Death burst: clay chunks on a native death event, like `PlayerBodyDamage.Burst`. Presentation only;
     give the chunks no colliders and no Rigidbody (animate them in code).
-  - Done when: Build and Rounds pass. [ ] Owner check.
+  - Done when: Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11; burst not seen, colours/labels/round confirmed).
 - [x] **C2b Yard stands at rest** (T2, Sonnet, S) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 8cd400d — cause: ground overlapped the side walls (allowed_overlaps), not a regression; ground trimmed to x ±18 (builder migration 3→4), yard re-exported; two-window run: revision constant and 0 pieces moved for ~48 s; Build, Content (1562), Rounds Yard+Draw pass; owner check still open
   - The owner saw the starting stack of slabs collapse almost at once. Find why (compare the pre-merge yard layout with the current one,
     N1 gravity scale, E1-N1 re-export), make the smallest change that lets it stand until something blasts it, and re-export the level (Level trap, rule 7).
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
   - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
-    and Build and Rounds pass. [ ] Owner check.
+    and Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11).
 - [ ] **C3 Audio** (T3 can do this; Haiku, S)
   - Call Darryn's public statics in `Assets/Game/Scripts/GameAudio.cs` without editing that file:
     `PlayBombExplosion(pos)` on each native explosion, `PlayWhistle()` when a round goes Playing and again when it goes Finished,
