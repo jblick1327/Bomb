@@ -234,7 +234,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
     pass/fail thresholds unchanged. The transition diagnostic stays in for future triage. No native engine code changed (DLL unchanged).
   - Full Prediction suite: all 6 profiles pass (seeds 42/137/2026 × typical/adverse), conservative_seconds 0, transitions 0, resets 0,
     snaps 0, correction p99 ≤ 0.002 — identical to pre-N1.
-- [ ] **N2 Lethal radius** (D1, M): add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
+- [~] **N2 Lethal radius** (D1, M) claimed: GPT-6 Codex 2026-11-11: add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
   `bomb_radius`. Kill only inside `lethal_radius`, still using `blast_capsule_visible` cover.
 - [ ] **N3 Grazes** (D1, L)
   - Inside `graze_radius` with cover visible, a player gets +1 graze; on the 3rd graze they die.
