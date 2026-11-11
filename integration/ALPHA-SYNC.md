@@ -178,7 +178,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
   - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
     and Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11).
-- [~] **C2c Death and graze presentation fix pack** (T2, Sonnet, M; from the midpoint review, findings 1-4; do before the E1-N3 owner check) claimed: Claude Sonnet 5.5 2026-11-11
+- [x] **C2c Death and graze presentation fix pack** (T2, Sonnet, M; from the midpoint review, findings 1-4; do before the E1-N3 owner check) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 19265ce — Build, Content (1562) and Rounds Yard+Draw pass; Draw primary and guest logs each have 4 `BOM UNITY BURST` (both players, both rounds); Yard has 0 (both rounds end by guest forfeit, death=3, logged as `BOM UNITY NOBURST ... reason=disconnect`); owner check still open
   - Why: Unity infers a death from a player pose vanishing while the round is Playing. The death that ends a round flips the round to Finished and removes
     the body on the same server tick, so the burst never plays in a 2-player round; a quit looks like a death; and effects are children of the per-revision
     `terrain` object, which `ClearScene(true)` destroys on every new topology revision. Read `integration/review/alpha-sync-review-20261111.md`, findings 1-4.
