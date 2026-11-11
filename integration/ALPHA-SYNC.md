@@ -174,7 +174,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
   - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
     and Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11).
-- [ ] **C3 Audio** (T3 can do this; Haiku, S)
+- [~] **C3 Audio** (T3 can do this; Haiku, S) claimed: Claude Haiku 5.5 2026-11-11
   - Call Darryn's public statics in `Assets/Game/Scripts/GameAudio.cs` without editing that file:
     `PlayBombExplosion(pos)` on each native explosion, `PlayWhistle()` when a round goes Playing and again when it goes Finished,
     and `PlayButtonPopSound()` on our UI Toolkit buttons in `BomNetworkHud`.
