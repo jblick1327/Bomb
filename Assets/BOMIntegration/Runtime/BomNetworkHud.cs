@@ -41,6 +41,9 @@ namespace Bom.Unity
             restart,
             setMode;
         Button replay, leave;
+        ulong lastHudKey = ulong.MaxValue,
+            menuRound = ulong.MaxValue;
+        uint menuState = uint.MaxValue;
         string message = "Connect to a local or LAN server.";
         ulong displayedRound,
             displayedTick;
@@ -346,6 +349,15 @@ namespace Bom.Unity
                 mode.SetValueWithoutNotify(r.mode == 1 ? "Elimination" : "Sandbox");
             }
             restart.text = has && r.mode == 0 ? "Reset sandbox" : "Start next round";
+            // The connection menu sits on top of the game-over panel and hides its RETURN button, so put it away when an
+            // Elimination round enters its countdown or finishes. Esc brings it back.
+            if (has && (r.round_id != menuRound || r.state != menuState))
+            {
+                menuRound = r.round_id;
+                menuState = r.state;
+                if (r.mode == 1 && (r.state == 1 || r.state == 3))
+                    SetMenuVisible(false);
+            }
             if (
                 requested
                 && has
@@ -378,9 +390,38 @@ namespace Bom.Unity
             if (replay != null)
             {
                 replay.SetEnabled(canRestart);
-                replay.text = canRestart ? "REPLAY" : "WAITING FOR HOST";
+                // The host loses restart permission for a few seconds while the server rebuilds the world after the click,
+                // so only a non-host should read "waiting for host".
+                replay.text = canRestart ? "REPLAY" : host ? "STARTING…" : "WAITING FOR HOST";
             }
             leave?.SetEnabled(requested);
+            ulong hudKey =
+                ((ulong)r.state << 40)
+                ^ ((ulong)r.mode << 32)
+                ^ r.flags
+                ^ (canRestart ? 1UL << 48 : 0)
+                ^ (host ? 1UL << 49 : 0)
+                ^ (requested ? 1UL << 50 : 0);
+            if (hudKey != lastHudKey)
+            {
+                lastHudKey = hudKey;
+                Debug.Log(
+                    "BOM UNITY HUD round="
+                        + r.round_id
+                        + " state="
+                        + r.state
+                        + " mode="
+                        + r.mode
+                        + " flags="
+                        + r.flags
+                        + " host="
+                        + host
+                        + " requested="
+                        + requested
+                        + " can_restart="
+                        + canRestart
+                );
+            }
             string error = !string.IsNullOrEmpty(Client.ConnectionError)
                 ? Client.ConnectionError
                 : session.Error;
