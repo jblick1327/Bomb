@@ -111,7 +111,8 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
    - **Native DLL trap** (cost an hour on 2026-11-11): the NativeInterop suite *rebuilds* `bomcore.dll` and rewrites
      `bomcore.build.json` inside the native stage (`OdinRoot` in the owner-validation config). The bytes differ even from
      the same source, so later player builds fail the identity guard ("Native DLL SHA-256 differs"). After running NativeInterop,
-     restore both files from `Assets/BOMIntegration/Plugins/x86_64/` into `<OdinRoot>/build/`.
+     restore both files from `Assets/BOMIntegration/Plugins/x86_64/` into `<OdinRoot>/build/`, and copy the same
+     `bomcore.dll` into `<OdinRoot>/build/interop/` (the Prediction suite checks that copy).
    - **Level trap**: a level's `VisualRegistry.asset` holds the manifest hash the client sends. If gameplay config or the layout
      changes, re-export the level in the validation project (`-executeMethod BomYardBuilder.CreateAndExport` with
      `BOM_YARD_LAYOUT_OUT` and `BOM_NATIVE_SERVER_EXE` set). Then copy the changed registry and scene back into the repo and commit them,
@@ -225,6 +226,19 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   - New defaults: speed 7, jump_speed √(2·25·2.5) ≈ 11.18, gravity_scale 25/9.8. Retune acceleration so a
     standing start reaches full speed in ≤ 0.12 s.
   - Update the Unity exporter (`Editor/BomLevelExporter.cs`) in E1, not here.
+- [ ] **N1b Prediction window after N1** (Codex high or Opus, M; blocks E1-N1 and every later E1). The evidence is in E1-N1 above.
+  - Likely cause (confirm first): `src/shared/prediction_client.odin` ~line 92. Large scenes build a 16×16 collision window around the
+    owner (server-confirmed) position, and rebuild only when the owner gets within a *fixed* 3 units of the window edge. The predicted player runs
+    `lead_ticks` (11–18 at 200 ms/5% loss) ahead of the owner. At speed 7 / jump 11.18 that's up to ~2 units sideways and ~3.4 up,
+    so it can leave the window (`Outside_Collision_Window` → conservative) before a rebuild triggers. The margin was implicitly tuned for speed 4.
+  1. Confirm: log the conservative reason on each transition (a test-only diagnostic) during the adverse profile:
+     `python integration/tools/Run-PredictionProfile.py --config integration/local.config.owner-validation.json --evidence-stage M9 --seconds 600 --rtt-ms 200 --jitter-ms 30 --loss 0.05 --fps 144 --seed 42`
+     (run from the Unity repo after an E1-style native rebuild, or the equivalent native-only harness in `tests/interop`).
+  2. Fix: derive the rebuild margin (and the window half-size if needed) from the lead distance instead of a constant, e.g.
+     `per-tick margin + (lead_ticks + pending_commands) * max(speed, jump_speed) / 60 + 1`, capped so the window stays within the
+     existing collision-history capacity. Don't change thresholds in `tests/interop/PredictionProfile.cs`.
+  3. Add a regression test: a player at speed 7 with an 18-tick lead never reports `Outside_Collision_Window` while the owner stays inside the window.
+  - Done when: native gates pass and the adverse profile above shows `conservative_seconds` < 1 with transitions near 0. Then E1-N1 runs the full suite.
 - [ ] **N2 Lethal radius** (D1, M): add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
   `bomb_radius`. Kill only inside `lethal_radius`, still using `blast_capsule_visible` cover.
 - [ ] **N3 Grazes** (D1, L)
@@ -247,7 +261,12 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 
 ## Phase E: bring native changes into Unity (Lane U)
 - [ ] **E1 Native checkpoint + gates after each N task** (T1, Opus, M). Copy this line for each N task (E1-N1, E1-N2, ...).
-- [~] **E1-N1** claimed: Claude Opus 5.5 2026-11-11
+- [!] **E1-N1** claimed: Claude Opus 5.5 2026-11-11 — **blocked on N1b** (2f554c6). Native checkpoint 35482a8, exporter v3, yard/draw
+  re-export, Build, Content (1562) and Rounds Yard+Draw all pass. The Prediction suite fails: the adverse profile (seed 42, 200 ms, 5% loss,
+  144 fps) has `conservative_seconds` 1.35 (limit < 1), with 5 transitions, 4 resets and 6 snaps (`evidence/M9/profile-20261111T140152557313Z`).
+  Before N1 the same profile had 0/0/0/0 (`profile-20261110T203824*`). The typical profile still passes but regressed (0.22 s, 2 transitions; was 0).
+  Seeds 137/2026 did not run (the suite stops at the first failure). After N1b: rebuild the native checkpoint, re-run the full
+  Prediction suite and Rounds, then tick this line. (The Unity side doesn't change again unless N1b changes the config.)
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -298,3 +317,13 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   If this check flakes again, re-run once and keep both evidence folders; do not edit the check.
 - 2026-11-11 Claude (C1): `BomCameraRig` needs `sceneHalfDepth` (default 1) to keep a tilted view from clipping the scene's depth. If the
   owner check shows the top or bottom cut off, raise it. Both players are still the same blue until C2 adds slot colours.
+- 2026-11-11 Claude (E1-N1): N1 changes every level's manifest (Odin now hashes `gravity_scale`). The yard and draw levels are
+  re-exported. The performance levels (`bom-performancereference-v1`, `bom-performancestress-v1`), `bom-source-fixtures-v1` and
+  `editor-export-v4-fixture` still hold pre-N1 registries. They only matter for the Performance/Soak/editor-fixture suites;
+  re-export them (`BomPerformanceBuilder.BuildMono` with `BOM_PERFORMANCE_LAYOUT_DIR`, and the fixture builders) before running those.
+- 2026-11-11 Claude (E1-N1): Rounds Yard passes 4 of 5 after the choreography change. One failure ended round 1 by elimination
+  ~1.8 s into play, before any bomb could land (the world revision never changed), so a player probably left the level bounds.
+  The cause wasn't captured; `BOM ROUND PLAYER ... death=` (2 = bounds) now logs it. If it recurs with death=2, check the spawn
+  platforms at x = ±8.5..14.5 with the faster N1 movement.
+- 2026-11-11 Claude (E1-N1): C1 left five folders of untracked screenshots (`integration/evidence/M8/unity-rounds-20261111T12*`/`T130*`).
+  They're kept on disk. To keep the repo small before F5, E1-N1 committed only text evidence (logs/json); its PNGs stay on disk too.
