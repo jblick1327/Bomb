@@ -265,7 +265,9 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - [x] **E1-N1** done: Claude Opus 5.5 2026-11-11. Native checkpoint 35482a8 (+ N1b harness ef08405, same DLL f591e8a1…), exporter v3,
   yard/draw re-export, Build, Content (1562), Rounds Yard+Draw and the full Prediction suite (6/6, `evidence/M0/Test-Prediction-20261111T143426524Z.json`)
   all pass. Rounds was not re-run after N1b: neither the DLL nor any Unity file changed. Pre-fix failure kept at `evidence/M9/profile-20261111T140152557313Z`.
-- [~] **E1-N2** claimed: Claude Opus 5.5 2026-11-11
+- [x] **E1-N2** claimed: Claude Opus 5.5 2026-11-11; done: Claude Opus 5.5 2026-11-11 2090459 — native b8b1074 (DLL ffe2d206…), exporter/tuning config v4
+  (lethal 1.2, graze 2.2), yard + draw re-exported; Build, Content (1562), Rounds Yard+Draw and Prediction 6/6 (`evidence/M0/Test-Prediction-20261111T172644051Z.json`)
+  pass. First Rounds run failed on a stale yard manifest (kept: `evidence/M8/unity-rounds-20261111T171928558289Z`); see Findings.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -339,3 +341,10 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Rule for C6 (Darryn's levels): a dynamic or anchored part must never overlap a Fixed wall, even with an `allowed_overlaps` entry; trim the part to the wall face.
   Check for any level: a spectator client on the real server must see the world revision stay constant while nothing blasts it
   (harness source: `side-session-notes/.../settle-harness`). The yard must be re-exported again at E1-N2 (N2 changes the gameplay manifest); the migration is already in the scene.
+- 2026-11-11 Claude (E1-N2): the Rounds gate does NOT re-export the yard. Its build calls `BomNetworkMenuBuilder.BuildWithDrawFixture`,
+  which regenerates only the draw fixture, so after any gameplay-config change Rounds fails with "manifest mismatch" until
+  `BomYardBuilder.CreateAndExport` is run by hand (rule 7, Level trap). Run it before Rounds in every E1. The performance, source-fixture and
+  editor-export fixture registries are still pre-N1 (see E1-N1 finding); they now also lack config v4.
+- 2026-11-11 Claude (E1-N2): in elimination rounds `BomClientBehaviour` sizes Darryn's blast ring by the round snapshot's `lethal_radius`,
+  so after N2 the ring shows the 1.2 kill zone, not the 5-unit crater. No code changed (N2 named no presentation change). Owner: judge it at
+  the next play; N3 may want a second ring for the 2.2 graze zone.
