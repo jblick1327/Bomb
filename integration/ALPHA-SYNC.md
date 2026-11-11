@@ -50,6 +50,10 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   to 4096. This should fix the colour shifting in shadows.
 - [ ] **D11 PR prep.** Before the PR, rewrite this branch so the 273 MB of `integration/evidence` leaves
   history. This needs a force-push.
+- [ ] **D12 Graze next to cover.** (from the midpoint review, finding 8) Today a player whose capsule surface is inside the 1.2 lethal
+  radius, but whose exposed part is only in the graze zone, takes nothing (the graze gate is skipped, and the lethal query sees nothing exposed).
+  Recommended: an exposed part inside the 1.2 to 2.2 band counts as a graze even when the nearest point is inside 1.2. This is a small Lane N rule change plus a test;
+  bundle it with N4 so one E1 covers it. Review: `integration/review/alpha-sync-review-20261111.md`.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
@@ -70,7 +74,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 ## Order (the orchestrator follows this)
 1. A1 → A2 → A3, strictly in order (Lane U). Nothing else starts until A2 is ticked.
 2. Owner ticks decisions. Then two lanes run in parallel:
-   Lane U: C1 → C2 → C3 → C4 → (D9) C5 → C6 → C7 → F1 → F3.
+   Lane U: C1 → C2 → C3 → C2c → (E1-N3 owner check) → A4 → C4 → (D9) C5 → C6 → C7 → F1 → F3. (C2c and A4 come from the 2026-11-11 midpoint review.)
    Lane N: (D2) N1 → (D1) N2 → N3 → (D6) N4 → (D8) N5. N6 can start any time after A2.
 3. Run E1 after each Lane N task, taking the Lane U slot between two C tasks.
 4. F2 runs after C1–C4. F4 runs after C7 and E1. F5 comes last (needs D11).
@@ -174,12 +178,37 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
   - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
     and Build and Rounds pass. [x] Owner check (ticked for the owner at their request, 2026-11-11).
+- [ ] **C2c Death and graze presentation fix pack** (T2, Sonnet, M; from the midpoint review, findings 1-4; do before the E1-N3 owner check)
+  - Why: Unity infers a death from a player pose vanishing while the round is Playing. The death that ends a round flips the round to Finished and removes
+    the body on the same server tick, so the burst never plays in a 2-player round; a quit looks like a death; and effects are children of the per-revision
+    `terrain` object, which `ClearScene(true)` destroys on every new topology revision. Read `integration/review/alpha-sync-review-20261111.md`, findings 1-4.
+  - Effects root: create one persistent `Native effects` object that `ClearScene(false)` clears and `ClearScene(true)` keeps. Parent the death burst,
+    the blast effects (`BomClientBehaviour` `Instantiate(BlastPrefab, terrain.transform)` and `SetParent(terrain.transform`) and the graze chunks (`PresentLimbLoss`) to it.
+  - Burst from the roster: replace the "pose gone while `Round.state == 2`" trigger with the copied `RoundPlayers`: a player whose `alive` goes 1 to 0 within the same
+    `round_id` and session/generation, with `death` Blast(1) or Bounds(2); never Disconnect(3) (`Round_Death :: None, Blast, Bounds, Disconnect`). Remember each player's last
+    `VisualPosition` every frame so the burst has a position after the pose is gone; one burst per (round, session, generation, player). Log `BOM UNITY BURST player= round= death=`.
+  - Limb timing: do not remove a limb the moment the snapshot count rises. Queue each increase and present it when an explosion event with `tick >=` the round snapshot's tick is
+    shown (use that event's centre for the nearest limb), with a short unscaled-time timeout fallback. Keep `BOM UNITY GRAZE` logging.
+  - New code goes in a new file under `Runtime/` with a fresh-GUID `.meta`; edit `BomClientBehaviour.cs` minimally. No colliders, no Rigidbody, no Unity-side outcome decisions.
+  - Done when: Build, Content (1562) and Rounds Yard+Draw pass, and the Rounds primary and guest logs contain a `BOM UNITY BURST` line for the round-ending death of each run and none for a quit.
+    [ ] Owner check: the last death of a two-player round bursts; quitting a window does not; a limb drops as its blast is drawn.
 - [x] **C3 Audio** (T3 can do this; Haiku, S) claimed: Claude Haiku 5.5 2026-11-11; done: Claude Haiku 5.5 2026-11-11 6beaeac — Build and Rounds Yard+Draw pass; no "Game audio prefab" error; whistle once per round state (4 per client per run); NetworkMenu/NetworkYard: no music (GameAudio's scene list has neither); owner check still open
   - Call Darryn's public statics in `Assets/Game/Scripts/GameAudio.cs` without editing that file:
     `PlayBombExplosion(pos)` on each native explosion, `PlayWhistle()` when a round goes Playing and again when it goes Finished,
     and `PlayButtonPopSound()` on our UI Toolkit buttons in `BomNetworkHud`.
   - Read how `GameAudio` picks music by scene name, and write what happens in `NetworkMenu`/`NetworkYard` into your tick line.
   - Done when: Build and Rounds pass, and the player log has no `Game audio prefab could not be loaded`. [ ] Owner check.
+- [ ] **A4 Tool and doc fixes from the midpoint review** (T2, Sonnet, S; Lane U; after C2c)
+  - Level trap: make `Test-NetworkRounds.ps1`/`BomNetworkMenuBuilder.BuildWithDrawFixture` also re-export the yard (`BomYardBuilder.CreateAndExport`), and refresh
+    `integration/fixtures/round-draw/draw.json` (it still says gameplay config 3) from the gate output (review finding 6).
+  - DLL trap: make `Test-RealNativeInterop.ps1` back up and restore the stage `bomcore.dll`, `bomcore.build.json` and the `build/interop/` copy itself, so rule 7's manual restore is no longer needed.
+  - Stale versions: `integration/README.md:57-58` (ABI 1.4, protocol 7, round format 2, config 2) must say ABI 1.5, protocol 8, round format 3, config 5. Refresh or delete the
+    `integration/contracts/BomNative.cs`, `bom-abi.json`, `bom_client.h` ABI 1.4 copies (prefer: have `Build-OwnerNative.py` refresh them from `Documents\BOM\bindings`) and fix
+    `contracts/README.md` ("pending M1") and `round-rules.md:23-26` ("E1-N3 must update").
+  - Exporter: `BomLevelAuthoring.GrazesToDie` gets `[Range(1,255)]` and `BomLevelExporter` rejects values outside 1..255 with a clear message (finding 13).
+  - HUD guard: re-run `BomNetworkHud.DisableDuplicateArenaHud` on `SceneManager.sceneLoaded` (finding 16).
+  - Prediction record: make the Prediction suite write per-profile resets, transitions and input generations into its `evidence/M0` record (it records `"checks": []` today).
+  - Done when: Build, Content and Rounds pass without any manual yard re-export, and `git grep -n "protocol 7" -- integration/README.md` is empty.
 - [ ] **C4 HUD, pause and results** (T2, Sonnet, M; needs D5)
   - `BomNetworkHud` still queries `level-fill`, `result-xp`, `current-level` and `next-level`, which Darryn's
     new `ArenaHud.uxml` removed. Map the HUD to his elements instead:
@@ -189,6 +218,9 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     - `return-button` = disconnect.
   - Wallet: call `MatchMenuUI.AddShopCoins(xp_gained)` exactly once per finished round. Key it on the round id;
     reconnects must not pay twice. Log `BOM WALLET round=<id> +<n>` at the moment you pay.
+  - Review notes (2026-11-11): `AddShopCoins` takes an `int` but `xp_gained` is `ulong`, so clamp to `int.MaxValue`. Bind it by reflection like C3 did and add `MatchMenuUI`
+    to `Assets/BOMIntegration/Runtime/link.xml`; also add `GameAudio` there now (`<type fullname="GameAudio" preserve="all"/>`) or IL2CPP stripping will silence C3's audio.
+    Also tell the owner: `MatchMenuUI.RestartCurrentScene` resets the wallet to 250, which would wipe coins earned here.
   - Done when: Build and Rounds pass, and each finished round logs exactly one `BOM WALLET` line. [ ] Owner check.
 - [ ] **C5 One front door** (T1, Opus, L; needs D3 and D9)
   - Darryn's `MainMenuScene` becomes the first scene. "Play" keeps his local mode (D4). "Online" opens Odin play:
@@ -198,7 +230,10 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     - **Join:** enter an IP and port.
   - Reuse the existing `NetworkMenu` code. Edit only the files D9 lists, then re-baseline exactly those files.
     Copy the hash-update approach in commit `865a1a5`'s message, and list every re-baselined file in your commit.
-  - Done when: Build, Content and Rounds pass, and a two-window run (host and join on 127.0.0.1) goes from
+  - Review notes (2026-11-11): pass the host token to the server in memory through `ConnectTo(..., token)`; do not rely on the `BOM_TEST_HOST_TOKEN` environment variable
+    (children inherit it and its name invites removal). Plan for firewall prompts, port conflicts, and killing the server on crash or quit. The Rounds gate drives the network scene
+    directly, not the main menu, so write the check below as an automated run, not only a manual one.
+  - Done when: Build, Content and Rounds pass, an automated run goes from `MainMenuScene` to a finished round, and a two-window run (host and join on 127.0.0.1) goes from
     the main menu to a finished round with no PowerShell launcher. [ ] Owner check.
 - [ ] **C6 Darryn's levels on Odin** (T1, Opus, L)
   - `Editor/BomYardBuilder.cs` expects the old yard paths (`YardLevel/Grass_Mesh`), which Darryn replaced
@@ -289,10 +324,10 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   (`-logFile` plus Unity's frame-timing log) and the server overruns in `server-errors.log`. Report in
   `integration/review/performance-2026-11.md`, with the top 3 causes and fixes ranked by gain per effort. Change no code.
 - [ ] **F3 Fix stale docs** (T3, Haiku, S)
-  - Package `DEVELOPER-README.md` (from `integration/README.md`): make it say protocol 7 and that
+  - Package `DEVELOPER-README.md` (from `integration/README.md`): make it say protocol 8 (ABI 1.5, round format 3, config 5; recheck against `Documents\BOM\AGENTS.md`) and that
     PowerShell 5.1 or 7 works, and remove references to files that aren't in the package.
   - `Package-BomWindows.ps1` must not copy a `Logs` folder.
-  - Done when: `git grep -n "protocol 6" -- integration/README.md` returns only lines marked as history.
+  - Done when: `git grep -n -e "protocol 6" -e "protocol 7" -- integration/README.md` returns only lines marked as history.
 - [ ] **F4 Repackage** (T2, Sonnet, S; after C7 and the last E1). Build Both, then
   `Package-BomWindows.ps1 -OutputDirectory C:\Users\jblic\Documents\BOM-Release\BOM-Windows-<date>` (a new folder, never overwrite).
   Launch it with `Launch-Bom.ps1 -Clients 2` and play one round.
@@ -385,3 +420,11 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   the limb nearest the last blast; a rebuilt or late-seen actor takes limbs in a fixed order and throws no chunks.
 - 2026-11-11 Claude (E1-N3): my first by-hand export with `Start-Process -Wait` hung for 10+ min after Unity had exited (likely waiting on a child process; not proven);
   use `$p.WaitForExit()` on the returned process instead when running `CreateAndExport` by hand.
+- 2026-11-11 Claude (midpoint review, report `integration/review/alpha-sync-review-20261111.md`, Opus 5.5, read-only, verdict: safe to continue the queue):
+  native N1-N3 match `round-rules.md`; versions agree (protocol 8, round format 3, config 5, ABI 1.5); the authority boundary holds. Findings 1-4 (round-ending death never bursts,
+  a quit draws a burst, effects die with the per-revision terrain object, limb drops before its blast) became **C2c** (verified in code for 1 and 3 on `BomClientBehaviour.cs:1027`, `:1036`, `:672-677`, `:894`);
+  findings 6, 9, 13, 16 and the empty Prediction record became **A4**; finding 8 became **D12**; finding 5, 14 and 15 notes were added to C4 and C5; F3 now says protocol 8.
+  Not turned into tasks (decide later): finding 7 (the seed 137 / 200 ms / 5 % Prediction profile had 2 unscripted input-schedule restarts; repeat it 3x before treating it as noise, command in the report),
+  10 (slot labels follow the connection index, so a spectator holding slot 0 makes players read P2/P3), 11 (network play is keyboard-only and lacks W, Up and gamepad), 12 (HUD allocates garbage every frame, an input to F2).
+  Report also lists alpha features with no task (gamepad in network play, music in NetworkMenu/Yard, chosen character over the wire, wallet reset by `RestartCurrentScene`, graze HUD) and
+  says D9 and D3 block the most work, with `graze_radius` best folded into N4's ABI bump.
