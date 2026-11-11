@@ -24,11 +24,11 @@ owner approves them (decisions below).
 
 ## Owner decisions (owner ticks these; tasks that need one stop until it is ticked)
 Recommendations are Claude's. Tick = approved as written. To change a decision, edit the line.
-- [ ] **D1 Lethality.** Separate the lethal radius from the destruction radius. Keep the 5-unit craters.
+- [x] **D1 Lethality.** (approved by owner 2026-11-10) Separate the lethal radius from the destruction radius. Keep the 5-unit craters.
   Kill within 1.2 units. Between 1.2 and 2.2 units is a graze: lose a limb, die on the 3rd graze. Cover
   still protects. *Why:* today the lethal radius equals the bomb radius (5), so every bomb kills in an
   ~11-unit circle inside a 40-unit arena, with bombs every 1–2.5 s. Darryn's near misses are where the fun is.
-- [ ] **D2 Movement feel.** Speed 4→7, jump height 2.5 units, player gravity 25 (snappy, ~0.9 s airtime)
+- [x] **D2 Movement feel.** (approved by owner 2026-11-10) Speed 4→7, jump height 2.5 units, player gravity 25 (snappy, ~0.9 s airtime)
   using a *player-only* gravity scale. World gravity stays 9.8, so debris is unchanged.
   *Why:* today jump 6.3 at g=9.8 gives a floaty 1.3 s airtime at walking pace.
 - [ ] **D3 Online.** Keep Odin UDP with LAN or direct IP for now and drop Unity Relay/NGO. Design an
@@ -117,7 +117,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 ---
 
 ## Phase A: restore the pipeline (Lane U, strictly in order)
-- [ ] **A1 Native checkpoint from Odin `master`** (T1, Codex high or Opus, S)
+- [~] **A1 Native checkpoint from Odin `master`** (T1, Codex high or Opus, S) claimed: Claude Opus 5.5 2026-11-10
   1. `cd C:\Users\jblic\Desktop\Bomb-integration`, then `python integration/tools/Build-OwnerNative.py --config integration/local.config.json`.
   2. It rebuilds the server and DLL from `Documents\BOM` and copies the plugin, `BomNative.cs`,
      `bomcore.build.json` and `BomExpectedNativeIdentity.cs`. It also writes `integration/local.config.owner-validation.json`.
