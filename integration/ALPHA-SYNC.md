@@ -226,19 +226,14 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   - New defaults: speed 7, jump_speed √(2·25·2.5) ≈ 11.18, gravity_scale 25/9.8. Retune acceleration so a
     standing start reaches full speed in ≤ 0.12 s.
   - Update the Unity exporter (`Editor/BomLevelExporter.cs`) in E1, not here.
-- [~] **N1b Prediction window after N1** (Codex high or Opus, M; blocks E1-N1 and every later E1). claimed: Claude Opus 5.5 2026-11-11 The evidence is in E1-N1 above.
-  - Likely cause (confirm first): `src/shared/prediction_client.odin` ~line 92. Large scenes build a 16×16 collision window around the
-    owner (server-confirmed) position, and rebuild only when the owner gets within a *fixed* 3 units of the window edge. The predicted player runs
-    `lead_ticks` (11–18 at 200 ms/5% loss) ahead of the owner. At speed 7 / jump 11.18 that's up to ~2 units sideways and ~3.4 up,
-    so it can leave the window (`Outside_Collision_Window` → conservative) before a rebuild triggers. The margin was implicitly tuned for speed 4.
-  1. Confirm: log the conservative reason on each transition (a test-only diagnostic) during the adverse profile:
-     `python integration/tools/Run-PredictionProfile.py --config integration/local.config.owner-validation.json --evidence-stage M9 --seconds 600 --rtt-ms 200 --jitter-ms 30 --loss 0.05 --fps 144 --seed 42`
-     (run from the Unity repo after an E1-style native rebuild, or the equivalent native-only harness in `tests/interop`).
-  2. Fix: derive the rebuild margin (and the window half-size if needed) from the lead distance instead of a constant, e.g.
-     `per-tick margin + (lead_ticks + pending_commands) * max(speed, jump_speed) / 60 + 1`, capped so the window stays within the
-     existing collision-history capacity. Don't change thresholds in `tests/interop/PredictionProfile.cs`.
-  3. Add a regression test: a player at speed 7 with an 18-tick lead never reports `Outside_Collision_Window` while the owner stays inside the window.
-  - Done when: native gates pass and the adverse profile above shows `conservative_seconds` < 1 with transitions near 0. Then E1-N1 runs the full suite.
+- [x] **N1b Prediction regression after N1** (Opus, M) done: Claude Opus 5.5 2026-11-11, Odin `ef08405`; evidence: Documents/BOM/evidence/N1b/REPORT.md
+  - Real cause: not the collision window (that hypothesis was wrong; no `Outside_Collision_Window` transitions were seen). A test-only
+    `PROFILE TRANSITION` log showed every transition was `Unsafe_Position`: the profile's scripted input walked the faster N1 player
+    off the legacy floor, so the server respawned it and prediction reset/snapped. The engine was correct.
+  - Fix (harness only, `tests/interop/PredictionProfile.cs`): symmetric left/right walk that stays on the floor, jumps spaced out;
+    pass/fail thresholds unchanged. The transition diagnostic stays in for future triage. No native engine code changed (DLL unchanged).
+  - Full Prediction suite: all 6 profiles pass (seeds 42/137/2026 × typical/adverse), conservative_seconds 0, transitions 0, resets 0,
+    snaps 0, correction p99 ≤ 0.002 — identical to pre-N1.
 - [ ] **N2 Lethal radius** (D1, M): add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
   `bomb_radius`. Kill only inside `lethal_radius`, still using `blast_capsule_visible` cover.
 - [ ] **N3 Grazes** (D1, L)
@@ -261,12 +256,9 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 
 ## Phase E: bring native changes into Unity (Lane U)
 - [ ] **E1 Native checkpoint + gates after each N task** (T1, Opus, M). Copy this line for each N task (E1-N1, E1-N2, ...).
-- [!] **E1-N1** claimed: Claude Opus 5.5 2026-11-11 — **blocked on N1b** (2f554c6). Native checkpoint 35482a8, exporter v3, yard/draw
-  re-export, Build, Content (1562) and Rounds Yard+Draw all pass. The Prediction suite fails: the adverse profile (seed 42, 200 ms, 5% loss,
-  144 fps) has `conservative_seconds` 1.35 (limit < 1), with 5 transitions, 4 resets and 6 snaps (`evidence/M9/profile-20261111T140152557313Z`).
-  Before N1 the same profile had 0/0/0/0 (`profile-20261110T203824*`). The typical profile still passes but regressed (0.22 s, 2 transitions; was 0).
-  Seeds 137/2026 did not run (the suite stops at the first failure). After N1b: rebuild the native checkpoint, re-run the full
-  Prediction suite and Rounds, then tick this line. (The Unity side doesn't change again unless N1b changes the config.)
+- [x] **E1-N1** done: Claude Opus 5.5 2026-11-11. Native checkpoint 35482a8 (+ N1b harness ef08405, same DLL f591e8a1…), exporter v3,
+  yard/draw re-export, Build, Content (1562), Rounds Yard+Draw and the full Prediction suite (6/6, `evidence/M0/Test-Prediction-20261111T143426524Z.json`)
+  all pass. Rounds was not re-run after N1b: neither the DLL nor any Unity file changed. Pre-fix failure kept at `evidence/M9/profile-20261111T140152557313Z`.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -327,3 +319,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   platforms at x = ±8.5..14.5 with the faster N1 movement.
 - 2026-11-11 Claude (E1-N1): C1 left five folders of untracked screenshots (`integration/evidence/M8/unity-rounds-20261111T12*`/`T130*`).
   They're kept on disk. To keep the repo small before F5, E1-N1 committed only text evidence (logs/json); its PNGs stay on disk too.
+- 2026-11-11 Claude (N1b): when a Prediction profile regresses, read the `PROFILE TRANSITION ... reason=` lines before touching
+  `prediction_client.odin`. reason=8 (`Unsafe_Position`) means the scripted player left safe ground (harness choreography);
+  reason=10 (`Outside_Collision_Window`) would point at the window margin. Any future speed/jump change (N4 speed x1.5 item!) must keep
+  the profile's walk on the legacy floor.
