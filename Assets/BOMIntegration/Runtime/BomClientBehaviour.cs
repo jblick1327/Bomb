@@ -949,6 +949,12 @@ namespace Bom.Unity
                                     : new Color32(234, 72, 72, 255);
                             properties.SetColor("_BaseColor", color);
                             actor.GetComponent<MeshRenderer>().SetPropertyBlock(properties, 0);
+                            if (pose.kind == 2)
+                            {
+                                if (!actor.TryGetComponent<BomPlayerLook>(out var look))
+                                    look = actor.AddComponent<BomPlayerLook>();
+                                look.Configure((int)pose.id);
+                            }
                         }
                         else
                         {
@@ -1011,6 +1017,17 @@ namespace Bom.Unity
             foreach (var key in gone)
             {
                 PresentationHadActorChange = true;
+                if (key.Item1 == 2 && client.Round.state == 2)
+                {
+                    var goneActor = actors[key];
+                    var at = goneActor.TryGetComponent<BomActorView>(out var goneView)
+                        ? goneView.VisualPosition
+                        : goneActor.transform.position;
+                    var tint = goneActor.TryGetComponent<BomPlayerLook>(out var goneLook)
+                        ? goneLook.Color
+                        : BomPlayerLook.SlotColor(0);
+                    BomDeathBurst.Spawn(terrain.transform, Material, at, tint, at - Vector3.up);
+                }
                 var filter = actors[key].GetComponent<MeshFilter>();
                 if (meshes.Remove(filter.sharedMesh))
                     Destroy(filter.sharedMesh);
