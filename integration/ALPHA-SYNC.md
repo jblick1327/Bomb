@@ -117,7 +117,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 ---
 
 ## Phase A: restore the pipeline (Lane U, strictly in order)
-- [~] **A1 Native checkpoint from Odin `master`** (T1, Codex high or Opus, S) claimed: Claude Opus 5.5 2026-11-10
+- [x] **A1 Native checkpoint from Odin `master`** (T1, Codex high or Opus, S) done: Claude Opus 5.5 2026-11-10 b868ce7 — tag 1072309867234513910 from master 0c11f5e, clean; NativeInterop PASS
   1. `cd C:\Users\jblic\Desktop\Bomb-integration`, then `python integration/tools/Build-OwnerNative.py --config integration/local.config.json`.
   2. It rebuilds the server and DLL from `Documents\BOM` and copies the plugin, `BomNative.cs`,
      `bomcore.build.json` and `BomExpectedNativeIdentity.cs`. It also writes `integration/local.config.owner-validation.json`.
@@ -125,7 +125,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   3. `powershell -File integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite NativeInterop -ConfigPath integration/local.config.owner-validation.json`
   - Done when: the script prints `built-and-copied` with `source_dirty: false`, NativeInterop passes, and the 4 changed SDK files are committed.
   - Don't: edit Odin source. If `source_dirty` is true, stop and report `git -C C:\Users\jblic\Documents\BOM status`.
-- [ ] **A2 First build after the merge** (T1, Opus, M)
+- [~] **A2 First build after the merge** (T1, Opus, M) claimed: Claude Opus 5.5 2026-11-10
   1. Run Build (rule 7). The first run creates `Documents\BOM-validation\alpha-merge` and imports ~7 GB,
      including Darryn's NGO packages (needs internet). Allow 30+ minutes; run it in the background.
   2. Run Content, then Rounds.
