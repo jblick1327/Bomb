@@ -168,6 +168,12 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Death burst: clay chunks on a native death event, like `PlayerBodyDamage.Burst`. Presentation only;
     give the chunks no colliders and no Rigidbody (animate them in code).
   - Done when: Build and Rounds pass. [ ] Owner check.
+- [~] **C2b Yard stands at rest** (T2, Sonnet, S) claimed: Claude Sonnet 5.5 2026-11-11
+  - The owner saw the starting stack of slabs collapse almost at once. Find why (compare the pre-merge yard layout with the current one,
+    N1 gravity scale, E1-N1 re-export), make the smallest change that lets it stand until something blasts it, and re-export the level (Level trap, rule 7).
+  - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
+  - Done when: after 30 s in a two-window local run (`C:\Users\jblic\Documents\BOM-Release\launch-c2-check.ps1`) the structure is still standing,
+    and Build and Rounds pass. [ ] Owner check.
 - [ ] **C3 Audio** (T3 can do this; Haiku, S)
   - Call Darryn's public statics in `Assets/Game/Scripts/GameAudio.cs` without editing that file:
     `PlayBombExplosion(pos)` on each native explosion, `PlayWhistle()` when a round goes Playing and again when it goes Finished,
