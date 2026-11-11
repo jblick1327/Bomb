@@ -242,7 +242,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
     snaps 0, correction p99 ≤ 0.002 — identical to pre-N1.
 - [x] **N2 Lethal radius** (D1, M) done: GPT-6 Codex 2026-11-11 b8b1074 — game 220, transport 27, shared 101, FFI 20, Content 1562 PASS; lethal 1.2 / graze config 2.2 / crater 5; config v4 migration; evidence: Documents/BOM/evidence/N2/REPORT.md; E1-N2 pending. Scope: add config `lethal_radius` (1.2) and `graze_radius` (2.2), separate from
   `bomb_radius`. Kill only inside `lethal_radius`, still using `blast_capsule_visible` cover.
-- [ ] **N3 Grazes** (D1, L)
+- [~] **N3 Grazes** (D1, L); claimed: Codex GPT-6 2026-11-11
   - Inside `graze_radius` with cover visible, a player gets +1 graze; on the 3rd graze they die.
   - Expose the graze count per player in the round snapshot. Bump the round format, and bump the protocol if the wire changes.
   - E1 then shows lost limbs in Unity (port the `PlayerBodyDamage` limb look).
