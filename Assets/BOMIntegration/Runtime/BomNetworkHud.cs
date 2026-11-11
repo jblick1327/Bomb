@@ -59,6 +59,7 @@ namespace Bom.Unity
 
         void Start()
         {
+            DisableDuplicateArenaHud(GetComponent<UIDocument>());
             if (Client != null)
             {
                 address.SetValueWithoutNotify(Client.Address);
@@ -66,9 +67,26 @@ namespace Bom.Unity
             }
         }
 
+        // The network scenes still hold a leftover "Arena UI" UIDocument that draws Darryn's ArenaHud.uxml with no
+        // stylesheet, so his pause and game-over panels show over the game. Our HUD draws the same template, styled.
+        void DisableDuplicateArenaHud(UIDocument own)
+        {
+            if (ArenaHudTemplate == null)
+                return;
+            foreach (
+                var other in FindObjectsByType<UIDocument>(
+                    FindObjectsInactive.Include,
+                    FindObjectsSortMode.None
+                )
+            )
+                if (other != own && other.visualTreeAsset == ArenaHudTemplate && other.enabled)
+                    other.enabled = false;
+        }
+
         void OnEnable()
         {
             var doc = GetComponent<UIDocument>();
+            DisableDuplicateArenaHud(doc);
             root = doc.rootVisualElement;
             root.Clear();
             root.pickingMode = PickingMode.Ignore;
@@ -101,8 +119,8 @@ namespace Bom.Unity
             nextLevel = L("next-level");
             levelFill = hud.Q("level-fill");
             death = hud.Q("death-panel");
-            // Darryn's pause and game-over panels are hidden only by his stylesheet. Hide them inline so they
-            // never cover the game; the death panel is shown again on a finished round. C4 maps the pause panel.
+            // Belt and braces: hide the pause and game-over panels inline too, even if the stylesheet fails to apply.
+            // The death panel is shown again on a finished round. C4 maps the pause panel.
             if (hud.Q("pause-panel") is VisualElement pausePanel)
                 pausePanel.style.display = DisplayStyle.None;
             if (death != null)
