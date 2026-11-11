@@ -36,18 +36,19 @@ public sealed class BomNetworkHud:MonoBehaviour {
   // The legacy subtitle assumes local restart authority. Replace that text in
   // this instantiated tree without editing the original UXML asset.
   if(death!=null)death.Query<Label>().ForEach(label=>{if(label.text=="Press R to restart")label.text="Open the menu (Esc) for the next round.";});
-  menu=new VisualElement();menu.name="network-menu";menu.style.position=Position.Absolute;menu.style.right=20;menu.style.top=20;menu.style.width=330;menu.style.paddingLeft=18;menu.style.paddingRight=18;menu.style.paddingTop=16;menu.style.paddingBottom=16;menu.style.backgroundColor=new Color(.035f,.055f,.075f,.96f);menu.style.color=Color.white;root.Add(menu);
+  menu=new VisualElement();menu.name="network-menu";menu.style.position=Position.Absolute;menu.style.right=20;menu.style.top=20;menu.style.width=330;menu.style.maxHeight=Length.Percent(92);menu.style.paddingLeft=18;menu.style.paddingRight=18;menu.style.paddingTop=16;menu.style.paddingBottom=16;menu.style.backgroundColor=new Color(.035f,.055f,.075f,.96f);menu.style.color=Color.white;root.Add(menu);
   var title=new Label("BOM · NETWORK PLAY");title.style.fontSize=21;title.style.unityFontStyleAndWeight=FontStyle.Bold;menu.Add(title);
   menu.AddToClassList("network-menu");if(NetworkMenuStyle!=null)menu.styleSheets.Add(NetworkMenuStyle);
-  status=new Label("Connect to a local or LAN server.");status.style.whiteSpace=WhiteSpace.Normal;status.style.marginTop=8;status.style.marginBottom=8;menu.Add(status);
-  address=new TextField("Server"){value=Client!=null?Client.Address:"127.0.0.1"};port=new TextField("Port"){value=Client!=null?Client.Port.ToString():"47380"};token=new TextField("Host key"){isPasswordField=true};spectator=new Toggle("Join as spectator");menu.Add(address);menu.Add(port);menu.Add(token);menu.Add(spectator);
-  connect=new Button(()=>Act(()=>{if(!uint.TryParse(port.value,out uint number)||number<1||number>65535)throw new ArgumentException("Enter a port from 1 to 65535.");Client.ConnectTo(address.value.Trim(),number,token.value,spectator.value);message="Connecting…";})){text="Connect"};menu.Add(connect);
-  disconnect=new Button(()=>Act(()=>{Client.Disconnect();message="Disconnected. You can reconnect to this session.";})){text="Disconnect"};menu.Add(disconnect);
-  reconnect=new Button(()=>Act(()=>{Client.Reconnect();message="Reconnecting…";})){text="Reconnect"};menu.Add(reconnect);
-  mode=new DropdownField("Mode",new System.Collections.Generic.List<string>{"Sandbox","Elimination"},0);menu.Add(mode);
-  setMode=new Button(()=>Intent(5,(uint)mode.index)){text="Apply mode (host)"};menu.Add(setMode);
-  restart=new Button(()=>Intent(1,0)){text="Start next round"};menu.Add(restart);
-  menu.Add(new Button(()=>Application.Quit()){text="Quit"});
+  var body=new ScrollView(ScrollViewMode.Vertical);body.name="network-menu-body";body.style.flexShrink=1;body.style.flexGrow=0;menu.Add(body);
+  status=new Label("Connect to a local or LAN server.");status.style.whiteSpace=WhiteSpace.Normal;status.style.marginTop=8;status.style.marginBottom=8;body.Add(status);
+  address=new TextField("Server"){value=Client!=null?Client.Address:"127.0.0.1"};port=new TextField("Port"){value=Client!=null?Client.Port.ToString():"47380"};token=new TextField("Host key"){isPasswordField=true};spectator=new Toggle("Join as spectator");body.Add(address);body.Add(port);body.Add(token);body.Add(spectator);
+  connect=new Button(()=>Act(()=>{if(!uint.TryParse(port.value,out uint number)||number<1||number>65535)throw new ArgumentException("Enter a port from 1 to 65535.");Client.ConnectTo(address.value.Trim(),number,token.value,spectator.value);message="Connecting…";})){text="Connect"};body.Add(connect);
+  disconnect=new Button(()=>Act(()=>{Client.Disconnect();message="Disconnected. You can reconnect to this session.";})){text="Disconnect"};body.Add(disconnect);
+  reconnect=new Button(()=>Act(()=>{Client.Reconnect();message="Reconnecting…";})){text="Reconnect"};body.Add(reconnect);
+  mode=new DropdownField("Mode",new System.Collections.Generic.List<string>{"Sandbox","Elimination"},0);body.Add(mode);
+  setMode=new Button(()=>Intent(5,(uint)mode.index)){text="Apply mode (host)"};body.Add(setMode);
+  restart=new Button(()=>Intent(1,0)){text="Start next round"};body.Add(restart);
+  body.Add(new Button(()=>Application.Quit()){text="Quit"});
   roundState=new Label();roundState.style.position=Position.Absolute;roundState.style.left=20;roundState.style.top=20;roundState.style.fontSize=22;roundState.style.color=Color.white;roundState.pickingMode=PickingMode.Ignore;root.Add(roundState);
  }
  void Act(Action action){try{if(Client==null)throw new InvalidOperationException("Network scene is unavailable.");action();}catch(Exception error){message=error.Message;}}
