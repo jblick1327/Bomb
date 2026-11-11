@@ -226,7 +226,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   - New defaults: speed 7, jump_speed √(2·25·2.5) ≈ 11.18, gravity_scale 25/9.8. Retune acceleration so a
     standing start reaches full speed in ≤ 0.12 s.
   - Update the Unity exporter (`Editor/BomLevelExporter.cs`) in E1, not here.
-- [ ] **N1b Prediction window after N1** (Codex high or Opus, M; blocks E1-N1 and every later E1). The evidence is in E1-N1 above.
+- [~] **N1b Prediction window after N1** (Codex high or Opus, M; blocks E1-N1 and every later E1). claimed: Claude Opus 5.5 2026-11-11 The evidence is in E1-N1 above.
   - Likely cause (confirm first): `src/shared/prediction_client.odin` ~line 92. Large scenes build a 16×16 collision window around the
     owner (server-confirmed) position, and rebuild only when the owner gets within a *fixed* 3 units of the window edge. The predicted player runs
     `lead_ticks` (11–18 at 200 ms/5% loss) ahead of the owner. At speed 7 / jump 11.18 that's up to ~2 units sideways and ~3.4 up,
