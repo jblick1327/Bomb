@@ -41,12 +41,20 @@ public sealed class ArenaCamera : MonoBehaviour
     private void OnValidate() => FitArena(true);
     private void LateUpdate() => FitArena(false);
 
+    private Camera view;
+    private CharacterController playerController;
+    private bool playerSearched;
+
     private void FitArena(bool instant)
     {
-        Camera view = GetComponent<Camera>();
+        if (view == null) view = GetComponent<Camera>();
         if (view == null || layout == null) return;
-        if (player == null)
+        // Look for a player once (or in edit mode, where the scene can change).
+        if (player == null && (!playerSearched || !Application.isPlaying))
+        {
             player = FindFirstObjectByType<ArenaPlayerController>(FindObjectsInactive.Include);
+            playerSearched = true;
+        }
 
         Bounds bounds = layout.CameraBounds;
 
@@ -96,7 +104,9 @@ public sealed class ArenaCamera : MonoBehaviour
     private Vector2 GetPlayerPadding()
     {
         if (player == null) return Vector2.one * playerEdgeMargin;
-        CharacterController controller = player.GetComponent<CharacterController>();
+        if (playerController == null || playerController.gameObject != player.gameObject)
+            playerController = player.GetComponent<CharacterController>();
+        CharacterController controller = playerController;
         if (controller == null) return Vector2.one * playerEdgeMargin;
         float horizontal = controller.radius * Mathf.Max(Mathf.Abs(player.transform.lossyScale.x), Mathf.Abs(player.transform.lossyScale.z));
         float vertical = controller.height * player.transform.lossyScale.y * 0.5f;

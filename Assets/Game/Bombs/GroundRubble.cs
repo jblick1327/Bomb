@@ -5,11 +5,30 @@ using UnityEngine;
 [AddComponentMenu("Arena/Ground Rubble")]
 public sealed class GroundRubble : MonoBehaviour
 {
-    public static GroundRubble Spawn(Vector2 center, float size, Vector2 impulse, Material material, Transform parent)
+    private const float Lifetime = 8f;
+    private const float ShrinkTime = 0.6f;
+
+    private static readonly List<GroundRubble> active = new List<GroundRubble>();
+
+    // Rubble currently in the scene, so callers do not need to search for it.
+    public static IReadOnlyList<GroundRubble> Active => active;
+    public Collider Collider { get; private set; }
+
+    private Mesh mesh;
+    private float age;
+    private Vector3 startScale;
+
+    private static MaterialPropertyBlock tintProperties;
+
+    // Spawns one chunk. The impulse can include Z, so pieces fly toward and away
+    // from the camera, and they tumble freely for a sense of depth. A tint
+    // recolours the material, for example to match a player's colour.
+    public static GroundRubble Spawn(Vector3 position, float size, Vector3 impulse, Material material,
+        Transform parent, Color? tint = null)
     {
         var rubble = new GameObject("Ground Rubble");
         rubble.transform.SetParent(parent, true);
-        rubble.transform.position = new Vector3(center.x, center.y, parent.position.z);
+        rubble.transform.position = position;
 
         int sides = Random.Range(5, 8);
         var outline = new List<Vector2>(sides);
@@ -20,7 +39,8 @@ public sealed class GroundRubble : MonoBehaviour
             outline.Add(new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius);
         }
 
-        float depth = 0.22f;
+        // Chunky rather than flat, since pieces now turn in all directions.
+        float depth = size * Random.Range(0.9f, 1.4f);
         var vertices = new List<Vector3>(sides * 4);
         var triangles = new List<int>((sides - 2) * 6 + sides * 6);
         foreach (Vector2 point in outline) vertices.Add(new Vector3(point.x, point.y, -depth * 0.5f));
@@ -51,17 +71,60 @@ public sealed class GroundRubble : MonoBehaviour
         filter.sharedMesh = mesh;
         var renderer = rubble.AddComponent<MeshRenderer>();
         renderer.sharedMaterial = material;
+        if (tint.HasValue)
+        {
+            if (tintProperties == null) tintProperties = new MaterialPropertyBlock();
+            tintProperties.SetColor("_BaseColor", tint.Value);
+            tintProperties.SetColor("_Color", tint.Value);
+            renderer.SetPropertyBlock(tintProperties);
+        }
         var collider = rubble.AddComponent<MeshCollider>();
         collider.sharedMesh = mesh;
         collider.convex = true;
         var body = rubble.AddComponent<Rigidbody>();
         body.mass = Random.Range(0.4f, 1.2f);
-        body.constraints = RigidbodyConstraints.FreezePositionZ
-            | RigidbodyConstraints.FreezeRotationX
-            | RigidbodyConstraints.FreezeRotationY;
         body.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        body.AddForce(new Vector3(impulse.x, impulse.y, 0f), ForceMode.Impulse);
-        body.AddTorque(Vector3.forward * Random.Range(-2f, 2f), ForceMode.Impulse);
-        return rubble.AddComponent<GroundRubble>();
+        body.AddForce(impulse, ForceMode.Impulse);
+        body.AddTorque(Random.insideUnitSphere * 2f, ForceMode.Impulse);
+        // Bombs pass through rubble instead of bouncing off it.
+        foreach (FallingBomb bomb in FallingBomb.Active)
+            if (bomb.TryGetComponent(out Collider bombCollider)) Physics.IgnoreCollision(collider, bombCollider);
+
+        GroundRubble component = rubble.AddComponent<GroundRubble>();
+        component.mesh = mesh;
+        component.Collider = collider;
+        component.startScale = rubble.transform.localScale;
+        return component;
+    }
+
+    // Removes all rubble, for a fresh round.
+    public static void ClearAll()
+    {
+        for (int i = active.Count - 1; i >= 0; i--)
+        {
+            GroundRubble rubble = active[i];
+            rubble.gameObject.SetActive(false);
+            Destroy(rubble.gameObject);
+        }
+    }
+
+    private void OnEnable() => active.Add(this);
+    private void OnDisable() => active.Remove(this);
+
+    // Shrink away after a while so rubble does not pile up over a long round.
+    private void Update()
+    {
+        age += Time.deltaTime;
+        float shrinkStart = Lifetime - ShrinkTime;
+        if (age < shrinkStart) return;
+        float t = Mathf.Clamp01((age - shrinkStart) / ShrinkTime);
+        transform.localScale = startScale * (1f - t);
+        if (t >= 1f) Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        // Generated meshes are not freed with their GameObject.
+        if (mesh != null) Destroy(mesh);
     }
 }
