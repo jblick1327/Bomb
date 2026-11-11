@@ -40,6 +40,7 @@ namespace Bom.Unity
             reconnect,
             restart,
             setMode;
+        Button replay, leave;
         string message = "Connect to a local or LAN server.";
         ulong displayedRound,
             displayedTick;
@@ -229,6 +230,20 @@ namespace Bom.Unity
             body.Add(setMode);
             restart = new Button(() => Intent(1, 0)) { text = "Start next round" };
             body.Add(restart);
+            // Darryn's game-over panel buttons: REPLAY asks the host to start the next round (same command as the menu button),
+            // RETURN leaves the server and shows the connection menu. Nothing was wired to them before.
+            replay = hud.Q<Button>("replay-button");
+            leave = hud.Q<Button>("return-button");
+            if (replay != null)
+                replay.clicked += () => Intent(1, 0);
+            if (leave != null)
+                leave.clicked += () =>
+                    Click(() =>
+                    {
+                        Client.Disconnect();
+                        message = "Left the server. Connect to play again.";
+                        SetMenuVisible(true);
+                    });
             body.Add(new Button(() => Click(() => Application.Quit())) { text = "Quit" });
             roundState = new Label();
             roundState.style.position = Position.Absolute;
@@ -358,7 +373,14 @@ namespace Bom.Unity
             setMode.SetEnabled(
                 requested && host && (!has || r.mode == 0 || r.state == 0 || r.state == 3)
             );
-            restart.SetEnabled(requested && has && (r.flags & 2) != 0);
+            bool canRestart = requested && has && (r.flags & 2) != 0;
+            restart.SetEnabled(canRestart);
+            if (replay != null)
+            {
+                replay.SetEnabled(canRestart);
+                replay.text = canRestart ? "REPLAY" : "WAITING FOR HOST";
+            }
+            leave?.SetEnabled(requested);
             string error = !string.IsNullOrEmpty(Client.ConnectionError)
                 ? Client.ConnectionError
                 : session.Error;

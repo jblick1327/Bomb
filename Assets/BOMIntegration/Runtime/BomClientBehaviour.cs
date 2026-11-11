@@ -356,10 +356,22 @@ namespace Bom.Unity
                         )
                         {
                             Vector3 point = ray.GetPoint(distance);
+                            // A click is a one-off host diagnostic, so stamp it with the native clock now. The input event's own
+                            // timestamp (c.time + inputOffset) lagged by more than the native 0.5 s bound on the owner's machine,
+                            // so every click came back Expired (status 3). The age is logged so that is visible.
+                            double now = BomSession.Now;
+                            Debug.Log(
+                                "BOM UNITY BLAST click_age_s="
+                                    + (now - (c.time + inputOffset)).ToString("F3")
+                                    + " x="
+                                    + point.x.ToString("F2")
+                                    + " y="
+                                    + point.y.ToString("F2")
+                            );
                             BomSession.Check(
                                 BomNative.bom_client_enqueue_action(
                                     session.Handle,
-                                    c.time + inputOffset,
+                                    now,
                                     point.x,
                                     point.y
                                 )
