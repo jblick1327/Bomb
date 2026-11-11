@@ -219,7 +219,7 @@ Every N task:
 
 Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 `.\scripts\test-client-core.ps1 -ConfigPath C:\Users\jblic\Desktop\Bomb-integration\integration\local.config.json`.
-- [~] **N1 Movement feel** (D2, M) claimed: GPT-6 Codex 2026-11-11
+- [x] **N1 Movement feel** (D2, M) done: GPT-6 Codex 2026-11-11 35482a8 — game 220, transport 27, shared 95, FFI 20, Content 1562 PASS; speed 7 at 0.100 s, player g=25, config v3 migrates v2; evidence: Documents/BOM/evidence/N1/REPORT.md; E1-N1 pending
   - Add `gravity_scale` to `Player_Tuning`, applied to the player body only (Box2D per-body gravity scale).
   - Gameplay config version 2→3, with migration from 2.
   - New defaults: speed 7, jump_speed √(2·25·2.5) ≈ 11.18, gravity_scale 25/9.8. Retune acceleration so a

@@ -1,12 +1,31 @@
 # Native elimination rules (owner follow-up)
 
-Current source: protocol 7 / round snapshot format 2 / gameplay config 2 /
+Current native source: protocol 7 / round snapshot format 2 / gameplay config 3 /
 ABI 1.4 / canonical topology 3. Protocol 7 changes the round wire roster from
 two to four records. Config 2 adds actual blast radius and the Elimination
-interval ramp; v4 level format remains 4. Old config-1 levels migrate to the
-current defaults while preserving their authored player/gravity/fuse/Sandbox
-interval tuning. M8/M9 protocol-6 binaries and M7 protocol-5 binaries are frozen
-historical checkpoints and must not be mixed with these builds.
+interval ramp; config 3 adds player-only gravity scaling. Level format remains 4.
+Explicit config-2 levels migrate preserving every authored field and adding
+player gravity scale 1. Config-1 levels also preserve authored player/gravity/
+fuse/Sandbox interval tuning, with current defaults for radius and Elimination
+pacing and player gravity scale 1. Historical M8/M9 protocol-6 binaries and M7
+protocol-5 binaries must not be mixed with these builds. Unity's config-2 SDK
+checkpoint and exporter remain pending E1-N1; matching native/config manifests
+and re-exported levels are required before using N1 in Unity.
+
+N1 movement (D2, approved 2026-11-10): new native defaults are speed 7,
+acceleration 70 (standing start reaches full speed in six 60 Hz ticks, 0.100 s),
+jump speed sqrt(2 * 25 * 2.5), approximately 11.18034, and player gravity scale
+25 / 9.8. Jump height is 2.5 units analytically with approximately 0.9 s airtime.
+World gravity remains (0, -9.8); bomb and debris gravity are unchanged. Coyote
+time and jump buffer remain 0.1 s. The authoritative player body and native
+prediction/rewind use the same authored tuning and Box2D per-body gravity scale.
+Respawn and rebuild preserve the configured rule. Gravity scale must be finite
+and in [0.1, 10], and is included in config and level gameplay manifest hashing.
+Omitted configs with recognized native default IDs resolve to current defaults;
+explicit v1/v2 configs retain legacy authored movement until re-exported as v3.
+Only the frozen historical material/seam snapshot fixtures retain the original
+player tuning (4 / 32 / 6.3 / scale 1), explicitly approved by the owner on
+2026-11-11, preserving their existing snapshots and byte-identity assertions.
 
 Odin owns a 2–4-participant elimination controller, separate from Sandbox.
 At least two matching, natively validated ready baselines start a
