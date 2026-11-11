@@ -84,10 +84,13 @@ namespace Bom.Unity
             new Dictionary<(uint, ulong), GameObject>();
         readonly List<Mesh> meshes = new List<Mesh>();
         readonly BomActorPool actorPool = new BomActorPool();
-        // Last native blast centre, so a graze takes the limb nearest the bomb (presentation only).
-        Vector2 lastBlast;
-        ulong lastBlastRound;
-        bool hasLastBlast;
+        // One persistent parent for blast, death-burst and graze-chunk effects. The per-revision terrain object
+        // is destroyed on every topology revision; this root survives that and is cleared by ClearScene(false).
+        GameObject effects;
+        readonly BomDeathWatch deaths = new BomDeathWatch();
+        readonly BomGrazeQueue grazes = new BomGrazeQueue();
+        readonly List<BomDeathWatch.Burst> deathsDue = new List<BomDeathWatch.Burst>();
+        readonly List<BomGrazeQueue.Release> grazesDue = new List<BomGrazeQueue.Release>();
         public int PooledActorCount => actorPool.OwnedCount;
         public int IdleActorCount => actorPool.IdleCount;
         readonly Dictionary<ulong, BomMeshGeometry> cellGeometry =
@@ -665,10 +668,32 @@ namespace Bom.Unity
             Close();
         }
 
+        Transform EffectsRoot()
+        {
+            if (effects == null)
+                effects = new GameObject("Native effects");
+            return effects.transform;
+        }
+
+        void ClearEffects()
+        {
+            if (effects != null)
+            {
+                effects.SetActive(false);
+                Destroy(effects);
+                effects = null;
+            }
+            deaths.Clear();
+            grazes.Clear();
+        }
+
         void ClearScene(bool keepSource = false)
         {
             if (!keepSource)
+            {
                 sourcePresentation?.Clear();
+                ClearEffects();
+            }
             if (terrain != null)
             {
                 terrain.SetActive(false);
@@ -998,6 +1023,11 @@ namespace Bom.Unity
                         new Vector3(pose.x, pose.y, 0),
                         BomUnityCoordinates.Rotation(pose.angle)
                     );
+                if (pose.kind == 2)
+                    deaths.Remember(
+                        (uint)pose.id,
+                        actorView != null ? actorView.VisualPosition : body.position
+                    );
                 if (smoke && smokeActive && pose.kind == 2 && pose.id == s.local_player_id)
                 {
                     if (
@@ -1024,17 +1054,6 @@ namespace Bom.Unity
             foreach (var key in gone)
             {
                 PresentationHadActorChange = true;
-                if (key.Item1 == 2 && client.Round.state == 2)
-                {
-                    var goneActor = actors[key];
-                    var at = goneActor.TryGetComponent<BomActorView>(out var goneView)
-                        ? goneView.VisualPosition
-                        : goneActor.transform.position;
-                    var tint = goneActor.TryGetComponent<BomPlayerLook>(out var goneLook)
-                        ? goneLook.Color
-                        : BomPlayerLook.SlotColor(0);
-                    BomDeathBurst.Spawn(terrain.transform, Material, at, tint, at - Vector3.up);
-                }
                 var filter = actors[key].GetComponent<MeshFilter>();
                 if (meshes.Remove(filter.sharedMesh))
                     Destroy(filter.sharedMesh);
@@ -1054,6 +1073,7 @@ namespace Bom.Unity
                         );
             }
             BomGameAudio.RoundState(client.Round.flags, client.Round.round_id, client.Round.state);
+            ObserveRoster(client);
             for (int i = 0; i < s.event_count; i++)
             {
                 var e = client.Events[i];
@@ -1069,14 +1089,12 @@ namespace Bom.Unity
                     foreach (var source in client.Sources.Values)
                         front = Mathf.Min(front, source.Binding.depth_lo - .1f);
                     var center = new Vector3(e.x, e.y, front);
-                    lastBlast = new Vector2(e.x, e.y);
-                    lastBlastRound = client.Round.round_id;
-                    hasLastBlast = true;
+                    grazes.Explosion(e.tick, new Vector2(e.x, e.y));
                     BomGameAudio.BombExplosion(center);
                     if (BlastPrefab != null)
                     {
                         BomAuthorityAudit.Validate(BlastPrefab);
-                        var effect = Instantiate(BlastPrefab, terrain.transform);
+                        var effect = Instantiate(BlastPrefab, EffectsRoot());
                         BomAuthorityAudit.Validate(effect);
                         effect.name = "Native blast " + e.id;
                         effect
@@ -1089,7 +1107,7 @@ namespace Bom.Unity
                     else
                     {
                         var effect = new GameObject("Native explosion " + e.id);
-                        effect.transform.SetParent(terrain.transform, false);
+                        effect.transform.SetParent(EffectsRoot(), false);
                         effect.AddComponent<BomExplosionView>().Show(Material, center, e.radius);
                     }
                     ExplosionVisuals++;
@@ -1109,65 +1127,160 @@ namespace Bom.Unity
                         + s.presentation_tick
                 );
             }
+            PresentDeaths(client);
             PresentLimbLoss(client);
+        }
+
+        // Copied native roster -> presentation queues, before this sample's events are shown. A death is the
+        // roster's alive 1 -> 0 (Blast or Bounds, never Disconnect), not a pose vanishing; a graze increase waits
+        // for its explosion event. Slot is the native server client index, the same number as the pose id.
+        void ObserveRoster(BomSession client)
+        {
+            var round = client.Round;
+            var players = client.RoundPlayers;
+            int playerCount = Mathf.Min((int)round.player_count, players.Length);
+            double now = Time.unscaledTimeAsDouble;
+            for (int i = 0; i < playerCount; i++)
+            {
+                var p = players[i];
+                grazes.Observe(
+                    p.slot,
+                    round.round_id,
+                    p.session_id,
+                    p.generation,
+                    p.graze_count,
+                    round.tick,
+                    now
+                );
+                string skipped = deaths.Observe(
+                    p.slot,
+                    round.round_id,
+                    p.session_id,
+                    p.generation,
+                    p.alive != 0,
+                    p.death,
+                    p.death_tick,
+                    now
+                );
+                if (skipped.Length > 0)
+                    Debug.Log(
+                        "BOM UNITY NOBURST player="
+                            + p.slot
+                            + " round="
+                            + round.round_id
+                            + " death="
+                            + p.death
+                            + " reason="
+                            + skipped
+                    );
+            }
+        }
+
+        void PresentDeaths(BomSession client)
+        {
+            deathsDue.Clear();
+            deaths.Collect(client.Sample.presentation_tick, Time.unscaledTimeAsDouble, deathsDue);
+            foreach (var burst in deathsDue)
+            {
+                BomDeathBurst.Spawn(
+                    EffectsRoot(),
+                    Material,
+                    burst.Position,
+                    BomPlayerLook.SlotColor((int)burst.Slot),
+                    burst.Position - Vector3.up
+                );
+                Debug.Log(
+                    "BOM UNITY BURST player="
+                        + burst.Slot
+                        + " round="
+                        + burst.Round
+                        + " death="
+                        + burst.Death
+                        + " session="
+                        + burst.Session
+                        + " generation="
+                        + burst.Generation
+                );
+            }
         }
 
         // Limb loss from the copied native graze counts (N3). A player pose id is the native server client
         // index, and BomRoundPlayer.slot is that same index (no offset): in Rounds the observer holds slot 0,
-        // so the two players are slots/pose ids 1 and 2 (guest logs local=2 and slot=2).
+        // so the two players are slots/pose ids 1 and 2 (guest logs local=2 and slot=2). Actors are recycled on
+        // every topology revision, so the already-shown count is presented first (a silent rebuild when the
+        // actor is new) and each released increase after it, with its own blast centre.
         void PresentLimbLoss(BomSession client)
         {
             var round = client.Round;
             var players = client.RoundPlayers;
             int playerCount = Mathf.Min((int)round.player_count, players.Length);
+            double now = Time.unscaledTimeAsDouble;
             foreach (var pair in actors)
             {
                 if (pair.Key.Item1 != 2 || !pair.Value.TryGetComponent<BomLimbLoss>(out var limbLoss))
                     continue;
-                uint count = 0;
                 ulong session = 0,
                     playerGeneration = 0;
                 for (int i = 0; i < playerCount; i++)
                     if (players[i].slot == pair.Key.Item2)
                     {
-                        count = players[i].graze_count;
                         session = players[i].session_id;
                         playerGeneration = players[i].generation;
                         break;
                     }
-                uint before = limbLoss.ShownCount;
                 var tint = pair.Value.TryGetComponent<BomPlayerLook>(out var look)
                     ? look.Color
                     : BomPlayerLook.SlotColor(0);
-                int presented = limbLoss.Present(
-                    round.round_id,
-                    session,
-                    playerGeneration,
-                    count,
-                    Material,
-                    terrain != null ? terrain.transform : null,
-                    tint,
-                    lastBlast,
-                    hasLastBlast && lastBlastRound == round.round_id
-                );
-                if (presented > 0 || before != limbLoss.ShownCount)
-                    Debug.Log(
-                        "BOM UNITY GRAZE player="
-                            + pair.Key.Item2
-                            + " round="
-                            + round.round_id
-                            + " session="
-                            + session
-                            + " count="
-                            + count
-                            + " presented="
-                            + presented
-                            + " limbs_lost="
-                            + limbLoss.LostLimbs
-                            + "/"
-                            + limbLoss.LimbCount
-                    );
+                grazesDue.Clear();
+                uint settled = grazes.Collect((uint)pair.Key.Item2, now, grazesDue);
+                var at = (pair.Key.Item2, session, playerGeneration, tint);
+                PresentGraze(round, limbLoss, at, settled, default, false);
+                foreach (var release in grazesDue)
+                    PresentGraze(round, limbLoss, at, release.Count, release.Blast, release.HasBlast);
             }
+        }
+
+        void PresentGraze(
+            BomRoundInfo round,
+            BomLimbLoss limbLoss,
+            (ulong, ulong, ulong, Color) who,
+            uint count,
+            Vector2 blast,
+            bool hasBlast
+        )
+        {
+            var (player, session, playerGeneration, tint) = who;
+            uint before = limbLoss.ShownCount;
+            int presented = limbLoss.Present(
+                round.round_id,
+                session,
+                playerGeneration,
+                count,
+                Material,
+                EffectsRoot(),
+                tint,
+                blast,
+                hasBlast
+            );
+            if (presented > 0 || before != limbLoss.ShownCount)
+                Debug.Log(
+                    "BOM UNITY GRAZE player="
+                        + player
+                        + " round="
+                        + round.round_id
+                        + " session="
+                        + session
+                        + " count="
+                        + count
+                        + " presented="
+                        + presented
+                        + " limbs_lost="
+                        + limbLoss.LostLimbs
+                        + "/"
+                        + limbLoss.LimbCount
+                        + " blast="
+                        + (hasBlast ? blast.x + "," + blast.y : "none")
+                );
         }
 
         void OnGUI()
