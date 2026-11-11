@@ -192,7 +192,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - New code goes in a new file under `Runtime/` with a fresh-GUID `.meta`; edit `BomClientBehaviour.cs` minimally. No colliders, no Rigidbody, no Unity-side outcome decisions.
   - Done when: Build, Content (1562) and Rounds Yard+Draw pass, and the Rounds primary and guest logs contain a `BOM UNITY BURST` line for the round-ending death of each run and none for a quit.
     [ ] Owner check: the last death of a two-player round bursts; quitting a window does not; a limb drops as its blast is drawn.
-- [x] **C2d Pointer stays visible in the network scenes** (T2, Sonnet, S; owner report 2026-11-11) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 4202ffc — Build, Content (1562) and Rounds Yard+Draw pass, 0 Exception lines; pointer not yet seen on screen
+- [x] **C2d Pointer stays visible in the network scenes** (T2, Sonnet, S; owner report 2026-11-11) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 4202ffc — Build, Content (1562) and Rounds Yard+Draw pass, 0 Exception lines; revised in 2d50ebd (the first guard flipped the pointer every frame, so it flickered); pointer not yet seen on screen
   - Darryn's `Assets/Game/UI/MenuCursor.cs` sets `Cursor.visible = false` every frame and draws its own ring only when an `ArenaSession` menu is open; the network scenes have no `ArenaSession`,
     so the pointer vanished (the connection menu and the host's click-to-blast were hard to use). Do not edit his script: new `Runtime/BomCursorGuard.cs` shows the OS pointer in `LateUpdate`, added by `BomNetworkHud`.
   - Done when: Build and Rounds pass. [ ] Owner check: the pointer is visible in NetworkMenu and NetworkYard, over the Esc menu, and the host can click to blast.
@@ -432,3 +432,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   10 (slot labels follow the connection index, so a spectator holding slot 0 makes players read P2/P3), 11 (network play is keyboard-only and lacks W, Up and gamepad), 12 (HUD allocates garbage every frame, an input to F2).
   Report also lists alpha features with no task (gamepad in network play, music in NetworkMenu/Yard, chosen character over the wire, wallet reset by `RestartCurrentScene`, graze HUD) and
   says D9 and D3 block the most work, with `graze_radius` best folded into N4's ABI bump.
+- 2026-11-11 Claude (C2d): the owner's first two-window run with the first cursor guard flickered, then both windows went `Not Responding` (Windows `Application Hang` events for `BombNetwork.exe`
+  at 16:47:27 and 16:47:32; the shared `Player.log` shows nothing after startup). Not reproduced: two scripted two-window runs (hover, clicks, Esc, ~70 s each) stayed responsive, before and after the guard was revised.
+  One player thread runs at about 92 % of a core (uncapped frame rate; the machine has 16 logical processors). The revised guard no longer toggles the pointer. If a freeze recurs, `launch-e1n3-graze-check.ps1` now writes
+  per-window player logs and a responsiveness/CPU sampler to `Documents/BOM-Release/logs/` (spinning CPU means a busy loop, flat CPU a blocked thread). Also noted: scripted clicks on the host sent blast requests with `status=3` and no explosion event; unchecked.
