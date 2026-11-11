@@ -1,4 +1,12 @@
 package main
+import b2 "vendor:box2d"
+
+// Explicit tuning for historical simulation fixtures, never a gameplay default.
+sandbox_fixture_player_tuning :: proc(g:^Sandbox,tuning:Player_Tuning) {
+ for &player in g.world.players { if player.active {
+  player.tuning=tuning;b2.Body_SetGravityScale(player.body,tuning.gravity_scale)
+ } }
+}
 
 preset_test_yard :: proc(index: int) -> Sandbox {
 	g:=sandbox_editor_create()

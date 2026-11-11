@@ -27,9 +27,10 @@ glass_study_stats :: proc(s: ^Scene,origin: Vec2) -> Glass_Study {
  for i in 0..<3 { result.band_counts[i]=len(areas[i]); result.medians[i]=wood_median(areas[i][:]); result.cell_band_counts[i]=len(cell_areas[i]); result.cell_medians[i]=wood_median(cell_areas[i][:]) }
  return result
 }
-glass_pane_yard :: proc(radius: f32) -> Sandbox {
+glass_pane_yard :: proc(radius: f32,tuning:Player_Tuning=PLAYER_TUNING) -> Sandbox {
  g:=sandbox_editor_create(); g.editor.palette=recipe_slot(.Glass)
  assert(editor_place(&g,{0,0},{5,2.5})); sandbox_toggle_editor(&g)
+ sandbox_fixture_player_tuning(&g,tuning)
  for _ in 0..<120 { sandbox_tick(&g,0,false) }
  sandbox_fixture_radius(&g,radius); sandbox_explode(&g,{-0.6,1.25}); return g
 }

@@ -16,6 +16,8 @@ seam_followup_legacy_world_bytes :: proc(t:^testing.T) {
   case 3:g=mortar_cantilever(4.4);ticks=240
   case 4:g=mortar_bridge_yard()
   }
+  // Freeze only this historical fixture's player; the byte checks stay exact.
+  sandbox_fixture_player_tuning(&g,LEGACY_SNAPSHOT_PLAYER_TUNING)
   for phase in 0..<2 {
    if phase==1 { for _ in 0..<ticks { sandbox_tick(&g,0,false) } }
    data,ok:=encode_world_snapshot(&g.world);testing.expect(t,ok)

@@ -47,6 +47,7 @@ prediction_bomb_uncertain :: proc(c:^Net_Client,owner:Owner_State,target:u64) ->
  horizon:=f32(target-owner.state_tick)/60
  tuning:=PLAYER_TUNING;gravity:=f32(9.8);topology:=collision_history_topology(h,owner.state_tick,owner.topology_revision)
  if topology!=nil {config:=scene_gameplay_config(&topology.scene);tuning=config.player;gravity=math.abs(config.gravity.y)}
+ gravity*=tuning.gravity_scale
  margin_x:=PLAYER_RADIUS+BOMB_RADIUS+.5+max(tuning.speed,math.abs(owner.velocity.x))*horizon
  margin_y:=PLAYER_HALF_HEIGHT+BOMB_RADIUS+.5+max(f32(20),tuning.jump_speed,math.abs(owner.velocity.y)+gravity*horizon)*horizon
  for key,pose in frame.poses {

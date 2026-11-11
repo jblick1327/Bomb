@@ -34,12 +34,11 @@ owner_state_valid :: proc(o: Owner_State) -> bool {
 }
 owner_state_restore :: proc(world: b2.WorldId,player: ^Player,o: Owner_State) -> bool {
  if !owner_state_valid(o) { return false }
- radius:=player.blast_radius;tuning:=player.tuning
+ radius:=player.blast_radius;tuning:=player_tuning(player)
  // Recreate only the prediction body: stale contact manifolds/warm starts may
  // not survive an authoritative rewind. The server never calls this helper.
  if player.active && b2.Body_IsValid(player.body) { b2.DestroyBody(player.body) }
- player^=player_create(world,radius)
- player.tuning=tuning
+ player^=player_create(world,radius,tuning)
  b2.Body_SetTransform(player.body,to_b2(o.position),b2.MakeRot(0))
  b2.Body_SetLinearVelocity(player.body,to_b2(o.velocity))
  player.grounded=o.grounded;player.coyote=o.coyote;player.buffered_jump=o.buffered_jump

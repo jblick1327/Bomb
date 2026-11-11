@@ -6,9 +6,11 @@ import math "core:math"
 
 Player_Tuning :: struct {
 	speed, acceleration, jump_speed, coyote_time, jump_buffer: f32,
+	gravity_scale: f32,
 }
 
-PLAYER_TUNING :: Player_Tuning{4,32,6.3,0.1,0.1}
+// sqrt(2 * 25 * 2.5); acceleration reaches 7 units/s in six 60 Hz ticks.
+PLAYER_TUNING :: Player_Tuning{speed=7,acceleration=70,jump_speed=11.180339887498949,coyote_time=0.1,jump_buffer=0.1,gravity_scale=25.0/9.8}
 
 PLAYER_RADIUS :: f32(0.26)
 
@@ -25,12 +27,13 @@ player_refresh_pose :: proc(player: ^Player) {
 	player.pose=read_body_state(player.body).pose
 }
 
-player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
+player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0,tuning:Player_Tuning=PLAYER_TUNING) -> Player {
 	def:=b2.DefaultBodyDef()
 	def.type=.dynamicBody
 	def.position=to_b2(PLAYER_SPAWN)
 	def.fixedRotation=true
 	def.enableSleep=false
+	def.gravityScale=tuning.gravity_scale
 	body:=b2.CreateBody(world,def)
 	shape:=b2.DefaultShapeDef()
 	shape.density=0.65
@@ -38,7 +41,7 @@ player_create :: proc(world: b2.WorldId,blast_radius: f32 = 0) -> Player {
 	// Players pass through each other (negative shared group) and collide with everything else.
 	shape.filter.groupIndex=-1
 	_ = b2.CreateCapsuleShape(body,shape,b2.Capsule{center1={0,-PLAYER_SEGMENT},center2={0,PLAYER_SEGMENT},radius=PLAYER_RADIUS})
-	player:=Player{active=true,body=body,blast_radius=blast_radius,teleport_serial=1}
+	player:=Player{active=true,body=body,blast_radius=blast_radius,teleport_serial=1,tuning=tuning}
 	player_refresh_pose(&player)
 	return player
 }

@@ -4,6 +4,10 @@ import "core:sync"
 import "core:os"
 import "core:fmt"
 
+// Owner approved 2026-11-11: preserve historical snapshot bytes and assertions
+// by giving only these legacy regressions their original movement fixture.
+LEGACY_SNAPSHOT_PLAYER_TUNING :: Player_Tuning{4,32,6.3,.1,.1,1}
+
 material_golden :: proc(t:^testing.T,name:string,data:[]byte) {
  when #config(MATERIAL_CAPTURE_DIRECTORY,"")!="" {
   capture:=fmt.aprintf("%s/%s.json",#config(MATERIAL_CAPTURE_DIRECTORY,""),name); defer delete(capture)
@@ -21,6 +25,7 @@ material_legacy_fixture_bytes :: proc(t:^testing.T) {
  sync.mutex_lock(&physics_test_mutex); defer sync.mutex_unlock(&physics_test_mutex)
  for i in 0..<5 {
   g:=preset_test_yard(i)
+  sandbox_fixture_player_tuning(&g,LEGACY_SNAPSHOT_PLAYER_TUNING)
   data,ok:=encode_world_snapshot(&g.world); testing.expect(t,ok)
   material_golden(t,fmt.tprintf("preset-%d",i),data); delete(data); sandbox_destroy(&g)
  }
@@ -29,16 +34,17 @@ material_legacy_fixture_bytes :: proc(t:^testing.T) {
   switch i {
   case 0:g=soak_yard()
   case 1:g=editor_test_yard()
-  case 2:g=glass_pane_yard(3)
+  case 2:g=glass_pane_yard(3,LEGACY_SNAPSHOT_PLAYER_TUNING)
   case 3:g=glass_nonglass_yard()
   case 4:g=wood_nonwood_yard()
   case 5:g=sandbox_editor_create()
-  case 6:g=glass_pane_yard(4)
+  case 6:g=glass_pane_yard(4,LEGACY_SNAPSHOT_PLAYER_TUNING)
   }
+  sandbox_fixture_player_tuning(&g,LEGACY_SNAPSHOT_PLAYER_TUNING)
   data,ok:=encode_world_snapshot(&g.world); testing.expect(t,ok)
   material_golden(t,fmt.tprintf("world-%d",i),data); delete(data); sandbox_destroy(&g)
  }
- data,_,_:=soak_replay_snapshot(); material_golden(t,"replay-600",data); delete(data)
+ data,_,_:=soak_replay_snapshot(LEGACY_SNAPSHOT_PLAYER_TUNING); material_golden(t,"replay-600",data); delete(data)
  for i in 0..<12 {
   s:Scene
   switch i {

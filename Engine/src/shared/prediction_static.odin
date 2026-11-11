@@ -77,8 +77,7 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
  shape:=b2.DefaultShapeDef();shape.material.friction=.65
  _=b2.CreatePolygonShape(floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*.5))
  }
- p.player=player_create(p.scene.physics.world)
- p.player.tuning=scene_gameplay_config(source).player
+ p.player=player_create(p.scene.physics.world,0,scene_gameplay_config(source).player)
  return true
 }
 prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64) -> bool {
@@ -106,7 +105,7 @@ prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,col
  if !prediction_proxy_positions(p,collision,tick-1) { return false }
  if p.has_region {
   position:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body));config:=scene_gameplay_config(&p.scene)
-  margin:=PLAYER_HALF_HEIGHT+.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed,config.player.jump_speed)/60+max(math.abs(config.gravity.x),math.abs(config.gravity.y))/3600
+  margin:=PLAYER_HALF_HEIGHT+.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed,config.player.jump_speed)/60+max(math.abs(config.gravity.x),math.abs(config.gravity.y))*config.player.gravity_scale/3600
   if !prediction_region_contains(p.region,position,margin) {p.reason=.Outside_Collision_Window;return false}
  }
  jump:=command.jump_edge!=0 && command.jump_edge>p.last_jump_edge

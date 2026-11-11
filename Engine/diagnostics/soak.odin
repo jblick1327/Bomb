@@ -84,8 +84,9 @@ run_soak :: proc(minutes: int = 20) {
 	assert(save_world_snapshot(&g.world,"output/soak-final.json"))
 }
 // Each call finishes and destroys its world before the next replay is started.
-soak_replay_snapshot :: proc() -> ([]byte,[3]int,u64) {
+soak_replay_snapshot :: proc(tuning:Player_Tuning=PLAYER_TUNING) -> ([]byte,[3]int,u64) {
 	g:=soak_yard(); defer sandbox_destroy(&g)
+ sandbox_fixture_player_tuning(&g,tuning)
 	positions:=[3]Vec2{{-6.6,1},{0,0.6},{5.8,1.2}}
 	for position in positions {
 		for _ in 0..<120 { sandbox_tick(&g,0,false) }

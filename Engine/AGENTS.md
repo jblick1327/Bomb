@@ -26,7 +26,7 @@ outcomes and never reads or writes wire bytes.
 5. Machine is memory-tight: never run two Unity builds, or a build and a soak, together. Stop if C: < 15 GB free.
 
 ## Versions
-Network protocol 7, round snapshot format 2, gameplay config 2, C ABI 1.4, level format 4, canonical topology 3.
+Network protocol 7, round snapshot format 2, gameplay config 3, C ABI 1.4, level format 4, canonical topology 3.
 Odin `dev-2026-05-nightly:ea5175d`, .NET 10, MSVC 14.51 / Windows SDK 10.0.26100.0, Unity 6000.2.14f1 (Mono + IL2CPP).
 Change a version only when the wire or file layout it names actually changes.
 

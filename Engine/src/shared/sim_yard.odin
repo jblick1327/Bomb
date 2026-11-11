@@ -206,8 +206,7 @@ world_start_physics :: proc(game: ^World) {
 
 world_add_player :: proc(w: ^World,index: int) -> bool {
  if index<0 || index>=MAX_PLAYERS || w.players[index].active || !w.scene.physics.active { return false }
- w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius)
- w.players[index].tuning=scene_gameplay_config(&w.scene).player
+ w.players[index]=player_create(w.scene.physics.world,w.settings.blast_radius,scene_gameplay_config(&w.scene).player)
  if w.scene.level_policy.active { b2.Body_SetTransform(w.players[index].body,to_b2(w.scene.level_policy.spawns[index]),b2.MakeRot(0));player_refresh_pose(&w.players[index]) }
  return true
 }

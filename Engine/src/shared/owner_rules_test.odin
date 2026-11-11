@@ -157,9 +157,9 @@ owner_elimination_bomb_pacing_is_tick_based_bounded_seeded_and_resets :: proc(te
  for i in 0..<64 {t.expect(test,bomb_drop_delay_round(&a,config,false,u64(i)*10000)==bomb_drop_delay_config(&b,config),"Sandbox retains the fixed range and independent random sequence")}
 }
 @(test)
-owner_config_version_two_migrates_old_tuning_and_fingerprints_pacing_and_radius :: proc(test:^t.T) {
+owner_config_migrates_old_tuning_and_fingerprints_pacing_and_radius :: proc(test:^t.T) {
  legacy:=DEFAULT_GAMEPLAY_CONFIG;legacy.version=1;legacy.player.speed=7;legacy.bomb_drop_min=1.2
- upgraded:=gameplay_config_upgrade(legacy);t.expect(test,upgraded.version==2&&upgraded.player.speed==7&&upgraded.bomb_drop_min==1.2&&gameplay_config_valid(upgraded))
+ upgraded:=gameplay_config_upgrade(legacy);t.expect(test,upgraded.version==3&&upgraded.player.speed==7&&upgraded.player.gravity_scale==1&&upgraded.bomb_drop_min==1.2&&gameplay_config_valid(upgraded))
  original:=gameplay_config_hash(upgraded);upgraded.bomb_radius=4;t.expect(test,gameplay_config_hash(upgraded)!=original)
  upgraded=gameplay_config_upgrade(legacy);upgraded.elimination_ramp_seconds=60;t.expect(test,gameplay_config_hash(upgraded)!=original)
  upgraded=gameplay_config_upgrade(legacy);upgraded.elimination_end_interval.x=.5;t.expect(test,gameplay_config_hash(upgraded)!=original)

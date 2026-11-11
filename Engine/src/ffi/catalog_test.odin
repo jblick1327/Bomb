@@ -20,7 +20,7 @@ catalog_binding_view_is_sample_coherent_and_keeps_u64_ids_and_matrix_order :: pr
  t.expect(test,catalog.epoch==sample.epoch&&catalog.flags==1&&catalog.source_count==1&&catalog.binding_count==sample.cell_count)
  source:=catalog.sources[0];t.expect(test,source.source_identity==9007199254741001&&string(source.asset_key[:source.asset_key_length])=="fixture")
  t.expect(test,source.m00== -2&&source.m11==3&&source.m22==.4&&source.m03==7&&source.m13== -2&&source.m23==4&&source.m33==1)
- t.expect(test,catalog.level.spawn0_x== -4&&catalog.level.spawn1_x==4&&catalog.level.flags==1&&catalog.level.move_speed==4)
+ t.expect(test,catalog.level.spawn0_x== -4&&catalog.level.spawn1_x==4&&catalog.level.flags==1&&catalog.level.move_speed==7)
  for binding in catalog.bindings[:catalog.binding_count] {t.expect(test,binding.source_identity==9007199254741001&&binding.source_part_id==9007199254742001&&binding.policy_flags&4!=0)}
  hash:=[32]u8{};t.expect(test,bom_client_expect_gameplay_manifest(handle,raw_data(hash[:]),32)==BUSY)
  t.expect(test,bom_client_release_sample(handle,sample.sample_sequence)==OK)

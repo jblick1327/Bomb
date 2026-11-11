@@ -208,7 +208,8 @@ players_do_not_collide_and_commands_are_per_player :: proc(t: ^testing.T) {
  for player in g.world.players { testing.expect(t,player.active && player.blast_radius==g.world.settings.blast_radius && player.pose.position==PLAYER_SPAWN) }
  for _ in 0..<30 { sandbox_tick(&g,0,false) }
  // Only players 1 and 2 walk; player 1 starts inside player 0 and walks through player 3's column.
- for _ in 0..<40 {
+ // At speed 7, 30 ticks tests crossing before player 2 reaches the yard edge.
+ for _ in 0..<30 {
   commands:Tick_Commands
   commands.players[1].move=1; commands.players[2].move=-1
   events:=world_tick(&g.world,commands,1.0/60); delete(events.explosions)
