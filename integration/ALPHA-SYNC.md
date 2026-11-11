@@ -168,7 +168,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Death burst: clay chunks on a native death event, like `PlayerBodyDamage.Burst`. Presentation only;
     give the chunks no colliders and no Rigidbody (animate them in code).
   - Done when: Build and Rounds pass. [ ] Owner check.
-- [~] **C2b Yard stands at rest** (T2, Sonnet, S) claimed: Claude Sonnet 5.5 2026-11-11
+- [x] **C2b Yard stands at rest** (T2, Sonnet, S) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 8cd400d — cause: ground overlapped the side walls (allowed_overlaps), not a regression; ground trimmed to x ±18 (builder migration 3→4), yard re-exported; two-window run: revision constant and 0 pieces moved for ~48 s; Build, Content (1562), Rounds Yard+Draw pass; owner check still open
   - The owner saw the starting stack of slabs collapse almost at once. Find why (compare the pre-merge yard layout with the current one,
     N1 gravity scale, E1-N1 re-export), make the smallest change that lets it stand until something blasts it, and re-export the level (Level trap, rule 7).
   - Native source in `C:\Users\jblic\Documents\BOM` is Lane N: don't edit it. If the fix needs a native change, stop and report.
@@ -329,3 +329,12 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   `prediction_client.odin`. reason=8 (`Unsafe_Position`) means the scripted player left safe ground (harness choreography);
   reason=10 (`Outside_Collision_Window`) would point at the window margin. Any future speed/jump change (N4 speed x1.5 item!) must keep
   the profile's walk on the legacy floor.
+- 2026-11-11 Claude (C2b): the yard stack collapsing was NOT a regression from the merge, N1 or E1-N1. The pre-merge native server (`BOM-Release\BOM-Windows`)
+  with the pre-merge yard collapses identically (same revisions at the same ticks), and every yard source is byte-identical to the M7 export.
+  Cause: the ground proxies (x -20..20 and -20.5..20.5) overlapped the side walls (x 18..18.6), which the layout allowed (`allowed_overlaps`). Odin ejects the
+  overlapped dynamic ground cells on tick 4, the shock cracks the ground (revision +62 at tick 18) and the stack topples within about 1 s, with no player
+  or bomb. Bisect on the real server: walls removed, or ground trimmed to x -18..18 with no overlap allowance, leave the revision unchanged for 35 s.
+  Fix: `BomYardBuilder` migration 3 to 4 trims the ground to the walls' inner faces and drops the allowance. Players never reach beyond the walls.
+  Rule for C6 (Darryn's levels): a dynamic or anchored part must never overlap a Fixed wall, even with an `allowed_overlaps` entry; trim the part to the wall face.
+  Check for any level: a spectator client on the real server must see the world revision stay constant while nothing blasts it
+  (harness source: `side-session-notes/.../settle-harness`). The yard must be re-exported again at E1-N2 (N2 changes the gameplay manifest); the migration is already in the scene.
