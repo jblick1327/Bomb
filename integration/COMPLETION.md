@@ -30,4 +30,4 @@ No second physical machine was available to verify LAN operation; explicit alter
 
 ## Exact native build
 
-Native source commit: dc22bcb6f925d773b2735278d0165c19c06f35db. ABI 1.4, protocol 6, canonical structure 3. Native DLL SHA-256: 4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7. Package manifests hash each distributed file. Matching symbols are separate to keep the game download smaller.
+Historical record of the M9 build (superseded): native source commit dc22bcb6f925d773b2735278d0165c19c06f35db, ABI 1.4, protocol 6, canonical structure 3, DLL SHA-256 4f8cd3852c9eaa40cb3b2cccbf6cfe097b99c013ae8563954773a5ca294407a7. The current build is protocol 7 (tag 217136225208817073, DLL SHA-256 9a35387de22209b351811129beeb42409942fdff2a4b08bb149ea7f864e1331f); see STATUS.md. Package manifests hash each distributed file. Matching symbols are separate to keep the game download smaller.
