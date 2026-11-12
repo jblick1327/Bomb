@@ -54,6 +54,8 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   radius, but whose exposed part is only in the graze zone, takes nothing (the graze gate is skipped, and the lethal query sees nothing exposed).
   Recommended: an exposed part inside the 1.2 to 2.2 band counts as a graze even when the nearest point is inside 1.2. This is a small Lane N rule change plus a test;
   bundle it with N4 so one E1 covers it. Review: `integration/review/alpha-sync-review-20261111.md`.
+- [x] **D13 Windows graphics API.** (approved by owner 2026-11-11) Players use Direct3D 11 on Windows: `ProjectSettings/ProjectSettings.asset` gets a `WindowsStandaloneSupport` entry
+  (`m_APIs: 02000000`, `m_Automatic: 0`) and that one file is re-baselined. *Why:* on Direct3D 12 Unity 6000.2.14f1 handles window messages in the middle of a frame and crashed two owner runs (see Findings, 2026-11-11 crash root cause).
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
@@ -473,3 +475,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Permanent fix needs a choice: `ProjectSettings/ProjectSettings.asset` is protected, so either the owner approves setting Windows Graphics APIs to D3D11 there (and a re-baseline), or our build scripts set it in the validation copy only; F4's package launcher must pass `-force-d3d11` either way until then. The Rounds gate still runs D3D12.
 - 2026-11-11 Claude Opus (owner play on D3D11, 18:52): owner reports no glitches and nothing looks different. Logs agree: both windows on `Direct3D 11.0`, 0 `Crash!!!`, 0 recursion or temp-scope warnings,
   21 focus changes handled, never `Responding=False` in watch.csv; the guest's only exception is "The host left" after the host window was closed first. The permanent D3D11 setting is still open (see the root-cause finding above).
+- 2026-11-11 Claude Opus (D13): `ProjectSettings.asset` now lists Direct3D 11 for Windows (baseline entry updated: size 25575, sha256 0b98f3ec...5d23). Content, Build (0 error CS) and Rounds Yard+Draw pass, 0 Exceptions.
+  Correction to the root-cause finding: the Rounds, Performance, Prediction and level-interop tools already pass `-force-d3d11`, so the gates never ran D3D12 (likely why they never crashed). Proof the setting works:
+  a player started with no flag logs `Version: Direct3D 11.0` (`BOM-Release/diag/noforce*-p1.log`); close-by-X twice more exited in <=0.5 s. The owner launcher's `-force-d3d11` is now redundant but harmless.
+  `robocopy ProjectSettings /MIR` into the validation copy also replaced its Unity-rewritten EditorBuildSettings, GraphicsSettings, ShaderGraphSettings and UnityConnectSettings with the repo versions; the builds passed afterwards.
