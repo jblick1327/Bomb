@@ -22,6 +22,7 @@ World :: struct {
 	bombs: [dynamic]Bomb,
 	next_bomb_id: u64,
 	rain: Bomb_Rain,
+ items: Item_Rain, // N4 Elimination items; frozen outside Playing.
 	settings: Sandbox_Settings,
 	tick: u64,
 }
@@ -90,11 +91,14 @@ world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
   for &player,i in w.players {
    // Bodies remain until tick-end winner selection. A lethal hit earlier on
    // this tick must not accumulate additional damage from later detonations.
-   if !player.active || events.deaths[i]!=.None || player.graze_count>=config.grazes_to_die {continue}
+   // N4: invincibility protects against both lethal and graze damage.
+   if !player.active || events.deaths[i]!=.None || player.graze_count>=config.grazes_to_die || player.invincible_ticks>0 {continue}
    center:=from_b2(b2.Body_GetPosition(player.body))
    if blast_capsule_visible(&cover,center,Blast{point,lethal_radius}) {
     events.deaths[i]=.Blast
-   }else if graze_radius>lethal_radius && !round_capsule_hit(center,point,lethal_radius) && round_capsule_hit(center,point,graze_radius) {
+   }else if graze_radius>lethal_radius && !round_capsule_tangent(center,point,lethal_radius) && round_capsule_hit(center,point,graze_radius) {
+    // D12: a capsule reaching inside the lethal radius whose exposed part lies
+    // only in the graze band grazes. Exact lethal tangency stays harmless (N3).
     // N3 includes outer tangency. Advance the positive query radius by one
     // float ULP after the inclusive distance gate; leave the shared blast
     // load/visibility implementation and N2's lethal tangency unchanged.
@@ -149,7 +153,10 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  }
  physics_tick(&w.scene,dt)
  world_refresh_poses(w)
+ if w.elimination_playing { item_rain_step(w,dt,&events) }
  bomb_rain_after_step(w,dt,&events)
+ // Darryn's landed items fall again after a blast; still-supported ones re-land at once.
+ if len(events.explosions)>0 { item_rain_resume(&w.items) }
  if world_remove_out_of_bounds(w) { events.structure_changed=true }
  for &player,i in w.players {
   if player.active {
@@ -167,6 +174,7 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
   }
  }
  world_refresh_poses(w)
+ for &player in w.players { if player.active && player.invincible_ticks>0 { player.invincible_ticks-=1 } }
  w.tick+=1
  return events
 }
@@ -218,6 +226,7 @@ world_start_physics :: proc(game: ^World) {
 	if !any_active { world_add_player(game,0) }
 	else { for i in 0..<MAX_PLAYERS { if was[i].active { world_add_player(game,i); game.players[i].blast_radius=was[i].blast_radius } } }
 	bomb_rain_reset(&game.rain,game.settings.seed,scene_gameplay_config(s))
+	item_rain_reset(&game.items,game.settings.seed)
 	clear(&game.bombs)
 	game.tick=0
 }

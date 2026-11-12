@@ -56,7 +56,7 @@ lethal_radius_keeps_full_zero_resistance_cover_and_partial_capsule_visibility ::
 lethal_radius_round_snapshot_reports_effective_damage_radius :: proc(test:^t.T) {
  ns:Net_Server;ns.game.world.settings=DEFAULT_SANDBOX_SETTINGS
  ns.game.world.settings.blast_radius=5
- result:=round_snapshot(&ns);t.expect(test,result.lethal_radius==1.2&&result.rules_version==3)
+ result:=round_snapshot(&ns);t.expect(test,result.lethal_radius==1.2&&result.rules_version==4)
  ns.game.world.scene.level_policy.active=true;ns.game.world.scene.level_policy.config=DEFAULT_GAMEPLAY_CONFIG
  ns.game.world.scene.level_policy.config.lethal_radius=.9
  result=round_snapshot(&ns);t.expect(test,result.lethal_radius==.9)

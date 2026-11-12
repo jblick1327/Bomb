@@ -114,7 +114,7 @@ bom_build_info :: proc "c" (info:^BomBuildInfo) -> u32 {
 @(export)
 bom_actor_shape_info :: proc "c" (info:^BomActorShapeInfo) -> u32 {
  if info==nil || info.struct_size<u32(size_of(BomActorShapeInfo)) || info.version!=1 { return BAD_ARGUMENT }
- info^=BomActorShapeInfo{struct_size=u32(size_of(BomActorShapeInfo)),version=1,player_radius=core.PLAYER_RADIUS,player_segment=core.PLAYER_SEGMENT,bomb_radius=core.BOMB_RADIUS}
+ info^=BomActorShapeInfo{struct_size=u32(size_of(BomActorShapeInfo)),version=1,player_radius=core.PLAYER_RADIUS,player_segment=core.PLAYER_SEGMENT,bomb_radius=core.BOMB_RADIUS,item_radius=core.ITEM_RADIUS}
  return OK
 }
 @(export)
@@ -332,7 +332,7 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
   s.cached_epoch=s.client.epoch;s.cached_revision=scene.structure_revision;s.has_geometry=true
  }
  clear(&s.poses)
- for key,d in s.client.drawn { append(&s.poses,BomPose{id=core.key_id(key),kind=u32(core.key_kind(key)),flags=u32(d.landed),x=d.x,y=d.y,angle=d.angle,fuse=d.fuse}) }
+ for key,d in s.client.drawn { append(&s.poses,BomPose{id=core.key_id(key),kind=u32(core.key_kind(key)),flags=u32(d.landed)|u32(d.item)<<8,x=d.x,y=d.y,angle=d.angle,fuse=d.fuse}) }
  if s.client.rep.has_baseline {
   core.net_client_ensure_anchored(&s.client)
   for piece in scene.pieces {

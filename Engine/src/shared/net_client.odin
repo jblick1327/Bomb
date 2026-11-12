@@ -51,7 +51,7 @@ Complete_Frame :: struct { valid: bool, tick: u64, table: Pose_Table }
 
 Arrival :: struct { time: f64, tick: u64 }
 
-Net_Drawn :: struct { x,y,angle: f32, landed: bool, fuse: f32 }
+Net_Drawn :: struct { x,y,angle: f32, landed: bool, fuse: f32, item: u8 }
 
 Applied_Struct :: struct { epoch: u32, revision: u64, hash: u64 }
 
@@ -372,18 +372,18 @@ net_lerp :: proc(a,b: f32,t: f32) -> f32 { return a+(b-a)*t }
 net_drawn_from :: proc(s0,s1: Pose_State,alpha: f32) -> Net_Drawn {
  a0,a1:=pose_dq_angle(s0.a),pose_dq_angle(s1.a)
  landed:=s0.landed; if alpha>=0.5 { landed=s1.landed }
- return {x=net_lerp(pose_dq_pos(s0.x),pose_dq_pos(s1.x),alpha),y=net_lerp(pose_dq_pos(s0.y),pose_dq_pos(s1.y),alpha),angle=a0+radians_delta(a1,a0)*alpha,landed=landed,fuse=net_lerp(pose_dq_fuse(s0.fuse),pose_dq_fuse(s1.fuse),alpha)}
+ return {x=net_lerp(pose_dq_pos(s0.x),pose_dq_pos(s1.x),alpha),y=net_lerp(pose_dq_pos(s0.y),pose_dq_pos(s1.y),alpha),angle=a0+radians_delta(a1,a0)*alpha,landed=landed,fuse=net_lerp(pose_dq_fuse(s0.fuse),pose_dq_fuse(s1.fuse),alpha),item=s1.item}
 }
 
 net_drawn_single :: proc(s: Pose_State) -> Net_Drawn {
- return {x=pose_dq_pos(s.x),y=pose_dq_pos(s.y),angle=pose_dq_angle(s.a),landed=s.landed,fuse=pose_dq_fuse(s.fuse)}
+ return {x=pose_dq_pos(s.x),y=pose_dq_pos(s.y),angle=pose_dq_angle(s.a),landed=s.landed,fuse=pose_dq_fuse(s.fuse),item=s.item}
 }
 
 net_in_structure :: proc(c: ^Net_Client,key: u64) -> bool {
  switch key_kind(key) {
  case .Piece: row,ok:=c.rep.scene.piece_rows[key_id(key)]; return ok && c.rep.scene.pieces[row].live
  case .Rubber: row,ok:=c.rep.scene.sub_rows[key_id(key)]; return ok && c.rep.scene.subdivisions[row].live
- case .Player,.Bomb: return true
+ case .Player,.Bomb,.Item: return true
  }
  return false
 }

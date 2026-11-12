@@ -24,7 +24,15 @@ Round_Player :: struct {
  death:Round_Death,
  graze_count:u32,
  death_tick, alive_ticks, bombs_faced, xp_gained:u64,
+ // N4: coins collected this round (added to xp_gained at the award), active
+ // effects (ROUND_EFFECT_*) and each effect's last affected tick (inclusive).
+ coins:u32,
+ effects:u8,
+ invincible_end_tick, speed_end_tick:u64,
 }
+ROUND_EFFECT_INVINCIBLE :: u8(1)
+ROUND_EFFECT_SPEED_BOOST :: u8(2)
+ROUND_EFFECT_SLOW :: u8(4)
 Round_Controller :: struct {
  mode:Game_Mode,
  state:Round_State,
@@ -136,7 +144,7 @@ round_award :: proc(r:^Round_Controller) {
  for &p in r.players {
   s:=round_find_session(r,p.session_id)
   if s==nil || s.awarded_round==r.id {continue}
-  p.xp_gained=round_add_sat(round_mul_sat(p.bombs_faced,10),p.alive_ticks/60)
+  p.xp_gained=round_add_sat(round_add_sat(round_mul_sat(p.bombs_faced,10),p.alive_ticks/60),u64(p.coins))
   s.total_xp=round_add_sat(s.total_xp,p.xp_gained)
   if p.session_id==r.winner {s.wins=round_add_sat(s.wins,1)}
   s.awarded_round=r.id
@@ -168,6 +176,14 @@ round_finish_tick :: proc(r:^Round_Controller,tick:u64,deaths:[MAX_PLAYERS]Round
 
 // Upright native player capsule: segment +/- PLAYER_SEGMENT plus PLAYER_RADIUS.
 // The expanded-radius distance test includes the boundary and avoids sqrt.
+// D12 keeps N3's exact lethal tangency harmless: the touching point is on the
+// lethal boundary (not inside it) and N3's fixtures assert no graze there.
+round_capsule_tangent :: proc(center,blast:Vec2,radius:f32)->bool {
+ if !finite(center.x) || !finite(center.y) || !finite(blast.x) || !finite(blast.y) || !finite(radius) || radius<0 {return false}
+ nearest:=Vec2{center.x,clamp(blast.y,center.y-PLAYER_SEGMENT,center.y+PLAYER_SEGMENT)}
+ delta:=vsub(blast,nearest);reach:=radius+PLAYER_RADIUS
+ return f64(delta.x)*f64(delta.x)+f64(delta.y)*f64(delta.y)==f64(reach)*f64(reach)
+}
 round_capsule_hit :: proc(center,blast:Vec2,lethal_radius:f32)->bool {
  if !finite(center.x) || !finite(center.y) || !finite(blast.x) || !finite(blast.y) || !finite(lethal_radius) || lethal_radius<0 {return false}
  nearest:=Vec2{center.x,clamp(blast.y,center.y-PLAYER_SEGMENT,center.y+PLAYER_SEGMENT)}

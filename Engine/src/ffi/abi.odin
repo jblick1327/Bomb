@@ -2,7 +2,7 @@
 package ffi
 
 BOM_ABI_MAJOR :: u32(1)
-BOM_ABI_MINOR :: u32(5)
+BOM_ABI_MINOR :: u32(6)
 
 BomCreateInfo :: struct {
  struct_size: u32,
@@ -176,7 +176,7 @@ BomActorShapeInfo :: struct {
  player_radius: f32,
  player_segment: f32,
  bomb_radius: f32,
- reserved: u32,
+ item_radius: f32,
 }
 
 BomOwnerState :: struct {
@@ -374,6 +374,10 @@ BomRoundPlayer :: struct {
  alive_ticks: u64,
  bombs_faced: u64,
  xp_gained: u64,
+ coins: u32,
+ effects: u32,
+ invincible_end_tick: u64,
+ speed_end_tick: u64,
 }
 
 BomRoundConnection :: struct {
@@ -411,6 +415,8 @@ BomRoundInfo :: struct {
  player_count: u32,
  connection_count: u32,
  connections: [^]BomRoundConnection,
+ graze_radius: f32,
+ grazes_to_die: u32,
 }
 
 @(export)
@@ -615,7 +621,7 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 4: return u32(offset_of(BomActorShapeInfo,player_radius))
   case 5: return u32(offset_of(BomActorShapeInfo,player_segment))
   case 6: return u32(offset_of(BomActorShapeInfo,bomb_radius))
-  case 7: return u32(offset_of(BomActorShapeInfo,reserved))
+  case 7: return u32(offset_of(BomActorShapeInfo,item_radius))
   }
  case 13:
   switch field_id {
@@ -829,6 +835,10 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 9: return u32(offset_of(BomRoundPlayer,alive_ticks))
   case 10: return u32(offset_of(BomRoundPlayer,bombs_faced))
   case 11: return u32(offset_of(BomRoundPlayer,xp_gained))
+  case 12: return u32(offset_of(BomRoundPlayer,coins))
+  case 13: return u32(offset_of(BomRoundPlayer,effects))
+  case 14: return u32(offset_of(BomRoundPlayer,invincible_end_tick))
+  case 15: return u32(offset_of(BomRoundPlayer,speed_end_tick))
   }
  case 21:
   switch field_id {
@@ -870,6 +880,8 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 21: return u32(offset_of(BomRoundInfo,player_count))
   case 22: return u32(offset_of(BomRoundInfo,connection_count))
   case 23: return u32(offset_of(BomRoundInfo,connections))
+  case 24: return u32(offset_of(BomRoundInfo,graze_radius))
+  case 25: return u32(offset_of(BomRoundInfo,grazes_to_die))
   }
  }
  return 0xffffffff

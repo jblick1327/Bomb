@@ -4,7 +4,7 @@ import "core:fmt"
 
 NET_APP_ROUND :: u8(0xCA)
 NET_APP_READY :: u8(0xCB)
-ROUND_RULES_VERSION :: u32(3)
+ROUND_RULES_VERSION :: u32(4)
 
 Round_Connection_View :: struct {
  session_id,generation,total_xp,wins:u64,
@@ -20,6 +20,8 @@ Round_Snapshot :: struct {
  draw:bool,
  reason:Round_End,
  lethal_radius:f32,
+ graze_radius:f32, // format 4: effective graze zone, capped like lethal_radius
+ grazes_to_die:u32,
  players:[MAX_PLAYERS]Round_Player,
  connections:[MAX_PLAYERS]Round_Connection_View,
 }
@@ -29,7 +31,9 @@ round_snapshot :: proc(ns:^Net_Server)->Round_Snapshot {
  result:=Round_Snapshot{epoch=ns.game.world.scene.epoch,rules_version=ROUND_RULES_VERSION,
   tick=ns.tick,id=r.id,countdown_tick=r.countdown_tick,start_tick=r.start_tick,end_tick=r.end_tick,
   bombs_spawned=r.bombs_spawned,winner=r.winner,mode=r.mode,state=r.state,draw=r.draw,reason=r.reason,
-  lethal_radius=min(ns.game.world.settings.blast_radius,scene_gameplay_config(&ns.game.world.scene).lethal_radius),players=r.players}
+  lethal_radius=min(ns.game.world.settings.blast_radius,scene_gameplay_config(&ns.game.world.scene).lethal_radius),
+  graze_radius=min(ns.game.world.settings.blast_radius,scene_gameplay_config(&ns.game.world.scene).graze_radius),
+  grazes_to_die=scene_gameplay_config(&ns.game.world.scene).grazes_to_die,players=r.players}
  for c,i in r.connections {
   v:=&result.connections[i]
   v.session_id=c.session_id;v.generation=c.generation;v.connected=c.connected;v.ready=c.ready
@@ -55,6 +59,9 @@ round_encode :: proc(w:^nc.Writer,s:Round_Snapshot) {
   nc.write_bool(w,c.connected);nc.write_bool(w,c.ready);nc.write_bool(w,c.spectator);nc.write_bool(w,c.restart_allowed)
   nc.write_u64(w,c.progress.level);nc.write_u64(w,c.progress.xp_in_level);nc.write_u64(w,c.progress.xp_to_next)
  }
+ // Format 4 tail: graze zone and per-player N4 item state. Format-3 offsets are unchanged.
+ nc.write_f32(w,s.graze_radius);nc.write_u32(w,s.grazes_to_die)
+ for p in s.players {nc.write_u32(w,p.coins);nc.write_u8(w,p.effects);nc.write_u64(w,p.invincible_end_tick);nc.write_u64(w,p.speed_end_tick)}
 }
 
 round_decode :: proc(data:[]u8)->(s:Round_Snapshot,ok:bool) {
@@ -80,7 +87,15 @@ round_decode :: proc(data:[]u8)->(s:Round_Snapshot,ok:bool) {
   c.progress.level=nc.read_u64(&r);c.progress.xp_in_level=nc.read_u64(&r);c.progress.xp_to_next=nc.read_u64(&r)
   if c.session_id!=0 && c.progress!=round_progress(c.total_xp) {return {},false}
  }
- ok=r.ok && r.pos==len(data) && s.rules_version==ROUND_RULES_VERSION && finite(s.lethal_radius) && s.lethal_radius>=0 && s.lethal_radius<=100
+ s.graze_radius=nc.read_f32(&r);s.grazes_to_die=nc.read_u32(&r)
+ for &p in s.players {
+  p.coins=nc.read_u32(&r);p.effects=nc.read_u8(&r);p.invincible_end_tick=nc.read_u64(&r);p.speed_end_tick=nc.read_u64(&r)
+  speed:=p.effects&(ROUND_EFFECT_SPEED_BOOST|ROUND_EFFECT_SLOW)
+  if p.effects&~(ROUND_EFFECT_INVINCIBLE|ROUND_EFFECT_SPEED_BOOST|ROUND_EFFECT_SLOW)!=0 || speed==ROUND_EFFECT_SPEED_BOOST|ROUND_EFFECT_SLOW ||
+   (p.effects&ROUND_EFFECT_INVINCIBLE!=0)!=(p.invincible_end_tick!=0) || (speed!=0)!=(p.speed_end_tick!=0) {return {},false}
+ }
+ ok=r.ok && r.pos==len(data) && s.rules_version==ROUND_RULES_VERSION && finite(s.lethal_radius) && s.lethal_radius>=0 && s.lethal_radius<=100 &&
+  finite(s.graze_radius) && s.graze_radius>=0 && s.graze_radius<=100 && s.grazes_to_die<=255
  return
 }
 

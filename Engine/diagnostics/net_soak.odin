@@ -97,7 +97,7 @@ visible_vertex_error :: proc(s: ^Scene,key: u64,drawn,truth: Pose,ref_rest: Vec2
    offset:=vsub(pt,sub.rest_center)
    worst=max(worst,vlen(vsub(vadd(drawn.position,vrotate(offset,drawn.angle)),vadd(truth.position,vrotate(offset,truth.angle)))))
   } }
- case .Player,.Bomb:
+ case .Player,.Bomb,.Item:
  }
  return f64(worst)
 }
@@ -303,6 +303,7 @@ net_soak_run :: proc(cfg: Net_Soak_Config) -> Net_Soak_Result {
       for bomb in ns.game.world.bombs { if bomb.id==key_id(key) {
        if b2.Body_IsAwake(bomb.body) { result.final_pose_awake[i]+=1 }; break
       } }
+     case .Item: // items are positions, not bodies; there is no sleep state
      }
     }
    }

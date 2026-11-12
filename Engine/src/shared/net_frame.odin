@@ -39,15 +39,31 @@ NET_BLAST_RATE_COUNT :: 4
 
 NET_YARD_CEILING :: f32(12)
 
-Ent_Kind :: enum u8 { Piece, Rubber, Player, Bomb }
+Ent_Kind :: enum u8 { Piece, Rubber, Player, Bomb, Item }
 
-ent_key :: proc(kind: Ent_Kind,id: u64) -> u64 { return (u64(kind)<<62)|id }
+// Kinds 0..3 keep their two top key bits. Items (N4, protocol 9) live in the
+// Bomb space with bit 61 set; bomb ids never reach 2^61, so keys stay unique
+// and every existing key value, ordering and frame byte is unchanged.
+ITEM_KEY_BIT :: u64(1)<<61
 
-key_kind :: proc(key: u64) -> Ent_Kind { return Ent_Kind(key>>62) }
+ent_key :: proc(kind: Ent_Kind,id: u64) -> u64 {
+ if kind==.Item { return (u64(Ent_Kind.Bomb)<<62)|ITEM_KEY_BIT|(id&(ITEM_KEY_BIT-1)) }
+ return (u64(kind)<<62)|id
+}
 
-key_id :: proc(key: u64) -> u64 { return key&((u64(1)<<62)-1) }
+key_kind :: proc(key: u64) -> Ent_Kind {
+ kind:=Ent_Kind(key>>62)
+ if kind==.Bomb && key&ITEM_KEY_BIT!=0 { return .Item }
+ return kind
+}
 
-Pose_State :: struct { x,y: i32, a: u16, landed: bool, fuse: u8 }
+key_id :: proc(key: u64) -> u64 {
+ if key_kind(key)==.Item { return key&(ITEM_KEY_BIT-1) }
+ return key&((u64(1)<<62)-1)
+}
+
+// item: Item_Kind byte for Item entries (sent once per changed row, like fuse).
+Pose_State :: struct { x,y: i32, a: u16, landed: bool, fuse: u8, item: u8 }
 
 Pose_Table :: map[u64]Pose_State
 
@@ -143,6 +159,7 @@ frame_write_entry :: proc(w: ^nc.Writer,e: Frame_Entry,base: ^Pose_Table,previou
  row:Pose_State; has:=false
  if base!=nil { row,has=base^[e.key] }
  flags:=u8(kind)
+ if kind==.Item { flags=16 } // kind bits 0 plus the item flag; 0xE0 stays reserved
  if !has { flags|=4 }
  if e.state.landed { flags|=8 }
  nc.write_u8(w,flags)
@@ -152,6 +169,7 @@ frame_write_entry :: proc(w: ^nc.Writer,e: Frame_Entry,base: ^Pose_Table,previou
   nc.write_zigzag(w,i64(e.state.x)); nc.write_zigzag(w,i64(e.state.y)); nc.write_zigzag(w,i64(e.state.a))
  }
  if kind==.Bomb { nc.write_u8(w,e.state.fuse) }
+ if kind==.Item { nc.write_u8(w,e.state.item) }
  previous^=e.key; have_previous^=true
 }
 
@@ -168,7 +186,7 @@ frame_entry_estimate :: proc(e: Frame_Entry,base: ^Pose_Table) -> int {
  size:=2+1
  if has { size+=nc.varint_size(nc.zigzag_encode(i64(e.state.x)-i64(row.x)))+nc.varint_size(nc.zigzag_encode(i64(e.state.y)-i64(row.y)))+nc.varint_size(nc.zigzag_encode(angle_delta(e.state.a,row.a))) }
  else { size+=nc.varint_size(nc.zigzag_encode(i64(e.state.x)))+nc.varint_size(nc.zigzag_encode(i64(e.state.y)))+nc.varint_size(nc.zigzag_encode(i64(e.state.a))) }
- if key_kind(e.key)==.Bomb { size+=1 }
+ if kind:=key_kind(e.key); kind==.Bomb || kind==.Item { size+=1 }
  return size
 }
 
@@ -224,11 +242,12 @@ frame_read_body :: proc(r: ^nc.Reader,p: ^Frame_Part,base: ^Pose_Table) -> bool 
  previous:=u64(0); have_previous:=false
  for _ in 0..<int(entry_count) {
   delta:=nc.read_varint(r); flags:=nc.read_u8(r)
-  if !r.ok || flags&0xF0!=0 { return false }
+  if !r.ok || flags&0xE0!=0 { return false }
   kind:=Ent_Kind(flags&3)
+  if flags&16!=0 { if flags&3!=0 { return false }; kind=.Item }
   id:=delta
   if have_previous && key_kind(previous)==kind { id=key_id(previous)+delta }
-  if id>=(u64(1)<<62) { return false }
+  if id>=(u64(1)<<62) || (kind==.Bomb || kind==.Item) && id>=ITEM_KEY_BIT { return false }
   k:=ent_key(kind,id)
   e:=Frame_Entry{key=k}
   e.state.landed=flags&8!=0
@@ -246,6 +265,7 @@ frame_read_body :: proc(r: ^nc.Reader,p: ^Frame_Part,base: ^Pose_Table) -> bool 
    e.state.x=i32(x); e.state.y=i32(y); e.state.a=u16(a)
   }
   if kind==.Bomb { e.state.fuse=nc.read_u8(r) }
+  if kind==.Item { e.state.item=nc.read_u8(r); if e.state.item==0 || e.state.item>u8(max(Item_Kind)) { return false } }
   if !r.ok { return false }
   append(&p.entries,e); previous=k; have_previous=true
  }

@@ -11,6 +11,10 @@ Owner_State :: struct {
  support_kind: u8,
  held: i8,
  missing: u32,
+ // N4 (protocol 9): the shared movement kernel consumes these, so prediction
+ // replays an active speed item exactly. Pickups themselves are not predicted.
+ speed_effect: Speed_Effect,
+ speed_ticks: u32,
 }
 owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revision: u64) -> Owner_State {
  return {
@@ -22,6 +26,7 @@ owner_state_capture :: proc(player: ^Player,schedule: ^Input_Schedule,tick,revis
   support_velocity=player.support_velocity,coyote=player.coyote,buffered_jump=player.buffered_jump,
   support_cell=player.support_cell,grounded=player.grounded,support_kind=player.support_kind,
   held=schedule.held,missing=schedule.missing,
+  speed_effect=player.speed_effect,speed_ticks=player.speed_ticks,
  }
 }
 owner_state_valid :: proc(o: Owner_State) -> bool {
@@ -30,7 +35,8 @@ owner_state_valid :: proc(o: Owner_State) -> bool {
   finite(o.support_velocity.x) && finite(o.support_velocity.y) && finite(o.coyote) && finite(o.buffered_jump) &&
   o.coyote>=0 && o.coyote<=1.00001 && o.buffered_jump>=0 && o.buffered_jump<=1.00001 &&
   o.support_kind<=3 && o.held!=min(i8) && o.missing<=INPUT_HELD_GRACE+1 &&
-  (o.support_kind==1 || o.support_cell==0)
+  (o.support_kind==1 || o.support_cell==0) &&
+  o.speed_ticks<=ITEM_TUNING.effect_ticks && (o.speed_effect==.None)==(o.speed_ticks==0)
 }
 owner_state_restore :: proc(world: b2.WorldId,player: ^Player,o: Owner_State) -> bool {
  if !owner_state_valid(o) { return false }
@@ -44,6 +50,7 @@ owner_state_restore :: proc(world: b2.WorldId,player: ^Player,o: Owner_State) ->
  player.grounded=o.grounded;player.coyote=o.coyote;player.buffered_jump=o.buffered_jump
  player.support_velocity=o.support_velocity;player.support_cell=o.support_cell;player.support_kind=o.support_kind
  player.teleport_serial=o.teleport_serial
+ player.speed_effect=o.speed_effect;player.speed_ticks=o.speed_ticks
  player_refresh_pose(player)
  return true
 }

@@ -61,6 +61,7 @@ owner_state_encode :: proc(w:^nc.Writer,o:Owner_State) {
  nc.write_f32(w,o.position.x);nc.write_f32(w,o.position.y);nc.write_f32(w,o.velocity.x);nc.write_f32(w,o.velocity.y)
  nc.write_f32(w,o.support_velocity.x);nc.write_f32(w,o.support_velocity.y);nc.write_f32(w,o.coyote);nc.write_f32(w,o.buffered_jump)
  nc.write_u64(w,o.support_cell);nc.write_bool(w,o.grounded);nc.write_u8(w,o.support_kind);nc.write_u8(w,u8(o.held));nc.write_u8(w,u8(o.missing))
+ nc.write_u8(w,u8(o.speed_effect));nc.write_u32(w,o.speed_ticks)
 }
 owner_state_decode :: proc(data:[]u8) -> (o:Owner_State,ok:bool) {
  r:nc.Reader;nc.reader_init(&r,data)
@@ -71,5 +72,8 @@ owner_state_decode :: proc(data:[]u8) -> (o:Owner_State,ok:bool) {
  o.position={nc.read_f32(&r),nc.read_f32(&r)};o.velocity={nc.read_f32(&r),nc.read_f32(&r)}
  o.support_velocity={nc.read_f32(&r),nc.read_f32(&r)};o.coyote=nc.read_f32(&r);o.buffered_jump=nc.read_f32(&r)
  o.support_cell=nc.read_u64(&r);o.grounded=nc.read_bool(&r);o.support_kind=nc.read_u8(&r);o.held=i8(nc.read_u8(&r));o.missing=u32(nc.read_u8(&r))
+ effect:=nc.read_u8(&r);o.speed_ticks=nc.read_u32(&r)
+ if effect>u8(Speed_Effect.Slow) { return {},false }
+ o.speed_effect=Speed_Effect(effect)
  return o,r.ok && r.pos==len(data) && owner_state_valid(o)
 }

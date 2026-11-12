@@ -64,6 +64,7 @@ round_server_after_rebuild :: proc(ns:^Net_Server) {
   ns.game.world.settings.blast_mode=.Falling_Bombs
   // Falling bomb physics, radius, fuse and deterministic stream stay native.
   bomb_rain_reset(&ns.game.world.rain,ns.game.world.settings.seed,scene_gameplay_config(&ns.game.world.scene),true)
+  item_rain_reset(&ns.game.world.items,ns.game.world.settings.seed)
  }
  ns.game.world.elimination_playing=false
  round_server_sync_bodies(ns)
@@ -93,12 +94,32 @@ round_server_finish :: proc(ns:^Net_Server,events:Tick_Events) {
    if !p.alive || !ns.game.world.players[p.slot].active {continue}
    count:=ns.game.world.players[p.slot].graze_count
    if count!=p.graze_count {p.graze_count=count;ns.round_dirty=true}
+   if round_player_sync_items(&p,&ns.game.world.players[p.slot],ns.tick+1) {ns.round_dirty=true}
   }
  }
  round_finish_tick(&ns.rounds,ns.tick+1,events.deaths,events.bombs_spawned)
+ // Effects are reported only for living players in a playing round; coins stay.
+ for &p in ns.rounds.players {
+  if (p.alive && ns.rounds.state==.Playing) || (p.effects==0 && p.invincible_end_tick==0 && p.speed_end_tick==0) {continue}
+  p.effects=0;p.invincible_end_tick=0;p.speed_end_tick=0;ns.round_dirty=true
+ }
  if old!=ns.rounds.state {
   ns.round_dirty=true
   round_server_sync_bodies(ns)
   if ns.real_logging {fmt.printf("ROUND id=%d state=%v tick=%d winner=%d draw=%t reason=%v\n",ns.rounds.id,ns.rounds.state,ns.tick+1,ns.rounds.winner,ns.rounds.draw,ns.rounds.reason)}
  }
+}
+
+// Copies N4 item state after a simulated tick. End ticks are the last affected
+// tick (inclusive), so they stay constant while an effect counts down and the
+// reliable snapshot changes only on pickup and expiry.
+round_player_sync_items :: proc(p:^Round_Player,body:^Player,tick:u64)->bool {
+ effects:=u8(0);invincible_end,speed_end:=u64(0),u64(0)
+ if body.invincible_ticks>0 {effects|=ROUND_EFFECT_INVINCIBLE;invincible_end=round_add_sat(tick,u64(body.invincible_ticks))}
+ if body.speed_ticks>0 && body.speed_effect!=.None {
+  effects|=body.speed_effect==.Boost?ROUND_EFFECT_SPEED_BOOST:ROUND_EFFECT_SLOW;speed_end=round_add_sat(tick,u64(body.speed_ticks))
+ }
+ if p.coins==body.coins && p.effects==effects && p.invincible_end_tick==invincible_end && p.speed_end_tick==speed_end {return false}
+ p.coins=body.coins;p.effects=effects;p.invincible_end_tick=invincible_end;p.speed_end_tick=speed_end
+ return true
 }

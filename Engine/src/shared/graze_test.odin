@@ -162,7 +162,7 @@ graze_round_wire_has_versioned_exact_offsets_roundtrip_and_byte_identity :: proc
  snapshot:=Round_Snapshot{rules_version=ROUND_RULES_VERSION,mode=.Elimination,state=.Playing,epoch=9,id=9007199254741001,lethal_radius=1.2}
  for i in 0..<MAX_PLAYERS {snapshot.players[i]={session_id=u64(i+1),generation=u64(i+7),slot=i,alive=i<3,graze_count=u32(i)}}
  writer:nc.Writer;nc.writer_init(&writer);defer nc.writer_destroy(&writer);round_encode(&writer,snapshot)
- t.expect(test,GAME_PROTOCOL_VERSION==8&&ROUND_RULES_VERSION==3&&len(writer.data)==533)
+ t.expect(test,GAME_PROTOCOL_VERSION==9&&ROUND_RULES_VERSION==4&&len(writer.data)==533+8+MAX_PLAYERS*21)
  for i in 0..<MAX_PLAYERS {
   offset:=73+i*55+19
   t.expect(test,writer.data[offset]==u8(i)&&writer.data[offset+1]==0&&writer.data[offset+2]==0&&writer.data[offset+3]==0,"each new count occupies its fixed little-endian u32 position")

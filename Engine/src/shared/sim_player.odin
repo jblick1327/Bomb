@@ -100,6 +100,9 @@ player_movement_from_support :: proc(player: ^Player,move: f32,jump_pressed: boo
 	if jump_pressed { player.buffered_jump=tuning.jump_buffer }
 	velocity:=from_b2(b2.Body_GetLinearVelocity(player.body))
 	target:=clamp(move,f32(-1),f32(1))*tuning.speed
+	// N4 speed items scale only the movement target; jump and acceleration keep
+	// their tuning. No effect leaves the original arithmetic untouched.
+	if player.speed_ticks>0 && player.speed_effect!=.None { target*=player_speed_scale(player) }
 	velocity.x+=clamp(target-velocity.x,-tuning.acceleration*dt,tuning.acceleration*dt)
 	if player.buffered_jump>0 && player.coyote>0 {
 		velocity.y=tuning.jump_speed+max(f32(0),player.support_velocity.y)
@@ -108,6 +111,7 @@ player_movement_from_support :: proc(player: ^Player,move: f32,jump_pressed: boo
 		player.buffered_jump=0
 	}
 	player.buffered_jump=max(f32(0),player.buffered_jump-dt)
+	if player.speed_ticks>0 { player.speed_ticks-=1; if player.speed_ticks==0 { player.speed_effect=.None } }
 	b2.Body_SetLinearVelocity(player.body,to_b2(velocity))
 }
 

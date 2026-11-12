@@ -251,6 +251,11 @@ net_collect :: proc(ns: ^Net_Server) {
   state.landed=bomb.landed; state.fuse=pose_q_fuse(bomb.fuse)
   ns.current[ent_key(.Bomb,bomb.id)]=Net_Entity{state=state,fx=pose.position.x,fy=pose.position.y,fa=pose.angle}
  }
+ for item in w.items.items[:w.items.count] {
+  state:=pose_state_make(item.position.x,item.position.y,0)
+  state.landed=item.landed; state.item=u8(item.kind)
+  ns.current[ent_key(.Item,item.id)]=Net_Entity{state=state,fx=item.position.x,fy=item.position.y}
+ }
  sorted_keys(&ns.current,&ns.keys)
 }
 
@@ -278,7 +283,7 @@ net_build_frame :: proc(ns: ^Net_Server,index: int) {
   else if !sent_before || last!=entity.state { if key not_in c.pending { c.pending[key]=ns.tick } }
   if matches_base { delete_key(&c.priority,key); continue }
   kind:=key_kind(key)
-  if kind==.Player || kind==.Bomb { append(&forced,Frame_Entry{key,entity.state}); continue }
+  if kind==.Player || kind==.Bomb || kind==.Item { append(&forced,Frame_Entry{key,entity.state}); continue }
   near:=vlen(vsub(Vec2{entity.fx,entity.fy},player_position))<4
   gain:=(1+entity.speed)*(0.5+min(entity.area,1))*(near?2:1)
   accumulator:=c.priority[key]+gain

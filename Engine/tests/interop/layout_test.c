@@ -166,7 +166,7 @@ int main(void) {
  CHECK(bom_debug_layout(12,4)==OFFSET(BomActorShapeInfo,player_radius));
  CHECK(bom_debug_layout(12,5)==OFFSET(BomActorShapeInfo,player_segment));
  CHECK(bom_debug_layout(12,6)==OFFSET(BomActorShapeInfo,bomb_radius));
- CHECK(bom_debug_layout(12,7)==OFFSET(BomActorShapeInfo,reserved));
+ CHECK(bom_debug_layout(12,7)==OFFSET(BomActorShapeInfo,item_radius));
  CHECK(bom_debug_layout(13,0)==sizeof(BomOwnerState));
  CHECK(bom_debug_layout(13,1)==__alignof(BomOwnerState));
  CHECK(bom_debug_layout(13,2)==OFFSET(BomOwnerState,struct_size));
@@ -356,6 +356,10 @@ int main(void) {
  CHECK(bom_debug_layout(20,9)==OFFSET(BomRoundPlayer,alive_ticks));
  CHECK(bom_debug_layout(20,10)==OFFSET(BomRoundPlayer,bombs_faced));
  CHECK(bom_debug_layout(20,11)==OFFSET(BomRoundPlayer,xp_gained));
+ CHECK(bom_debug_layout(20,12)==OFFSET(BomRoundPlayer,coins));
+ CHECK(bom_debug_layout(20,13)==OFFSET(BomRoundPlayer,effects));
+ CHECK(bom_debug_layout(20,14)==OFFSET(BomRoundPlayer,invincible_end_tick));
+ CHECK(bom_debug_layout(20,15)==OFFSET(BomRoundPlayer,speed_end_tick));
  CHECK(bom_debug_layout(21,0)==sizeof(BomRoundConnection));
  CHECK(bom_debug_layout(21,1)==__alignof(BomRoundConnection));
  CHECK(bom_debug_layout(21,2)==OFFSET(BomRoundConnection,session_id));
@@ -391,6 +395,8 @@ int main(void) {
  CHECK(bom_debug_layout(22,21)==OFFSET(BomRoundInfo,player_count));
  CHECK(bom_debug_layout(22,22)==OFFSET(BomRoundInfo,connection_count));
  CHECK(bom_debug_layout(22,23)==OFFSET(BomRoundInfo,connections));
+ CHECK(bom_debug_layout(22,24)==OFFSET(BomRoundInfo,graze_radius));
+ CHECK(bom_debug_layout(22,25)==OFFSET(BomRoundInfo,grazes_to_die));
  CHECK(bom_abi_version()==1 && bom_build_tag()!=0);
  CHECK(bom_client_create(0,&handle)==2 && bom_client_create(&create,0)==2);
  for(i=0;i<100;i++) {
