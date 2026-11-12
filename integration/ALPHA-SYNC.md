@@ -252,8 +252,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     loads `NetworkMenu` and calls `ConnectTo(127.0.0.1, port, token)` with a fresh in-memory token. Server stop: kill-on-close job object (crash), `Application.quitting` (quit), main menu (RETURN/LEAVE GAME/Main menu; 6 s for the server's own host-left shutdown, then kill).
     The game player `Bomb.exe` is built by `Editor/BomFrontDoorBuilder.cs` into `build/validation/Game-Mono` (MainMenuScene, Darryn's 3 levels, NetworkMenu); EditorBuildSettings untouched. Evidence: `evidence/M8/frontdoor-20261112T143715768211Z` (1.5 s grace, server killed) and `…T144730281207Z` (final, server ended itself).
     Not covered by the gate: visible windows (players run `-batchmode`), the LAN bind/firewall dialog, a second PC, and a guest still connected when the host leaves (it gets the existing "The host left" error, which `BomClientBehaviour.Fail` logs as an exception).
-- [~] **C6 Darryn's levels on Odin** (T1, Opus, L) claimed: Claude Opus 5.5 2026-11-12
-  - Hand-over (WIP, Claude Opus 5.5): `Editor/BomTileLevelBuilder.cs` exports all three (run by `BomFrontDoorBuilder`, `Test-FrontDoor.ps1 -Level Yard|Bridge|Tower`); Yard front-door gate passed (`evidence/M8/frontdoor-yard-20261112T152658014670Z`). Left: Bridge and Tower gate runs, `Test-LevelManifest.py` x3, Build/Content/Rounds, Findings, tick.
+- [x] **C6 Darryn's levels on Odin** (T1, Opus, L) claimed: Claude Opus 5.5 2026-11-12; done: Claude Opus 5.5 2026-11-12 159349e — Yard, Bridge and Tower export, validate (`Test-LevelManifest.py` x3) and finish a front-door round each (17/17 checks, 0 Exception, 0 visual fallback); Classic Yard front door, Rounds Yard+Draw, Build and Content pass
   - `Editor/BomYardBuilder.cs` expects the old yard paths (`YardLevel/Grass_Mesh`), which Darryn replaced
     with ~130 `Yard Ground Tile 0x` prefabs. Write `Editor/BomTileLevelBuilder.cs`. It exports any scene
     built from `DestructibleObject` tiles plus `Left Wall`/`Right Wall`/`Bottom Boundary` into a native layout
@@ -265,7 +264,13 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     `python integration/tools/Test-LevelManifest.py --config <owner-validation config> --layout <json> --player <exe>`.
   - Add all three to the host level picker from C5. Keep the old network yard as "Classic Yard".
   - Done when: all three validate and play one round each in Rounds-style runs. Also fix the `Left Wall`/`Right Wall`
-    `BOM VISUAL FALLBACK` warning seen in every playtest. [ ] Owner check.
+    `BOM VISUAL FALLBACK` warning seen in every playtest. [ ] Owner check: host each of Yard, Bridge and Tower from the main menu; each looks like Darryn's level, blasts carve it sensibly, and spawns/camera fit; Classic Yard still works.
+  - Result: `Editor/BomTileLevelBuilder.cs` saves a *copy* of each of Darryn's scenes as `Assets/BOMIntegration/Network{YardTiles,Bridge,Tower}.unity` (his files are only opened), adds the native
+    authoring and clones NetworkMenu's session/HUD/camera, and exports `integration/fixtures/levels/{Yard,Bridge,Tower}Level.json` plus a per-tile report `<json>.tiles.json`. It runs inside
+    `BomFrontDoorBuilder` (`Test-FrontDoor.ps1`, new `-Level ClassicYard|Yard|Bridge|Tower`), which copies the layouts to `Server/levels/`. Picker order: CLASSIC YARD, YARD, BRIDGE, TOWER, on host *and* join
+    (a guest must pick the host's level; the server refuses another level's manifest). Walls: `BomVisualEntry.Hidden` (no mesh, nothing drawn); the classic yard's walls migrate too (`YardBuilderVersion` 5).
+    Mapping choices and numbers are in Findings (C6). Evidence (final player): `evidence/M8/frontdoor-yard-20261112T164606662867Z`, `frontdoor-bridge-…T164749357225Z`, `frontdoor-tower-…T164821923693Z`,
+    `frontdoor-20261112T164930709737Z` (Classic), `unity-rounds-20261112T154122903920Z`/`…T154253245490Z`, `evidence/M6/manifest-reject-20261112T154539805017Z` (Yard), `…T154625093285Z` (Bridge), `…T164421116279Z` (Tower).
 - [x] **C7 Remove NGO/Relay** (T2, Sonnet, S; needs C5 and D9) claimed: Claude Sonnet 5.5 2026-11-12; done: Claude Sonnet 5.5 2026-11-12 7a7f05d — Build 0 error CS, Content 1555, Rounds Yard+Draw and front-door gate pass; `git grep "Unity.Netcode|Services.Multiplayer" -- Assets` empty; also deleted orphan NGO-generated Assets/DefaultNetworkPrefabs.asset(+meta), outside D9 list, needed for the grep
   - Delete `Assets/Game/Online/` and remove `com.unity.netcode.gameobjects` and `com.unity.services.multiplayer` from `Packages/manifest.json`. Re-baseline.
   - Done when: Build and Content pass, and `git grep -n "Unity.Netcode\|Services.Multiplayer" -- Assets` is empty.
@@ -509,3 +514,21 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - 2026-11-12 Claude Opus (C5): for C7, nothing outside `Assets/Game/Online/` references `OnlineMenuUI`/`OnlineSession` any more, so the folder can be deleted as written. For F4: package `Server/BOM-server.exe` and
   `Server/levels/yard.json` next to `Bomb.exe` (see `BomHostServer.FindServer`); the host token is on the server's command line (visible to local programs only), never in an environment variable.
   A guest still connected when its host leaves logs `InvalidOperationException: The host left…` through `BomClientBehaviour.Fail` (`Debug.LogError(exception)`); a gate that keeps a guest connected through that would count it. Music in NetworkMenu is still the open C3 finding (not checked here).
+- 2026-11-12 Claude Opus (C6): how Darryn's tiles map to Odin (each tile's decision is in `fixtures/levels/<Level>.json.tiles.json`):
+  - **Off-plane tiles are decoration.** A tile whose depth misses the player plane (z 0 +/- 0.45, his CharacterController radius) never touches his players, so it stays visible art and does not break on Odin:
+    Bridge 88 of 110 (the whole front/rear truss: posts, braces, girders at z +/-2.08..2.42; only the 22 deck tiles are physical, all Carve -> Anchored), Yard 8 and Tower 29 pillars (z 1.06..1.76). Owner: the truss and pillars no longer carve.
+  - **Seams.** Darryn's tiles overlap neighbours, which native rejects. Each overlapping box is trimmed on its shallowest side against tiles kept whole (higher top first): Yard 87 trimmed (max 0.39), Tower 61 (max 0.18), Bridge 0.
+    The yard's 4 rocks (non-box meshes sunk into the ground) are clipped at the ground face (<= 0.222 area each). Tiles outside the walls stay art: Yard 26, Tower 10. Anything deeper than 0.5 or 25 % of a tile fails the export.
+  - **CarveAndFragment that rests only on off-plane pillars** cannot be Dynamic (it would fall at tick 0), so it is Anchored at its pillar contacts and falls once a blast removes them (his fallWhenUnsupported):
+    Tower 46 floor tiles, Yard 2 (`Cube (8)`, `Cube (10)`); 8 Tower tiles with nothing under them within 0.3 are anchored on their bottom edge. Dynamic as specified: Tower 32 (ground rows), Yard 4 (rocks).
+    Carve tiles are anchored on every edge (pieces still touching the original outline stay). Materials: Yard custom `earth` (stone), Bridge `wood`, Tower `stone`; gameplay config copied from the classic yard.
+  - Bounds: camera = his Level Bounds (-18,-25.36)..(18,34.64) in all three (his ArenaCamera uses the same); bombs drop at its top + 2 = 36.64 (his BombDropper, same as the classic yard); kill = inner wall faces x Level Bounds.
+    Spawns: his ArenaSession spacing (2) for 4 players at x -3,-1,1,3, dropped onto the surface below his spawn height: Yard y 6.64, Bridge 10.11 (top deck), Tower 20.35 (fourth floor).
+  - Not checked: the C2b settle check (world revision constant with no blasts) for Tower's dynamic ground and pillar-anchored floors; visuals and camera fit (no human looked; gate players run `-batchmode`).
+- 2026-11-12 Claude Opus (C6): the first Bridge rounds (`frontdoor-bridge-20261112T153044009290Z`, `…T153424780227Z`, kept) threw `Outline could not triangulate` in `BomExtrusion` (fallback cell mesh) at connect: a native wood plank cell
+  ends in a 4-vertex cluster 1e-4 apart that doubles back. `BomExtrusion` now retries only when the old ear clipping fails: drop vertices < 0.001 apart or collinear, strict interior test; the message now lists the outline.
+- 2026-11-12 Claude Opus (C6): `Test-LevelManifest.py` timed out against `BombNetwork.exe` (menu player, never connects by itself; failed runs `manifest-reject-20261112T1543*`/`T1544*` kept); it now passes `--bom-auto-connect`.
+  The Tower manifest run `…T160205673822Z` overlapped laptop standby (Kernel-Power 506 at 16:02:04Z, resume 507 at 16:42:18Z); rerun passed, not counted.
+- 2026-11-12 Claude Opus (C6): the tile scenes are rebuilt from Darryn's scenes in every front-door build, so their YAML churns (file IDs) and regenerated `Source_*_Mesh_*.asset` differ only in `m_Name` (not copied back).
+  `Build-BomPlayers.ps1` and the Rounds gate copy the repo's `Assets/BOMIntegration` over the validation copy, so after a front-door build copy `Levels/bomb-{yard-tiles,bridge,tower}-v1/VisualRegistry.asset` and the three
+  `Network*.unity` back before running them, or the registries go stale against `fixtures/levels` (manifest mismatch). E1 after any gameplay-config change: rerun `Test-FrontDoor.ps1` to re-export these levels too.
