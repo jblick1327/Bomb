@@ -169,6 +169,7 @@ public static class BomNetworkMenuBuilder
         };
         BomSession.Check(BomNative.bom_actor_shape_info(ref shape));
         client.BombPrefab = Bomb(shape);
+        BomItemPrefabBuilder.Build(shape);
         var hud = UnityEngine.Object.FindFirstObjectByType<BomNetworkHud>();
         hud.NetworkMenuStyle = AssetDatabase.LoadAssetAtPath<StyleSheet>(
             "Assets/BOMIntegration/Runtime/BomNetworkMenu.uss"

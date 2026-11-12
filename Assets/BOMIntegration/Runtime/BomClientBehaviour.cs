@@ -89,6 +89,10 @@ namespace Bom.Unity
         GameObject effects;
         readonly BomDeathWatch deaths = new BomDeathWatch();
         readonly BomGrazeQueue grazes = new BomGrazeQueue();
+        // E1-N4: native item actors (pose kind 4) and this sample's player poses for the pickup sound.
+        readonly BomItemWatch items = new BomItemWatch();
+        readonly List<BomPose> framePlayers = new List<BomPose>();
+        public int ItemsDrawn => items.Drawn;
         readonly List<BomDeathWatch.Burst> deathsDue = new List<BomDeathWatch.Burst>();
         readonly List<BomGrazeQueue.Release> grazesDue = new List<BomGrazeQueue.Release>();
         public int PooledActorCount => actorPool.OwnedCount;
@@ -697,6 +701,7 @@ namespace Bom.Unity
             }
             deaths.Clear();
             grazes.Clear();
+            items.Clear();
         }
 
         void ClearScene(bool keepSource = false)
@@ -962,10 +967,13 @@ namespace Bom.Unity
             }
             var seen = seenActors;
             seen.Clear();
+            framePlayers.Clear();
             for (int i = 0; i < s.pose_count; i++)
             {
                 var pose = client.Poses[i];
                 var key = (pose.kind, pose.id);
+                if (pose.kind == 2)
+                    framePlayers.Add(pose);
                 Transform body;
                 if (pose.kind < 2)
                 {
@@ -978,11 +986,17 @@ namespace Bom.Unity
                     if (!actors.TryGetValue(key, out var actor))
                     {
                         PresentationHadActorChange = true;
-                        var prefab = pose.kind == 2 ? PlayerPrefab : BombPrefab;
+                        bool item = pose.kind == BomItemLook.PoseKind;
+                        var prefab =
+                            pose.kind == 2 ? PlayerPrefab
+                            : item ? BomItemLook.Prefab(BomItemLook.Kind(pose))
+                            : BombPrefab;
+                        if (item)
+                            items.Appeared(pose, prefab);
                         if (prefab != null)
                         {
                             actor = actorPool.Rent(prefab);
-                            actor.name = (pose.kind == 2 ? "Player " : "Bomb ") + pose.id;
+                            actor.name = (pose.kind == 2 ? "Player " : item ? "Item " : "Bomb ") + pose.id;
                             var properties = new MaterialPropertyBlock();
                             Color color =
                                 pose.kind == 2
@@ -998,6 +1012,9 @@ namespace Bom.Unity
                                 if (!actor.TryGetComponent<BomLimbLoss>(out var limbLoss))
                                     limbLoss = actor.AddComponent<BomLimbLoss>();
                                 limbLoss.ResetBody();
+                                if (!actor.TryGetComponent<BomItemGlow>(out var glow))
+                                    glow = actor.AddComponent<BomItemGlow>();
+                                glow.ResetGlow();
                             }
                         }
                         else
@@ -1008,7 +1025,9 @@ namespace Bom.Unity
                                 BomExtrusion.Build(
                                     BomUnityCoordinates.ActorOutline(pose.kind == 2, shapeInfo)
                                 ),
-                                pose.kind == 2 ? 0xffe7ae42u : 0xff4848eau,
+                                pose.kind == 2 ? 0xffe7ae42u
+                                : item ? 0xff28c8ffu
+                                : 0xff4848eau,
                                 meshes
                             );
                             actor.AddComponent<BomActorView>();
@@ -1066,6 +1085,8 @@ namespace Bom.Unity
             foreach (var key in gone)
             {
                 PresentationHadActorChange = true;
+                if (key.Item1 == BomItemLook.PoseKind && actors[key].TryGetComponent<BomActorView>(out var lastItem))
+                    items.Vanished(lastItem.Pose, framePlayers, shapeInfo, client.Round, lastItem.VisualPosition);
                 var filter = actors[key].GetComponent<MeshFilter>();
                 if (meshes.Remove(filter.sharedMesh))
                     Destroy(filter.sharedMesh);
@@ -1115,6 +1136,16 @@ namespace Bom.Unity
                                 center,
                                 client.Round.mode == 1 ? client.Round.lethal_radius : e.radius
                             );
+                        if (
+                            client.Round.mode == 1
+                            && client.Round.graze_radius > client.Round.lethal_radius
+                        )
+                            BomGrazeRing.Show(
+                                EffectsRoot(),
+                                BlastPrefab.GetComponent<LineRenderer>(),
+                                center,
+                                client.Round.graze_radius
+                            );
                     }
                     else
                     {
@@ -1141,6 +1172,35 @@ namespace Bom.Unity
             }
             PresentDeaths(client);
             PresentLimbLoss(client);
+            PresentItemEffects(client, s.presentation_tick);
+        }
+
+        // E1-N4: Darryn's item glow from the copied round roster. Slot is the pose id (see PresentLimbLoss).
+        void PresentItemEffects(BomSession client, double tick)
+        {
+            var round = client.Round;
+            var players = client.RoundPlayers;
+            int playerCount = Mathf.Min((int)round.player_count, players.Length);
+            foreach (var pair in actors)
+            {
+                if (pair.Key.Item1 != 2 || !pair.Value.TryGetComponent<BomItemGlow>(out var glow))
+                    continue;
+                uint effects = 0;
+                ulong invincibleEnd = 0,
+                    speedEnd = 0;
+                for (int i = 0; i < playerCount; i++)
+                    if (players[i].slot == pair.Key.Item2)
+                    {
+                        effects = players[i].effects;
+                        invincibleEnd = players[i].invincible_end_tick;
+                        speedEnd = players[i].speed_end_tick;
+                        break;
+                    }
+                var tint = pair.Value.TryGetComponent<BomPlayerLook>(out var look)
+                    ? look.Color
+                    : BomPlayerLook.SlotColor(0);
+                glow.Apply(pair.Key.Item2, effects, invincibleEnd, speedEnd, tick, tint);
+            }
         }
 
         // Copied native roster -> presentation queues, before this sample's events are shown. A death is the

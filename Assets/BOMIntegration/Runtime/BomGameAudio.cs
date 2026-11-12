@@ -14,6 +14,7 @@ namespace Bom.Unity
         static Action<Vector3> bombExplosion;
         static Action whistle;
         static Action buttonPop;
+        static Action<Vector3> coinPickup;
         static bool roundSeen;
         static ulong seenRound;
         static uint seenState;
@@ -22,6 +23,13 @@ namespace Bom.Unity
         {
             Bind();
             bombExplosion?.Invoke(position);
+        }
+
+        // E1-N4: item pickup sound, bound on its own so a missing method cannot silence the other three.
+        public static void CoinPickup(Vector3 position)
+        {
+            Bind();
+            coinPickup?.Invoke(position);
         }
 
         public static void ButtonPop()
@@ -77,6 +85,18 @@ namespace Bom.Unity
                 Type.EmptyTypes,
                 null
             );
+            MethodInfo coinMethod = audio?.GetMethod(
+                "PlayCoinPickup",
+                statics,
+                null,
+                new[] { typeof(Vector3) },
+                null
+            );
+            if (coinMethod != null)
+                coinPickup =
+                    (Action<Vector3>)Delegate.CreateDelegate(typeof(Action<Vector3>), coinMethod);
+            else
+                Debug.LogWarning("BOM AUDIO could not bind GameAudio.PlayCoinPickup; the item sound is off.");
             if (explosion == null || whistleMethod == null || popMethod == null)
             {
                 Debug.LogWarning("BOM AUDIO could not bind GameAudio statics; game audio is off.");

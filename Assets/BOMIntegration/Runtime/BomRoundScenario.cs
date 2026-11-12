@@ -44,6 +44,13 @@ namespace Bom.Unity
             JumpRetryTicks = 20,
             GuestForfeitTicks = 150;
 
+        // E1-N4 evidence runs only: BOM_ROUND_FORFEIT_TICKS delays the guest forfeit so an item (first one 3-8 s
+        // into Playing) can spawn and be drawn. Unset (the gates), the choreography is unchanged.
+        static ulong ForfeitTicks =>
+            ulong.TryParse(Environment.GetEnvironmentVariable("BOM_ROUND_FORFEIT_TICKS"), out var ticks) && ticks > 0
+                ? ticks
+                : GuestForfeitTicks;
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void SelectFixture()
         {
@@ -319,7 +326,7 @@ namespace Bom.Unity
                         guestRestartRejected = true;
                     if (
                         !drawScenario
-                        && r.tick >= r.start_tick + GuestForfeitTicks
+                        && r.tick >= r.start_tick + ForfeitTicks
                         && forfeitedRound != r.round_id
                     )
                     {
