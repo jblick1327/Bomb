@@ -221,7 +221,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - HUD guard: re-run `BomNetworkHud.DisableDuplicateArenaHud` on `SceneManager.sceneLoaded` (finding 16).
   - Prediction record: make the Prediction suite write per-profile resets, transitions and input generations into its `evidence/M0` record (it records `"checks": []` today).
   - Done when: Build, Content and Rounds pass without any manual yard re-export, and `git grep -n "protocol 7" -- integration/README.md` is empty.
-- [x] **C4 HUD, pause and results** (T2, Sonnet, M; needs D5) claimed: Claude Sonnet 5.5 2026-11-12; done: Claude Sonnet 5.5 2026-11-12 COMMIT — Build (0 error CS), Content and Rounds Yard+Draw pass; each finished round logs exactly one `BOM WALLET` line per player (yard +12/+13, draw +23/+23, primary and guest alike), 0 Exception lines
+- [x] **C4 HUD, pause and results** (T2, Sonnet, M; needs D5) claimed: Claude Sonnet 5.5 2026-11-12; done: Claude Sonnet 5.5 2026-11-12 dc860ff — Build (0 error CS), Content and Rounds Yard+Draw pass; each finished round logs exactly one `BOM WALLET` line per player (yard +12/+13, draw +23/+23, primary and guest alike), 0 Exception lines
   - `BomNetworkHud` still queries `level-fill`, `result-xp`, `current-level` and `next-level`, which Darryn's
     new `ArenaHud.uxml` removed. Map the HUD to his elements instead:
     - `result-coins` = Odin `xp_gained`, plus `result-bombs`, `result-time` and `result-total-coins` (the wallet total);
