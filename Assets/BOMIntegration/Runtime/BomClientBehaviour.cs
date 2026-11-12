@@ -54,6 +54,7 @@ namespace Bom.Unity
         readonly List<(uint, ulong)> goneActors = new List<(uint, ulong)>();
         public BomSession Session => session;
         BomSourcePresentation sourcePresentation;
+        BomG1Presenter g1; // G1 prototype; only created with --bom-g1 / BOM_G1=1
         BomCameraRig cameraRig;
         public BomSourcePresentation SourcePresentation => sourcePresentation;
         public bool AutomatedProfile { get; private set; }
@@ -283,7 +284,8 @@ namespace Bom.Unity
                 BomSession.Check(
                     BomNative.bom_client_set_prediction(session.Handle, Prediction ? 1u : 0u)
                 );
-                if (Array.IndexOf(args, "--bom-no-visual-registry") >= 0)
+                // G1 draws every cell from native outlines, so it runs without Darryn's clipped source art (and its manifest pin).
+                if (Array.IndexOf(args, "--bom-no-visual-registry") >= 0 || BomG1Presenter.Enabled)
                     VisualRegistry = null;
                 string expected = Arg(
                     "--bom-expected-manifest",
@@ -679,6 +681,8 @@ namespace Bom.Unity
             ClearScene();
             sourcePresentation?.Dispose();
             sourcePresentation = null;
+            g1?.Dispose();
+            g1 = null;
         }
 
         void OnApplicationQuit()
@@ -712,6 +716,7 @@ namespace Bom.Unity
             {
                 sourcePresentation?.Clear();
                 ClearEffects();
+                g1?.Clear();
             }
             if (terrain != null)
             {
@@ -815,6 +820,13 @@ namespace Bom.Unity
                     }
                     renderers.Add(obj.GetComponent<MeshRenderer>());
                 }
+                if (BomG1Presenter.Enabled)
+                {
+                    // G1 prototype (opt-in): persistent depth-from-shape bodies instead of per-revision batches.
+                    g1 ??= new BomG1Presenter(transform, Material);
+                    g1.Apply(client, nextBodies, newSession);
+                }
+                else
                 try
                 {
                     for (int i = 0; i < s.cell_count; i++)
