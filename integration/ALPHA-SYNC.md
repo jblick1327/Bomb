@@ -320,7 +320,11 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   and Prediction 6/6 (`evidence/M0/Test-Prediction-20261111T194433351Z.json`) pass, 0 Exception lines. No graze occurred in the Rounds runs, so limb removal
   is unverified in a player (see Findings). Failed first export kept: `evidence/M8/e1-n3-yard-export-20261111T142922`.
   [ ] Owner check: a graze visibly removes a limb; two grazes remove two; the third kills; limbs are back next round.
-- [~] **E1-N4** claimed: Claude Opus 5.5 2026-11-11
+- [x] **E1-N4** claimed: Claude Opus 5.5 2026-11-11; done: Claude Opus 5.5 2026-11-12 7aa3131 — native 3aed89e (DLL f87d0cd6…), protocol 9 / round 4 / ABI 1.6;
+  items drawn with Darryn's models (`Resources/BomItem1..5`), `PlayerItemGlow` port, coin sound, faint graze ring, scripted runs muted; Build, Content (1562),
+  Rounds Yard+Draw, Prediction 6/6 (`evidence/M0/Test-Prediction-20261112T032632412Z.json`) and the 30-minute soak (`evidence/M9/soak-20261112T043608868359Z`, 1800 s, 183 resets)
+  pass, 0 Exception lines. Item drawn and landed in `evidence/M8/unity-rounds-20261112T032344202604Z` (evidence run, see Findings). Failed first Prediction and soak kept (see Findings).
+  [ ] Owner check: items fall and land; touching one makes it vanish with a sound; coins raise the round award; the glow shows for invincible/speed/slow and ends after ~10 s; a faint outer ring shows the graze zone.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -473,3 +477,19 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Correction to the root-cause finding: the Rounds, Performance, Prediction and level-interop tools already pass `-force-d3d11`, so the gates never ran D3D12 (likely why they never crashed). Proof the setting works:
   a player started with no flag logs `Version: Direct3D 11.0` (`BOM-Release/diag/noforce*-p1.log`); close-by-X twice more exited in <=0.5 s. The owner launcher's `-force-d3d11` is now redundant but harmless.
   `robocopy ProjectSettings /MIR` into the validation copy also replaced its Unity-rewritten EditorBuildSettings, GraphicsSettings, ShaderGraphSettings and UnityConnectSettings with the repo versions; the builds passed afterwards.
+- 2026-11-12 Claude Opus (E1-N4): A4's NativeInterop restore only restores files that existed before the run. In a fresh checkpoint folder from `Build-OwnerNative.py`,
+  `build/interop/bomcore.dll` did not exist, so the suite left its own rebuilt DLL there (872b558b…) and the Prediction suite then refused to run ("plugin identity differs";
+  failed record `evidence/M0/Test-Prediction-20261112T032546587Z.json`). Copying `build/bomcore.dll` over it fixed it (6/6 next run). Tool fix for A-lane: after NativeInterop,
+  copy the stage `bomcore.dll` to `interop/` when it had no backup.
+- 2026-11-12 Claude Opus (E1-N4): the M9 performance fixtures were still protocol 7 (pre-N1), so the first soak failed at startup in both players with
+  `gameplay level/config manifest mismatch` (kept: `evidence/M9/soak-20261112T042936243816Z`). `Build-BomPlayers.ps1` calls `RebuildMono`, which does not re-export.
+  I ran `BomPerformanceBuilder.BuildMono` by hand in the validation project (`BOM_NATIVE_SERVER_EXE`, `BOM_PERFORMANCE_LAYOUT_DIR=integration/fixtures/M9`,
+  `BOM_PERFORMANCE_PLAYER_OUT=build/validation/Mono`) and committed the two registries, scenes and `fixtures/M9/*`; its 500 regenerated mesh assets differed only in `m_Name`
+  and were reverted, and the validation copy's `Validation/Identity*.unity` (one with a changed `.meta` GUID) were not copied back. After any future gameplay-config change, rerun it.
+- 2026-11-12 Claude Opus (E1-N4): no gate exercises items fully. Rounds ends before the first item (guest forfeits at 2.5 s; items start 3-8 s into Playing); Prediction profiles
+  and the soak run Sandbox, so no items spawn there. An evidence run with the new opt-in `BOM_ROUND_FORFEIT_TICKS=720`
+  (`Test-NetworkRounds.ps1 -SkipBuild -Scenario Yard -PlayerPath build/validation/Network-Mono/BombNetwork.exe`) passed and both clients logged
+  `BOM UNITY ITEM drawn id=1 kind=4 type=slow prefab=BomItem4`, falling from y 36.6 to rest at 10.03. Nobody touched it, so pickup sound, glow and coins are unverified in a player:
+  look for `BOM UNITY ITEM gone ... pickup=1` and `BOM UNITY EFFECT player= effects=` in the owner play. The graze ring logs nothing. Item ids restart each round, so `drawn` repeats per round (log only).
+- 2026-11-12 Claude Opus (E1-N4, owner request): `Runtime/BomTestAudioMute.cs` mutes players started with `-batchmode`, `--bom-round-test`, `--bom-soak`, `--bom-perf-out`,
+  `--bom-profile-out`, `--bom-mute` or `BOM_MUTE=1` (each logs `BOM AUDIO muted for scripted run (...)`); owner launches pass none of these and keep sound.
