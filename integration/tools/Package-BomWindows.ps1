@@ -31,7 +31,7 @@ New-Item -ItemType Directory -Path $output -Force|Out-Null
 foreach($pair in $backends){
  $destination=Join-Path $output $pair[0];New-Item -ItemType Directory -Path $destination -Force|Out-Null
  foreach($item in Get-ChildItem -LiteralPath (Split-Path -Parent $pair[1])){
-  if($item.Name -match 'BackUpThisFolder|BurstDebugInformation'){continue}
+  if($item.Name -match 'BackUpThisFolder|BurstDebugInformation' -or $item.Name -eq 'Logs'){continue}
   Copy-Item -LiteralPath $item.FullName -Destination (Join-Path $destination $item.Name) -Recurse -Force
  }
 }
