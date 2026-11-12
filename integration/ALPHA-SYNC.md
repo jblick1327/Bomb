@@ -31,7 +31,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 - [x] **D2 Movement feel.** (approved by owner 2026-11-10) Speed 4→7, jump height 2.5 units, player gravity 25 (snappy, ~0.9 s airtime)
   using a *player-only* gravity scale. World gravity stays 9.8, so debris is unchanged.
   *Why:* today jump 6.3 at g=9.8 gives a floaty 1.3 s airtime at walking pace.
-- [ ] **D3 Online.** Keep Odin UDP with LAN or direct IP for now and drop Unity Relay/NGO. Design an
+- [x] **D3 Online.** (approved by owner 2026-11-12) Keep Odin UDP with LAN or direct IP for now and drop Unity Relay/NGO. Design an
   internet relay later.
 - [ ] **D4 Couch play.** Couch play moves to Odin later through task N6. Until then Darryn's local
   "Play" mode keeps its own Unity-physics rules (two rule sets, temporarily).
@@ -43,7 +43,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   P4 green). Sending each player's chosen character over the wire comes later.
 - [ ] **D8 Solo.** Add a native Survival mode (1–4 players; the round ends when all are dead), with
   optional native bots.
-- [ ] **D9 Editing Darryn's files.** Integration tasks C5 and C7 may edit `Assets/Game/Scripts/MatchMenuUI.cs`,
+- [x] **D9 Editing Darryn's files.** (approved by owner 2026-11-12) Integration tasks C5 and C7 may edit `Assets/Game/Scripts/MatchMenuUI.cs`,
   `Assets/Game/Online/*`, `Assets/Game/Scenes/MainMenuScene.unity` and `Packages/manifest.json`, then
   re-baseline those exact files. Without this, the menus cannot be joined up.
 - [ ] **D10 Shadows.** Raise the additional-light shadow atlas in `Assets/Settings/PC_RPAsset.asset` from 2048
