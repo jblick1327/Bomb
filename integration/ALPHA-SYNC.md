@@ -221,7 +221,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - HUD guard: re-run `BomNetworkHud.DisableDuplicateArenaHud` on `SceneManager.sceneLoaded` (finding 16).
   - Prediction record: make the Prediction suite write per-profile resets, transitions and input generations into its `evidence/M0` record (it records `"checks": []` today).
   - Done when: Build, Content and Rounds pass without any manual yard re-export, and `git grep -n "protocol 7" -- integration/README.md` is empty.
-- [~] **C4 HUD, pause and results** (T2, Sonnet, M; needs D5) claimed: Claude Sonnet 5.5 2026-11-12
+- [x] **C4 HUD, pause and results** (T2, Sonnet, M; needs D5) claimed: Claude Sonnet 5.5 2026-11-12; done: Claude Sonnet 5.5 2026-11-12 COMMIT — Build (0 error CS), Content and Rounds Yard+Draw pass; each finished round logs exactly one `BOM WALLET` line per player (yard +12/+13, draw +23/+23, primary and guest alike), 0 Exception lines
   - `BomNetworkHud` still queries `level-fill`, `result-xp`, `current-level` and `next-level`, which Darryn's
     new `ArenaHud.uxml` removed. Map the HUD to his elements instead:
     - `result-coins` = Odin `xp_gained`, plus `result-bombs`, `result-time` and `result-total-coins` (the wallet total);
@@ -233,7 +233,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Review notes (2026-11-11): `AddShopCoins` takes an `int` but `xp_gained` is `ulong`, so clamp to `int.MaxValue`. Bind it by reflection like C3 did and add `MatchMenuUI`
     to `Assets/BOMIntegration/Runtime/link.xml`; also add `GameAudio` there now (`<type fullname="GameAudio" preserve="all"/>`) or IL2CPP stripping will silence C3's audio.
     Also tell the owner: `MatchMenuUI.RestartCurrentScene` resets the wallet to 250, which would wipe coins earned here.
-  - Done when: Build and Rounds pass, and each finished round logs exactly one `BOM WALLET` line. [ ] Owner check.
+  - Done when: Build and Rounds pass, and each finished round logs exactly one `BOM WALLET` line. [ ] Owner check: results show coins/bombs/time and the wallet total; the wallet goes up once per round; Esc opens the pause panel without pausing; REPLAY shows for the host only; RETURN disconnects.
 - [ ] **C5 One front door** (T1, Opus, L; needs D3 and D9)
   - Darryn's `MainMenuScene` becomes the first scene. "Play" keeps his local mode (D4). "Online" opens Odin play:
     - **Host:** pick a level and start `BOM-server.exe` from the player's folder with `--bind`, `--port`,
@@ -493,3 +493,10 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   look for `BOM UNITY ITEM gone ... pickup=1` and `BOM UNITY EFFECT player= effects=` in the owner play. The graze ring logs nothing. Item ids restart each round, so `drawn` repeats per round (log only).
 - 2026-11-12 Claude Opus (E1-N4, owner request): `Runtime/BomTestAudioMute.cs` mutes players started with `-batchmode`, `--bom-round-test`, `--bom-soak`, `--bom-perf-out`,
   `--bom-profile-out`, `--bom-mute` or `BOM_MUTE=1` (each logs `BOM AUDIO muted for scripted run (...)`); owner launches pass none of these and keep sound.
+- 2026-11-12 Claude Sonnet (C4): **Owner, please note: `MatchMenuUI.RestartCurrentScene` (Darryn's "RESTART GAME" in his local match menu) resets the shop wallet to 250, which wipes coins earned in network rounds.** Not changed (his file).
+  Mapping: `result-coins` = `xp_gained` (includes item coins), `result-bombs` = `bombs_faced`, `result-time` = alive time, `result-total-coins` = wallet read from PlayerPrefs `CharacterShop.Coins` (the key `AddShopCoins` writes; `MatchMenuUI.shopCoins` is private).
+  `pause-panel` is shown by Esc together with the connection menu (RESUME closes both, RESTART = host command and host-only, LEAVE GAME = disconnect); the game never pauses. `replay-button` is hidden for non-hosts.
+  Wallet: new `Runtime/BomWallet.cs`, paid once per round id; the paid set is cleared on RETURN/LEAVE GAME because another server may reuse round ids (a reconnect keeps it). Spectators (not in the round's players) are not paid.
+  `link.xml` now preserves `MatchMenuUI` and `GameAudio`. All Darryn UXML elements in the C4 list exist; `level-fill`, `result-xp`, `current-level`, `next-level` queries were removed.
+  First Rounds attempt (evidence `unity-rounds-20261112T140238368619Z` / `...T140421200332Z`, kept) paid only the surviving player and nothing in the draw: I had skipped clients with round flag 4, which is also set for a dead player. Fixed (the seated-player check suffices); not a sleep.
+  Not verified in a player: the on-screen panels, `AddShopCoins` running under IL2CPP (Mono only), the wallet total on screen. In a Rounds run a window only logs the payment; the shop total was not read back.

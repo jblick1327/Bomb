@@ -27,10 +27,12 @@ namespace Bom.Unity
             winner,
             resultBombs,
             resultTime,
-            resultXp,
-            currentLevel,
-            nextLevel;
-        VisualElement levelFill;
+            resultCoins,
+            resultTotal;
+        VisualElement pausePanel;
+        Button pauseResume,
+            pauseRestart,
+            pauseLeave;
         TextField address,
             port,
             token;
@@ -58,6 +60,10 @@ namespace Bom.Unity
             if (menu == null)
                 return;
             menu.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            // C4: Darryn's pause-panel is our Esc menu. The game does not pause; it only shows next to the connection menu.
+            if (pausePanel != null)
+                pausePanel.style.display =
+                    visible && Client != null && Client.ConnectionRequested ? DisplayStyle.Flex : DisplayStyle.None;
             if (!visible)
                 (root.panel?.focusController?.focusedElement as VisualElement)?.Blur();
         }
@@ -124,14 +130,13 @@ namespace Bom.Unity
             winner = L("winner");
             resultBombs = L("result-bombs");
             resultTime = L("result-time");
-            resultXp = L("result-xp");
-            currentLevel = L("current-level");
-            nextLevel = L("next-level");
-            levelFill = hud.Q("level-fill");
+            resultCoins = L("result-coins");
+            resultTotal = L("result-total-coins");
             death = hud.Q("death-panel");
             // Belt and braces: hide the pause and game-over panels inline too, even if the stylesheet fails to apply.
             // The death panel is shown again on a finished round. C4 maps the pause panel.
-            if (hud.Q("pause-panel") is VisualElement pausePanel)
+            pausePanel = hud.Q("pause-panel");
+            if (pausePanel != null)
                 pausePanel.style.display = DisplayStyle.None;
             if (death != null)
                 death.style.display = DisplayStyle.None;
@@ -244,13 +249,16 @@ namespace Bom.Unity
             if (replay != null)
                 replay.clicked += () => Intent(1, 0);
             if (leave != null)
-                leave.clicked += () =>
-                    Click(() =>
-                    {
-                        Client.Disconnect();
-                        message = "Left the server. Connect to play again.";
-                        SetMenuVisible(true);
-                    });
+                leave.clicked += () => Click(LeaveServer);
+            pauseResume = hud.Q<Button>("resume-button");
+            pauseRestart = hud.Q<Button>("restart-button");
+            pauseLeave = hud.Q<Button>("leave-button");
+            if (pauseResume != null)
+                pauseResume.clicked += () => Click(() => SetMenuVisible(false));
+            if (pauseRestart != null)
+                pauseRestart.clicked += () => Intent(1, 0);
+            if (pauseLeave != null)
+                pauseLeave.clicked += () => Click(LeaveServer);
             body.Add(new Button(() => Click(() => Application.Quit())) { text = "Quit" });
             roundState = new Label();
             roundState.style.position = Position.Absolute;
@@ -260,6 +268,15 @@ namespace Bom.Unity
             roundState.style.color = Color.white;
             roundState.pickingMode = PickingMode.Ignore;
             root.Add(roundState);
+        }
+
+        // RETURN and LEAVE GAME: disconnect, forget paid rounds (another server may reuse round ids), show the menu.
+        void LeaveServer()
+        {
+            Client.Disconnect();
+            BomWallet.Forget();
+            message = "Left the server. Connect to play again.";
+            SetMenuVisible(true);
         }
 
         void Act(Action action)
@@ -396,8 +413,13 @@ namespace Bom.Unity
                 replay.SetEnabled(canRestart);
                 // The host loses restart permission for a few seconds while the server rebuilds the world after the click,
                 // so only a non-host should read "waiting for host".
-                replay.text = canRestart ? "REPLAY" : host ? "STARTING…" : "WAITING FOR HOST";
+                replay.text = canRestart ? "REPLAY" : "STARTING…";
+                // C4: REPLAY is the host's command; guests see no button.
+                replay.style.display = host ? DisplayStyle.Flex : DisplayStyle.None;
             }
+            pauseRestart?.SetEnabled(canRestart);
+            if (pauseRestart != null)
+                pauseRestart.style.display = host ? DisplayStyle.Flex : DisplayStyle.None;
             leave?.SetEnabled(requested);
             ulong hudKey =
                 ((ulong)r.state << 40)
@@ -485,18 +507,18 @@ namespace Bom.Unity
                     : r.winner == r.local_session_id ? "YOU WIN"
                     : "ROUND OVER"
             );
-            Text(resultBombs, "Bombs faced: " + player.bombs_faced);
-            Text(resultTime, "Time survived: " + TimeText(player.alive_ticks));
-            Text(resultXp, "XP gained: " + player.xp_gained + " · Total: " + profile.total_xp);
-            Text(currentLevel, "Lvl " + profile.level);
-            Text(nextLevel, "Lvl " + (profile.level + 1));
-            if (levelFill != null)
-                levelFill.style.width = Length.Percent(
-                    profile.xp_to_next == 0
-                        ? 0
-                        : Mathf.Clamp01((float)((double)profile.xp_in_level / profile.xp_to_next))
-                            * 100
-                );
+            // D5: only a seated round player is paid (flag 4 is also set for a dead player, so it is not tested). The round award (xp_gained, which includes item coins) is paid into the local shop wallet once per round id.
+            if (
+                r.mode == 1
+                && r.state == 3
+                && player.session_id == r.local_session_id
+                && r.local_session_id != 0
+            )
+                BomWallet.TryPay(r.round_id, player.xp_gained);
+            Text(resultCoins, "Coins Collected: " + player.xp_gained);
+            Text(resultBombs, "Bombs Dodged: " + player.bombs_faced);
+            Text(resultTime, "Time Survived: " + TimeText(player.alive_ticks));
+            Text(resultTotal, "Total Coins: " + BomWallet.Total);
             foreach (var result in session.RequestResults)
                 if (result.kind != 1)
                     message =
