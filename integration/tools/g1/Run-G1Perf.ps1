@@ -1,4 +1,4 @@
-# G1 measurement harness (Windows PowerShell 5.1), F2's protocol (integration/evidence/F2/tools/Run-F2Perf.ps1) plus scripted
+# G1 measurement harness (Windows PowerShell 5.1), F2's protocol (with --bom-perf-manual: no scripted held input, real input kept) (integration/evidence/F2/tools/Run-F2Perf.ps1) plus scripted
 # host click-blasts at fixed times and window positions, so a flag-off and a flag-on run see the same blasts.
 #   --bom-frontdoor-test (C5 menu driver, caps 60 fps, vSync 0), --bom-perf-out (BomPerformanceProbe per-frame rows), 1 window, Sandbox.
 # -Extra is extra player arguments separated by '|', e.g. '--bom-g1|--bom-levels|C:\...\levels-g1'.
@@ -11,14 +11,17 @@ param(
  [string]$Clicks='30:900,380|42:400,570|54:640,300|66:1000,560'
 )
 $ErrorActionPreference='Stop'
+$Out=[IO.Path]::GetFullPath($Out) # the player resolves -logFile against its own folder, so never pass it a relative path
 . 'C:\Users\jblic\Documents\BOM-Release\diag\ui.ps1'
 $pkg=Split-Path -Parent $Exe
 $free=(Get-PSDrive C).Free/1GB;$ram=(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB
-$unity=@(Get-Process Unity -EA SilentlyContinue).Count
+# Rule 3 counts Unity Editors. Unity Hub's helpers (Hub\resources\unity.exe, AppData\Local\Unity\bin\unity.exe, ~30 MB) are not editors (C3 finding).
+$unity=@(Get-Process Unity -EA SilentlyContinue|Where-Object{$_.Path -like '*\Editor\Unity.exe'}).Count
+$meta_helpers=@(Get-Process Unity -EA SilentlyContinue|Where-Object{$_.Path -notlike '*\Editor\Unity.exe'}|ForEach-Object{"$($_.Id) $($_.Path)"})
 $mine=@(Get-Process Bomb,BOM-server -EA SilentlyContinue).Count
 New-Item -ItemType Directory -Force -Path $Out|Out-Null
 $script:scratch=$Out
-$meta=[ordered]@{level=$Level;seconds=$Seconds;exe=$Exe;extra=$Extra;clicks=$Clicks;free_c_gb=[math]::Round($free,2);free_ram_gb=[math]::Round($ram,2);unity=$unity;preexisting_bomb_or_server=$mine;
+$meta=[ordered]@{level=$Level;seconds=$Seconds;exe=$Exe;extra=$Extra;clicks=$Clicks;free_c_gb=[math]::Round($free,2);free_ram_gb=[math]::Round($ram,2);unity=$unity;preexisting_bomb_or_server=$mine;unity_helpers=($meta_helpers -join '; ');
  power=(Get-CimInstance Win32_Battery -EA SilentlyContinue|ForEach-Object{"status=$($_.BatteryStatus) charge=$($_.EstimatedChargeRemaining)"}) -join ';';started=(Get-Date).ToString('o')}
 if($unity -ne 0 -or $ram -lt 4 -or $mine -ne 0){$meta.result='precheck_failed';$meta|ConvertTo-Json|Set-Content (Join-Path $Out 'run.json');throw "precheck failed: unity=$unity ram=$ram bomb/server=$mine"}
 $t0=Get-Date
@@ -26,7 +29,7 @@ $port=Get-Random -Minimum 47400 -Maximum 47900
 function Q([string]$p){'"'+$p+'"'}
 $hostArgs=@('-screen-fullscreen','0','-screen-width','1280','-screen-height','720','--bom-frontdoor-port',"$port",'--bom-frontdoor-level',"$Level",
  '-logFile',(Q (Join-Path $Out 'host.log')),'--bom-frontdoor-test',(Q (Join-Path $Out 'signals-host')),'--bom-frontdoor-role','host',
- '--bom-perf-out',(Q (Join-Path $Out 'host-perf.json')),'--bom-perf-seconds',"$Seconds",'--bom-perf-warmup','5')+@($Extra.Split([char]'|')|Where-Object{$_})
+ '--bom-perf-manual','--bom-perf-out',(Q (Join-Path $Out 'host-perf.json')),'--bom-perf-seconds',"$Seconds",'--bom-perf-warmup','5')+@($Extra.Split([char]'|')|Where-Object{$_})
 $meta.args=$hostArgs -join ' '
 $p=Start-Process -FilePath $Exe -ArgumentList $hostArgs -WorkingDirectory $pkg -PassThru -RedirectStandardOutput (Join-Path $Out 'host-stdout.log') -RedirectStandardError (Join-Path $Out 'host-stderr.log')
 $deadline=(Get-Date).AddSeconds(120)

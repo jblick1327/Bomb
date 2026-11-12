@@ -36,7 +36,14 @@ The owner's principle, which this design does not trade away:
 **The prototype works.** The flag is `--bom-g1`, the level is the G1 Bridge (`integration/fixtures/levels-g1/`), and
 `integration/tools/g1/Start-BridgeG1.ps1` launches it. Darryn's 110 tiles become 52 physical parts with 97 glue links
 and 5 anchored truss feet. It passes native validation and stands on the real server, and a blast now splinters the
-planks, drops the bay and piles debris on the deck below. Measurements are in section 6.
+planks, drops the bay and piles debris on the deck below.
+
+The new presenter removes F2's main cause of lag. On Classic Yard, GC drops from 2,632 to 16 MB/min and p95 from 23.8
+to 17.2 ms, and drawing a blast costs under 1.5 ms. Two things are left, both for Lane N:
+- the G1 Bridge is fragile under its own weight (glue capacity is global, G-N1);
+- while it collapses, the *client native update* hitches at 26–36 ms (G-N5).
+
+Details are in section 6.
 
 **Owner decisions needed:** the boundary (section 3.5), the material table (section 3.2), how Bridge supports work
 (section 3.4), and the band depth and backdrop look (section 4). The task list is in section 8.
@@ -213,8 +220,17 @@ epoch clears everything.
    the managed heap is not touched at all. Instancing does not help here, because every fragment is a unique shape;
    chunked batching already keeps draw calls in the hundreds. `BatchRendererGroup` is not needed at these counts.
 
-**Expected gain from F2's numbers.** A round start or join costs what Tower's does (0.1 s), not 25–35 s, because
-bodies, chunks and cached cells persist. A blast rebuilds only its chunks. Measured numbers are in section 6.
+**Expected gain from F2's numbers, and measured.** F2's Classic Yard rebuild window was 25–35 s of 2.5–3 MB GC per
+frame. With persistent bodies it should cost one first build, and a blast should rebuild only the chunks it touches.
+
+Measured on the same level and blasts (section 6.3):
+- GC: 2,632 → 16 MB/min;
+- p95: 23.8 → 17.2 ms;
+- frames with more than 5 ms of presentation: 1,590 → 2;
+- first build of the 3,549-cell yard: about 15 ms in one frame.
+
+The prototype keeps its caches only within an epoch. G2 adds keeping them across a round-start epoch whose cells did
+not change (F2's 1a), so a round start costs the same as a join.
 
 ## 6. Prototype: the Bridge rebuilt the G1 way
 
@@ -296,7 +312,48 @@ before tiles were hidden by path, is `39-…`.
 
 ### 6.3 Frame times (F2 protocol, 1 window, Sandbox, same scripted blasts)
 
-(pending)
+**Setup.** One build: `Game-Mono`, built from this branch with the prototype. Harness:
+`integration/tools/g1/Run-G1Perf.ps1`, summary `integration/tools/g1/Summarize-G1Perf.py`, which uses F2's
+analyser. Same machine as F2, running on battery, 1280 × 720 windowed, D3D11, 60 fps cap, 100 s per run.
+
+Four host click-blasts happen at 30, 42, 54 and 66 s after hosting, at the same window positions; 2–3 of the 4 were
+valid (the others started inside solid). The probe ran with the new opt-in `--bom-perf-manual`. The stock probe sets
+`DrivenByRoundScenario`, which drops all player input, so F2's runs could not blast at all.
+
+The **blast window** is the frames from 0.5 s before to 3 s after each world-revision change. Evidence:
+`integration/evidence/G1/perf/perf-20261112T205556-*`. Two failed attempts are kept beside them:
+
+- `attempt1-relative-out-no-blasts`: the player resolved a relative `-logFile` against its own folder;
+- `attempt2-probe-blocked-input`: the stock probe swallowed the clicks, and a Unity Hub helper process failed the
+  Classic precheck.
+
+| Run | p50 | p95 | p99 | max | > 33 ms per min | GC MB/min | presentation+geometry p99 / max ms | frames with presentation > 5 ms | revisions | blast window p95 / max | blast window GC MB |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Classic Yard, stock | 16.7 | **23.8** | 28.0 | 125.7 | 7.8 | **2632** | **25.3 / 59.1** | **1590** | 5 | 20.5 / 125.7 | 581 |
+| Classic Yard, `--bom-g1` | 16.7 | **17.2** | 17.8 | 79.4 | 4.2 | **15.9** | **0.11 / 14.8** | **2** | 5 | 17.4 / 79.4 | 7.1 |
+| Bridge (shipped C6 layout), stock | 16.7 | 17.1 | 18.3 | 67.9 | 6.0 | 107.9 | 0.25 / 26.5 | 6 | 3 | 17.6 / 67.9 | 157 |
+| G1 Bridge, `--bom-g1` | 16.7 | 17.9 | 19.4 | 54.6 | 28.8 | 17.8 | 0.27 / 11.6 | 1 | 46 | 18.7 / 54.6 | 12.6 |
+
+What the numbers say:
+
+1. **F2 cause 1 is gone under the G1 presenter.** On Classic Yard, the same level, layout and blasts:
+   - GC drops from 2,632 to 16 MB/min (99.4 %);
+   - p95 drops from 23.8 to 17.2 ms;
+   - frames spending more than 5 ms in presentation drop from 1,590 to 2.
+
+   The two remaining frames are the one-time first build of 3,549 cells (about 15 ms in one frame, instead of 30 s
+   of rebuilding). Per revision, the G1 presenter took 0.5–3.3 ms and rebuilt only the touched chunks
+   (`BOM G1 APPLY … rebuilt=` lines in `host.log`).
+2. **A blast costs almost nothing to draw.** On the G1 Bridge, presentation p99 is 0.27 ms, with 46 revisions in
+   100 s because the structure really collapses. The stock Bridge spends up to 25 ms presenting one blast, and on
+   Classic Yard up to 59 ms.
+3. **The G1 Bridge's remaining hitches are native, not presentation.** 45 of its 48 frames over 33 ms have 26–36 ms
+   in `native_ms`, the client's native update. That is the client simulation and prediction stepping a collapsing
+   structure of dozens of moving glued bodies, which the shipped Bridge never had because nothing in it moves. This
+   is a new Lane N item (G-N5): profile `bom_client_update` with many moving pieces, the prediction collision-window
+   rebuild and replay in particular. The server reported 0 overruns in every run. The stock Bridge shows the same
+   native spikes, smaller (5 of 10 hitches), after its blasts.
+4. **Steady state is unchanged:** p50 16.7 ms in all four runs.
 
 ## 7. What needs Lane N
 
@@ -305,6 +362,7 @@ before tiles were hidden by path, is `39-…`.
 | G-N1 | **Glue load capacity from materials.** Today the force capacity is global (`MORTAR_STRENGTH` 280 per unit length, `SEAM_TOUGHNESS` 0.4 s, `sim_mortar.odin:122`); only blast failure uses the materials (`min(connection_strength)`). Proposal: capacity = 280 × min(toughness of the two materials), or an optional per-link strength in the level's glue records (canonical data) | Steel truss joints should outlast wood plank joints under load. On a 29-unit three-deck bridge, the 0.34-long post seams carry most of the weight | M (+ tests, + E1) |
 | G-N2 | **Report each glue link's sample count** in `--validate-layout`, and fail a link with zero samples | `glue_add` silently drops a link whose parts are more than 0.2 apart; an exporter cannot tell | S |
 | G-N3 | **Larger glue and part budgets, or a group glue record** ("glue all contacts within these sources") | Darryn's Yard (~130 tiles) and Tower can approach 1,024 links once everything is glued | S |
+| G-N5 | **Client native update cost while a structure collapses.** On the G1 Bridge, 45 of 48 frames over 33 ms spend 26–36 ms in `bom_client_update`, while presentation stays under 1.5 ms (section 6.3). Profile the prediction collision window and replay with dozens of moving glued bodies; bound the per-frame work or move it off the main thread | Real Odin destruction means many moving pieces; the client must keep up as the server does (0 overruns) | M |
 | G-N4 | (Optional) **Per-source settle report** in `--validate-layout`: simulate N ticks headless and report the revision changes and the cells lost | Makes I5 a one-command export check instead of a Unity run | M |
 
 Not needed from Lane N:
@@ -323,8 +381,9 @@ through E1. Sizes: S < 1 h, M 1–3 h, L = several sessions. The owner decisions
 |---|---|---|---|---|---|---|
 | 1 | **G2** | **Presentation core for every level.** Make `BomG1Presenter`'s persistent, chunked, cached bodies the only cell path: remove the per-revision batch rebuild in `Accept`. Keep bodies and caches across an epoch whose cells did not change (F2 fix 1a). Move chunk assembly to `Mesh.MeshData` / `NativeArray` (+ Burst) for zero managed GC. Retire per-fragment prism clipping of Darryn's meshes in the play band. Re-run F2's protocol on all four levels with 1 and 2 windows | Opus (T1) | U | M | — |
 | 2 | **G-N1** | **Glue load capacity from materials** (section 7). Capacity scales with the weaker material's toughness, or an optional per-link strength in level glue. Add tests: a steel seam outlasts wood under load; blast behaviour unchanged | Codex high (T1) | N | M | OD-2 |
+| 2 | **G-N5** | Client native update cost with many moving pieces (section 7): profile `bom_client_update` on the G1 Bridge collapse, then fix the prediction collision-window and replay cost | Codex high (T1) | N | M | — |
 | 2 | **G-N2** | `--validate-layout` reports each glue link's sample count and fails links with zero samples; raise or group the glue budget (G-N3) | Codex medium (T2) | N | S | — |
-| 3 | **E1-G** | Bring G-N1/G-N2 into Unity (A1 steps, re-export levels, gates) | Opus (T1) | U | M | G-N1, G-N2 |
+| 3 | **E1-G** | Bring G-N1/G-N2/G-N5 into Unity (A1 steps, re-export levels, gates) | Opus (T1) | U | M | G-N1, G-N2, G-N5 |
 | 3 | **G3** | **Depth from shape as the default look.** Make the band and `clamp(√area)` depth the default for all levels (no flag). Add the terrain back wall (darker, no top cap, never rebuilt). Apply Darryn's material per source through the registry instead of scene paths. Keep the stock look selectable by a flag for one release | Opus (T1) | U | M | G2, OD-4 |
 | 4 | **G5** | **Tile exporter v2** in `Editor/BomTileLevelBuilder.cs`: the section 3 mapping for any tile scene (merge duplicates, partition + glue, material table, anchors at real supports only, invariants I1–I5 as export failures). It reads mesh silhouettes directly, so it also covers non-box tiles with proxies. It replaces the Python generator | Opus (T1) | U | L | OD-1, OD-2, OD-3; G-N2 helps |
 | 5 | **G6** | Re-export Yard, Bridge and Tower with G5. Settle check on each (35 s, revision constant); tune materials and glue with the owner; capture them next to G1 | Sonnet (T2) | U | M | G5, E1-G |

@@ -215,9 +215,13 @@ namespace Bom.Unity
         readonly Dictionary<(uint, ulong), Vector3> prior =
             new Dictionary<(uint, ulong), Vector3>();
 
+        // G1: --bom-perf-manual records frames but leaves the player's own input alone (no scripted held input), so a
+        // measured run can include real or scripted mouse blasts. Off by default; the stock probe is unchanged.
+        static readonly bool manual = Array.IndexOf(Environment.GetCommandLineArgs(), "--bom-perf-manual") >= 0;
+
         void Update()
         {
-            if (soak)
+            if (soak || manual)
                 return;
             if (client == null)
                 client = FindFirstObjectByType<BomClientBehaviour>();
