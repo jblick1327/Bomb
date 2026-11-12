@@ -351,7 +351,8 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - [ ] **F2 Why it's choppy** (T1, Opus, M). Run the packaged Mono build with 1 window, then with 2. Record frame times
   (`-logFile` plus Unity's frame-timing log) and the server overruns in `server-errors.log`. Report in
   `integration/review/performance-2026-11.md`, with the top 3 causes and fixes ranked by gain per effort. Change no code.
-- [~] **F3 Fix stale docs** (T3, Haiku, S) claimed: claude-haiku-5-5 2026-11-12
+- [x] **F3 Fix stale docs** (T3, Haiku, S) claimed: claude-haiku-5-5 2026-11-12
+  done: claude-haiku-5-5 2026-11-12 305b1fb — README says protocol 9 / round format 4 / config 5 / ABI 1.6; packager skips Logs. `git grep -n -e "protocol 6" -e "protocol 7" -e "protocol 8" -- integration/README.md` returned no lines; Content passed (1555 files).
   - Package `DEVELOPER-README.md` (from `integration/README.md`): make it say protocol 8 (ABI 1.5, round format 3, config 5; recheck against `Documents\BOM\AGENTS.md`) and that
     PowerShell 5.1 or 7 works, and remove references to files that aren't in the package.
   - `Package-BomWindows.ps1` must not copy a `Logs` folder.
