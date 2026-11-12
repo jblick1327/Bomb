@@ -161,7 +161,7 @@ typedef struct BomActorShapeInfo {
  float player_radius;
  float player_segment;
  float bomb_radius;
- unsigned int reserved;
+ float item_radius;
 } BomActorShapeInfo;
 typedef struct BomOwnerState {
  unsigned int struct_size;
@@ -351,6 +351,10 @@ typedef struct BomRoundPlayer {
  unsigned long long alive_ticks;
  unsigned long long bombs_faced;
  unsigned long long xp_gained;
+ unsigned int coins;
+ unsigned int effects;
+ unsigned long long invincible_end_tick;
+ unsigned long long speed_end_tick;
 } BomRoundPlayer;
 typedef struct BomRoundConnection {
  unsigned long long session_id;
@@ -386,6 +390,8 @@ typedef struct BomRoundInfo {
  unsigned int player_count;
  unsigned int connection_count;
  BomRoundConnection* connections;
+ float graze_radius;
+ unsigned int grazes_to_die;
 } BomRoundInfo;
 __declspec(dllimport) unsigned int __cdecl bom_abi_version(void);
 __declspec(dllimport) unsigned long long __cdecl bom_build_tag(void);

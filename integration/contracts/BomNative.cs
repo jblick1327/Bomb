@@ -162,7 +162,7 @@ namespace Bom.Native {
  public float player_radius;
  public float player_segment;
  public float bomb_radius;
- public uint reserved;
+ public float item_radius;
 }
 [StructLayout(LayoutKind.Sequential)] public struct BomOwnerState {
  public uint struct_size;
@@ -352,6 +352,10 @@ namespace Bom.Native {
  public ulong alive_ticks;
  public ulong bombs_faced;
  public ulong xp_gained;
+ public uint coins;
+ public uint effects;
+ public ulong invincible_end_tick;
+ public ulong speed_end_tick;
 }
 [StructLayout(LayoutKind.Sequential)] public struct BomRoundConnection {
  public ulong session_id;
@@ -387,10 +391,12 @@ namespace Bom.Native {
  public uint player_count;
  public uint connection_count;
  public IntPtr connections;
+ public float graze_radius;
+ public uint grazes_to_die;
 }
 public static class BomNative {
  public const uint AbiVersion = 1;
- public const uint AbiMinorVersion = 5;
+ public const uint AbiMinorVersion = 6;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern ulong bom_build_tag();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_create(ref BomCreateInfo info, ref ulong handle);

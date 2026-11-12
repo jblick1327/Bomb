@@ -21,9 +21,9 @@ outcomes and never reads or writes wire bytes. This file is read with the Odin r
 5. One Unity build at a time (memory-tight machine). Never run a build and a soak together.
 
 ## Versions
-Protocol 8, round format 3, gameplay config 5, ABI 1.5, level 4, canonical 3. Unity 6000.2.14f1.
+Protocol 9, round format 4, gameplay config 5, ABI 1.6, level 4, canonical 3. Unity 6000.2.14f1.
 The shipped `Assets/BOMIntegration/Plugins/x86_64/bomcore.dll` must match `bomcore.build.json` and
-`BomExpectedNativeIdentity.cs` (build tag 763263499167801642, DLL sha256 0887c0b1...5deb8, from Odin alpha-sync 9eb164e, 2026-11-11); the
+`BomExpectedNativeIdentity.cs` (build tag 165566078179921899, DLL sha256 f87d0cd6...0a965, from Odin alpha-sync 3aed89e, 2026-11-11); the
 identity guard (`BomNativeIdentity.Verify`) fails builds and players on a mismatch.
 
 ## Commands (PowerShell; pass `-ConfigPath integration/local.config.json` or the owner-validation config explicitly)

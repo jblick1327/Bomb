@@ -54,7 +54,7 @@ The pinned environment is Windows x64, Unity 6000.2.14f1, Odin May 2026 ea5175d,
 MSVC/Windows SDK, .NET 10 and Python 3. See `local.config.example.json` for paths,
 `source-lock.json` for exact inputs/build identities, and `STATUS.md` for next work.
 
-Current SDK/players use ABI 1.5, game protocol 8 (round snapshot format 3, gameplay config 5),
+Current SDK/players use ABI 1.6, game protocol 9 (round snapshot format 4, gameplay config 5),
 level format 4 and canonical topology 3.
 `build/Network-Mono` and `build/M8-native` form one compatible checkpoint. Frozen
 M5, M6 and M7 artifacts retain their original versions; never mix their servers

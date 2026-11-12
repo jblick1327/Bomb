@@ -1,7 +1,7 @@
 # Native elimination rules (owner follow-up)
 
-Current native source: protocol 8 / round snapshot format 3 / gameplay config 5 /
-ABI 1.5 / canonical topology 3. Protocol 7 changed the round wire roster from
+Current native source: protocol 9 / round snapshot format 4 / gameplay config 5 /
+ABI 1.6 / canonical topology 3 (N4; see the N4 section at the end). Protocol 7 changed the round wire roster from
 two to four records. Config 2 adds actual blast radius and the Elimination
 interval ramp; config 3 adds player-only gravity scaling; config 4 adds separate
 lethal and graze radii. Config 5 adds `grazes_to_die` (default 3, valid integer
@@ -21,8 +21,8 @@ silently repairing missing fields. Omitted native default IDs v1..v5 resolve
 to current defaults. Unknown versions remain invalid.
 Historical M8/M9 protocol-6 binaries and M7 protocol-5 binaries must not be mixed
 with these builds. E1-N1, E1-N2 and E1-N3 completed the Unity config-3, config-4
-and config-5 checkpoints: the exporter and native SDK are on config 5 and ABI 1.5, level manifests
-are re-exported, and limb-loss presentation is in place.
+and config-5 checkpoints: the exporter is on config 5, level manifests
+are re-exported, and limb-loss presentation is in place. E1-N4 moved the native SDK to ABI 1.6 / protocol 9.
 
 N1 movement (D2, approved 2026-11-10): new native defaults are speed 7,
 acceleration 70 (standing start reaches full speed in six 60 Hz ticks, 0.100 s),
