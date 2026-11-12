@@ -210,7 +210,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     and `PlayButtonPopSound()` on our UI Toolkit buttons in `BomNetworkHud`.
   - Read how `GameAudio` picks music by scene name, and write what happens in `NetworkMenu`/`NetworkYard` into your tick line.
   - Done when: Build and Rounds pass, and the player log has no `Game audio prefab could not be loaded`. [ ] Owner check.
-- [~] **A4 Tool and doc fixes from the midpoint review** (T2, Sonnet, S; Lane U; after C2c) claimed: Claude Sonnet 5.5 2026-11-11
+- [x] **A4 Tool and doc fixes from the midpoint review** (T2, Sonnet, S; Lane U; after C2c) claimed: Claude Sonnet 5.5 2026-11-11; done: Claude Sonnet 5.5 2026-11-11 355e3da — Content, Build x2, Rounds (stale yard registry replaced by the gate), NativeInterop (stage DLL restored), Prediction 6/6 with per-profile record; seed 137 adverse showed no restart this run (seed 2026 typical input_generation 2, resets 0)
   - Level trap: make `Test-NetworkRounds.ps1`/`BomNetworkMenuBuilder.BuildWithDrawFixture` also re-export the yard (`BomYardBuilder.CreateAndExport`), and refresh
     `integration/fixtures/round-draw/draw.json` (it still says gameplay config 3) from the gate output (review finding 6).
   - DLL trap: make `Test-RealNativeInterop.ps1` back up and restore the stage `bomcore.dll`, `bomcore.build.json` and the `build/interop/` copy itself, so rule 7's manual restore is no longer needed.
