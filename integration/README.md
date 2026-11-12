@@ -67,7 +67,7 @@ See `contracts/round-rules.md` and `contracts/source-mesh-rendering.md` for rule
 and ownership. M8 presentation tests disable prediction; static prediction was
 validated separately in M5. Dynamic-yard prediction and performance were validated
 in M9 (six 600-second prediction profiles and the 30-minute reset-under-load soak)
-and rerun after each native checkpoint (latest: E1-N3, protocol 8); see `evidence/M9/`.
+and rerun after each native checkpoint (latest: E1-N4, protocol 9); see `evidence/M9/`.
 
 
 ## Unified build, test and package commands

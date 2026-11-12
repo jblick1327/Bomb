@@ -1,10 +1,10 @@
 {
 	"status": "passed",
 	"level_id": "bom-performancereference-v1",
-	"gameplay_manifest_hash": "bdfe94792366e1559c70d9938d11617dd07e0e0314ad49046e45ade79890cb80",
-	"gameplay_config_hash": "1402a12361198fe32c988bb883232159591eb9cdc8e8422e9ea08e33882e0c7f",
-	"catalog_hash": "da2396bea8661aacb82155ffc10fc1abe672472a99ccb846febf0eda256e0127",
-	"game_protocol": 7,
+	"gameplay_manifest_hash": "ac1f7ba3053de28b1b128c321f5ec68daa8f9f0d5b10272255ebef5ac843dfcc",
+	"gameplay_config_hash": "134e5ae57149a6ee24f11a528a30d93dfb4efbe1397a4aff084ea056adfa9b4a",
+	"catalog_hash": "72225af0d6de10a61a5c1c27fd52d5050ddd10bf92f5b036dcc533d14e56c9c0",
+	"game_protocol": 9,
 	"canonical_version": 3,
 	"source_count": 101,
 	"part_count": 401,
@@ -98,22 +98,26 @@
 			}
 		},
 		"config": {
-			"version": 2,
+			"version": 5,
 			"gravity": {
 				"x": 0,
 				"y": -9.8
 			},
 			"player": {
-				"speed": 4,
-				"acceleration": 32,
-				"jump_speed": 6.3,
+				"speed": 7,
+				"acceleration": 70,
+				"jump_speed": 11.1803398,
 				"coyote_time": 0.1,
-				"jump_buffer": 0.1
+				"jump_buffer": 0.1,
+				"gravity_scale": 2.5510204
 			},
 			"bomb_fuse": 1,
 			"bomb_drop_min": 1,
 			"bomb_drop_max": 2.5,
 			"bomb_radius": 5,
+			"lethal_radius": 1.2,
+			"graze_radius": 2.2,
+			"grazes_to_die": 3,
 			"elimination_start_interval": {
 				"x": 1,
 				"y": 2.5
