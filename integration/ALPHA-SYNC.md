@@ -252,7 +252,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     loads `NetworkMenu` and calls `ConnectTo(127.0.0.1, port, token)` with a fresh in-memory token. Server stop: kill-on-close job object (crash), `Application.quitting` (quit), main menu (RETURN/LEAVE GAME/Main menu; 6 s for the server's own host-left shutdown, then kill).
     The game player `Bomb.exe` is built by `Editor/BomFrontDoorBuilder.cs` into `build/validation/Game-Mono` (MainMenuScene, Darryn's 3 levels, NetworkMenu); EditorBuildSettings untouched. Evidence: `evidence/M8/frontdoor-20261112T143715768211Z` (1.5 s grace, server killed) and `…T144730281207Z` (final, server ended itself).
     Not covered by the gate: visible windows (players run `-batchmode`), the LAN bind/firewall dialog, a second PC, and a guest still connected when the host leaves (it gets the existing "The host left" error, which `BomClientBehaviour.Fail` logs as an exception).
-- [ ] **C6 Darryn's levels on Odin** (T1, Opus, L)
+- [~] **C6 Darryn's levels on Odin** (T1, Opus, L) claimed: Claude Opus 5.5 2026-11-12
   - `Editor/BomYardBuilder.cs` expects the old yard paths (`YardLevel/Grass_Mesh`), which Darryn replaced
     with ~130 `Yard Ground Tile 0x` prefabs. Write `Editor/BomTileLevelBuilder.cs`. It exports any scene
     built from `DestructibleObject` tiles plus `Left Wall`/`Right Wall`/`Bottom Boundary` into a native layout
