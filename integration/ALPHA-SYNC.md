@@ -368,6 +368,25 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   archive outside the repo and keep a `integration/evidence/INDEX.md` with hashes. Squash the branch onto
   `origin/AlphaV0.1` (or `main`, whichever the owner names) and hand the owner the force-push command.
 
+## Phase G: Odin destruction in Darryn's 2.5D (owner priority, 2026-11-12)
+Owner's principle (do not trade away): the destruction is the soul of the game. Every piece is a simulated, interactable body sent over the wire,
+and **what's there is what you get**: what you see is exactly what you collide with, and it all fits together intuitively. Toughness comes from
+the owner's tuned **materials** (Wood, Glass, Rubber, Stone and custom) and **connectors/glue**, never from an indestructible flag or decoration-only
+status. C6's off-plane decoration (Bridge truss 88/110, Tower pillars 29, Yard 8), trimmed overlaps, indestructible walls, and the full-tile-depth
+extrusion that turns debris into long sticks all violate it. F2 showed the explosion lag is Unity presentation (mesh rebuild + GC), not the native design.
+- [ ] **G1 Destruction design spike** (T1, Opus, L; report + opt-in prototype; the shipped game stays unchanged)
+  1. Capture the same blasts in the raylib sandbox (`Documents\BOM`, `scriptsom.ps1`), the pre-merge package `BOM-Release\BOM-Windows`, and the current
+     package `BOM-Windows-2026-11-12b` (Classic Yard and Bridge/Tower). Write down what is lost: piece size/density, depth/stick look, tumble/settle,
+     crater readability, standing on/pushing debris.
+  2. Design: how Darryn's tiles become an Odin authored layout (tile → part with a real material; overlaps/contacts → glue connectors whose strength
+     comes from materials; anchors only where something truly rests on ground/walls; off-plane truss/pillars brought onto the play plane, with front/back
+     duplicates merged); how depth is drawn from the 2D sim (per-piece depth from its own shape/size; Darryn's extra depth as backdrop behind a play band);
+     and a presentation architecture with no per-change mesh churn/GC (F2 cause 1). Name anything that needs Lane N.
+  3. Prototype behind an opt-in flag or a separate level variant (e.g. `BridgeLevel-G1`): the Bridge rebuilt this way, plus the depth-from-shape drawing.
+     Capture it next to the originals.
+  - Done when: `integration/review/destruction-design-2026-11.md` has the captures, the design, the measured effect of the prototype and a task
+    breakdown (models/lanes/sizes); Build, Content and Rounds still pass with the flag off. [ ] Owner check: the prototype feels like the original Odin game in Darryn's 2.5D.
+
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
   `PlayerItemGlow` adds point lights, which will press on the shadow atlas (see D10).
