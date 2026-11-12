@@ -16,6 +16,7 @@ namespace Bom.Unity
             "--bom-soak",
             "--bom-perf-out",
             "--bom-profile-out",
+            "--bom-frontdoor-test",
         };
 
         public static bool Muted { get; private set; }

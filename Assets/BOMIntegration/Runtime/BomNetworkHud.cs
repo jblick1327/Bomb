@@ -43,7 +43,7 @@ namespace Bom.Unity
             reconnect,
             restart,
             setMode;
-        Button replay, leave;
+        Button replay, leave, mainMenu;
         ulong lastHudKey = ulong.MaxValue,
             menuRound = ulong.MaxValue;
         uint menuState = uint.MaxValue;
@@ -80,6 +80,32 @@ namespace Bom.Unity
                 address.SetValueWithoutNotify(Client.Address);
                 port.SetValueWithoutNotify(Client.Port.ToString());
             }
+            ApplyFrontDoor();
+        }
+
+        // C5: started from the main menu. The connection was made for the player, so the manual connection fields are
+        // hidden, leaving goes back to the main menu, and a LAN host is shown the addresses other PCs type into Join.
+        void ApplyFrontDoor()
+        {
+            bool front = BomFrontDoor.InSession;
+            foreach (VisualElement element in new VisualElement[] { address, port, token, spectator, connect })
+                if (element != null)
+                    element.style.display = front ? DisplayStyle.None : DisplayStyle.Flex;
+            if (mainMenu != null)
+                mainMenu.style.display = front ? DisplayStyle.Flex : DisplayStyle.None;
+            if (!front)
+                return;
+            if (BomFrontDoor.IsHost && BomFrontDoor.LanHost)
+            {
+                var addresses = BomFrontDoor.LanAddresses();
+                message =
+                    "Hosting on port " + BomFrontDoor.SessionPort + ". Other PCs join "
+                    + (addresses.Count > 0 ? string.Join(" or ", addresses) : "this PC's address") + " port " + BomFrontDoor.SessionPort + ".";
+            }
+            else if (BomFrontDoor.IsHost)
+                message = "Hosting on port " + BomFrontDoor.SessionPort + " (this PC only). Others on this PC join 127.0.0.1.";
+            else
+                message = "Joined port " + BomFrontDoor.SessionPort + ".";
         }
 
         // The network scenes still hold a leftover "Arena UI" UIDocument that draws Darryn's ArenaHud.uxml with no
@@ -259,6 +285,9 @@ namespace Bom.Unity
                 pauseRestart.clicked += () => Intent(1, 0);
             if (pauseLeave != null)
                 pauseLeave.clicked += () => Click(LeaveServer);
+            mainMenu = new Button(() => Click(LeaveServer)) { text = "Main menu" };
+            mainMenu.style.display = DisplayStyle.None;
+            body.Add(mainMenu);
             body.Add(new Button(() => Click(() => Application.Quit())) { text = "Quit" });
             roundState = new Label();
             roundState.style.position = Position.Absolute;
@@ -270,11 +299,20 @@ namespace Bom.Unity
             root.Add(roundState);
         }
 
+        // The same path as the RETURN button (used by the scripted front-door run).
+        public void Leave() => Click(LeaveServer);
+
         // RETURN and LEAVE GAME: disconnect, forget paid rounds (another server may reuse round ids), show the menu.
         void LeaveServer()
         {
             Client.Disconnect();
             BomWallet.Forget();
+            if (BomFrontDoor.InSession)
+            {
+                // C5: back to Darryn's main menu; a host's server stops there (BomFrontDoor).
+                BomFrontDoor.ReturnToMainMenu("leave");
+                return;
+            }
             message = "Left the server. Connect to play again.";
             SetMenuVisible(true);
         }

@@ -334,7 +334,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             return;
         onlineMenuOpen = true;
         SetMainMenuButtonsVisible(false);
-        OnlineMenuUI.Open(CloseOnlineMenu);
+        Bom.Unity.BomOnlineMenu.Open(CloseOnlineMenu); // C5 (D3/D9, Odin integration): Online hosts or joins an Odin server; was OnlineMenuUI.Open (NGO/Relay, removed in C7).
     }
 
     private void CloseOnlineMenu()
