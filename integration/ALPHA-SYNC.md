@@ -348,7 +348,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
 - [ ] **F1 Shadows** (D10; T3, Haiku, S). In the Unity Editor: PC_RPAsset → Lighting → Additional Lights →
   Shadow Atlas Resolution = 4096. Re-baseline that one file.
   - Done when: the log line `Reduced additional punctual light shadows resolution` is gone from a player log. [ ] Owner check.
-- [ ] **F2 Why it's choppy** (T1, Opus, M). Run the packaged Mono build with 1 window, then with 2. Record frame times
+- [~] **F2 Why it's choppy** (T1, Opus, M). claimed: claude-opus-5-5 2026-11-12. Run the packaged Mono build with 1 window, then with 2. Record frame times
   (`-logFile` plus Unity's frame-timing log) and the server overruns in `server-errors.log`. Report in
   `integration/review/performance-2026-11.md`, with the top 3 causes and fixes ranked by gain per effort. Change no code.
 - [x] **F3 Fix stale docs** (T3, Haiku, S) claimed: claude-haiku-5-5 2026-11-12 (orchestrator a9fe185: restored the developer sections 305b1fb dropped; kept the version, PowerShell and Logs fixes)
