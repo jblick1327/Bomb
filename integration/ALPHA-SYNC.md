@@ -37,7 +37,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   "Play" mode keeps its own Unity-physics rules (two rule sets, temporarily).
 - [ ] **D5 Currency.** Odin's round award goes into Darryn's local shop wallet as coins. The formulas are
   already identical: 10 per bomb faced + 1 per second. The shop stays cosmetic and local.
-- [ ] **D6 Items.** Coins, invincibility, speed and slow become native Odin items, using Darryn's
+- [x] **D6 Items.** (approved by owner 2026-11-11) Coins, invincibility, speed and slow become native Odin items, using Darryn's
   durations and chances. Do this after N1–N2.
 - [x] **D7 Network cosmetics.** (approved by owner 2026-11-11) For now every player gets a slot colour (P1 blue, P2 red, P3 yellow,
   P4 green). Sending each player's chosen character over the wire comes later.
@@ -50,7 +50,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   to 4096. This should fix the colour shifting in shadows.
 - [ ] **D11 PR prep.** Before the PR, rewrite this branch so the 273 MB of `integration/evidence` leaves
   history. This needs a force-push.
-- [ ] **D12 Graze next to cover.** (from the midpoint review, finding 8) Today a player whose capsule surface is inside the 1.2 lethal
+- [x] **D12 Graze next to cover.** (approved by owner 2026-11-11) (from the midpoint review, finding 8) Today a player whose capsule surface is inside the 1.2 lethal
   radius, but whose exposed part is only in the graze zone, takes nothing (the graze gate is skipped, and the lethal query sees nothing exposed).
   Recommended: an exposed part inside the 1.2 to 2.2 band counts as a graze even when the nearest point is inside 1.2. This is a small Lane N rule change plus a test;
   bundle it with N4 so one E1 covers it. Review: `integration/review/alpha-sync-review-20261111.md`.
