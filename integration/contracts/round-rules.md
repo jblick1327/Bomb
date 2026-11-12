@@ -167,3 +167,66 @@ the old world/network alive while a worker builds the next epoch; publication
 precedes round-ID advancement. Host mutations remain gated while pending. The
 historical reset-under-load soak and current follow-up status are linked in
 `integration/review/decisions-needed.md`.
+
+## N4 items and D12 graze next to cover (native, 2026-11-11)
+
+Owner decisions D6 (items) and D12 (graze next to cover), approved 2026-11-11.
+Native protocol 9, round snapshot format 4, gameplay config 5 (unchanged), C ABI 1.6,
+level format 4, canonical topology 3. Unity picks this up in E1-N4.
+
+**D12.** If a capsule reaches inside the lethal radius but cover hides every part of it
+within that radius, an exposed part in the lethal-to-graze band (1.2 to 2.2) counts as a
+graze. Before N4 such a player took nothing. Full cover still protects. A capsule that
+exactly touches the lethal boundary (tangent at 1.2) stays harmless, as N3 decided.
+
+**Items (D6).** Only the server spawns and simulates items, and only while an Elimination
+round is Playing. Defaults follow Darryn's AlphaV0.1 `BombDropper`,
+`FallingCollectibleItem` and `ArenaPlayerController`:
+- Timing: the first item comes 3 to 8 s after the round starts, then one every 12 to 20 s
+  (uniform), counted in server ticks. The draw uses a seeded stream (world seed +
+  "item") kept apart from bomb drops, so the bomb schedule is unchanged.
+- Kinds: silver coin 25 %, gold coin 15 %; invincibility, slow and speed boost share
+  the remaining 60 % equally (20 % each).
+- Placement: x is uniform over the level's bomb spawn range, at the bomb spawn height.
+  The item falls at Darryn's constant 18 units/s² with x fixed. It stops on the first
+  surface below (structure or floor; players and bombs are ignored) and stays there
+  until the next detonation, which makes it fall again. It disappears after 15 s
+  (900 ticks) or when it leaves the bomb cleanup bounds.
+- Pickup: the item is a circle of radius 0.35. It is collected when it overlaps an
+  alive player's capsule (boundary included). Each tick runs after the physics step and
+  before detonations. Items are checked in ascending id; on a tie, the lowest player
+  slot gets the item. A player who already died this tick collects nothing.
+- Coins: silver +10, gold +50. Coins collected during the round are added to that
+  player's round award: `xp_gained = 10 × bombs faced + seconds alive + coins`. They
+  count even if the player later dies.
+- Effects last 10 s (600 ticks). Picking up the same effect again restarts its timer.
+  Speed boost (×1.5) and slow (×0.5) share one slot, so a new one replaces the old one.
+  Invincibility runs alongside either speed effect.
+- Speed effects scale only the horizontal movement target (7 → 10.5 or 3.5).
+  Acceleration, jump and gravity are unchanged. The shared movement kernel counts the
+  timer down, and the owner state carries the effect and its remaining ticks, so client
+  prediction replays an active effect and its expiry exactly. A pickup itself is not
+  predicted; the next owner state corrects it.
+- **Invincibility** protects against all blast damage: no lethal hit and no graze.
+  It does not protect against leaving the kill bounds.
+- New rounds, resets and rebuilds clear all items, coins and effects.
+
+**What clients receive.**
+- Items are actors in the pose frames: kind 4 (`Item`). In `BomPose`, `flags` bit 0
+  means landed and bits 8–15 hold the item kind: 1 silver coin, 2 gold coin,
+  3 invincibility, 4 slow, 5 speed boost (Darryn's `CollectibleItemType` + 1).
+  `BomActorShapeInfo.item_radius` is 0.35.
+- Each `BomRoundPlayer` (stride 64 → 88) adds `coins`, `effects` (bit 0 invincible,
+  bit 1 speed boost, bit 2 slow), `invincible_end_tick` and `speed_end_tick`. The end
+  ticks are the last server tick the effect applies (inclusive), and 0 when inactive.
+  Effects are reported only for living players while the round is Playing, so Unity can
+  drive `PlayerItemGlow` from them. The snapshot is re-sent on pickup and on expiry,
+  not every tick.
+- `BomRoundInfo` adds `graze_radius` (the effective graze zone, capped by the actual bomb
+  radius like `lethal_radius`) and `grazes_to_die`, appended after `connections`, so
+  Unity can draw a fainter second ring.
+
+**Not covered here.** Unity presentation (Darryn's item prefabs, pickup sound, glow,
+graze ring) is E1-N4. Item tuning is native constants (`ITEM_TUNING`), not
+gameplay-config fields. Moving them into the config would mean config 6 plus a
+migration.
