@@ -74,6 +74,7 @@ namespace Bom.Unity
             GrazeRadius = 2.2f;
         // Gameplay config v5 (native N3 9eb164e): each exposed blast inside GrazeRadius (outside LethalRadius)
         // adds one graze; the GrazesToDie-th graze kills. Native validates 1..255.
+        [Range(1, 255)]
         public int GrazesToDie = 3;
         public Vector2 SandboxBombInterval = new Vector2(1, 2.5f);
         public Vector2 EliminationStartInterval = new Vector2(1, 2.5f),

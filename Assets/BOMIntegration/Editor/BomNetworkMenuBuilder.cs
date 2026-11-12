@@ -233,6 +233,7 @@ public static class BomNetworkMenuBuilder
 
     public static void BuildWithDrawFixture()
     {
+        BomYardBuilder.CreateAndExport();
         BomRoundFixtureBuilder.CreateAndExport();
         RebuildMono();
     }

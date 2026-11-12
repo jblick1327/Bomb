@@ -346,7 +346,7 @@ typedef struct BomRoundPlayer {
  unsigned int slot;
  unsigned int alive;
  unsigned int death;
- unsigned int reserved;
+ unsigned int graze_count;
  unsigned long long death_tick;
  unsigned long long alive_ticks;
  unsigned long long bombs_faced;

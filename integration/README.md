@@ -54,7 +54,7 @@ The pinned environment is Windows x64, Unity 6000.2.14f1, Odin May 2026 ea5175d,
 MSVC/Windows SDK, .NET 10 and Python 3. See `local.config.example.json` for paths,
 `source-lock.json` for exact inputs/build identities, and `STATUS.md` for next work.
 
-Current SDK/players use ABI 1.4, game protocol 7 (round snapshot format 2, gameplay config 2),
+Current SDK/players use ABI 1.5, game protocol 8 (round snapshot format 3, gameplay config 5),
 level format 4 and canonical topology 3.
 `build/Network-Mono` and `build/M8-native` form one compatible checkpoint. Frozen
 M5, M6 and M7 artifacts retain their original versions; never mix their servers
@@ -67,7 +67,7 @@ See `contracts/round-rules.md` and `contracts/source-mesh-rendering.md` for rule
 and ownership. M8 presentation tests disable prediction; static prediction was
 validated separately in M5. Dynamic-yard prediction and performance were validated
 in M9 (six 600-second prediction profiles and the 30-minute reset-under-load soak)
-and rerun on protocol 7 after the owner follow-up; see `evidence/M9/`.
+and rerun after each native checkpoint (latest: E1-N3, protocol 8); see `evidence/M9/`.
 
 
 ## Unified build, test and package commands

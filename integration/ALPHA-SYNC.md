@@ -114,15 +114,8 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
      The player is written to `integration/build/validation/Mono/BombPerformance.exe`. On failure, read `error CS` lines in that folder's `editor-*.log`.
    - **Rounds**: `powershell -File integration/tools/Test-NetworkRounds.ps1 -ConfigPath integration/local.config.owner-validation.json`
      (no `-SkipBuild`). It builds its own `integration/build/validation/Network-Mono/BombNetwork.exe` and runs two clients for two rounds. Evidence lands in `integration/evidence/M8/unity-rounds-*`.
-   - **Native DLL trap** (cost an hour on 2026-11-11): the NativeInterop suite *rebuilds* `bomcore.dll` and rewrites
-     `bomcore.build.json` inside the native stage (`OdinRoot` in the owner-validation config). The bytes differ even from
-     the same source, so later player builds fail the identity guard ("Native DLL SHA-256 differs"). After running NativeInterop,
-     restore both files from `Assets/BOMIntegration/Plugins/x86_64/` into `<OdinRoot>/build/`, and copy the same
-     `bomcore.dll` into `<OdinRoot>/build/interop/` (the Prediction suite checks that copy).
-   - **Level trap**: a level's `VisualRegistry.asset` holds the manifest hash the client sends. If gameplay config or the layout
-     changes, re-export the level in the validation project (`-executeMethod BomYardBuilder.CreateAndExport` with
-     `BOM_YARD_LAYOUT_OUT` and `BOM_NATIVE_SERVER_EXE` set). Then copy the changed registry and scene back into the repo and commit them,
-     or the server answers "gameplay level/config manifest mismatch".
+   - **Native DLL trap**: the NativeInterop suite now backs up and restores the stage `bomcore.dll`, `bomcore.build.json` and `build/interop/bomcore.dll` itself (A4); no manual restore.
+   - **Level trap**: the Rounds gate now re-exports the yard itself (A4, `BuildWithDrawFixture`). If the validation project's registries/scenes change, copy the changed ones back into the repo and commit them; the draw fixture `fixtures/round-draw/draw.json` is refreshed from `build/validation/round-draw/draw.json`.
    - **Sync**: `Build-BomPlayers.ps1` only copies `Assets/BOMIntegration` into an existing validation copy.
      If you changed files outside it, mirror them first. From the repo root, run
      `robocopy Assets <validation>\Assets /MIR /XD BOMIntegration Library`, then

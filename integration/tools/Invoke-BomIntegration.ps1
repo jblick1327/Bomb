@@ -42,11 +42,22 @@ try {
         foreach($kind in $kinds){& (Join-Path $PSScriptRoot 'Test-UnitySlice.ps1') -ConfigPath $ConfigPath -Backend $kind -Seconds $(if($Seconds){$Seconds}else{24}) -SkipBuild:$SkipBuild;if($LASTEXITCODE -ne 0){throw 'Unity live slice failed.'}}
     } elseif ($Task -eq 'Test' -and $Suite -eq 'Prediction') {
         $duration=if($Seconds){$Seconds}else{600}
+        function Invoke-PredictionProfile([string]$Label,[string[]]$ProfileArguments){
+            $lines=@(& python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration @ProfileArguments 2>&1|ForEach-Object{Write-Host $_;"$_"})
+            $code=$LASTEXITCODE
+            $json=$lines|Where-Object{$_.StartsWith('{"status"')}|Select-Object -First 1
+            $evidenceLine=$lines|Where-Object{$_.StartsWith('Evidence: ')}|Select-Object -First 1
+            if($json){
+                $summary=$json|ConvertFrom-Json;$run=$summary.result;$stats=$run.stats
+                $result.checks += [ordered]@{name=$Label;seed=$summary.profile.seed;rtt_ms=$summary.profile.rtt_ms;jitter_ms=$summary.profile.jitter_ms;loss=$summary.profile.loss;fps=$summary.profile.fps;seconds=$summary.profile.seconds;status=$summary.status;failures=@($run.failures);resets=$stats.reset_count;transitions=$stats.conservative_transitions;recoveries=$stats.recoveries;snaps=$stats.snap_count;corrections=$stats.correction_count;input_generation=$stats.input_generation;conservative_seconds=$stats.conservative_seconds;fallback_frames=$run.fallbackFrames;evidence=$(if($evidenceLine){$evidenceLine.Substring(10)}else{''})}
+            } else { $result.checks += [ordered]@{name=$Label;status='no-summary';exit_code=$code} }
+            return $code
+        }
         foreach($seed in @(42,137,2026)){
-            & python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration --rtt-ms 100 --jitter-ms 10 --fps 60 --seed $seed
-            if($LASTEXITCODE -ne 0){throw 'Typical prediction profile failed.'}
-            & python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration --rtt-ms 200 --jitter-ms 30 --loss 0.05 --fps 144 --seed $seed
-            if($LASTEXITCODE -ne 0){throw 'Adverse prediction profile failed.'}
+            $code=Invoke-PredictionProfile "typical seed $seed" @('--rtt-ms','100','--jitter-ms','10','--fps','60','--seed',"$seed")
+            if($code -ne 0){throw 'Typical prediction profile failed.'}
+            $code=Invoke-PredictionProfile "adverse seed $seed" @('--rtt-ms','200','--jitter-ms','30','--loss','0.05','--fps','144','--seed',"$seed")
+            if($code -ne 0){throw 'Adverse prediction profile failed.'}
         }
     } elseif ($Task -eq 'Test' -and $Suite -eq 'NativeInterop') {
         & (Join-Path $PSScriptRoot 'Test-RealNativeInterop.ps1') -ConfigPath $ConfigPath -Seconds $Seconds

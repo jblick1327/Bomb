@@ -360,6 +360,10 @@ public static class BomLevelExporter
             .Append(",\"catalog_id\":")
             .Append(Q(level.LevelId + "-visual-v1"));
         var tuning = level.Gameplay ?? new BomGameplayTuning();
+        if (tuning.GrazesToDie < 1 || tuning.GrazesToDie > 255)
+            throw new InvalidOperationException(
+                "Level '" + level.LevelId + "': GrazesToDie must be 1..255 but is " + tuning.GrazesToDie
+            );
         json.Append(",\"gameplay_config\":{\"version\":5,\"gravity\":")
             .Append(V(tuning.Gravity))
             .Append(",\"player\":{\"speed\":")
@@ -381,7 +385,7 @@ public static class BomLevelExporter
             .Append(",\"graze_radius\":")
             .Append(F(tuning.GrazeRadius))
             .Append(",\"grazes_to_die\":")
-            .Append(U((ulong)Math.Max(0, tuning.GrazesToDie)))
+            .Append(U((ulong)tuning.GrazesToDie))
             .Append(",\"bomb_fuse\":")
             .Append(F(tuning.BombFuse))
             .Append(",\"bomb_drop_min\":")

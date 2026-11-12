@@ -20,10 +20,9 @@ destruction radius, fuse and pacing. Current config 5 is validated without
 silently repairing missing fields. Omitted native default IDs v1..v5 resolve
 to current defaults. Unknown versions remain invalid.
 Historical M8/M9 protocol-6 binaries and M7 protocol-5 binaries must not be mixed
-with these builds. E1-N1 and E1-N2 completed the Unity config-3 and config-4
-checkpoints. E1-N3 must update the exporter and native SDK to config 5 and ABI
-1.5, re-export level manifests, and implement limb-loss presentation. Until
-E1-N3, existing Unity binaries remain on their previous native checkpoint.
+with these builds. E1-N1, E1-N2 and E1-N3 completed the Unity config-3, config-4
+and config-5 checkpoints: the exporter and native SDK are on config 5 and ABI 1.5, level manifests
+are re-exported, and limb-loss presentation is in place.
 
 N1 movement (D2, approved 2026-11-10): new native defaults are speed 7,
 acceleration 70 (standing start reaches full speed in six 60 Hz ticks, 0.100 s),

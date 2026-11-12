@@ -2,6 +2,7 @@ using System;
 using Bom.Native;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace Bom.Unity
@@ -95,6 +96,7 @@ namespace Bom.Unity
         {
             var doc = GetComponent<UIDocument>();
             DisableDuplicateArenaHud(doc);
+            SceneManager.sceneLoaded += OnSceneLoaded;
             root = doc.rootVisualElement;
             root.Clear();
             root.pickingMode = PickingMode.Ignore;
@@ -503,8 +505,12 @@ namespace Bom.Unity
                             : "Server rejected the request.";
         }
 
+        void OnSceneLoaded(Scene scene, LoadSceneMode mode) =>
+            DisableDuplicateArenaHud(GetComponent<UIDocument>());
+
         void OnDisable()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             if (Client != null)
                 Client.InputBlocked = false;
             root?.Clear();
