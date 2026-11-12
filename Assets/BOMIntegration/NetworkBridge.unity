@@ -119,71 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &4247897
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4247898}
-  - component: {fileID: 4247899}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4247898
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4247897}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2100000031}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4247899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4247897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: 1.65, y: 8.5}
-  - {x: 4.81, y: 8.5}
-  - {x: 4.81, y: 9.5}
-  - {x: 1.65, y: 9.5}
-  Anchors:
-  - A: {x: 1.65, y: 8.5}
-    B: {x: 4.81, y: 8.5}
-  - A: {x: 4.81, y: 8.5}
-    B: {x: 4.81, y: 9.5}
-  - A: {x: 4.81, y: 9.5}
-    B: {x: 1.65, y: 9.5}
-  - A: {x: 1.65, y: 9.5}
-    B: {x: 1.65, y: 8.5}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &15447891
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,71 +386,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 44213461}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &48600102
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 48600103}
-  - component: {fileID: 48600104}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &48600103
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 48600102}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 347470704}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &48600104
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 48600102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -14.5, y: 4.25}
-  - {x: -11.34, y: 4.25}
-  - {x: -11.34, y: 5.25}
-  - {x: -14.5, y: 5.25}
-  Anchors:
-  - A: {x: -14.5, y: 4.25}
-    B: {x: -11.34, y: 4.25}
-  - A: {x: -11.34, y: 4.25}
-    B: {x: -11.34, y: 5.25}
-  - A: {x: -11.34, y: 5.25}
-    B: {x: -14.5, y: 5.25}
-  - A: {x: -14.5, y: 5.25}
-    B: {x: -14.5, y: 4.25}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &58456738
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +653,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 66965690}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &73453574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 73453575}
+  - component: {fileID: 73453576}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &73453575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 73453574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 709261992}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &73453576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 73453574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -11.27, y: 12.93}
+  - {x: -8.11, y: 12.93}
+  - {x: -8.11, y: 13.93}
+  - {x: -11.27, y: 13.93}
+  Anchors:
+  - A: {x: -11.27, y: 12.93}
+    B: {x: -8.11, y: 12.93}
+  - A: {x: -8.11, y: 12.93}
+    B: {x: -8.11, y: 13.93}
+  - A: {x: -8.11, y: 13.93}
+    B: {x: -11.27, y: 13.93}
+  - A: {x: -11.27, y: 13.93}
+    B: {x: -11.27, y: 12.93}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &82916753
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,71 +807,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82916753}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &86256855
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 86256856}
-  - component: {fileID: 86256857}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &86256856
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86256855}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 181370794}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &86256857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 86256855}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -4.81, y: 4.25}
-  - {x: -1.65, y: 4.25}
-  - {x: -1.65, y: 5.25}
-  - {x: -4.81, y: 5.25}
-  Anchors:
-  - A: {x: -4.81, y: 4.25}
-    B: {x: -1.65, y: 4.25}
-  - A: {x: -1.65, y: 4.25}
-    B: {x: -1.65, y: 5.25}
-  - A: {x: -1.65, y: 5.25}
-    B: {x: -4.81, y: 5.25}
-  - A: {x: -4.81, y: 5.25}
-    B: {x: -4.81, y: 4.25}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &114380839
 GameObject:
   m_ObjectHideFlags: 0
@@ -1382,71 +1252,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 170131049}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &180616349
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 180616350}
-  - component: {fileID: 180616351}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &180616350
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180616349}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2100000021}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &180616351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180616349}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -4.81, y: 8.5}
-  - {x: -1.65, y: 8.5}
-  - {x: -1.65, y: 9.5}
-  - {x: -4.81, y: 9.5}
-  Anchors:
-  - A: {x: -4.81, y: 8.5}
-    B: {x: -1.65, y: 8.5}
-  - A: {x: -1.65, y: 8.5}
-    B: {x: -1.65, y: 9.5}
-  - A: {x: -1.65, y: 9.5}
-    B: {x: -4.81, y: 9.5}
-  - A: {x: -4.81, y: 9.5}
-    B: {x: -4.81, y: 8.5}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &181370793
 GameObject:
   m_ObjectHideFlags: 0
@@ -1479,7 +1284,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 86256856}
+  - {fileID: 1585886378}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &181370797
@@ -1553,7 +1358,7 @@ MonoBehaviour:
   identityDecimal: 22
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-86256857-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1585886379-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -1565,6 +1370,63 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
+--- !u!1 &192305354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 192305355}
+  - component: {fileID: 192305356}
+  m_Layer: 0
+  m_Name: Native fixed boundary
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &192305355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192305354}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1641916535}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &192305356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192305354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: stone
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -18.599998, y: -25.36}
+  - {x: -18, y: -25.36}
+  - {x: -18, y: 34.64}
+  - {x: -18.599998, y: 34.64}
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &199875953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,7 +1548,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2103130209}
+  - {fileID: 1577309763}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &210175627
@@ -1760,7 +1622,7 @@ MonoBehaviour:
   identityDecimal: 16
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2103130210-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1577309764-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -1860,7 +1722,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1835272454}
+  - {fileID: 860550631}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &221487494
@@ -1878,7 +1740,7 @@ MonoBehaviour:
   identityDecimal: 5
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1835272455-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-860550632-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -1921,7 +1783,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &241127632
+--- !u!1 &232679903
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1929,8 +1791,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 241127633}
-  - component: {fileID: 241127634}
+  - component: {fileID: 232679904}
+  - component: {fileID: 232679905}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -1938,28 +1800,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &241127633
+--- !u!4 &232679904
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 241127632}
+  m_GameObject: {fileID: 232679903}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 946254673}
+  m_Father: {fileID: 889027025}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &241127634
+--- !u!114 &232679905
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 241127632}
+  m_GameObject: {fileID: 232679903}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -1971,19 +1833,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: -8.04, y: 4.25}
-  - {x: -4.88, y: 4.25}
-  - {x: -4.88, y: 5.25}
-  - {x: -8.04, y: 5.25}
+  - {x: -11.27, y: 4.25}
+  - {x: -8.11, y: 4.25}
+  - {x: -8.11, y: 5.25}
+  - {x: -11.27, y: 5.25}
   Anchors:
-  - A: {x: -8.04, y: 4.25}
-    B: {x: -4.88, y: 4.25}
-  - A: {x: -4.88, y: 4.25}
-    B: {x: -4.88, y: 5.25}
-  - A: {x: -4.88, y: 5.25}
-    B: {x: -8.04, y: 5.25}
-  - A: {x: -8.04, y: 5.25}
-    B: {x: -8.04, y: 4.25}
+  - A: {x: -11.27, y: 4.25}
+    B: {x: -8.11, y: 4.25}
+  - A: {x: -8.11, y: 4.25}
+    B: {x: -8.11, y: 5.25}
+  - A: {x: -8.11, y: 5.25}
+    B: {x: -11.27, y: 5.25}
+  - A: {x: -11.27, y: 5.25}
+    B: {x: -11.27, y: 4.25}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &249713106
@@ -2107,7 +1969,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 637752998}
+  - {fileID: 991700129}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &258674127
@@ -2181,7 +2043,7 @@ MonoBehaviour:
   identityDecimal: 19
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-637752999-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-991700130-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -2317,7 +2179,7 @@ Transform:
   - {fileID: 510415493}
   - {fileID: 226705444}
   - {fileID: 859434656}
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &312599248
 GameObject:
@@ -2408,63 +2270,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312599248}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &313174904
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 313174905}
-  - component: {fileID: 313174906}
-  m_Layer: 0
-  m_Name: Native fixed boundary
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &313174905
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313174904}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 859434656}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &313174906
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 313174904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -18.6, y: -26.56}
-  - {x: 18.6, y: -26.56}
-  - {x: 18.6, y: -25.960001}
-  - {x: -18.6, y: -25.960001}
-  Anchors: []
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &328479882
 GameObject:
   m_ObjectHideFlags: 0
@@ -2675,7 +2480,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 48600103}
+  - {fileID: 1347742871}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &347470707
@@ -2749,7 +2554,7 @@ MonoBehaviour:
   identityDecimal: 18
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-48600104-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1347742872-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -3117,63 +2922,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 369570657}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &377012457
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 377012458}
-  - component: {fileID: 377012459}
-  m_Layer: 0
-  m_Name: Native fixed boundary
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &377012458
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 377012457}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1641916535}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &377012459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 377012457}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -18.599998, y: -25.36}
-  - {x: -18, y: -25.36}
-  - {x: -18, y: 34.64}
-  - {x: -18.599998, y: 34.64}
-  Anchors: []
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &391267600
 GameObject:
   m_ObjectHideFlags: 0
@@ -3947,7 +3695,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1536804543}
+  - {fileID: 1870095624}
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &510415494
@@ -3965,7 +3713,7 @@ MonoBehaviour:
   identityDecimal: 2
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1536804544-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1870095625-0
     IdentityDecimal: 1
   AssetKey: tiles/BridgeLevel/Right Wall
   VisualGroup: {fileID: 0}
@@ -4156,6 +3904,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 517085724}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &544068353
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 544068354}
+  - component: {fileID: 544068355}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &544068354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544068353}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1993649802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &544068355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544068353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -1.58, y: 4.25}
+  - {x: 1.58, y: 4.25}
+  - {x: 1.58, y: 5.25}
+  - {x: -1.58, y: 5.25}
+  Anchors:
+  - A: {x: -1.58, y: 4.25}
+    B: {x: 1.58, y: 4.25}
+  - A: {x: 1.58, y: 4.25}
+    B: {x: 1.58, y: 5.25}
+  - A: {x: 1.58, y: 5.25}
+    B: {x: -1.58, y: 5.25}
+  - A: {x: -1.58, y: 5.25}
+    B: {x: -1.58, y: 4.25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &555789210
 GameObject:
   m_ObjectHideFlags: 0
@@ -4544,7 +4357,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 663977710}
+  - {fileID: 780141393}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &600177226
@@ -4618,7 +4431,7 @@ MonoBehaviour:
   identityDecimal: 24
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-663977711-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-780141394-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -4630,7 +4443,7 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &609608895
+--- !u!1 &602563697
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4638,8 +4451,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 609608896}
-  - component: {fileID: 609608897}
+  - component: {fileID: 602563698}
+  - component: {fileID: 602563699}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -4647,28 +4460,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &609608896
+--- !u!4 &602563698
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609608895}
+  m_GameObject: {fileID: 602563697}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1898473079}
+  m_Father: {fileID: 946254673}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &609608897
+--- !u!114 &602563699
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 609608895}
+  m_GameObject: {fileID: 602563697}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -4680,22 +4493,22 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 8.11, y: 4.25}
-  - {x: 11.27, y: 4.25}
-  - {x: 11.27, y: 5.25}
-  - {x: 8.11, y: 5.25}
+  - {x: -8.04, y: 4.25}
+  - {x: -4.88, y: 4.25}
+  - {x: -4.88, y: 5.25}
+  - {x: -8.04, y: 5.25}
   Anchors:
-  - A: {x: 8.11, y: 4.25}
-    B: {x: 11.27, y: 4.25}
-  - A: {x: 11.27, y: 4.25}
-    B: {x: 11.27, y: 5.25}
-  - A: {x: 11.27, y: 5.25}
-    B: {x: 8.11, y: 5.25}
-  - A: {x: 8.11, y: 5.25}
-    B: {x: 8.11, y: 4.25}
+  - A: {x: -8.04, y: 4.25}
+    B: {x: -4.88, y: 4.25}
+  - A: {x: -4.88, y: 4.25}
+    B: {x: -4.88, y: 5.25}
+  - A: {x: -4.88, y: 5.25}
+    B: {x: -8.04, y: 5.25}
+  - A: {x: -8.04, y: 5.25}
+    B: {x: -8.04, y: 4.25}
   WorldRestCoordinates: 1
   ApproximationNote: 
---- !u!1 &637752997
+--- !u!1 &675234926
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4703,64 +4516,56 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 637752998}
-  - component: {fileID: 637752999}
+  - component: {fileID: 675234927}
+  - component: {fileID: 675234928}
   m_Layer: 0
-  m_Name: Native tile proxy
+  m_Name: Native fixed boundary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &637752998
+--- !u!4 &675234927
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637752997}
+  m_GameObject: {fileID: 675234926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 258674124}
+  m_Father: {fileID: 859434656}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &637752999
+--- !u!114 &675234928
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637752997}
+  m_GameObject: {fileID: 675234926}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
   PartIdDecimal: 1
-  MaterialKey: wood
+  MaterialKey: stone
   Shape: 2
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 11.34, y: 4.25}
-  - {x: 14.5, y: 4.25}
-  - {x: 14.5, y: 5.25}
-  - {x: 11.34, y: 5.25}
-  Anchors:
-  - A: {x: 11.34, y: 4.25}
-    B: {x: 14.5, y: 4.25}
-  - A: {x: 14.5, y: 4.25}
-    B: {x: 14.5, y: 5.25}
-  - A: {x: 14.5, y: 5.25}
-    B: {x: 11.34, y: 5.25}
-  - A: {x: 11.34, y: 5.25}
-    B: {x: 11.34, y: 4.25}
+  - {x: -18.6, y: -26.56}
+  - {x: 18.6, y: -26.56}
+  - {x: 18.6, y: -25.960001}
+  - {x: -18.6, y: -25.960001}
+  Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: 
---- !u!1 &663977709
+--- !u!1 &682875132
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4768,8 +4573,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 663977710}
-  - component: {fileID: 663977711}
+  - component: {fileID: 682875133}
+  - component: {fileID: 682875134}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -4777,28 +4582,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &663977710
+--- !u!4 &682875133
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 663977709}
+  m_GameObject: {fileID: 682875132}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 600177223}
+  m_Father: {fileID: 1363155320}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &663977711
+--- !u!114 &682875134
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 663977709}
+  m_GameObject: {fileID: 682875132}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -4810,19 +4615,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 4.88, y: 4.25}
-  - {x: 8.04, y: 4.25}
-  - {x: 8.04, y: 5.25}
-  - {x: 4.88, y: 5.25}
+  - {x: 1.65, y: 4.25}
+  - {x: 4.81, y: 4.25}
+  - {x: 4.81, y: 5.25}
+  - {x: 1.65, y: 5.25}
   Anchors:
-  - A: {x: 4.88, y: 4.25}
-    B: {x: 8.04, y: 4.25}
-  - A: {x: 8.04, y: 4.25}
-    B: {x: 8.04, y: 5.25}
-  - A: {x: 8.04, y: 5.25}
-    B: {x: 4.88, y: 5.25}
-  - A: {x: 4.88, y: 5.25}
-    B: {x: 4.88, y: 4.25}
+  - A: {x: 1.65, y: 4.25}
+    B: {x: 4.81, y: 4.25}
+  - A: {x: 4.81, y: 4.25}
+    B: {x: 4.81, y: 5.25}
+  - A: {x: 4.81, y: 5.25}
+    B: {x: 1.65, y: 5.25}
+  - A: {x: 1.65, y: 5.25}
+    B: {x: 1.65, y: 4.25}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &706443159
@@ -4916,7 +4721,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &706443164
 MonoBehaviour:
@@ -4994,7 +4799,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1095888657}
+  - {fileID: 73453575}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &709261995
@@ -5068,7 +4873,7 @@ MonoBehaviour:
   identityDecimal: 15
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1095888658-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-73453576-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -5258,6 +5063,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 775777132}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &780141392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 780141393}
+  - component: {fileID: 780141394}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &780141393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780141392}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 600177223}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &780141394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780141392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: 4.88, y: 4.25}
+  - {x: 8.04, y: 4.25}
+  - {x: 8.04, y: 5.25}
+  - {x: 4.88, y: 5.25}
+  Anchors:
+  - A: {x: 4.88, y: 4.25}
+    B: {x: 8.04, y: 4.25}
+  - A: {x: 8.04, y: 4.25}
+    B: {x: 8.04, y: 5.25}
+  - A: {x: 8.04, y: 5.25}
+    B: {x: 4.88, y: 5.25}
+  - A: {x: 4.88, y: 5.25}
+    B: {x: 4.88, y: 4.25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &791696569
 GameObject:
   m_ObjectHideFlags: 0
@@ -5525,7 +5395,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813399911}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &834423226
+--- !u!1 &822347151
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5533,100 +5403,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 834423229}
-  - component: {fileID: 834423228}
-  - component: {fileID: 834423227}
-  m_Layer: 0
-  m_Name: BOM native yard camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!81 &834423227
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834423226}
-  m_Enabled: 1
---- !u!20 &834423228
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834423226}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.05, g: 0.07, b: 0.1, a: 1}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.1
-  far clip plane: 200
-  field of view: 60
-  orthographic: 1
-  orthographic size: 5
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 0
-  m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!4 &834423229
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834423226}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 12, z: -40}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &839332832
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 839332833}
-  - component: {fileID: 839332834}
+  - component: {fileID: 822347152}
+  - component: {fileID: 822347153}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -5634,28 +5412,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &839332833
+--- !u!4 &822347152
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839332832}
+  m_GameObject: {fileID: 822347151}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 889027025}
+  m_Father: {fileID: 2100000031}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &839332834
+--- !u!114 &822347153
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839332832}
+  m_GameObject: {fileID: 822347151}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -5667,19 +5445,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: -11.27, y: 4.25}
-  - {x: -8.11, y: 4.25}
-  - {x: -8.11, y: 5.25}
-  - {x: -11.27, y: 5.25}
+  - {x: 1.65, y: 8.5}
+  - {x: 4.81, y: 8.5}
+  - {x: 4.81, y: 9.5}
+  - {x: 1.65, y: 9.5}
   Anchors:
-  - A: {x: -11.27, y: 4.25}
-    B: {x: -8.11, y: 4.25}
-  - A: {x: -8.11, y: 4.25}
-    B: {x: -8.11, y: 5.25}
-  - A: {x: -8.11, y: 5.25}
-    B: {x: -11.27, y: 5.25}
-  - A: {x: -11.27, y: 5.25}
-    B: {x: -11.27, y: 4.25}
+  - A: {x: 1.65, y: 8.5}
+    B: {x: 4.81, y: 8.5}
+  - A: {x: 4.81, y: 8.5}
+    B: {x: 4.81, y: 9.5}
+  - A: {x: 4.81, y: 9.5}
+    B: {x: 1.65, y: 9.5}
+  - A: {x: 1.65, y: 9.5}
+    B: {x: 1.65, y: 8.5}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &859434655
@@ -5712,7 +5490,7 @@ Transform:
   m_LocalScale: {x: 37.2, y: 0.6, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 313174905}
+  - {fileID: 675234927}
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &859434657
@@ -5730,7 +5508,7 @@ MonoBehaviour:
   identityDecimal: 3
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-313174906-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-675234928-0
     IdentityDecimal: 1
   AssetKey: tiles/BridgeLevel/Bottom Boundary
   VisualGroup: {fileID: 0}
@@ -5743,6 +5521,136 @@ MonoBehaviour:
     invisible in the original, so hidden
   IncludeInExport: 1
   HiddenVisual: 1
+--- !u!1 &860550630
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 860550631}
+  - component: {fileID: 860550632}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &860550631
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860550630}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 221487493}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &860550632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860550630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -14.5, y: 8.5}
+  - {x: -11.34, y: 8.5}
+  - {x: -11.34, y: 9.5}
+  - {x: -14.5, y: 9.5}
+  Anchors:
+  - A: {x: -14.5, y: 8.5}
+    B: {x: -11.34, y: 8.5}
+  - A: {x: -11.34, y: 8.5}
+    B: {x: -11.34, y: 9.5}
+  - A: {x: -11.34, y: 9.5}
+    B: {x: -14.5, y: 9.5}
+  - A: {x: -14.5, y: 9.5}
+    B: {x: -14.5, y: 8.5}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
+--- !u!1 &885024845
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 885024846}
+  - component: {fileID: 885024847}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &885024846
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885024845}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1350883911}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &885024847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 885024845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -1.58, y: 8.5}
+  - {x: 1.58, y: 8.5}
+  - {x: 1.58, y: 9.5}
+  - {x: -1.58, y: 9.5}
+  Anchors:
+  - A: {x: -1.58, y: 8.5}
+    B: {x: 1.58, y: 8.5}
+  - A: {x: 1.58, y: 8.5}
+    B: {x: 1.58, y: 9.5}
+  - A: {x: 1.58, y: 9.5}
+    B: {x: -1.58, y: 9.5}
+  - A: {x: -1.58, y: 9.5}
+    B: {x: -1.58, y: 8.5}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &889027024
 GameObject:
   m_ObjectHideFlags: 0
@@ -5775,7 +5683,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 839332833}
+  - {fileID: 232679904}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &889027028
@@ -5849,7 +5757,7 @@ MonoBehaviour:
   identityDecimal: 20
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-839332834-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-232679905-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -6217,71 +6125,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 914874577}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &938542808
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 938542809}
-  - component: {fileID: 938542810}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &938542809
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 938542808}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2100000041}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &938542810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 938542808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: 4.88, y: 8.5}
-  - {x: 8.04, y: 8.5}
-  - {x: 8.04, y: 9.5}
-  - {x: 4.88, y: 9.5}
-  Anchors:
-  - A: {x: 4.88, y: 8.5}
-    B: {x: 8.04, y: 8.5}
-  - A: {x: 8.04, y: 8.5}
-    B: {x: 8.04, y: 9.5}
-  - A: {x: 8.04, y: 9.5}
-    B: {x: 4.88, y: 9.5}
-  - A: {x: 4.88, y: 9.5}
-    B: {x: 4.88, y: 8.5}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &941873542
 GameObject:
   m_ObjectHideFlags: 0
@@ -6403,7 +6246,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 241127633}
+  - {fileID: 602563698}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &946254676
@@ -6477,7 +6320,7 @@ MonoBehaviour:
   identityDecimal: 21
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-241127634-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-602563699-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -6489,7 +6332,7 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &995180358
+--- !u!1 &991700128
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6497,8 +6340,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 995180359}
-  - component: {fileID: 995180360}
+  - component: {fileID: 991700129}
+  - component: {fileID: 991700130}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -6506,28 +6349,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &995180359
+--- !u!4 &991700129
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 995180358}
+  m_GameObject: {fileID: 991700128}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1350883911}
+  m_Father: {fileID: 258674124}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &995180360
+--- !u!114 &991700130
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 995180358}
+  m_GameObject: {fileID: 991700128}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -6539,19 +6382,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: -1.58, y: 8.5}
-  - {x: 1.58, y: 8.5}
-  - {x: 1.58, y: 9.5}
-  - {x: -1.58, y: 9.5}
+  - {x: 11.34, y: 4.25}
+  - {x: 14.5, y: 4.25}
+  - {x: 14.5, y: 5.25}
+  - {x: 11.34, y: 5.25}
   Anchors:
-  - A: {x: -1.58, y: 8.5}
-    B: {x: 1.58, y: 8.5}
-  - A: {x: 1.58, y: 8.5}
-    B: {x: 1.58, y: 9.5}
-  - A: {x: 1.58, y: 9.5}
-    B: {x: -1.58, y: 9.5}
-  - A: {x: -1.58, y: 9.5}
-    B: {x: -1.58, y: 8.5}
+  - A: {x: 11.34, y: 4.25}
+    B: {x: 14.5, y: 4.25}
+  - A: {x: 14.5, y: 4.25}
+    B: {x: 14.5, y: 5.25}
+  - A: {x: 14.5, y: 5.25}
+    B: {x: 11.34, y: 5.25}
+  - A: {x: 11.34, y: 5.25}
+    B: {x: 11.34, y: 4.25}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &1005624312
@@ -6643,6 +6486,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005624312}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1033673982
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1033673983}
+  - component: {fileID: 1033673984}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1033673983
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033673982}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1786697241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1033673984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1033673982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -14.5, y: 12.93}
+  - {x: -11.34, y: 12.93}
+  - {x: -11.34, y: 13.93}
+  - {x: -14.5, y: 13.93}
+  Anchors:
+  - A: {x: -14.5, y: 12.93}
+    B: {x: -11.34, y: 12.93}
+  - A: {x: -11.34, y: 12.93}
+    B: {x: -11.34, y: 13.93}
+  - A: {x: -11.34, y: 13.93}
+    B: {x: -14.5, y: 13.93}
+  - A: {x: -14.5, y: 13.93}
+    B: {x: -14.5, y: 12.93}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1050701813
 GameObject:
   m_ObjectHideFlags: 0
@@ -6739,7 +6647,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 87.5, y: 0, z: 0}
 --- !u!114 &1050701816
 MonoBehaviour:
@@ -6859,136 +6767,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054193451}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1095888656
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1095888657}
-  - component: {fileID: 1095888658}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1095888657
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095888656}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 709261992}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1095888658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1095888656}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -11.27, y: 12.93}
-  - {x: -8.11, y: 12.93}
-  - {x: -8.11, y: 13.93}
-  - {x: -11.27, y: 13.93}
-  Anchors:
-  - A: {x: -11.27, y: 12.93}
-    B: {x: -8.11, y: 12.93}
-  - A: {x: -8.11, y: 12.93}
-    B: {x: -8.11, y: 13.93}
-  - A: {x: -8.11, y: 13.93}
-    B: {x: -11.27, y: 13.93}
-  - A: {x: -11.27, y: 13.93}
-    B: {x: -11.27, y: 12.93}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
---- !u!1 &1097003047
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1097003048}
-  - component: {fileID: 1097003049}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1097003048
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1097003047}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2100000011}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1097003049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1097003047}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -8.04, y: 8.5}
-  - {x: -4.88, y: 8.5}
-  - {x: -4.88, y: 9.5}
-  - {x: -8.04, y: 9.5}
-  Anchors:
-  - A: {x: -8.04, y: 8.5}
-    B: {x: -4.88, y: 8.5}
-  - A: {x: -4.88, y: 8.5}
-    B: {x: -4.88, y: 9.5}
-  - A: {x: -4.88, y: 9.5}
-    B: {x: -8.04, y: 9.5}
-  - A: {x: -8.04, y: 9.5}
-    B: {x: -8.04, y: 8.5}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &1138145793
 GameObject:
   m_ObjectHideFlags: 0
@@ -7076,7 +6854,7 @@ Transform:
   m_LocalScale: {x: 80, y: 10, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1151952742
 GameObject:
@@ -7395,7 +7173,7 @@ Transform:
   - {fileID: 1363155320}
   - {fileID: 600177223}
   - {fileID: 1898473079}
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1190742087
 GameObject:
@@ -7518,7 +7296,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1866139577}
+  - {fileID: 1931979841}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1195825113
@@ -7592,7 +7370,7 @@ MonoBehaviour:
   identityDecimal: 14
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1866139578-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1931979842-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -7693,83 +7471,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221927352}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1274298545
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1274298548}
-  - component: {fileID: 1274298546}
-  - component: {fileID: 1274298547}
-  m_Layer: 0
-  m_Name: BOM native yard session
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1274298546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1274298545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a0f4fe47206e7743b04c5958a7e19a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomClientBehaviour
-  Material: {fileID: 2100000, guid: 160876804ae2e3d42ac3d659835cc7bb, type: 2}
-  View: {fileID: 834423228}
-  PlayerPrefab: {fileID: 3914388416614864481, guid: 0776f098973e40e4b86885d83fc35229, type: 3}
-  BombPrefab: {fileID: 8642442638985349948, guid: 9bb20eb5d8bd286499f54fadf5448b4e, type: 3}
-  BlastPrefab: {fileID: 643950438087958761, guid: db0ee267936605e41b2a8f46a519ecb3, type: 3}
-  PresentationMilliseconds: 0
-  GeometryMilliseconds: 0
-  PresentationAllocatedBytes: 0
-  GeometryAllocatedBytes: 0
-  PresentationHadTopology: 0
-  PresentationHadActorChange: 0
-  GeometryWorkThisFrame: 0
-  Port: 47380
-  Address: 127.0.0.1
-  Prediction: 1
-  VisualRegistry: {fileID: 11400000, guid: b7074020bfb319949800155153d639bd, type: 2}
-  ConnectOnEnable: 0
-  InputBlocked: 0
-  DiagnosticOverlay: 0
---- !u!114 &1274298547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1274298545}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b07f49a1e5f18764d9938f585fba0b2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomRoundScenario
-  Client: {fileID: 1274298546}
---- !u!4 &1274298548
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1274298545}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1278725432
 GameObject:
   m_ObjectHideFlags: 0
@@ -8215,143 +7916,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1294632904}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1297732499
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1297732502}
-  - component: {fileID: 1297732501}
-  - component: {fileID: 1297732500}
-  m_Layer: 0
-  m_Name: Network menu and arena HUD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1297732500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297732499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0ffb888e7bb3324c91e5c7435ec6c24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomNetworkHud
-  Client: {fileID: 1274298546}
-  ArenaHudTemplate: {fileID: 9197481963319205126, guid: 7a55910b11903be40b79949fd708e06d, type: 3}
-  ArenaHudStyle: {fileID: 7433441132597879392, guid: df03c397ed0765a4fb87aba0a592556f, type: 3}
-  NetworkMenuStyle: {fileID: 7433441132597879392, guid: 2b3e09eb9ca81194b86be8f5c7d282b9, type: 3}
---- !u!114 &1297732501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297732499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e38489645cd09ed48bdd876cffe949f0, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &1297732502
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1297732499}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1317753702
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1317753703}
-  - component: {fileID: 1317753704}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1317753703
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1317753702}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1363155320}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1317753704
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1317753702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: 1.65, y: 4.25}
-  - {x: 4.81, y: 4.25}
-  - {x: 4.81, y: 5.25}
-  - {x: 1.65, y: 5.25}
-  Anchors:
-  - A: {x: 1.65, y: 4.25}
-    B: {x: 4.81, y: 4.25}
-  - A: {x: 4.81, y: 4.25}
-    B: {x: 4.81, y: 5.25}
-  - A: {x: 4.81, y: 5.25}
-    B: {x: 1.65, y: 5.25}
-  - A: {x: 1.65, y: 5.25}
-    B: {x: 1.65, y: 4.25}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &1336761326
 GameObject:
   m_ObjectHideFlags: 0
@@ -8439,7 +8003,7 @@ Transform:
   m_LocalScale: {x: 20, y: 1, z: 20.000002}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: -0.915, y: 0, z: 0}
 --- !u!1 &1347256262
 GameObject:
@@ -8530,6 +8094,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347256262}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1347742870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1347742871}
+  - component: {fileID: 1347742872}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1347742871
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347742870}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 347470704}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1347742872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347742870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -14.5, y: 4.25}
+  - {x: -11.34, y: 4.25}
+  - {x: -11.34, y: 5.25}
+  - {x: -14.5, y: 5.25}
+  Anchors:
+  - A: {x: -14.5, y: 4.25}
+    B: {x: -11.34, y: 4.25}
+  - A: {x: -11.34, y: 4.25}
+    B: {x: -11.34, y: 5.25}
+  - A: {x: -11.34, y: 5.25}
+    B: {x: -14.5, y: 5.25}
+  - A: {x: -14.5, y: 5.25}
+    B: {x: -14.5, y: 4.25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1350883906
 GameObject:
   m_ObjectHideFlags: 0
@@ -8618,7 +8247,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 995180359}
+  - {fileID: 885024846}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1350883912
@@ -8636,7 +8265,7 @@ MonoBehaviour:
   identityDecimal: 4
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-995180360-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-885024847-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -8769,7 +8398,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1317753703}
+  - {fileID: 682875133}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1363155323
@@ -8843,7 +8472,7 @@ MonoBehaviour:
   identityDecimal: 23
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1317753704-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-682875134-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -8855,6 +8484,78 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
+--- !u!1 &1387489077
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1387489080}
+  - component: {fileID: 1387489079}
+  - component: {fileID: 1387489078}
+  m_Layer: 0
+  m_Name: Network menu and arena HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1387489078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387489077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0ffb888e7bb3324c91e5c7435ec6c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomNetworkHud
+  Client: {fileID: 1823294216}
+  ArenaHudTemplate: {fileID: 9197481963319205126, guid: 7a55910b11903be40b79949fd708e06d, type: 3}
+  ArenaHudStyle: {fileID: 7433441132597879392, guid: df03c397ed0765a4fb87aba0a592556f, type: 3}
+  NetworkMenuStyle: {fileID: 7433441132597879392, guid: 2b3e09eb9ca81194b86be8f5c7d282b9, type: 3}
+--- !u!114 &1387489079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387489077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: e38489645cd09ed48bdd876cffe949f0, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &1387489080
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387489077}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1441348696
 GameObject:
   m_ObjectHideFlags: 0
@@ -9122,63 +8823,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1491712232}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1536804542
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1536804543}
-  - component: {fileID: 1536804544}
-  m_Layer: 0
-  m_Name: Native fixed boundary
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1536804543
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536804542}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 510415493}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1536804544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536804542}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: 18, y: -25.36}
-  - {x: 18.599998, y: -25.36}
-  - {x: 18.599998, y: 34.64}
-  - {x: 18, y: 34.64}
-  Anchors: []
-  WorldRestCoordinates: 1
-  ApproximationNote: 
 --- !u!1 &1570865048
 GameObject:
   m_ObjectHideFlags: 0
@@ -9268,7 +8912,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1570865048}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1571480680
+--- !u!1 &1577309762
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9276,8 +8920,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1571480681}
-  - component: {fileID: 1571480682}
+  - component: {fileID: 1577309763}
+  - component: {fileID: 1577309764}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -9285,28 +8929,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1571480681
+--- !u!4 &1577309763
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571480680}
+  m_GameObject: {fileID: 1577309762}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1786697241}
+  m_Father: {fileID: 210175624}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1571480682
+--- !u!114 &1577309764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571480680}
+  m_GameObject: {fileID: 1577309762}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -9318,19 +8962,84 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: -14.5, y: 12.93}
-  - {x: -11.34, y: 12.93}
-  - {x: -11.34, y: 13.93}
-  - {x: -14.5, y: 13.93}
+  - {x: 8.11, y: 12.93}
+  - {x: 11.27, y: 12.93}
+  - {x: 11.27, y: 13.93}
+  - {x: 8.11, y: 13.93}
   Anchors:
-  - A: {x: -14.5, y: 12.93}
-    B: {x: -11.34, y: 12.93}
-  - A: {x: -11.34, y: 12.93}
-    B: {x: -11.34, y: 13.93}
-  - A: {x: -11.34, y: 13.93}
-    B: {x: -14.5, y: 13.93}
-  - A: {x: -14.5, y: 13.93}
-    B: {x: -14.5, y: 12.93}
+  - A: {x: 8.11, y: 12.93}
+    B: {x: 11.27, y: 12.93}
+  - A: {x: 11.27, y: 12.93}
+    B: {x: 11.27, y: 13.93}
+  - A: {x: 11.27, y: 13.93}
+    B: {x: 8.11, y: 13.93}
+  - A: {x: 8.11, y: 13.93}
+    B: {x: 8.11, y: 12.93}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
+--- !u!1 &1585886377
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1585886378}
+  - component: {fileID: 1585886379}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1585886378
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1585886377}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 181370794}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1585886379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1585886377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -4.81, y: 4.25}
+  - {x: -1.65, y: 4.25}
+  - {x: -1.65, y: 5.25}
+  - {x: -4.81, y: 5.25}
+  Anchors:
+  - A: {x: -4.81, y: 4.25}
+    B: {x: -1.65, y: 4.25}
+  - A: {x: -1.65, y: 4.25}
+    B: {x: -1.65, y: 5.25}
+  - A: {x: -1.65, y: 5.25}
+    B: {x: -4.81, y: 5.25}
+  - A: {x: -4.81, y: 5.25}
+    B: {x: -4.81, y: 4.25}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &1641916534
@@ -9363,7 +9072,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 377012458}
+  - {fileID: 192305355}
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1641916536
@@ -9381,7 +9090,7 @@ MonoBehaviour:
   identityDecimal: 1
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-377012459-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-192305356-0
     IdentityDecimal: 1
   AssetKey: tiles/BridgeLevel/Left Wall
   VisualGroup: {fileID: 0}
@@ -9692,6 +9401,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1710034571}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1732467266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1732467267}
+  - component: {fileID: 1732467268}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1732467267
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732467266}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1898473079}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1732467268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732467266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: 8.11, y: 4.25}
+  - {x: 11.27, y: 4.25}
+  - {x: 11.27, y: 5.25}
+  - {x: 8.11, y: 5.25}
+  Anchors:
+  - A: {x: 8.11, y: 4.25}
+    B: {x: 11.27, y: 4.25}
+  - A: {x: 11.27, y: 4.25}
+    B: {x: 11.27, y: 5.25}
+  - A: {x: 11.27, y: 5.25}
+    B: {x: 8.11, y: 5.25}
+  - A: {x: 8.11, y: 5.25}
+    B: {x: 8.11, y: 4.25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1732592733
 GameObject:
   m_ObjectHideFlags: 0
@@ -9781,6 +9555,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1732592733}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1747326013
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1747326014}
+  - component: {fileID: 1747326015}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1747326014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747326013}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2100000021}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1747326015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747326013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: -4.81, y: 8.5}
+  - {x: -1.65, y: 8.5}
+  - {x: -1.65, y: 9.5}
+  - {x: -4.81, y: 9.5}
+  Anchors:
+  - A: {x: -4.81, y: 8.5}
+    B: {x: -1.65, y: 8.5}
+  - A: {x: -1.65, y: 8.5}
+    B: {x: -1.65, y: 9.5}
+  - A: {x: -1.65, y: 9.5}
+    B: {x: -4.81, y: 9.5}
+  - A: {x: -4.81, y: 9.5}
+    B: {x: -4.81, y: 8.5}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1765157303
 GameObject:
   m_ObjectHideFlags: 0
@@ -10005,7 +9844,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 8, y: 0, z: 0}
 --- !u!1 &1778954779
 GameObject:
@@ -10095,7 +9934,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2018911623}
+  - {fileID: 1804964694}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1778954785
@@ -10113,7 +9952,7 @@ MonoBehaviour:
   identityDecimal: 6
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2018911624-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1804964695-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -10157,7 +9996,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1571480681}
+  - {fileID: 1033673983}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1786697244
@@ -10231,7 +10070,7 @@ MonoBehaviour:
   identityDecimal: 13
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1571480682-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1033673984-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -10332,6 +10171,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1803490466}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1804964693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1804964694}
+  - component: {fileID: 1804964695}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1804964694
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804964693}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1778954784}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1804964695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804964693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: 11.34, y: 8.5}
+  - {x: 14.5, y: 8.5}
+  - {x: 14.5, y: 9.5}
+  - {x: 11.34, y: 9.5}
+  Anchors:
+  - A: {x: 11.34, y: 8.5}
+    B: {x: 14.5, y: 8.5}
+  - A: {x: 14.5, y: 8.5}
+    B: {x: 14.5, y: 9.5}
+  - A: {x: 14.5, y: 9.5}
+    B: {x: 11.34, y: 9.5}
+  - A: {x: 11.34, y: 9.5}
+    B: {x: 11.34, y: 8.5}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1821013071
 GameObject:
   m_ObjectHideFlags: 0
@@ -10421,7 +10325,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1821013071}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1835272453
+--- !u!1 &1823294215
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10429,64 +10333,76 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1835272454}
-  - component: {fileID: 1835272455}
+  - component: {fileID: 1823294218}
+  - component: {fileID: 1823294216}
+  - component: {fileID: 1823294217}
   m_Layer: 0
-  m_Name: Native tile proxy
+  m_Name: BOM native yard session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1835272454
+--- !u!114 &1823294216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823294215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a0f4fe47206e7743b04c5958a7e19a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomClientBehaviour
+  Material: {fileID: 2100000, guid: 160876804ae2e3d42ac3d659835cc7bb, type: 2}
+  View: {fileID: 1924929448}
+  PlayerPrefab: {fileID: 3914388416614864481, guid: 0776f098973e40e4b86885d83fc35229, type: 3}
+  BombPrefab: {fileID: 8642442638985349948, guid: 9bb20eb5d8bd286499f54fadf5448b4e, type: 3}
+  BlastPrefab: {fileID: 643950438087958761, guid: db0ee267936605e41b2a8f46a519ecb3, type: 3}
+  PresentationMilliseconds: 0
+  GeometryMilliseconds: 0
+  PresentationAllocatedBytes: 0
+  GeometryAllocatedBytes: 0
+  PresentationHadTopology: 0
+  PresentationHadActorChange: 0
+  GeometryWorkThisFrame: 0
+  Port: 47380
+  Address: 127.0.0.1
+  Prediction: 1
+  VisualRegistry: {fileID: 11400000, guid: b7074020bfb319949800155153d639bd, type: 2}
+  ConnectOnEnable: 0
+  InputBlocked: 0
+  DiagnosticOverlay: 0
+--- !u!114 &1823294217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823294215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07f49a1e5f18764d9938f585fba0b2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomRoundScenario
+  Client: {fileID: 1823294216}
+--- !u!4 &1823294218
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835272453}
+  m_GameObject: {fileID: 1823294215}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 221487493}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1835272455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835272453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -14.5, y: 8.5}
-  - {x: -11.34, y: 8.5}
-  - {x: -11.34, y: 9.5}
-  - {x: -14.5, y: 9.5}
-  Anchors:
-  - A: {x: -14.5, y: 8.5}
-    B: {x: -11.34, y: 8.5}
-  - A: {x: -11.34, y: 8.5}
-    B: {x: -11.34, y: 9.5}
-  - A: {x: -11.34, y: 9.5}
-    B: {x: -14.5, y: 9.5}
-  - A: {x: -14.5, y: 9.5}
-    B: {x: -14.5, y: 8.5}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
---- !u!1 &1866139576
+--- !u!1 &1870095623
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10494,61 +10410,53 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1866139577}
-  - component: {fileID: 1866139578}
+  - component: {fileID: 1870095624}
+  - component: {fileID: 1870095625}
   m_Layer: 0
-  m_Name: Native tile proxy
+  m_Name: Native fixed boundary
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1866139577
+--- !u!4 &1870095624
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1866139576}
+  m_GameObject: {fileID: 1870095623}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1195825110}
+  m_Father: {fileID: 510415493}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1866139578
+--- !u!114 &1870095625
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1866139576}
+  m_GameObject: {fileID: 1870095623}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
   PartIdDecimal: 1
-  MaterialKey: wood
+  MaterialKey: stone
   Shape: 2
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 11.34, y: 12.93}
-  - {x: 14.5, y: 12.93}
-  - {x: 14.5, y: 13.93}
-  - {x: 11.34, y: 13.93}
-  Anchors:
-  - A: {x: 11.34, y: 12.93}
-    B: {x: 14.5, y: 12.93}
-  - A: {x: 14.5, y: 12.93}
-    B: {x: 14.5, y: 13.93}
-  - A: {x: 14.5, y: 13.93}
-    B: {x: 11.34, y: 13.93}
-  - A: {x: 11.34, y: 13.93}
-    B: {x: 11.34, y: 12.93}
+  - {x: 18, y: -25.36}
+  - {x: 18.599998, y: -25.36}
+  - {x: 18.599998, y: 34.64}
+  - {x: 18, y: 34.64}
+  Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &1898473078
@@ -10583,7 +10491,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 609608896}
+  - {fileID: 1732467267}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1898473082
@@ -10657,7 +10565,7 @@ MonoBehaviour:
   identityDecimal: 25
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-609608897-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1732467268-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -10669,6 +10577,163 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
+--- !u!1 &1924929446
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1924929449}
+  - component: {fileID: 1924929448}
+  - component: {fileID: 1924929447}
+  m_Layer: 0
+  m_Name: BOM native yard camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1924929447
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924929446}
+  m_Enabled: 1
+--- !u!20 &1924929448
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924929446}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.05, g: 0.07, b: 0.1, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.1
+  far clip plane: 200
+  field of view: 60
+  orthographic: 1
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1924929449
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924929446}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 12, z: -40}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1931979840
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1931979841}
+  - component: {fileID: 1931979842}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1931979841
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931979840}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1195825110}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1931979842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931979840}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: 11.34, y: 12.93}
+  - {x: 14.5, y: 12.93}
+  - {x: 14.5, y: 13.93}
+  - {x: 11.34, y: 13.93}
+  Anchors:
+  - A: {x: 11.34, y: 12.93}
+    B: {x: 14.5, y: 12.93}
+  - A: {x: 14.5, y: 12.93}
+    B: {x: 14.5, y: 13.93}
+  - A: {x: 14.5, y: 13.93}
+    B: {x: 11.34, y: 13.93}
+  - A: {x: 11.34, y: 13.93}
+    B: {x: 11.34, y: 12.93}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1 &1965220916
 GameObject:
   m_ObjectHideFlags: 0
@@ -10758,7 +10823,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1965220916}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1984470394
+--- !u!1 &1968202345
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10766,63 +10831,154 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1984470395}
-  - component: {fileID: 1984470396}
+  - component: {fileID: 1968202347}
+  - component: {fileID: 1968202346}
   m_Layer: 0
-  m_Name: Native tile proxy
+  m_Name: BOM BridgeLevel Authoring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1984470395
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1984470394}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1993649802}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1984470396
+--- !u!114 &1968202346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1984470394}
+  m_GameObject: {fileID: 1968202345}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Script: {fileID: 11500000, guid: 2045cc867e364e64c9f8b74b274949a9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -1.58, y: 4.25}
-  - {x: 1.58, y: 4.25}
-  - {x: 1.58, y: 5.25}
-  - {x: -1.58, y: 5.25}
-  Anchors:
-  - A: {x: -1.58, y: 4.25}
-    B: {x: 1.58, y: 4.25}
-  - A: {x: 1.58, y: 4.25}
-    B: {x: 1.58, y: 5.25}
-  - A: {x: 1.58, y: 5.25}
-    B: {x: -1.58, y: 5.25}
-  - A: {x: -1.58, y: 5.25}
-    B: {x: -1.58, y: 4.25}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
+  LevelId: bomb-bridge-v1
+  YardBuilderVersion: 0
+  NextIdentityDecimal: 26
+  StoredSceneGuid: 372abca0247ea2f429637e0606d6c2ca
+  StoredRootGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1968202346-0
+  IdentityRegistry:
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1641916536-0
+    IdentityDecimal: 1
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-510415494-0
+    IdentityDecimal: 2
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-859434657-0
+    IdentityDecimal: 3
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1350883912-0
+    IdentityDecimal: 4
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-221487494-0
+    IdentityDecimal: 5
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1778954785-0
+    IdentityDecimal: 6
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000004-0
+    IdentityDecimal: 7
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000014-0
+    IdentityDecimal: 8
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000024-0
+    IdentityDecimal: 9
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000034-0
+    IdentityDecimal: 10
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000044-0
+    IdentityDecimal: 11
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000054-0
+    IdentityDecimal: 12
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1786697246-0
+    IdentityDecimal: 13
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1195825115-0
+    IdentityDecimal: 14
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-709261997-0
+    IdentityDecimal: 15
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-210175629-0
+    IdentityDecimal: 16
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1993649807-0
+    IdentityDecimal: 17
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-347470709-0
+    IdentityDecimal: 18
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-258674129-0
+    IdentityDecimal: 19
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-889027030-0
+    IdentityDecimal: 20
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-946254678-0
+    IdentityDecimal: 21
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-181370799-0
+    IdentityDecimal: 22
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1363155325-0
+    IdentityDecimal: 23
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-600177228-0
+    IdentityDecimal: 24
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1898473084-0
+    IdentityDecimal: 25
+  Seed: 42
+  GameplayConfigId: bom-default-v5
+  Gameplay:
+    Gravity: {x: 0, y: -9.8}
+    PlayerSpeed: 7
+    PlayerAcceleration: 70
+    PlayerJumpSpeed: 11.18034
+    PlayerCoyoteTime: 0.1
+    PlayerJumpBuffer: 0.1
+    PlayerGravityScale: 2.5510204
+    BombRadius: 5
+    BombFuse: 1
+    LethalRadius: 1.2
+    GrazeRadius: 2.2
+    GrazesToDie: 3
+    SandboxBombInterval: {x: 1, y: 2.5}
+    EliminationStartInterval: {x: 1, y: 2.5}
+    EliminationEndInterval: {x: 0.4, y: 1}
+    EliminationRampSeconds: 90
+  SimulationBounds:
+    Minimum: {x: -22, y: -28.56}
+    Maximum: {x: 22, y: 38.64}
+  KillBounds:
+    Minimum: {x: -18, y: -25.36}
+    Maximum: {x: 18, y: 34.64}
+  CameraBounds:
+    Minimum: {x: -18, y: -25.36}
+    Maximum: {x: 18, y: 34.64}
+  AimBounds:
+    Minimum: {x: -21, y: -27.56}
+    Maximum: {x: 21, y: 37.64}
+  FragmentCullBounds:
+    Minimum: {x: -30, y: -32.559998}
+    Maximum: {x: 30, y: 45.64}
+  Spawns:
+  - {x: -3, y: 10.11}
+  - {x: -1, y: 10.11}
+  - {x: 1, y: 10.11}
+  - {x: 3, y: 10.11}
+  BombSpawnX: {x: -17.25, y: 17.25}
+  BombSpawnHeight: 36.64
+  BombCleanupBounds:
+    Minimum: {x: -24, y: -29.56}
+    Maximum: {x: 24, y: 43.64}
+  Glue: []
+  AllowedOverlaps: []
+  Materials: []
+  VisualRegistry: {fileID: 11400000, guid: b7074020bfb319949800155153d639bd, type: 2}
+--- !u!4 &1968202347
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968202345}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 295586447}
+  - {fileID: 706443163}
+  - {fileID: 1769111392}
+  - {fileID: 1050701815}
+  - {fileID: 1176850137}
+  - {fileID: 1336761330}
+  - {fileID: 1138145797}
+  - {fileID: 3667556329119011660}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1993649801
 GameObject:
   m_ObjectHideFlags: 0
@@ -10855,7 +11011,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1984470395}
+  - {fileID: 544068354}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1993649805
@@ -10929,7 +11085,7 @@ MonoBehaviour:
   identityDecimal: 17
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1984470396-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-544068355-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -12365,7 +12521,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &2004320882
+--- !u!1 &2050991684
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12373,164 +12529,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2004320884}
-  - component: {fileID: 2004320883}
-  m_Layer: 0
-  m_Name: BOM BridgeLevel Authoring
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2004320883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2004320882}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2045cc867e364e64c9f8b74b274949a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
-  LevelId: bomb-bridge-v1
-  YardBuilderVersion: 0
-  NextIdentityDecimal: 26
-  StoredSceneGuid: 372abca0247ea2f429637e0606d6c2ca
-  StoredRootGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2004320883-0
-  IdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1641916536-0
-    IdentityDecimal: 1
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-510415494-0
-    IdentityDecimal: 2
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-859434657-0
-    IdentityDecimal: 3
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1350883912-0
-    IdentityDecimal: 4
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-221487494-0
-    IdentityDecimal: 5
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1778954785-0
-    IdentityDecimal: 6
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000004-0
-    IdentityDecimal: 7
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000014-0
-    IdentityDecimal: 8
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000024-0
-    IdentityDecimal: 9
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000034-0
-    IdentityDecimal: 10
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000044-0
-    IdentityDecimal: 11
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2100000054-0
-    IdentityDecimal: 12
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1786697246-0
-    IdentityDecimal: 13
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1195825115-0
-    IdentityDecimal: 14
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-709261997-0
-    IdentityDecimal: 15
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-210175629-0
-    IdentityDecimal: 16
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1993649807-0
-    IdentityDecimal: 17
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-347470709-0
-    IdentityDecimal: 18
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-258674129-0
-    IdentityDecimal: 19
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-889027030-0
-    IdentityDecimal: 20
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-946254678-0
-    IdentityDecimal: 21
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-181370799-0
-    IdentityDecimal: 22
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1363155325-0
-    IdentityDecimal: 23
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-600177228-0
-    IdentityDecimal: 24
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1898473084-0
-    IdentityDecimal: 25
-  Seed: 42
-  GameplayConfigId: bom-default-v5
-  Gameplay:
-    Gravity: {x: 0, y: -9.8}
-    PlayerSpeed: 7
-    PlayerAcceleration: 70
-    PlayerJumpSpeed: 11.18034
-    PlayerCoyoteTime: 0.1
-    PlayerJumpBuffer: 0.1
-    PlayerGravityScale: 2.5510204
-    BombRadius: 5
-    BombFuse: 1
-    LethalRadius: 1.2
-    GrazeRadius: 2.2
-    GrazesToDie: 3
-    SandboxBombInterval: {x: 1, y: 2.5}
-    EliminationStartInterval: {x: 1, y: 2.5}
-    EliminationEndInterval: {x: 0.4, y: 1}
-    EliminationRampSeconds: 90
-  SimulationBounds:
-    Minimum: {x: -22, y: -32.559998}
-    Maximum: {x: 22, y: 48.64}
-  KillBounds:
-    Minimum: {x: -18, y: -28.56}
-    Maximum: {x: 18, y: 54.64}
-  CameraBounds:
-    Minimum: {x: -18, y: -25.36}
-    Maximum: {x: 18, y: 34.64}
-  AimBounds:
-    Minimum: {x: -21, y: -31.559998}
-    Maximum: {x: 21, y: 47.64}
-  FragmentCullBounds:
-    Minimum: {x: -30, y: -36.559998}
-    Maximum: {x: 30, y: 55.64}
-  Spawns:
-  - {x: -3, y: 10.11}
-  - {x: -1, y: 10.11}
-  - {x: 1, y: 10.11}
-  - {x: 3, y: 10.11}
-  BombSpawnX: {x: -17.25, y: 17.25}
-  BombSpawnHeight: 46.64
-  BombCleanupBounds:
-    Minimum: {x: -24, y: -33.559998}
-    Maximum: {x: 24, y: 53.64}
-  Glue: []
-  AllowedOverlaps: []
-  Materials: []
-  VisualRegistry: {fileID: 11400000, guid: b7074020bfb319949800155153d639bd, type: 2}
---- !u!4 &2004320884
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2004320882}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 295586447}
-  - {fileID: 706443163}
-  - {fileID: 1769111392}
-  - {fileID: 1050701815}
-  - {fileID: 1176850137}
-  - {fileID: 1336761330}
-  - {fileID: 1138145797}
-  - {fileID: 3667556329119011660}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2018911622
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2018911623}
-  - component: {fileID: 2018911624}
+  - component: {fileID: 2050991685}
+  - component: {fileID: 2050991686}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -12538,28 +12538,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2018911623
+--- !u!4 &2050991685
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2018911622}
+  m_GameObject: {fileID: 2050991684}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1778954784}
+  m_Father: {fileID: 2100000011}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2018911624
+--- !u!114 &2050991686
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2018911622}
+  m_GameObject: {fileID: 2050991684}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -12571,22 +12571,22 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 11.34, y: 8.5}
-  - {x: 14.5, y: 8.5}
-  - {x: 14.5, y: 9.5}
-  - {x: 11.34, y: 9.5}
+  - {x: -8.04, y: 8.5}
+  - {x: -4.88, y: 8.5}
+  - {x: -4.88, y: 9.5}
+  - {x: -8.04, y: 9.5}
   Anchors:
-  - A: {x: 11.34, y: 8.5}
-    B: {x: 14.5, y: 8.5}
-  - A: {x: 14.5, y: 8.5}
-    B: {x: 14.5, y: 9.5}
-  - A: {x: 14.5, y: 9.5}
-    B: {x: 11.34, y: 9.5}
-  - A: {x: 11.34, y: 9.5}
-    B: {x: 11.34, y: 8.5}
+  - A: {x: -8.04, y: 8.5}
+    B: {x: -4.88, y: 8.5}
+  - A: {x: -4.88, y: 8.5}
+    B: {x: -4.88, y: 9.5}
+  - A: {x: -4.88, y: 9.5}
+    B: {x: -8.04, y: 9.5}
+  - A: {x: -8.04, y: 9.5}
+    B: {x: -8.04, y: 8.5}
   WorldRestCoordinates: 1
   ApproximationNote: 
---- !u!1 &2031505285
+--- !u!1 &2058148338
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -12594,8 +12594,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2031505286}
-  - component: {fileID: 2031505287}
+  - component: {fileID: 2058148339}
+  - component: {fileID: 2058148340}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -12603,28 +12603,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2031505286
+--- !u!4 &2058148339
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2031505285}
+  m_GameObject: {fileID: 2058148338}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2100000051}
+  m_Father: {fileID: 2100000001}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2031505287
+--- !u!114 &2058148340
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2031505285}
+  m_GameObject: {fileID: 2058148338}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -12636,19 +12636,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 8.11, y: 8.5}
-  - {x: 11.27, y: 8.5}
-  - {x: 11.27, y: 9.5}
-  - {x: 8.11, y: 9.5}
+  - {x: -11.27, y: 8.5}
+  - {x: -8.11, y: 8.5}
+  - {x: -8.11, y: 9.5}
+  - {x: -11.27, y: 9.5}
   Anchors:
-  - A: {x: 8.11, y: 8.5}
-    B: {x: 11.27, y: 8.5}
-  - A: {x: 11.27, y: 8.5}
-    B: {x: 11.27, y: 9.5}
-  - A: {x: 11.27, y: 9.5}
-    B: {x: 8.11, y: 9.5}
-  - A: {x: 8.11, y: 9.5}
-    B: {x: 8.11, y: 8.5}
+  - A: {x: -11.27, y: 8.5}
+    B: {x: -8.11, y: 8.5}
+  - A: {x: -8.11, y: 8.5}
+    B: {x: -8.11, y: 9.5}
+  - A: {x: -8.11, y: 9.5}
+    B: {x: -11.27, y: 9.5}
+  - A: {x: -11.27, y: 9.5}
+    B: {x: -11.27, y: 8.5}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &2100000000
@@ -12683,7 +12683,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2124081430}
+  - {fileID: 2058148339}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000002
@@ -12757,7 +12757,7 @@ MonoBehaviour:
   identityDecimal: 7
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2124081431-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2058148340-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -12801,7 +12801,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1097003048}
+  - {fileID: 2050991685}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000012
@@ -12875,7 +12875,7 @@ MonoBehaviour:
   identityDecimal: 8
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1097003049-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2050991686-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -12919,7 +12919,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 180616350}
+  - {fileID: 1747326014}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000022
@@ -12993,7 +12993,7 @@ MonoBehaviour:
   identityDecimal: 9
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-180616351-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-1747326015-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -13037,7 +13037,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4247898}
+  - {fileID: 822347152}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000032
@@ -13111,7 +13111,7 @@ MonoBehaviour:
   identityDecimal: 10
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-4247899-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-822347153-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -13155,7 +13155,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 938542809}
+  - {fileID: 2140140435}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000042
@@ -13229,7 +13229,7 @@ MonoBehaviour:
   identityDecimal: 11
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-938542810-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2140140436-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -13273,7 +13273,7 @@ Transform:
   m_LocalScale: {x: 3.16, y: 1, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2031505286}
+  - {fileID: 2112748746}
   m_Father: {fileID: 1176850137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2100000052
@@ -13347,7 +13347,7 @@ MonoBehaviour:
   identityDecimal: 12
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2031505287-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-372abca0247ea2f429637e0606d6c2ca-2112748747-0
     IdentityDecimal: 1
   AssetKey: tiles/8eb9d1d85255afe1ab742f1bb77bfecc
   VisualGroup: {fileID: 0}
@@ -13359,7 +13359,7 @@ MonoBehaviour:
   ApproximationNote: 'C6 tile (Carve): Carve: anchored on every edge.'
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &2103130208
+--- !u!1 &2112748745
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -13367,8 +13367,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2103130209}
-  - component: {fileID: 2103130210}
+  - component: {fileID: 2112748746}
+  - component: {fileID: 2112748747}
   m_Layer: 0
   m_Name: Native tile proxy
   m_TagString: Untagged
@@ -13376,28 +13376,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2103130209
+--- !u!4 &2112748746
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103130208}
+  m_GameObject: {fileID: 2112748745}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 210175624}
+  m_Father: {fileID: 2100000051}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2103130210
+--- !u!114 &2112748747
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103130208}
+  m_GameObject: {fileID: 2112748745}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -13409,84 +13409,19 @@ MonoBehaviour:
   Minimum: {x: -0.5, y: -0.5}
   Maximum: {x: 0.5, y: 0.5}
   Outline:
-  - {x: 8.11, y: 12.93}
-  - {x: 11.27, y: 12.93}
-  - {x: 11.27, y: 13.93}
-  - {x: 8.11, y: 13.93}
+  - {x: 8.11, y: 8.5}
+  - {x: 11.27, y: 8.5}
+  - {x: 11.27, y: 9.5}
+  - {x: 8.11, y: 9.5}
   Anchors:
-  - A: {x: 8.11, y: 12.93}
-    B: {x: 11.27, y: 12.93}
-  - A: {x: 11.27, y: 12.93}
-    B: {x: 11.27, y: 13.93}
-  - A: {x: 11.27, y: 13.93}
-    B: {x: 8.11, y: 13.93}
-  - A: {x: 8.11, y: 13.93}
-    B: {x: 8.11, y: 12.93}
-  WorldRestCoordinates: 1
-  ApproximationNote: 
---- !u!1 &2124081429
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2124081430}
-  - component: {fileID: 2124081431}
-  m_Layer: 0
-  m_Name: Native tile proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2124081430
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2124081429}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2100000001}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2124081431
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2124081429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: wood
-  Shape: 2
-  Minimum: {x: -0.5, y: -0.5}
-  Maximum: {x: 0.5, y: 0.5}
-  Outline:
-  - {x: -11.27, y: 8.5}
-  - {x: -8.11, y: 8.5}
-  - {x: -8.11, y: 9.5}
-  - {x: -11.27, y: 9.5}
-  Anchors:
-  - A: {x: -11.27, y: 8.5}
-    B: {x: -8.11, y: 8.5}
-  - A: {x: -8.11, y: 8.5}
-    B: {x: -8.11, y: 9.5}
-  - A: {x: -8.11, y: 9.5}
-    B: {x: -11.27, y: 9.5}
-  - A: {x: -11.27, y: 9.5}
-    B: {x: -11.27, y: 8.5}
+  - A: {x: 8.11, y: 8.5}
+    B: {x: 11.27, y: 8.5}
+  - A: {x: 11.27, y: 8.5}
+    B: {x: 11.27, y: 9.5}
+  - A: {x: 11.27, y: 9.5}
+    B: {x: 8.11, y: 9.5}
+  - A: {x: 8.11, y: 9.5}
+    B: {x: 8.11, y: 8.5}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &2128050558
@@ -13578,6 +13513,71 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2128050558}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2140140434
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2140140435}
+  - component: {fileID: 2140140436}
+  m_Layer: 0
+  m_Name: Native tile proxy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2140140435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2140140434}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2100000041}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2140140436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2140140434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: wood
+  Shape: 2
+  Minimum: {x: -0.5, y: -0.5}
+  Maximum: {x: 0.5, y: 0.5}
+  Outline:
+  - {x: 4.88, y: 8.5}
+  - {x: 8.04, y: 8.5}
+  - {x: 8.04, y: 9.5}
+  - {x: 4.88, y: 9.5}
+  Anchors:
+  - A: {x: 4.88, y: 8.5}
+    B: {x: 8.04, y: 8.5}
+  - A: {x: 8.04, y: 8.5}
+    B: {x: 8.04, y: 9.5}
+  - A: {x: 8.04, y: 9.5}
+    B: {x: 4.88, y: 9.5}
+  - A: {x: 4.88, y: 9.5}
+    B: {x: 4.88, y: 8.5}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!4 &3667556329119011660
 Transform:
   m_ObjectHideFlags: 0
@@ -13591,7 +13591,7 @@ Transform:
   m_LocalScale: {x: 60, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2004320884}
+  m_Father: {fileID: 1968202347}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3715362724673546522
 MeshFilter:
@@ -13671,7 +13671,7 @@ MeshRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2004320884}
-  - {fileID: 1274298548}
-  - {fileID: 1297732502}
-  - {fileID: 834423229}
+  - {fileID: 1968202347}
+  - {fileID: 1823294218}
+  - {fileID: 1387489080}
+  - {fileID: 1924929449}
