@@ -153,25 +153,24 @@ same generated bindings as the clients. It is a native API caller, not a codec.
 
 ## Windows package
 
-Package-BomWindows.ps1 accepts -MonoPlayer, -Il2CppPlayer and -OutputDirectory.
-It requires a new destination and verifies both embedded DLL hashes. The package
-contains complete Mono and IL2CPP player directories, Server, Symbols, a SHA-256
-manifest, a yard layout, developer instructions, and Launch-Bom.ps1. Players start
-in the original-art network menu; benchmark drivers activate only with explicit
-test arguments. The convenience launcher runs under Windows PowerShell 5.1 or PowerShell 7; the game
-executables do not require the Unity Editor or Odin compiler.
+`Package-BomWindows.ps1` accepts -MonoPlayer, -Il2CppPlayer and -OutputDirectory (a new folder; existing packages are kept).
+Since F4 it packages the front-door game `Bomb.exe` (MainMenuScene first; built by `Build-BomGame.ps1 -Backend Both`
+into `build/validation/Game-Mono` and `Game-IL2CPP`), not the old network-menu player. It verifies both embedded DLL
+hashes and the server hash. The package has complete `Mono/` and `IL2CPP/` game folders (each with its own
+`Server/BOM-server.exe` and `Server/levels/{yard,YardLevel,BridgeLevel,TowerLevel}.json`), Symbols, a SHA-256 manifest,
+developer instructions, README.txt and Launch-Bom.ps1. The convenience launcher runs under Windows PowerShell 5.1 or
+PowerShell 7; the game executables do not require the Unity Editor or Odin compiler.
 
 ```powershell
-./Launch-Bom.ps1                    # two Mono windows and a local server
+./Launch-Bom.ps1                    # two Mono windows at the main menu
 ./Launch-Bom.ps1 -Backend IL2CPP     # two IL2CPP windows
-./Launch-Bom.ps1 -Clients 1
+./Launch-Bom.ps1 -Clients 1 -Lan     # one window; prints this PC's addresses for a LAN game
 ```
 
-The first window is host. A/D or arrows move, Space jumps, Esc opens the menu.
-The host selects Sandbox or Elimination there. The dedicated server defaults to
-127.0.0.1; --bind accepts a numeric IPv4 address. A non-loopback bind requires a
-random --host-token of 16-128 bytes. Launch-Bom.ps1 -Bind 0.0.0.0 explicitly enables
-other interfaces while retaining the generated host key. A second physical
+The launcher only opens windows; the game starts and stops its own server (ONLINE > HOST GAME > START, then JOIN GAME in
+the other window). `Test-FrontDoor.ps1 -Backend Mono|IL2CPP -SkipBuild -PlayerPath <package>/<Backend>/Bomb.exe` plays a
+scripted round against a package. The dedicated server defaults to 127.0.0.1; a non-loopback bind requires a
+random --host-token of 16-128 bytes, which the game generates. A second physical
 machine was unavailable: alternate-loopback binding is tested, physical LAN
 coverage is a reported limit. There is no account persistence across server exit;
 resume credentials and the bounded 128-session table are server-session scoped.

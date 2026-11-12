@@ -30,7 +30,12 @@ public static class BomFrontDoorBuilder
         return value;
     }
 
-    public static void BuildMono()
+    public static void BuildMono() => Build(false);
+
+    // F4: the same front-door game on the IL2CPP backend (package for the owner; BOM_GAME_PLAYER_OUT picks the folder).
+    public static void BuildIl2Cpp() => Build(true);
+
+    static void Build(bool il2cpp)
     {
         string output = Env("BOM_GAME_PLAYER_OUT"),
             server = Env("BOM_NATIVE_SERVER_EXE"),
@@ -52,7 +57,10 @@ public static class BomFrontDoorBuilder
             if (!File.Exists(scene))
                 throw new InvalidOperationException("Missing front-door scene " + scene);
         Directory.CreateDirectory(output);
-        PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
+        PlayerSettings.SetScriptingBackend(
+            NamedBuildTarget.Standalone,
+            il2cpp ? ScriptingImplementation.IL2CPP : ScriptingImplementation.Mono2x
+        );
         var report = BuildPipeline.BuildPlayer(
             new BuildPlayerOptions
             {
@@ -74,6 +82,6 @@ public static class BomFrontDoorBuilder
                 throw new InvalidOperationException("No exported layout or scene for level " + level.Name);
             File.Copy(from, Path.Combine(serverFolder, "levels", level.Layout), true);
         }
-        Debug.Log("BOM FRONT DOOR MONO BUILD PASS scenes=" + string.Join(",", scenes) + " server=" + serverFolder);
+        Debug.Log("BOM FRONT DOOR " + (il2cpp ? "IL2CPP" : "MONO") + " BUILD PASS scenes=" + string.Join(",", scenes) + " server=" + serverFolder);
     }
 }
