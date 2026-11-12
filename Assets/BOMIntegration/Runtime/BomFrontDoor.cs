@@ -280,7 +280,7 @@ namespace Bom.Unity
 
         // RETURN, LEAVE GAME and "Main menu" in the network HUD. The caller has already disconnected the client; the server
         // ends itself when its host leaves ("SERVER host-left shutdown"), which lets guests see a clean "host left". It is
-        // killed if it is still running after a short grace.
+        // killed if it is still running after 6 s (the server waits about 5 s before its host-left shutdown).
         public static void ReturnToMainMenu(string reason)
         {
             Debug.Log("BOM FRONTDOOR RETURN reason=" + reason + " host=" + IsHost);
@@ -289,7 +289,7 @@ namespace Bom.Unity
             if (server != null)
             {
                 stopping = server;
-                Instance.StartCoroutine(Instance.StopAfterGrace(server, reason, 1.5f));
+                Instance.StartCoroutine(Instance.StopAfterGrace(server, reason, 6f));
             }
             pending = null;
             SceneManager.LoadScene(MainMenuScene);

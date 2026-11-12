@@ -7,6 +7,37 @@ Odin owns physics, destruction, networking, input scheduling, prediction and
 rounds. Unity copies the native C ABI snapshots and supplies input/presentation.
 Original Unity assets, GUIDs, prefabs, scenes and packages remain protected.
 
+## Play from the main menu (C5)
+
+The game player `Bomb.exe` (built by `Test-FrontDoor.ps1`, `BomFrontDoorBuilder.BuildMono`) starts at Darryn's
+`MainMenuScene`. OFFLINE is his local mode, unchanged (D4). ONLINE opens Odin play over LAN or direct IP (D3):
+
+- **Host game:** pick a level (today only CLASSIC YARD; C6 adds more), a UDP port (default 47380) and who may join:
+  *This PC only* binds the server to 127.0.0.1; *LAN / direct IP* binds 0.0.0.0 and the host's Esc menu lists the
+  addresses other PCs type in. START launches `BOM-server.exe --bind <ip> --port <port> --layout <level json>
+  --host-token <random>` with no window, waits for its "listening" line (60 s limit), loads the level and connects to
+  127.0.0.1 with the same token, passed in memory to `ConnectTo` (no `BOM_TEST_HOST_TOKEN`). The token is 24 random
+  bytes per hosting; it is visible on the server's command line to programs on the same PC, nowhere else.
+- **Busy port:** the host probes the port with an exclusive bind and also watches the server for
+  `Could not bind UDP port`; it then tries the next port (10 in all) and says which port it used. The Esc menu shows it.
+- **Join game:** address (dotted IPv4; 127.0.0.1 for the same PC) and port (1-65535), checked before anything loads.
+- **Leaving:** RETURN, LEAVE GAME and *Main menu* in the Esc menu disconnect and load the main menu. A host's server
+  ends itself when its host leaves ("SERVER host-left shutdown"); it is killed after 6 s if it has not. Quitting kills it
+  at once. Every server is also placed in a Windows job object with kill-on-close, so a crash or a Task Manager kill of
+  the player takes the server down too.
+- **Where the server lives:** `Server/BOM-server.exe` and `Server/levels/<level>.json` next to the game exe (the
+  build copies them there). Fallback for today's BOM-Windows package layout: `../Server/BOM-server.exe` and
+  `../yard.json`. `--bom-server <exe>` and `--bom-levels <folder>` override both. F4 packages this.
+- **Firewall:** *This PC only* binds loopback, which Windows Firewall does not prompt for (the gate runs this way). The first *LAN / direct IP* host is expected to get Windows' "Windows Security Alert ... has blocked some
+  features of BOM-server.exe" dialog (not triggered by the gate, which never binds 0.0.0.0 on the owner's machine);
+  tick **Private networks** and press Allow, or other PCs cannot reach it (play on the host PC still works). The host
+  screen warns about this before START. Each new build folder is a new program path to Windows, so it may ask again.
+- Server output goes to `bom-server-<time>.log` next to the player log.
+
+Gate: `./integration/tools/Test-FrontDoor.ps1 -ConfigPath integration/local.config.owner-validation.json` (evidence in
+`evidence/M8/frontdoor-*`). It mirrors nothing outside `Assets/BOMIntegration`: copy `Assets/Game/Scripts/MatchMenuUI.cs`
+to the validation project first if it changed (the tool checks).
+
 ## Play the network yard
 
 From the Unity repository, using Windows PowerShell 5.1 or PowerShell 7:
