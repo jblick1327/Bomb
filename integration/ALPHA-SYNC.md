@@ -265,7 +265,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
   - Add all three to the host level picker from C5. Keep the old network yard as "Classic Yard".
   - Done when: all three validate and play one round each in Rounds-style runs. Also fix the `Left Wall`/`Right Wall`
     `BOM VISUAL FALLBACK` warning seen in every playtest. [ ] Owner check.
-- [ ] **C7 Remove NGO/Relay** (T2, Sonnet, S; needs C5 and D9)
+- [~] **C7 Remove NGO/Relay** (T2, Sonnet, S; needs C5 and D9) claimed: Claude Sonnet 5.5 2026-11-12
   - Delete `Assets/Game/Online/` and remove `com.unity.netcode.gameobjects` and `com.unity.services.multiplayer` from `Packages/manifest.json`. Re-baseline.
   - Done when: Build and Content pass, and `git grep -n "Unity.Netcode\|Services.Multiplayer" -- Assets` is empty.
 
