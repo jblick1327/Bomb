@@ -300,7 +300,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   - Inside `graze_radius` with cover visible, a player gets +1 graze; on the 3rd graze they die.
   - Expose the graze count per player in the round snapshot. Bump the round format, and bump the protocol if the wire changes.
   - E1 then shows lost limbs in Unity (port the `PlayerBodyDamage` limb look).
-- [~] **N4 Items** (D6, L) claimed: Claude Opus 5.5 2026-11-11
+- [x] **N4 Items** (D6, L) claimed: Claude Opus 5.5 2026-11-11; done: Claude Opus 5.5 2026-11-11 3aed89e — items (Darryn numbers), D12 band graze, graze_radius; protocol 9 / round 4 / ABI 1.6 / config 5; game 220, shared 124, FFI 22, transport 27, C+.NET ABI pass, Content 1562; contract ba83748; evidence: Documents/BOM/evidence/N4/REPORT.md; E1-N4 pending
   - The server spawns items every 12–20 s: silver coin 25 % (+10), gold coin 15 % (+50), and
     invincibility, speed ×1.5 and slow ×0.5 for the rest, each lasting 10 s.
   - Pickup is a capsule overlap. Effects are server-side. Coins add to the round award.
