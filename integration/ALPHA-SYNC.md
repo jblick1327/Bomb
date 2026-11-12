@@ -234,7 +234,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     to `Assets/BOMIntegration/Runtime/link.xml`; also add `GameAudio` there now (`<type fullname="GameAudio" preserve="all"/>`) or IL2CPP stripping will silence C3's audio.
     Also tell the owner: `MatchMenuUI.RestartCurrentScene` resets the wallet to 250, which would wipe coins earned here.
   - Done when: Build and Rounds pass, and each finished round logs exactly one `BOM WALLET` line. [ ] Owner check: results show coins/bombs/time and the wallet total; the wallet goes up once per round; Esc opens the pause panel without pausing; REPLAY shows for the host only; RETURN disconnects.
-- [~] **C5 One front door** (T1, Opus, L; needs D3 and D9) claimed: Claude Opus 5.5 2026-11-12
+- [x] **C5 One front door** (T1, Opus, L; needs D3 and D9) claimed: Claude Opus 5.5 2026-11-12; done: Claude Opus 5.5 2026-11-12 COMMIT — Build (0 error CS), Content (1562, MatchMenuUI.cs re-baselined), Rounds Yard+Draw and the new front-door gate (`Test-FrontDoor.ps1`, 16/16 checks, twice) pass; 0 Exception lines; no BOM-server left after any run
   - Darryn's `MainMenuScene` becomes the first scene. "Play" keeps his local mode (D4). "Online" opens Odin play:
     - **Host:** pick a level and start `BOM-server.exe` from the player's folder with `--bind`, `--port`,
       `--layout` and a random `--host-token` (copy the logic in `BOM-Windows/Launch-Bom.ps1`). Then connect.
@@ -246,7 +246,12 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     (children inherit it and its name invites removal). Plan for firewall prompts, port conflicts, and killing the server on crash or quit. The Rounds gate drives the network scene
     directly, not the main menu, so write the check below as an automated run, not only a manual one.
   - Done when: Build, Content and Rounds pass, an automated run goes from `MainMenuScene` to a finished round, and a two-window run (host and join on 127.0.0.1) goes from
-    the main menu to a finished round with no PowerShell launcher. [ ] Owner check.
+    the main menu to a finished round with no PowerShell launcher. [ ] Owner check: from the main menu, Online → Host starts a game another window can Join on 127.0.0.1 (and, if possible, from a second PC on the LAN); Play still runs Darryn's local mode; quitting the host leaves no BOM-server running.
+  - Result: `MatchMenuUI.ShowOnlineMenu` (one marked line, D9) opens our `Runtime/BomOnlineMenu.cs` (Host: level, port, This PC only / LAN; Join: validated IPv4 + port). `BomFrontDoor` starts
+    `Server/BOM-server.exe` next to the game exe (fallback `../Server`, as in BOM-Windows; README "Play from the main menu" documents layout, busy ports and the firewall prompt), waits for "listening",
+    loads `NetworkMenu` and calls `ConnectTo(127.0.0.1, port, token)` with a fresh in-memory token. Server stop: kill-on-close job object (crash), `Application.quitting` (quit), main menu (RETURN/LEAVE GAME/Main menu; 6 s for the server's own host-left shutdown, then kill).
+    The game player `Bomb.exe` is built by `Editor/BomFrontDoorBuilder.cs` into `build/validation/Game-Mono` (MainMenuScene, Darryn's 3 levels, NetworkMenu); EditorBuildSettings untouched. Evidence: `evidence/M8/frontdoor-20261112T143715768211Z` (1.5 s grace, server killed) and `…T144730281207Z` (final, server ended itself).
+    Not covered by the gate: visible windows (players run `-batchmode`), the LAN bind/firewall dialog, a second PC, and a guest still connected when the host leaves (it gets the existing "The host left" error, which `BomClientBehaviour.Fail` logs as an exception).
 - [ ] **C6 Darryn's levels on Odin** (T1, Opus, L)
   - `Editor/BomYardBuilder.cs` expects the old yard paths (`YardLevel/Grass_Mesh`), which Darryn replaced
     with ~130 `Yard Ground Tile 0x` prefabs. Write `Editor/BomTileLevelBuilder.cs`. It exports any scene
@@ -500,3 +505,6 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   `link.xml` now preserves `MatchMenuUI` and `GameAudio`. All Darryn UXML elements in the C4 list exist; `level-fill`, `result-xp`, `current-level`, `next-level` queries were removed.
   First Rounds attempt (evidence `unity-rounds-20261112T140238368619Z` / `...T140421200332Z`, kept) paid only the surviving player and nothing in the draw: I had skipped clients with round flag 4, which is also set for a dead player. Fixed (the seated-player check suffices); not a sleep.
   Not verified in a player: the on-screen panels, `AddShopCoins` running under IL2CPP (Mono only), the wallet total on screen. In a Rounds run a window only logs the payment; the shop total was not read back.
+- 2026-11-12 Claude Opus (C5): for C7, nothing outside `Assets/Game/Online/` references `OnlineMenuUI`/`OnlineSession` any more, so the folder can be deleted as written. For F4: package `Server/BOM-server.exe` and
+  `Server/levels/yard.json` next to `Bomb.exe` (see `BomHostServer.FindServer`); the host token is on the server's command line (visible to local programs only), never in an environment variable.
+  A guest still connected when its host leaves logs `InvalidOperationException: The host left…` through `BomClientBehaviour.Fail` (`Debug.LogError(exception)`); a gate that keeps a guest connected through that would count it. Music in NetworkMenu is still the open C3 finding (not checked here).
