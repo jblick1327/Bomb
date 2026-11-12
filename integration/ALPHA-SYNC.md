@@ -374,7 +374,7 @@ and **what's there is what you get**: what you see is exactly what you collide w
 the owner's tuned **materials** (Wood, Glass, Rubber, Stone and custom) and **connectors/glue**, never from an indestructible flag or decoration-only
 status. C6's off-plane decoration (Bridge truss 88/110, Tower pillars 29, Yard 8), trimmed overlaps, indestructible walls, and the full-tile-depth
 extrusion that turns debris into long sticks all violate it. F2 showed the explosion lag is Unity presentation (mesh rebuild + GC), not the native design.
-- [ ] **G1 Destruction design spike** (T1, Opus, L; report + opt-in prototype; the shipped game stays unchanged)
+- [~] **G1 Destruction design spike** (T1, Opus, L; report + opt-in prototype; the shipped game stays unchanged) claimed: Claude Opus 5.5 2026-11-12
   1. Capture the same blasts in the raylib sandbox (`Documents\BOM`, `scripts\bom.ps1`), the pre-merge package `BOM-Release\BOM-Windows`, and the current
      package `BOM-Windows-2026-11-12b` (Classic Yard and Bridge/Tower). Write down what is lost: piece size/density, depth/stick look, tumble/settle,
      crater readability, standing on/pushing debris.
