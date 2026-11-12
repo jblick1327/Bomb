@@ -234,7 +234,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     to `Assets/BOMIntegration/Runtime/link.xml`; also add `GameAudio` there now (`<type fullname="GameAudio" preserve="all"/>`) or IL2CPP stripping will silence C3's audio.
     Also tell the owner: `MatchMenuUI.RestartCurrentScene` resets the wallet to 250, which would wipe coins earned here.
   - Done when: Build and Rounds pass, and each finished round logs exactly one `BOM WALLET` line. [ ] Owner check: results show coins/bombs/time and the wallet total; the wallet goes up once per round; Esc opens the pause panel without pausing; REPLAY shows for the host only; RETURN disconnects.
-- [ ] **C5 One front door** (T1, Opus, L; needs D3 and D9)
+- [~] **C5 One front door** (T1, Opus, L; needs D3 and D9) claimed: Claude Opus 5.5 2026-11-12
   - Darryn's `MainMenuScene` becomes the first scene. "Play" keeps his local mode (D4). "Online" opens Odin play:
     - **Host:** pick a level and start `BOM-server.exe` from the player's folder with `--bind`, `--port`,
       `--layout` and a random `--host-token` (copy the logic in `BOM-Windows/Launch-Bom.ps1`). Then connect.
