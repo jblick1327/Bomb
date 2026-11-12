@@ -357,7 +357,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
     PowerShell 5.1 or 7 works, and remove references to files that aren't in the package.
   - `Package-BomWindows.ps1` must not copy a `Logs` folder.
   - Done when: `git grep -n -e "protocol 6" -e "protocol 7" -- integration/README.md` returns only lines marked as history.
-- [ ] **F4 Repackage** (T2, Sonnet, S; after C7 and the last E1). Build Both, then
+- [~] **F4 Repackage** (T2, Sonnet, S; after C7 and the last E1). claimed: Claude Sonnet 5.5 2026-11-12 Build Both, then
   `Package-BomWindows.ps1 -OutputDirectory C:\Users\jblic\Documents\BOM-Release\BOM-Windows-<date>` (a new folder, never overwrite).
   Launch it with `Launch-Bom.ps1 -Clients 2` and play one round.
   - Done when: the package launches under Windows PowerShell 5.1 and the player logs have no exceptions.
