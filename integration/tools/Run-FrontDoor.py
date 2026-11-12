@@ -94,6 +94,6 @@ passed=not failure and all(checks.values())
 summary={'status':'passed' if passed else 'failed','level':a.level,'level_scene':level_scene,'level_file':level_file,'scope':'C5: MainMenuScene -> Online host (player starts BOM-server.exe itself) + Online join 127.0.0.1 -> finished elimination round; server stops on return to menu, on quit and on player crash; busy port skipped',
  'failure':failure,'checks':checks,'exit_codes':codes,'busy_port_held':busy,'orphans_killed':orphans,'exception_lines':exceptions,'timeline':timeline,
  'native_identity':identity,'player_sha256':sha(player),'plugin_sha256':sha(plugin),'server_sha256':sha(server_exe),'layout_sha256':sha(layout),
- 'runtime_sha256':sha(player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll'),'commands':commands}
+ 'runtime_sha256':sha(next(path for path in (player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll',player.parent/'GameAssembly.dll') if path.exists())),'runtime_file':('Bom.Unity.Runtime.dll' if (player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll').exists() else 'GameAssembly.dll (IL2CPP)'),'commands':commands}
 (out/'summary.json').write_text(json.dumps(summary,indent=2));print(json.dumps({k:summary[k] for k in ['status','failure','checks','exit_codes','orphans_killed']},indent=1));print('Evidence: '+str(out))
 raise SystemExit(0 if passed else 1)
