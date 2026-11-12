@@ -213,6 +213,18 @@ public static class BomLevelExporter
     static BomVisualEntry Preprocess(BomAssetInstance instance, string folder, out string fallback)
     {
         fallback = "";
+        if (instance.HiddenVisual)
+            // C6: an invisible boundary. No mesh and no extrusion; the hash still names what it is.
+            return new BomVisualEntry
+            {
+                AssetKey = instance.AssetKey,
+                ContentHash = Digest(
+                    "bom-visual-builder-" + BomMeshPreprocessor.BuilderVersion + "\nhidden-boundary\n" + instance.AssetKey
+                ),
+                BuilderVersion = BomMeshPreprocessor.BuilderVersion,
+                FallbackDepth = instance.FallbackDepth,
+                Hidden = true,
+            };
         var groups = new List<BomVisualMeshGroup>();
         var fingerprints = new StringBuilder(
             "bom-visual-builder-" + BomMeshPreprocessor.BuilderVersion + "\n"
@@ -481,7 +493,20 @@ public static class BomLevelExporter
                     row.approximation = source.ApproximationNote;
                     row.visual_fallback = fallback;
                 }
-            visualGeometry.Add(InspectVisual(source, entry));
+            if (entry.Hidden)
+                visualGeometry.Add(
+                    new VisualPreflightRow
+                    {
+                        source_identity = U(source.Identity),
+                        object_path = source.OriginalObjectPath,
+                        asset_key = source.AssetKey,
+                        classification = "hidden boundary",
+                        expected_fallback = "none (drawn as nothing, like the original invisible wall)",
+                        remedy = "None",
+                    }
+                );
+            else
+                visualGeometry.Add(InspectVisual(source, entry));
             if (sourceIndex > 0)
                 json.Append(',');
             json.Append("{\"identity\":")

@@ -512,6 +512,23 @@ public static class BomYardBuilder
             EditorUtility.SetDirty(level);
             EditorSceneManager.SaveScene(level.gameObject.scene, ScenePath);
         }
+        if (level.YardBuilderVersion == 4)
+        {
+            // C6: the side walls have no renderer in the original yard, so they were drawn as a native extrusion and
+            // logged "BOM VISUAL FALLBACK" in every play. Export them as hidden boundaries (they still collide).
+            foreach (var source in level.GetComponentsInChildren<BomAssetInstance>(true))
+                if (
+                    source.OriginalObjectPath == "Arena/Left Wall"
+                    || source.OriginalObjectPath == "Arena/Right Wall"
+                )
+                {
+                    source.HiddenVisual = true;
+                    EditorUtility.SetDirty(source);
+                }
+            level.YardBuilderVersion = 5;
+            EditorUtility.SetDirty(level);
+            EditorSceneManager.SaveScene(level.gameObject.scene, ScenePath);
+        }
         var registry = BomLevelExporter.Export(level, output);
         var client = UnityEngine.Object.FindFirstObjectByType<BomClientBehaviour>();
         if (client == null)

@@ -253,6 +253,7 @@ In every C task, read native state from `BomClientBehaviour`/`BomSession` and dr
     The game player `Bomb.exe` is built by `Editor/BomFrontDoorBuilder.cs` into `build/validation/Game-Mono` (MainMenuScene, Darryn's 3 levels, NetworkMenu); EditorBuildSettings untouched. Evidence: `evidence/M8/frontdoor-20261112T143715768211Z` (1.5 s grace, server killed) and `…T144730281207Z` (final, server ended itself).
     Not covered by the gate: visible windows (players run `-batchmode`), the LAN bind/firewall dialog, a second PC, and a guest still connected when the host leaves (it gets the existing "The host left" error, which `BomClientBehaviour.Fail` logs as an exception).
 - [~] **C6 Darryn's levels on Odin** (T1, Opus, L) claimed: Claude Opus 5.5 2026-11-12
+  - Hand-over (WIP, Claude Opus 5.5): `Editor/BomTileLevelBuilder.cs` exports all three (run by `BomFrontDoorBuilder`, `Test-FrontDoor.ps1 -Level Yard|Bridge|Tower`); Yard front-door gate passed (`evidence/M8/frontdoor-yard-20261112T152658014670Z`). Left: Bridge and Tower gate runs, `Test-LevelManifest.py` x3, Build/Content/Rounds, Findings, tick.
   - `Editor/BomYardBuilder.cs` expects the old yard paths (`YardLevel/Grass_Mesh`), which Darryn replaced
     with ~130 `Yard Ground Tile 0x` prefabs. Write `Editor/BomTileLevelBuilder.cs`. It exports any scene
     built from `DestructibleObject` tiles plus `Left Wall`/`Right Wall`/`Bottom Boundary` into a native layout

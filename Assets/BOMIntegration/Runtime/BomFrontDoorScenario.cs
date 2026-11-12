@@ -22,6 +22,7 @@ namespace Bom.Unity
             role;
         uint port = BomFrontDoor.DefaultPort;
         string joinAddress = "127.0.0.1";
+        int level; // C6: --bom-frontdoor-level <index into BomFrontDoor.Levels>; host and guest pick it in the menu
 
         void Start()
         {
@@ -35,10 +36,13 @@ namespace Bom.Unity
             role = Arg("--bom-frontdoor-role", "host");
             port = uint.Parse(Arg("--bom-frontdoor-port", port.ToString()));
             joinAddress = Arg("--bom-frontdoor-address", joinAddress);
+            level = int.Parse(Arg("--bom-frontdoor-level", "0"));
+            if (level < 0 || level >= BomFrontDoor.Levels.Count)
+                throw new ArgumentOutOfRangeException("--bom-frontdoor-level");
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 60;
             Directory.CreateDirectory(dir);
-            Log("start port=" + port);
+            Log("start port=" + port + " level=" + BomFrontDoor.Levels[level].Name + " scene=" + BomFrontDoor.Levels[level].Scene);
             StartCoroutine(Guard(role == "guest" ? Guest() : role == "crash" ? Crash() : Host()));
         }
 
@@ -133,11 +137,13 @@ namespace Bom.Unity
             var menu = BomOnlineMenu.Current;
             Press(menu.HostButton, "HOST GAME");
             yield return null;
+            menu.SelectLevel(level);
             menu.PortField.text = port.ToString();
             Press(menu.StartButton, "START");
             yield return Until(() => Client() != null && Connected(Client()), 90, "the hosted level to load and connect");
             if (!IsHost(Client()))
                 throw new InvalidOperationException("Hosted, but the server did not grant host permission");
+            CheckLevel();
             if (!BomFrontDoor.ServerRunning)
                 throw new InvalidOperationException("Connected, but no server process is tracked");
             Log("hosted port=" + BomFrontDoor.SessionPort + " pid=" + BomFrontDoor.LastServerPid);
@@ -149,12 +155,25 @@ namespace Bom.Unity
             var menu = BomOnlineMenu.Current;
             Press(menu.JoinButton, "JOIN GAME");
             yield return null;
+            menu.SelectLevel(level);
             menu.AddressField.text = address;
             menu.PortField.text = port.ToString();
             Press(menu.ConnectButton, "JOIN");
         }
 
         static BomClientBehaviour Client() => FindFirstObjectByType<BomClientBehaviour>();
+
+        // The loaded scene and the server's level must be the picked one (the manifest check already refused others).
+        void CheckLevel()
+        {
+            var expected = BomFrontDoor.Levels[level];
+            var client = Client();
+            string scene = SceneManager.GetActiveScene().name,
+                registry = client.VisualRegistry != null ? client.VisualRegistry.LevelId : "";
+            if (scene != expected.Scene)
+                throw new InvalidOperationException("Loaded scene " + scene + ", expected " + expected.Scene);
+            Log("level " + expected.Name + " scene=" + scene + " level_id=" + registry + " sources=" + client.Session.Sources.Count);
+        }
 
         static bool Connected(BomClientBehaviour client) =>
             client.ConnectionRequested
@@ -241,6 +260,7 @@ namespace Bom.Unity
             var menu = BomOnlineMenu.Current;
             Press(menu.JoinButton, "JOIN GAME");
             yield return null;
+            menu.SelectLevel(level);
             menu.AddressField.text = "999.1.1.1";
             menu.PortField.text = port.ToString();
             Press(menu.ConnectButton, "JOIN (bad address)");
@@ -260,6 +280,7 @@ namespace Bom.Unity
             yield return Until(() => Client() != null && Connected(Client()), 90, "the joined level to load and connect");
             if (IsHost(Client()))
                 throw new InvalidOperationException("A guest must not get host permission");
+            CheckLevel();
             Mark("connected");
             var client = Client();
             ulong forfeitRound = 0,

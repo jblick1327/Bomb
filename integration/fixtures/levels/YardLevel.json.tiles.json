@@ -1,0 +1,4037 @@
+{
+    "level": "YardLevel",
+    "source_scene": "Assets/Game/Scenes/YardLevel.unity",
+    "derived_scene": "Assets/BOMIntegration/NetworkYardTiles.unity",
+    "level_id": "bomb-yard-tiles-v1",
+    "player_plane_z": 0.0,
+    "max_trim": 0.3899998664855957,
+    "tiles": 138,
+    "exported": 104,
+    "off_plane": 8,
+    "outside_arena": 26,
+    "anchored": 100,
+    "dynamic": 4,
+    "trimmed": 87,
+    "spawns": [
+        {
+            "x": -3.0,
+            "y": 6.640000343322754
+        },
+        {
+            "x": -1.0,
+            "y": 6.640000343322754
+        },
+        {
+            "x": 1.0,
+            "y": 6.640000343322754
+        },
+        {
+            "x": 3.0,
+            "y": 6.640000343322754
+        }
+    ],
+    "rows": [
+        {
+            "path": "Level/Cube",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": -4.5,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": -3.5,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Cube (6)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": -2.5,
+                "y": 9.5
+            },
+            "original_max": {
+                "x": -1.5,
+                "y": 12.0
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Cube (7)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": 1.5,
+                "y": 9.5
+            },
+            "original_max": {
+                "x": 2.5,
+                "y": 12.0
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 05",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Cube (8)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "CarveAndFragment on off-plane pillars: anchored at 1 pillar contact(s) (falls when a blast removes them).",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -3.9053900241851808,
+                "y": 12.0
+            },
+            "original_max": {
+                "x": 0.09460999816656113,
+                "y": 13.0
+            },
+            "final_min": {
+                "x": -3.9053900241851808,
+                "y": 12.0
+            },
+            "final_max": {
+                "x": 0.09460999816656113,
+                "y": 13.0
+            },
+            "trimmed": 0.0,
+            "anchors": 1
+        },
+        {
+            "path": "Level/Cube (10)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.01 against tiles kept whole. CarveAndFragment on off-plane pillars: anchored at 1 pillar contact(s) (falls when a blast removes them).",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 0.0846100002527237,
+                "y": 12.0
+            },
+            "original_max": {
+                "x": 4.0846099853515629,
+                "y": 13.0
+            },
+            "final_min": {
+                "x": 0.09460999816656113,
+                "y": 12.0
+            },
+            "final_max": {
+                "x": 4.0846099853515629,
+                "y": 13.0
+            },
+            "trimmed": 0.009999997913837433,
+            "anchors": 1
+        },
+        {
+            "path": "Level/Cube (1)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": 3.5,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": 4.5,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Cube (5)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": 13.0,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": 14.0,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Cube (11)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": -14.0,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": -13.0,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -14.53499984741211,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.06999969482421875,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.08 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.08000016212463379,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.1 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.09999990463256836,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (13)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.33 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.3299999237060547,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (19)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (18)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (17)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (16)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (15)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (14)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.625,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -17.395000457763673,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -17.395000457763673,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (20)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (21)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (22)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (26)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (27)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (28)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (29)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (30)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (31)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -26.22039031982422,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -22.99039077758789,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (23)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (24)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (25)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -23.500389099121095,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -20.270389556884767,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (8)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.36 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.3599996566772461,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (12)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.37 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.36999988555908205,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (9)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.37 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.37000012397766116,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (11)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.38 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.37999987602233889,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (10)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.39 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.725000381469728,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -14.494999885559082,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -17.395000457763673,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -14.494999885559082,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.3899998664855957,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (8)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.09 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.09000015258789063,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (13)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.12 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.11999988555908203,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (12)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.13 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.13000011444091798,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (9)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.13 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.13000035285949708,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (11)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.14 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.1400001049041748,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (10)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.15 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.444999694824219,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 17.674999237060548,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 17.674999237060548,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.15000009536743165,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (19)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.32 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.31999826431274416,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (18)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.31 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.3099982738494873,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (17)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.3 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.29999852180480959,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (16)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.3 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.29999828338623049,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (15)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.29 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.28999805450439455,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (14)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.26 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.415000915527345,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 20.645000457763673,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 17.674999237060548,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.2599983215332031,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (20)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (21)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (22)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (23)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (24)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (26)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (27)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (28)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (29)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (30)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (31)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 23.269609451293947,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 26.499610900878908,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (25)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.299610137939454,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 23.52960968017578,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (32)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.095 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 14.509610176086426,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 17.73961067199707,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 14.53499984741211,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 17.73961067199707,
+                "y": 0.25
+            },
+            "trimmed": 0.09538966417312622,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (33)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.1 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 17.709609985351564,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 20.93960952758789,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 17.73961067199707,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 18.0,
+                "y": 0.25
+            },
+            "trimmed": 0.10000067949295044,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (34)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 20.929609298706056,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 24.159610748291017,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (7)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.115 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -14.490389823913575,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 0.25
+            },
+            "trimmed": 0.11461001634597779,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (32)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -17.72039031982422,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -14.490389823913575,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -17.72039031982422,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -14.490389823913575,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (33)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Clipped to the arena walls/floor. Seam trimmed by 0.07 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -20.950389862060548,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -17.72039031982422,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": -18.0,
+                "y": -0.6800000071525574
+            },
+            "final_max": {
+                "x": -17.72039031982422,
+                "y": 0.25
+            },
+            "trimmed": 0.06999999284744263,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (34)",
+            "behaviour": "Carve",
+            "classification": "outside arena decoration",
+            "motion": "",
+            "note": "Outside the walls/floor; visible art only",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -24.160390853881837,
+                "y": -0.6800000071525574
+            },
+            "original_max": {
+                "x": -20.930389404296876,
+                "y": 0.3199999928474426
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (6)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.06 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 0.25
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 1.25
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 0.25
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "trimmed": 0.059999942779541019,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.05 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.04999995231628418,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (5)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.09 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 1.190000057220459
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 2.190000057220459
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 1.190000057220459
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 2.140000104904175
+            },
+            "trimmed": 0.08999991416931153,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 3.140000104904175
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 2.140000104904175
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "trimmed": 0.040000200271606448,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.08 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 3.0999999046325685
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 4.099999904632568
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 3.0999999046325685
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "trimmed": 0.07999992370605469,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 09 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 02 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 03 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -4.84499979019165,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 07 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 8.074999809265137,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 4.84499979019165,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 8.074999809265137,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.03 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 5.059999942779541
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 4.059999942779541
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 5.03000020980835
+            },
+            "trimmed": 0.029999732971191407,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 05 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": 1.6150000095367432,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -1.6150000095367432,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": 1.6150000095367432,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 01 (1)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Seam trimmed by 0.04 against tiles kept whole. Carve: anchored on every edge.",
+            "depth": {
+                "x": -5.0,
+                "y": 5.0
+            },
+            "original_min": {
+                "x": -14.53499984741211,
+                "y": 5.03000020980835
+            },
+            "original_max": {
+                "x": -11.305000305175782,
+                "y": 6.03000020980835
+            },
+            "final_min": {
+                "x": -14.494999885559082,
+                "y": 5.03000020980835
+            },
+            "final_max": {
+                "x": -11.305000305175782,
+                "y": 6.03000020980835
+            },
+            "trimmed": 0.039999961853027347,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Cube (9)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": -10.0,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": -9.0,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 09",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 11.305000305175782,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 14.53499984741211,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 11.305000305175782,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 14.53499984741211,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Cube (3)",
+            "behaviour": "CarveAndFragment",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 1.06..1.76 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 1.0599998235702515,
+                "y": 1.7599998712539673
+            },
+            "original_min": {
+                "x": 9.0,
+                "y": 6.0
+            },
+            "original_max": {
+                "x": 10.0,
+                "y": 8.5
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Rock (1)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Dynamic",
+            "note": "Outline clipped at box faces, area removed 0.192 against tiles kept whole. CarveAndFragment: dynamic, resting on a tile or the floor.",
+            "depth": {
+                "x": -1.9050098657608033,
+                "y": 0.24209687113761903
+            },
+            "original_min": {
+                "x": 5.998650074005127,
+                "y": 5.926519870758057
+            },
+            "original_max": {
+                "x": 8.23717975616455,
+                "y": 7.073339939117432
+            },
+            "final_min": {
+                "x": 5.998650074005127,
+                "y": 6.03000020980835
+            },
+            "final_max": {
+                "x": 8.234968185424805,
+                "y": 7.073339939117432
+            },
+            "trimmed": 0.1918046474456787,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Rock (4)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Dynamic",
+            "note": "Outline clipped at box faces, area removed 0.192 against tiles kept whole. CarveAndFragment: dynamic, resting on a tile or the floor.",
+            "depth": {
+                "x": -1.9050098657608033,
+                "y": 0.24209687113761903
+            },
+            "original_min": {
+                "x": -8.001350402832032,
+                "y": 5.926519870758057
+            },
+            "original_max": {
+                "x": -5.762819766998291,
+                "y": 7.073339939117432
+            },
+            "final_min": {
+                "x": -8.001350402832032,
+                "y": 6.03000020980835
+            },
+            "final_max": {
+                "x": -5.765030860900879,
+                "y": 7.073339939117432
+            },
+            "trimmed": 0.1918048858642578,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Rock (2)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Dynamic",
+            "note": "Outline clipped at box faces, area removed 0.222 against tiles kept whole. CarveAndFragment: dynamic, resting on a tile or the floor.",
+            "depth": {
+                "x": -2.1693801879882814,
+                "y": 0.32443368434906008
+            },
+            "original_min": {
+                "x": 14.694999694824219,
+                "y": 5.926519870758057
+            },
+            "original_max": {
+                "x": 16.876129150390626,
+                "y": 7.073339939117432
+            },
+            "final_min": {
+                "x": 14.694999694824219,
+                "y": 6.03000020980835
+            },
+            "final_max": {
+                "x": 16.876129150390626,
+                "y": 7.073339939117432
+            },
+            "trimmed": 0.22229397296905518,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Rock (3)",
+            "behaviour": "CarveAndFragment",
+            "classification": "native tile",
+            "motion": "Dynamic",
+            "note": "Outline clipped at box faces, area removed 0.212 against tiles kept whole. CarveAndFragment: dynamic, resting on a tile or the floor.",
+            "depth": {
+                "x": -2.304999351501465,
+                "y": -0.12386768311262131
+            },
+            "original_min": {
+                "x": -17.324430465698243,
+                "y": 5.926519870758057
+            },
+            "original_max": {
+                "x": -14.830619812011719,
+                "y": 7.073339939117432
+            },
+            "final_min": {
+                "x": -17.319936752319337,
+                "y": 6.03000020980835
+            },
+            "final_max": {
+                "x": -14.832616806030274,
+                "y": 7.073339939117432
+            },
+            "trimmed": 0.2124314308166504,
+            "anchors": 0
+        },
+        {
+            "path": "Level/Yard Ground Tile 02",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -11.305000305175782,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -8.074999809265137,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -11.305000305175782,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -8.074999809265137,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 04",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -4.84499979019165,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -1.6150000095367432,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -4.84499979019165,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -1.6150000095367432,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 06",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 1.6150000095367432,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 4.84499979019165,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 1.6150000095367432,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 4.84499979019165,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Level/Yard Ground Tile 08",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 8.074999809265137,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 11.305000305175782,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 8.074999809265137,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 11.305000305175782,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        }
+    ]
+}

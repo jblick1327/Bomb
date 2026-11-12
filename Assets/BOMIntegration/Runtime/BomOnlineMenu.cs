@@ -20,7 +20,8 @@ namespace Bom.Unity
         const string AddressKey = "Bom.Online.JoinAddress",
             JoinPortKey = "Bom.Online.JoinPort",
             HostPortKey = "Bom.Online.HostPort",
-            LanKey = "Bom.Online.HostLan";
+            LanKey = "Bom.Online.HostLan",
+            LevelKey = "Bom.Online.Level";
 
         public enum MenuScreen { Choose, Host, Join, Busy }
 
@@ -38,6 +39,7 @@ namespace Bom.Unity
             BackButton;
         public TMP_InputField AddressField,
             PortField;
+        public int LevelIndex => level;
 
         Action onClosed;
         RectTransform content;
@@ -88,6 +90,7 @@ namespace Bom.Unity
             content.offsetMin = Vector2.zero;
             content.offsetMax = Vector2.zero;
             lan = PlayerPrefs.GetInt(LanKey, 0) == 1;
+            level = Mathf.Clamp(PlayerPrefs.GetInt(LevelKey, 0), 0, BomFrontDoor.Levels.Count - 1);
             ShowChoose("");
         }
 
@@ -148,7 +151,12 @@ namespace Bom.Unity
             AddressField = AddField(content, "127.0.0.1", PlayerPrefs.GetString(AddressKey, "127.0.0.1"), new Vector2(.32f, .80f), new Vector2(.96f, .96f), TMP_InputField.ContentType.Standard, 15);
             AddText(content, "PORT", new Vector2(.05f, .60f), new Vector2(.30f, .73f), 20, LightText, FontStyles.Bold);
             PortField = AddField(content, "Port", PlayerPrefs.GetInt(JoinPortKey, (int)BomFrontDoor.DefaultPort).ToString(), new Vector2(.32f, .58f), new Vector2(.96f, .74f), TMP_InputField.ContentType.IntegerNumber, 5);
-            AddText(content, "Same PC: 127.0.0.1. Another PC: the address the host's screen shows.", new Vector2(.05f, .30f), new Vector2(.96f, .52f), 18, LightText, FontStyles.Normal);
+            AddText(content, "LEVEL", new Vector2(.05f, .40f), new Vector2(.30f, .52f), 20, LightText, FontStyles.Bold);
+            AddButton(content, "‹", new Vector2(.32f, .39f), new Vector2(.42f, .53f), SecondaryButtonColor, () => ChangeLevel(-1), 40, DarkText);
+            levelText = AddText(content, "", new Vector2(.43f, .39f), new Vector2(.85f, .53f), 26, Color.white, FontStyles.Bold);
+            AddButton(content, "›", new Vector2(.86f, .39f), new Vector2(.96f, .53f), SecondaryButtonColor, () => ChangeLevel(1), 40, DarkText);
+            ChangeLevel(0);
+            AddText(content, "Same PC: 127.0.0.1. Another PC: the address the host's screen shows. Pick the level the host chose.", new Vector2(.05f, .22f), new Vector2(.96f, .37f), 18, LightText, FontStyles.Normal);
             ConnectButton = AddButton(content, "JOIN", new Vector2(.52f, .04f), new Vector2(.96f, .2f), ButtonColor, StartJoin, 30, DarkText);
             BackButton = AddButton(content, "BACK", new Vector2(.05f, .04f), new Vector2(.48f, .2f), SecondaryButtonColor, () => ShowChoose(""), 28, DarkText);
         }
@@ -172,6 +180,9 @@ namespace Bom.Unity
             if (levelText != null)
                 levelText.text = BomFrontDoor.Levels[level].Name;
         }
+
+        // Scripted runs (BomFrontDoorScenario --bom-frontdoor-level) pick a level the same way the arrows do.
+        public void SelectLevel(int index) => ChangeLevel(index - level);
 
         void ToggleLan()
         {
@@ -199,6 +210,7 @@ namespace Bom.Unity
             }
             PlayerPrefs.SetInt(HostPortKey, (int)port);
             PlayerPrefs.SetInt(LanKey, lan ? 1 : 0);
+            PlayerPrefs.SetInt(LevelKey, level);
             PlayerPrefs.Save();
             var chosen = BomFrontDoor.Levels[level];
             Debug.Log("BOM FRONTDOOR MENU host level=" + chosen.Name + " port=" + port + " lan=" + lan);
@@ -231,10 +243,12 @@ namespace Bom.Unity
             }
             PlayerPrefs.SetString(AddressKey, address);
             PlayerPrefs.SetInt(JoinPortKey, (int)port);
+            PlayerPrefs.SetInt(LevelKey, level);
             PlayerPrefs.Save();
-            Debug.Log("BOM FRONTDOOR MENU join address=" + address + " port=" + port);
+            var chosen = BomFrontDoor.Levels[level];
+            Debug.Log("BOM FRONTDOOR MENU join address=" + address + " port=" + port + " level=" + chosen.Name);
             ShowBusy("Joining " + address + ":" + port + "…");
-            BomFrontDoor.Join(BomFrontDoor.Levels[0], address, port);
+            BomFrontDoor.Join(chosen, address, port);
         }
 
         void Close()

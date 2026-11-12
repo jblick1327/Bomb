@@ -28,10 +28,14 @@ namespace Bom.Unity
                 Layout;
         }
 
-        // Host level picker. C6 adds Darryn's Yard, Bridge and Tower here; the old network yard stays as "Classic Yard".
+        // Level picker (host and join). C6 added Darryn's Yard, Bridge and Tower (BomTileLevelBuilder); the old network
+        // yard stays as "Classic Yard". A guest must pick the host's level: the server rejects a different level's manifest.
         public static readonly IReadOnlyList<Level> Levels = new[]
         {
             new Level { Name = "CLASSIC YARD", Scene = "NetworkMenu", Layout = "yard.json" },
+            new Level { Name = "YARD", Scene = "NetworkYardTiles", Layout = "YardLevel.json" },
+            new Level { Name = "BRIDGE", Scene = "NetworkBridge", Layout = "BridgeLevel.json" },
+            new Level { Name = "TOWER", Scene = "NetworkTower", Layout = "TowerLevel.json" },
         };
 
         sealed class Pending

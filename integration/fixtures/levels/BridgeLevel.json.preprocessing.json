@@ -1,0 +1,1580 @@
+{
+    "level_id": "bomb-bridge-v1",
+    "layout": "C:\\Users\\jblic\\Desktop\\Bomb-integration\\integration\\fixtures\\levels\\BridgeLevel.json",
+    "native_report": "C:\\Users\\jblic\\Desktop\\Bomb-integration\\integration\\fixtures\\levels\\BridgeLevel.json.native-report.json",
+    "inventory": [
+        {
+            "object_path": "BOM BridgeLevel Authoring",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Level Bounds",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Level Background",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Left Wall",
+            "classification": "physics source",
+            "approximation": "Explicit XY boundary from the original ArenaLayout collider; invisible in the original, so hidden",
+            "visual_fallback": "",
+            "source_identity": "1"
+        },
+        {
+            "object_path": "Arena/Left Wall/Native fixed boundary",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Right Wall",
+            "classification": "physics source",
+            "approximation": "Explicit XY boundary from the original ArenaLayout collider; invisible in the original, so hidden",
+            "visual_fallback": "",
+            "source_identity": "2"
+        },
+        {
+            "object_path": "Arena/Right Wall/Native fixed boundary",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Back Wall",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Arena/Bottom Boundary",
+            "classification": "physics source",
+            "approximation": "Explicit XY boundary from the original ArenaLayout collider; invisible in the original, so hidden",
+            "visual_fallback": "",
+            "source_identity": "3"
+        },
+        {
+            "object_path": "Arena/Bottom Boundary/Native fixed boundary",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Main Camera Solo",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Main Camera Multiplayer",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Directional Light",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 05",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "4"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 05/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "5"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "6"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Front",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Rear",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front West",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front East",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End (5)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front West (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front East (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "7"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 03",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "8"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 03/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 04",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "9"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 04/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 06",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "10"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 06/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 07",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "11"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 07/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "12"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01 (4)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "13"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01 (4)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09 (4)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "14"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09 (4)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Front (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Rear (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front West (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front East (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East (4)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02 (3)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "15"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02 (3)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08 (3)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "16"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08 (3)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End (3)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End (1)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 05 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "17"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 05 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "18"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 01 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "19"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 09 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Front (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Girder - Rear (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West End (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West End (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front West Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear West Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Front East End (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Post - Rear East End (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front West (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front West Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear West Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front East Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East Center (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Front East (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Truss Brace - Rear East (2)",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "20"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 02 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 03 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "21"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 03 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 04 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "22"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 04 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 06 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "23"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 06 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 07 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "24"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 07 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08 (2)",
+            "classification": "physics source",
+            "approximation": "C6 tile (Carve): Carve: anchored on every edge.",
+            "visual_fallback": "",
+            "source_identity": "25"
+        },
+        {
+            "object_path": "Bridge/Bridge Deck Tile 08 (2)/Native tile proxy",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Plane",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Cube",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Bound",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "BOM native yard session",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Network menu and arena HUD",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "BOM native yard camera",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        }
+    ],
+    "visual_geometry": [
+        {
+            "source_identity": "1",
+            "object_path": "Arena/Left Wall",
+            "asset_key": "tiles/BridgeLevel/Left Wall",
+            "classification": "hidden boundary",
+            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
+            "remedy": "None",
+            "triangles": 0,
+            "materials": 0,
+            "minimum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maximum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "source_identity": "2",
+            "object_path": "Arena/Right Wall",
+            "asset_key": "tiles/BridgeLevel/Right Wall",
+            "classification": "hidden boundary",
+            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
+            "remedy": "None",
+            "triangles": 0,
+            "materials": 0,
+            "minimum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maximum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "source_identity": "3",
+            "object_path": "Arena/Bottom Boundary",
+            "asset_key": "tiles/BridgeLevel/Bottom Boundary",
+            "classification": "hidden boundary",
+            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
+            "remedy": "None",
+            "triangles": 0,
+            "materials": 0,
+            "minimum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "maximum": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            }
+        },
+        {
+            "source_identity": "4",
+            "object_path": "Bridge/Bridge Deck Tile 05",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -1.5800000429153443,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 1.5800000429153443,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "5",
+            "object_path": "Bridge/Bridge Deck Tile 01",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -14.5,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -11.34000015258789,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "6",
+            "object_path": "Bridge/Bridge Deck Tile 09",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 11.34000015258789,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 14.5,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "7",
+            "object_path": "Bridge/Bridge Deck Tile 02",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -11.270000457763672,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -8.110000610351563,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "8",
+            "object_path": "Bridge/Bridge Deck Tile 03",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -8.040000915527344,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -4.880001068115234,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "9",
+            "object_path": "Bridge/Bridge Deck Tile 04",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -4.809999465942383,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -1.6499994993209839,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "10",
+            "object_path": "Bridge/Bridge Deck Tile 06",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 1.649999976158142,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 4.809999942779541,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "11",
+            "object_path": "Bridge/Bridge Deck Tile 07",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 4.880000114440918,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 8.039999961853028,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "12",
+            "object_path": "Bridge/Bridge Deck Tile 08",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 8.109999656677246,
+                "y": 8.5,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 11.269999504089356,
+                "y": 9.5,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "13",
+            "object_path": "Bridge/Bridge Deck Tile 01 (4)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -14.5,
+                "y": 12.930000305175782,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -11.34000015258789,
+                "y": 13.930000305175782,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "14",
+            "object_path": "Bridge/Bridge Deck Tile 09 (4)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 11.34000015258789,
+                "y": 12.930000305175782,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 14.5,
+                "y": 13.930000305175782,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "15",
+            "object_path": "Bridge/Bridge Deck Tile 02 (3)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -11.270000457763672,
+                "y": 12.930000305175782,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -8.110000610351563,
+                "y": 13.930000305175782,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "16",
+            "object_path": "Bridge/Bridge Deck Tile 08 (3)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 8.109999656677246,
+                "y": 12.930000305175782,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 11.269999504089356,
+                "y": 13.930000305175782,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "17",
+            "object_path": "Bridge/Bridge Deck Tile 05 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -1.5800000429153443,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 1.5800000429153443,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "18",
+            "object_path": "Bridge/Bridge Deck Tile 01 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -14.5,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -11.34000015258789,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "19",
+            "object_path": "Bridge/Bridge Deck Tile 09 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 11.34000015258789,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 14.5,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "20",
+            "object_path": "Bridge/Bridge Deck Tile 02 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -11.270000457763672,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -8.110000610351563,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "21",
+            "object_path": "Bridge/Bridge Deck Tile 03 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -8.040000915527344,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -4.880001068115234,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "22",
+            "object_path": "Bridge/Bridge Deck Tile 04 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": -4.809999465942383,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": -1.6499994993209839,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "23",
+            "object_path": "Bridge/Bridge Deck Tile 06 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 1.649999976158142,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 4.809999942779541,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "24",
+            "object_path": "Bridge/Bridge Deck Tile 07 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 4.880000114440918,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 8.039999961853028,
+                "y": 5.25,
+                "z": 2.0
+            }
+        },
+        {
+            "source_identity": "25",
+            "object_path": "Bridge/Bridge Deck Tile 08 (2)",
+            "asset_key": "tiles/8eb9d1d85255afe1ab742f1bb77bfecc",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
+            "minimum": {
+                "x": 8.109999656677246,
+                "y": 4.25,
+                "z": -2.0
+            },
+            "maximum": {
+                "x": 11.269999504089356,
+                "y": 5.25,
+                "z": 2.0
+            }
+        }
+    ]
+}

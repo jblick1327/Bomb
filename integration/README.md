@@ -12,7 +12,7 @@ Original Unity assets, GUIDs, prefabs, scenes and packages remain protected.
 The game player `Bomb.exe` (built by `Test-FrontDoor.ps1`, `BomFrontDoorBuilder.BuildMono`) starts at Darryn's
 `MainMenuScene`. OFFLINE is his local mode, unchanged (D4). ONLINE opens Odin play over LAN or direct IP (D3):
 
-- **Host game:** pick a level (today only CLASSIC YARD; C6 adds more), a UDP port (default 47380) and who may join:
+- **Host game:** pick a level (CLASSIC YARD, or Darryn's YARD, BRIDGE and TOWER from C6), a UDP port (default 47380) and who may join:
   *This PC only* binds the server to 127.0.0.1; *LAN / direct IP* binds 0.0.0.0 and the host's Esc menu lists the
   addresses other PCs type in. START launches `BOM-server.exe --bind <ip> --port <port> --layout <level json>
   --host-token <random>` with no window, waits for its "listening" line (60 s limit), loads the level and connects to
@@ -20,7 +20,8 @@ The game player `Bomb.exe` (built by `Test-FrontDoor.ps1`, `BomFrontDoorBuilder.
   bytes per hosting; it is visible on the server's command line to programs on the same PC, nowhere else.
 - **Busy port:** the host probes the port with an exclusive bind and also watches the server for
   `Could not bind UDP port`; it then tries the next port (10 in all) and says which port it used. The Esc menu shows it.
-- **Join game:** address (dotted IPv4; 127.0.0.1 for the same PC) and port (1-65535), checked before anything loads.
+- **Join game:** address (dotted IPv4; 127.0.0.1 for the same PC), port (1-65535) and the level the host picked
+  (the guest loads that level's scene; the server refuses a guest whose level differs, "manifest mismatch").
 - **Leaving:** RETURN, LEAVE GAME and *Main menu* in the Esc menu disconnect and load the main menu. A host's server
   ends itself when its host leaves ("SERVER host-left shutdown"); it is killed after 6 s if it has not. Quitting kills it
   at once. Every server is also placed in a Windows job object with kill-on-close, so a crash or a Task Manager kill of
@@ -34,8 +35,10 @@ The game player `Bomb.exe` (built by `Test-FrontDoor.ps1`, `BomFrontDoorBuilder.
   screen warns about this before START. Each new build folder is a new program path to Windows, so it may ask again.
 - Server output goes to `bom-server-<time>.log` next to the player log.
 
-Gate: `./integration/tools/Test-FrontDoor.ps1 -ConfigPath integration/local.config.owner-validation.json` (evidence in
-`evidence/M8/frontdoor-*`). It mirrors nothing outside `Assets/BOMIntegration`: copy `Assets/Game/Scripts/MatchMenuUI.cs`
+Gate: `./integration/tools/Test-FrontDoor.ps1 -ConfigPath integration/local.config.owner-validation.json [-Level Yard|Bridge|Tower]`
+(evidence in `evidence/M8/frontdoor-*`, `frontdoor-<level>-*` with `-Level`). The build also exports Darryn's three tile levels
+(`Editor/BomTileLevelBuilder.cs`) to `integration/fixtures/levels/<Scene>.json` (+ `.tiles.json`, the per-tile mapping) and
+copies them to `Server/levels/`. It mirrors nothing outside `Assets/BOMIntegration`: copy `Assets/Game/Scripts/MatchMenuUI.cs`
 to the validation project first if it changed (the tool checks).
 
 ## Play the network yard

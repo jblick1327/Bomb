@@ -71,6 +71,7 @@ namespace Bom.Unity
         public int IntactSources { get; private set; }
         public int FragmentSources { get; private set; }
         public int FallbackSources { get; private set; }
+        public int HiddenSources { get; private set; }
         public long StaleApplications { get; private set; }
         public long GpuCacheHits { get; private set; }
         public long GpuEvictions { get; private set; }
@@ -114,6 +115,7 @@ namespace Bom.Unity
             public int QueueCursor,
                 PlanCursor;
             public string Mode = "fallback";
+            public bool Hidden;
         }
 
         sealed class Plan
@@ -307,7 +309,7 @@ namespace Bom.Unity
             revision = 0;
             if (!disposed)
                 Jobs.Reset(0, 0);
-            IntactSources = FragmentSources = FallbackSources = 0;
+            IntactSources = FragmentSources = FallbackSources = HiddenSources = 0;
         }
 
         public void SetTopology(
@@ -368,6 +370,7 @@ namespace Bom.Unity
                     if (registry.TryFind(metadata.AssetKey, metadata.VisualHash, out var entry))
                     {
                         source.Entry = entry;
+                        source.Hidden = entry.Hidden;
                         source.Key =
                             "source:"
                             + BomSourceMeshData.MatrixKey(entry.ContentHash, source.Matrix);
@@ -468,7 +471,7 @@ namespace Bom.Unity
             if (fallbackViews != null && fallbackViews.TryGetValue(source.Id, out var renderers))
                 foreach (var renderer in renderers)
                     if (renderer != null)
-                        renderer.enabled = !show;
+                        renderer.enabled = !show && !source.Hidden;
             if (source.Plans != null)
                 foreach (var plan in source.Plans)
                 foreach (var obj in plan.Objects)
@@ -1169,7 +1172,7 @@ namespace Bom.Unity
             for (int n = 0; n < ordered.Count && Milliseconds(start) < 1.5; n++)
             {
                 var source = ordered[(sourceCursor + n) % ordered.Count];
-                if (source.Cells.Count == 0)
+                if (source.Cells.Count == 0 || source.Hidden)
                     continue;
                 if (source.Mode == "intact" || source.Mode == "fragments")
                     continue;
@@ -1205,12 +1208,14 @@ namespace Bom.Unity
             }
             if (ordered.Count > 0)
                 sourceCursor = (sourceCursor + 1) % ordered.Count;
-            IntactSources = FragmentSources = FallbackSources = 0;
+            IntactSources = FragmentSources = FallbackSources = HiddenSources = 0;
             foreach (var source in sources.Values)
             {
                 if (source.Cells.Count == 0)
                     continue;
-                if (source.Mode == "intact")
+                if (source.Hidden)
+                    HiddenSources++;
+                else if (source.Mode == "intact")
                     IntactSources++;
                 else if (source.Mode == "fragments")
                     FragmentSources++;

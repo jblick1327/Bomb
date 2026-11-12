@@ -1,0 +1,3225 @@
+{
+    "level": "BridgeLevel",
+    "source_scene": "Assets/Game/Scenes/BridgeLevel.unity",
+    "derived_scene": "Assets/BOMIntegration/NetworkBridge.unity",
+    "level_id": "bomb-bridge-v1",
+    "player_plane_z": 0.0,
+    "max_trim": 0.0,
+    "tiles": 110,
+    "exported": 22,
+    "off_plane": 88,
+    "outside_arena": 0,
+    "anchored": 22,
+    "dynamic": 0,
+    "trimmed": 0,
+    "spawns": [
+        {
+            "x": -3.0,
+            "y": 10.109999656677246
+        },
+        {
+            "x": -1.0,
+            "y": 10.109999656677246
+        },
+        {
+            "x": 1.0,
+            "y": 10.109999656677246
+        },
+        {
+            "x": 3.0,
+            "y": 10.109999656677246
+        }
+    ],
+    "rows": [
+        {
+            "path": "Bridge/Bridge Deck Tile 05",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -1.5800000429153443,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 1.5800000429153443,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -1.5800000429153443,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 1.5800000429153443,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 01",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -11.34000015258789,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -14.5,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -11.34000015258789,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 09",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 11.34000015258789,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 11.34000015258789,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 14.5,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Girder - Front",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.425..-2.075 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.424999952316284,
+                "y": -2.075000047683716
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 8.125
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 8.475000381469727
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Girder - Rear",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.075..2.425 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.075000047683716,
+                "y": 2.424999952316284
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 8.125
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 8.475000381469727
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 6.099999904632568
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 8.300000190734864
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front West",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 5.990819931030273
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 8.4091796875
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 5.990819931030273
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 8.4091796875
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front East",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 5.990819931030273
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 8.4091796875
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 5.990819931030273
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 8.4091796875
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End (5)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": -0.2720000147819519
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 1.9279999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front West (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.553490161895752,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": 0.05349000170826912,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.05349000170826912,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": 6.553490161895752,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front East (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": -0.3811799883842468
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 2.037179946899414
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 02",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -11.270000457763672,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -8.109999656677246,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -11.270000457763672,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -8.109999656677246,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 03",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -8.039999961853028,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -4.880000114440918,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -8.039999961853028,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -4.880000114440918,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 04",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -4.809999942779541,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": -1.649999976158142,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": -4.809999942779541,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": -1.649999976158142,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 06",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 1.649999976158142,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 4.809999942779541,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 1.649999976158142,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 4.809999942779541,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 07",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 4.880000114440918,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 8.039999961853028,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 4.880000114440918,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 8.039999961853028,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 08",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 8.109999656677246,
+                "y": 8.5
+            },
+            "original_max": {
+                "x": 11.270000457763672,
+                "y": 9.5
+            },
+            "final_min": {
+                "x": 8.109999656677246,
+                "y": 8.5
+            },
+            "final_max": {
+                "x": 11.270000457763672,
+                "y": 9.5
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 01 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 12.930000305175782
+            },
+            "original_max": {
+                "x": -11.34000015258789,
+                "y": 13.930000305175782
+            },
+            "final_min": {
+                "x": -14.5,
+                "y": 12.930000305175782
+            },
+            "final_max": {
+                "x": -11.34000015258789,
+                "y": 13.930000305175782
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 09 (4)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 11.34000015258789,
+                "y": 12.930000305175782
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 13.930000305175782
+            },
+            "final_min": {
+                "x": 11.34000015258789,
+                "y": 12.930000305175782
+            },
+            "final_max": {
+                "x": 14.5,
+                "y": 13.930000305175782
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Girder - Front (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.425..-2.075 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.424999952316284,
+                "y": -2.075000047683716
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 12.555000305175782
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 12.904999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Girder - Rear (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.075..2.425 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.075000047683716,
+                "y": 2.424999952316284
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 12.555000305175782
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 12.904999732971192
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 10.529999732971192
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 12.729999542236329
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front West (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 10.420820236206055
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 12.839179992675782
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 10.420820236206055
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 12.839179992675782
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front East (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 10.420820236206055
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 12.839179992675782
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East (4)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 10.420820236206055
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 12.839179992675782
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 02 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -11.270000457763672,
+                "y": 12.930000305175782
+            },
+            "original_max": {
+                "x": -8.109999656677246,
+                "y": 13.930000305175782
+            },
+            "final_min": {
+                "x": -11.270000457763672,
+                "y": 12.930000305175782
+            },
+            "final_max": {
+                "x": -8.109999656677246,
+                "y": 13.930000305175782
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 08 (3)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 8.109999656677246,
+                "y": 12.930000305175782
+            },
+            "original_max": {
+                "x": 11.270000457763672,
+                "y": 13.930000305175782
+            },
+            "final_min": {
+                "x": 8.109999656677246,
+                "y": 12.930000305175782
+            },
+            "final_max": {
+                "x": 11.270000457763672,
+                "y": 13.930000305175782
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End (3)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 8.3100004196167
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 10.510000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End (1)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 4.059999942779541
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 6.260000228881836
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 05 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -1.5800000429153443,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": 1.5800000429153443,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": -1.5800000429153443,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": 1.5800000429153443,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 01 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": -11.34000015258789,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": -14.5,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": -11.34000015258789,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 09 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 11.34000015258789,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": 11.34000015258789,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": 14.5,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Girder - Front (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.425..-2.075 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.424999952316284,
+                "y": -2.075000047683716
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 3.875
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 4.224999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Girder - Rear (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.075..2.425 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.075000047683716,
+                "y": 2.424999952316284
+            },
+            "original_min": {
+                "x": -14.5,
+                "y": 3.875
+            },
+            "original_max": {
+                "x": 14.5,
+                "y": 4.224999904632568
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West End (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West End (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.170000076293946,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": -12.829999923706055,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front West Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear West Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.670000076293945,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": -6.329999923706055,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.17000000178813935,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 0.17000000178813935,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.329999923706055,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 6.670000076293945,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Front East End (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Post - Rear East End (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 12.829999923706055,
+                "y": 1.850000023841858
+            },
+            "original_max": {
+                "x": 13.170000076293946,
+                "y": 4.050000190734863
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front West (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -13.053489685058594,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": -6.446509838104248,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front West Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -6.553490161895752,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 0.05349000170826912,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear West Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -6.553490161895752,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 0.05349000170826912,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front East Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": -0.05349000170826912,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 6.553490161895752,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East Center (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": -0.05349000170826912,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 6.553490161895752,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Front East (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth -2.42..-2.08 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": -2.4200000762939455,
+                "y": -2.0799999237060549
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Truss Brace - Rear East (2)",
+            "behaviour": "Carve",
+            "classification": "off-plane decoration",
+            "motion": "",
+            "note": "Depth 2.08..2.42 misses the player plane z=0+/-0.45; visible art, not destructible on Odin",
+            "depth": {
+                "x": 2.0799999237060549,
+                "y": 2.4200000762939455
+            },
+            "original_min": {
+                "x": 6.446509838104248,
+                "y": 1.740820050239563
+            },
+            "original_max": {
+                "x": 13.053489685058594,
+                "y": 4.159180164337158
+            },
+            "final_min": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "final_max": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "trimmed": 0.0,
+            "anchors": 0
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 02 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -11.270000457763672,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": -8.109999656677246,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": -11.270000457763672,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": -8.109999656677246,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 03 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -8.039999961853028,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": -4.880000114440918,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": -8.039999961853028,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": -4.880000114440918,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 04 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": -4.809999942779541,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": -1.649999976158142,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": -4.809999942779541,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": -1.649999976158142,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 06 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 1.649999976158142,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": 4.809999942779541,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": 1.649999976158142,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": 4.809999942779541,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 07 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 4.880000114440918,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": 8.039999961853028,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": 4.880000114440918,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": 8.039999961853028,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        },
+        {
+            "path": "Bridge/Bridge Deck Tile 08 (2)",
+            "behaviour": "Carve",
+            "classification": "native tile",
+            "motion": "Anchored",
+            "note": "Carve: anchored on every edge.",
+            "depth": {
+                "x": -2.0,
+                "y": 2.0
+            },
+            "original_min": {
+                "x": 8.109999656677246,
+                "y": 4.25
+            },
+            "original_max": {
+                "x": 11.270000457763672,
+                "y": 5.25
+            },
+            "final_min": {
+                "x": 8.109999656677246,
+                "y": 4.25
+            },
+            "final_max": {
+                "x": 11.270000457763672,
+                "y": 5.25
+            },
+            "trimmed": 0.0,
+            "anchors": 4
+        }
+    ]
+}

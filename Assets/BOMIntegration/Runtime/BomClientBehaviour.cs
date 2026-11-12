@@ -527,7 +527,9 @@ namespace Bom.Unity
                                     + " groups="
                                     + entry.Groups.Length
                                     + " mesh_vertices="
-                                    + entry.Groups[0].Mesh.vertexCount
+                                    + (entry.Groups.Length > 0 ? entry.Groups[0].Mesh.vertexCount : 0)
+                                    + " hidden="
+                                    + (entry.Hidden ? 1 : 0)
                                     + " native_gameplay="
                                     + BomSession.HashText(
                                         session.Catalog.gameplay_hash0,

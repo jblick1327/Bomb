@@ -38,6 +38,9 @@ namespace Bom.Unity
         [TextArea]
         public string ApproximationNote = "";
         public bool IncludeInExport = true;
+
+        // C6: export this source as a hidden registry entry (no mesh, nothing drawn), e.g. invisible boundary walls.
+        public bool HiddenVisual;
         public ulong Identity =>
             ulong.TryParse(
                 identityDecimal,

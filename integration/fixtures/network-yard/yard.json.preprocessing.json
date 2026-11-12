@@ -49,7 +49,7 @@
             "object_path": "Arena/Left Wall",
             "classification": "physics source",
             "approximation": "Explicit XY boundary from the original gameplay wall collider; no collider is retained at runtime",
-            "visual_fallback": "No usable source mesh; explicit physics proxy uses extrusion",
+            "visual_fallback": "",
             "source_identity": "9007199254741002"
         },
         {
@@ -63,7 +63,7 @@
             "object_path": "Arena/Right Wall",
             "classification": "physics source",
             "approximation": "Explicit XY boundary from the original gameplay wall collider; no collider is retained at runtime",
-            "visual_fallback": "No usable source mesh; explicit physics proxy uses extrusion",
+            "visual_fallback": "",
             "source_identity": "9007199254741003"
         },
         {
@@ -1086,9 +1086,9 @@
             "source_identity": "9007199254741002",
             "object_path": "Arena/Left Wall",
             "asset_key": "yard/1909f56bfc062723c751e8b465ee728b/Left Wall",
-            "classification": "empty visual group",
-            "expected_fallback": "native extrusion",
-            "remedy": "Author closed visual solids or explicitly separate decorative open surfaces; physics proxies remain independent.",
+            "classification": "hidden boundary",
+            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
+            "remedy": "None",
             "triangles": 0,
             "materials": 0,
             "minimum": {
@@ -1106,9 +1106,9 @@
             "source_identity": "9007199254741003",
             "object_path": "Arena/Right Wall",
             "asset_key": "yard/1909f56bfc062723c751e8b465ee728b/Right Wall",
-            "classification": "empty visual group",
-            "expected_fallback": "native extrusion",
-            "remedy": "Author closed visual solids or explicitly separate decorative open surfaces; physics proxies remain independent.",
+            "classification": "hidden boundary",
+            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
+            "remedy": "None",
             "triangles": 0,
             "materials": 0,
             "minimum": {

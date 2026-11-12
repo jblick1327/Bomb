@@ -2,17 +2,20 @@
 which starts BOM-server.exe from the player's Server folder (no launcher here). The guest joins 127.0.0.1 through the
 menu. Odin plays one elimination round to Finished (guest forfeit, as in the Rounds gate). Then the host returns to
 the menu (its server must stop), hosts again and quits (its server must stop). A third run hosts and is killed; the
-job object must take the server with it. A UDP port held by this script proves the busy-port fallback."""
+job object must take the server with it. A UDP port held by this script proves the busy-port fallback.
+--level (C6) picks the level in the host and join menus (index into BomFrontDoor.Levels, kept in step below)."""
 import argparse,datetime,hashlib,json,os,pathlib,re,socket,subprocess,time
-p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--player',required=True);a=p.parse_args()
+LEVELS={'ClassicYard':(0,'NetworkMenu','yard.json'),'Yard':(1,'NetworkYardTiles','YardLevel.json'),'Bridge':(2,'NetworkBridge','BridgeLevel.json'),'Tower':(3,'NetworkTower','TowerLevel.json')}
+p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--player',required=True);p.add_argument('--level',default='ClassicYard',choices=sorted(LEVELS));a=p.parse_args()
+level_index,level_scene,level_file=LEVELS[a.level]
 cfg=pathlib.Path(a.config).resolve();config=json.loads(cfg.read_text(encoding='utf-8-sig'));root=pathlib.Path(config['OdinRoot']);player=pathlib.Path(a.player).resolve()
 identity=json.loads((root/'build/bomcore.build.json').read_text(encoding='utf-8-sig'))
 sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
-plugin=next(player.parent.rglob('bomcore.dll'));server_exe=player.parent/'Server/BOM-server.exe';layout=player.parent/'Server/levels/yard.json'
+plugin=next(player.parent.rglob('bomcore.dll'));server_exe=player.parent/'Server/BOM-server.exe';layout=player.parent/'Server/levels'/level_file
 if sha(plugin)!=identity['dll_sha256']:raise SystemExit('Player native library differs from the current manifest')
 for path in (server_exe,layout):
  if not path.exists():raise SystemExit('Missing packaged file: '+str(path))
-out=cfg.parent/'evidence/M8'/('frontdoor-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
+out=cfg.parent/'evidence/M8'/('frontdoor-'+('' if a.level=='ClassicYard' else a.level.lower()+'-')+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'));out.mkdir(parents=True)
 def read(path):return path.read_text(encoding='utf-8',errors='replace') if path.exists() else ''
 def servers():
  rows=subprocess.run(['tasklist','/FI','IMAGENAME eq BOM-server.exe','/FO','CSV','/NH'],capture_output=True,text=True).stdout
@@ -28,7 +31,7 @@ t0=time.monotonic()
 def note(text):timeline.append(f'{time.monotonic()-t0:7.1f}s {text}');print(timeline[-1],flush=True)
 def launch(name,role,port):
  command=[str(player),'-batchmode','-force-d3d11','-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
-  '--bom-frontdoor-test',str(out),'--bom-frontdoor-role',role,'--bom-frontdoor-port',str(port),'-logFile',str(out/(name+'.log'))]
+  '--bom-frontdoor-test',str(out),'--bom-frontdoor-role',role,'--bom-frontdoor-port',str(port),'--bom-frontdoor-level',str(level_index),'-logFile',str(out/(name+'.log'))]
  streams[name]=(out/(name+'-stdout.log')).open('w',encoding='utf-8')
  children[name]=subprocess.Popen(command,cwd=player.parent,stdout=streams[name],stderr=subprocess.STDOUT,startupinfo=startup)
  note(f'started {name} pid={children[name].pid} port={port}');return command
@@ -86,8 +89,9 @@ checks['round_finished_both']=bool(re.search(r'BOM FRONTDOOR TEST role=host roun
 checks['main_menu_first']='menu ONLINE' in logs['host'] and 'menu ONLINE' in logs['guest']
 checks['job_kill_on_close']=all('BOM FRONTDOOR SERVER job kill_on_close=1' in logs[n] for n in ['host','crash'])
 checks['no_host_token_env']='BOM_TEST_HOST_TOKEN' not in os.environ
+checks['level_scene_loaded']=all(f'BOM FRONTDOOR LOAD scene={level_scene} ' in logs[n] for n in ['host','guest']) and all(f'level=' in logs[n] and f' scene={level_scene} level_id=' in logs[n] for n in ['host','guest'])
 passed=not failure and all(checks.values())
-summary={'status':'passed' if passed else 'failed','scope':'C5: MainMenuScene -> Online host (player starts BOM-server.exe itself) + Online join 127.0.0.1 -> finished elimination round; server stops on return to menu, on quit and on player crash; busy port skipped',
+summary={'status':'passed' if passed else 'failed','level':a.level,'level_scene':level_scene,'level_file':level_file,'scope':'C5: MainMenuScene -> Online host (player starts BOM-server.exe itself) + Online join 127.0.0.1 -> finished elimination round; server stops on return to menu, on quit and on player crash; busy port skipped',
  'failure':failure,'checks':checks,'exit_codes':codes,'busy_port_held':busy,'orphans_killed':orphans,'exception_lines':exceptions,'timeline':timeline,
  'native_identity':identity,'player_sha256':sha(player),'plugin_sha256':sha(plugin),'server_sha256':sha(server_exe),'layout_sha256':sha(layout),
  'runtime_sha256':sha(player.parent/(player.stem+'_Data')/'Managed/Bom.Unity.Runtime.dll'),'commands':commands}

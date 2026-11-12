@@ -21,6 +21,10 @@ namespace Bom.Unity
         public Material CapMaterial;
         public Vector2 FallbackDepth;
         public GameObject IntactPrefab;
+
+        // C6: an invisible boundary (Darryn's Left/Right Wall have no renderer). Native still collides with it; Unity
+        // draws nothing for it, which is the original look, instead of falling back to a visible extrusion.
+        public bool Hidden;
     }
 
     [Serializable]
@@ -42,7 +46,7 @@ namespace Bom.Unity
         public bool TryFind(string key, string hash, out BomVisualEntry result)
         {
             foreach (var entry in Entries)
-                if (entry.AssetKey == key && entry.ContentHash == hash && entry.Groups.Length > 0)
+                if (entry.AssetKey == key && entry.ContentHash == hash && (entry.Groups.Length > 0 || entry.Hidden))
                 {
                     bool valid = true;
                     foreach (var group in entry.Groups)
