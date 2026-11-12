@@ -26,7 +26,8 @@ using UnityEngine.SceneManagement;
 //     each overlapping tile is trimmed along its shallowest side against tiles already kept (kept first: higher top, then
 //     lower x). A trim deeper than MaxTrim or a quarter of the tile fails the export instead of guessing.
 //   - Spawns: ArenaSession/ArenaLayout spawn height and spacing (4 players), dropped onto the first surface below.
-//     Camera bounds: the Level Bounds collider. Other bounds follow the classic yard's margins.
+//     Camera bounds: the Level Bounds collider (Darryn's ArenaCamera uses the same). Bombs drop at its top + 2 (his
+//     BombDropper). Kill bounds: inner wall faces and Level Bounds; other bounds follow the classic yard's margins.
 public static class BomTileLevelBuilder
 {
     public sealed class Spec
@@ -613,9 +614,9 @@ public static class BomTileLevelBuilder
         }
         level.Spawns = spawns;
         level.CameraBounds = new BomBounds2(new Vector2(b.min.x, b.min.y), new Vector2(b.max.x, b.max.y));
-        float bombHeight = b.max.y + 12;
-        level.SimulationBounds = new BomBounds2(new Vector2(b.min.x - 4, fixedParts[0].lo.y - 6), new Vector2(b.max.x + 4, bombHeight + 2));
-        level.KillBounds = new BomBounds2(new Vector2(innerLeft, fixedParts[0].lo.y - 2), new Vector2(innerRight, b.max.y + 20));
+        float bombHeight = b.max.y + 2; // BombDropper: CameraBounds.max.y + dropHeightAboveArena (2)
+        level.SimulationBounds = new BomBounds2(new Vector2(b.min.x - 4, fixedParts[0].lo.y - 2), new Vector2(b.max.x + 4, bombHeight + 2));
+        level.KillBounds = new BomBounds2(new Vector2(innerLeft, b.min.y), new Vector2(innerRight, b.max.y)); // classic yard: walls + Level Bounds
         level.AimBounds = new BomBounds2(level.SimulationBounds.Minimum + Vector2.one, level.SimulationBounds.Maximum - Vector2.one);
         level.FragmentCullBounds = new BomBounds2(level.SimulationBounds.Minimum - new Vector2(8, 4), level.SimulationBounds.Maximum + new Vector2(8, 7));
         level.BombCleanupBounds = new BomBounds2(level.SimulationBounds.Minimum - new Vector2(2, 1), level.SimulationBounds.Maximum + new Vector2(2, 5));

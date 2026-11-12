@@ -49,6 +49,61 @@ namespace Bom.Unity
             return BuildData(points, depth, uvOrigin, depthCenter).Upload("Native cell extrusion");
         }
 
+        static List<int> Triangulate(Vector2[] points, int n, List<int> order, bool strict)
+        {
+            var remaining = new List<int>(order);
+            var triangles = new List<int>();
+            int budget = n * n;
+            while (remaining.Count > 2)
+            {
+                bool cut = false;
+                for (int j = 0; j < remaining.Count; j++)
+                {
+                    int a = remaining[(j + remaining.Count - 1) % remaining.Count],
+                        b = remaining[j],
+                        c = remaining[(j + 1) % remaining.Count];
+                    if (Cross(points[a], points[b], points[c]) <= 1e-8f)
+                        continue;
+                    bool inside = false;
+                    foreach (int p in remaining)
+                    {
+                        if (p == a || p == b || p == c)
+                            continue;
+                        // Default: a point on the ear's boundary blocks it. Strict (fallback): only a point inside does.
+                        float edge = strict ? 1e-8f : -1e-8f;
+                        bool within =
+                            Cross(points[a], points[b], points[p]) > edge
+                            && Cross(points[b], points[c], points[p]) > edge
+                            && Cross(points[c], points[a], points[p]) > edge;
+                        if (!strict)
+                            within =
+                                Cross(points[a], points[b], points[p]) >= edge
+                                && Cross(points[b], points[c], points[p]) >= edge
+                                && Cross(points[c], points[a], points[p]) >= edge;
+                        if (within)
+                        {
+                            inside = true;
+                            break;
+                        }
+                    }
+                    if (inside)
+                        continue;
+                    triangles.Add(a);
+                    triangles.Add(c);
+                    triangles.Add(b); // Front faces -Z camera.
+                    triangles.Add(a + n);
+                    triangles.Add(b + n);
+                    triangles.Add(c + n);
+                    remaining.RemoveAt(j);
+                    cut = true;
+                    break;
+                }
+                if (!cut || --budget < 0)
+                    return null;
+            }
+            return triangles;
+        }
+
         public static BomMeshGeometry BuildData(
             Vector2[] points,
             float depth = 0.6f,
@@ -70,50 +125,45 @@ namespace Bom.Unity
             }
             if (Mathf.Abs(area) < 1e-8f)
                 throw new ArgumentException("Degenerate outline");
-            var remaining = new List<int>();
+            var order = new List<int>();
             for (int i = 0; i < n; i++)
-                remaining.Add(area > 0 ? i : n - 1 - i);
-            var triangles = new List<int>();
-            int budget = n * n;
-            while (remaining.Count > 2)
+                order.Add(area > 0 ? i : n - 1 - i);
+            var triangles = Triangulate(points, n, order, false);
+            if (triangles == null)
             {
-                bool cut = false;
-                for (int j = 0; j < remaining.Count; j++)
+                // C6: native cells can carry T-junction / near-collinear / micro-edge vertices on a candidate ear's edge, which the
+                // tolerant inside test above treats as blocking. Retry without collinear vertices and with a strict
+                // interior test; the first pass is unchanged so existing outlines triangulate exactly as before.
+                var cleaned = new List<int>(order);
+                for (int guard = 0; guard < n && cleaned.Count > 3; guard++)
                 {
-                    int a = remaining[(j + remaining.Count - 1) % remaining.Count],
-                        b = remaining[j],
-                        c = remaining[(j + 1) % remaining.Count];
-                    if (Cross(points[a], points[b], points[c]) <= 1e-8f)
-                        continue;
-                    bool inside = false;
-                    foreach (int p in remaining)
+                    bool removed = false;
+                    for (int j = 0; j < cleaned.Count && cleaned.Count > 3; j++)
                     {
-                        if (p == a || p == b || p == c)
-                            continue;
-                        if (
-                            Cross(points[a], points[b], points[p]) >= -1e-8f
-                            && Cross(points[b], points[c], points[p]) >= -1e-8f
-                            && Cross(points[c], points[a], points[p]) >= -1e-8f
-                        )
+                        Vector2 a = points[cleaned[(j + cleaned.Count - 1) % cleaned.Count]],
+                            b = points[cleaned[j]],
+                            c = points[cleaned[(j + 1) % cleaned.Count]];
+                        float scale = Mathf.Max((b - a).magnitude * (c - b).magnitude, 1e-12f);
+                        // Also drop micro-edges (< 0.001, native's minimum proxy edge): wood fracture can leave a tiny
+                        // doubled-back cluster of vertices at a plank's end.
+                        if ((b - a).magnitude < 1e-3f || Mathf.Abs(Cross(a, b, c)) <= 1e-5f * scale)
                         {
-                            inside = true;
+                            cleaned.RemoveAt(j);
+                            removed = true;
                             break;
                         }
                     }
-                    if (inside)
-                        continue;
-                    triangles.Add(a);
-                    triangles.Add(c);
-                    triangles.Add(b); // Front faces -Z camera.
-                    triangles.Add(a + n);
-                    triangles.Add(b + n);
-                    triangles.Add(c + n);
-                    remaining.RemoveAt(j);
-                    cut = true;
-                    break;
+                    if (!removed)
+                        break;
                 }
-                if (!cut || --budget < 0)
-                    throw new ArgumentException("Outline could not triangulate");
+                triangles = Triangulate(points, n, cleaned, true);
+            }
+            if (triangles == null)
+            {
+                var text = new System.Text.StringBuilder();
+                foreach (var p in points)
+                    text.Append(' ').Append(p.x.ToString("R")).Append(',').Append(p.y.ToString("R"));
+                throw new ArgumentException("Outline could not triangulate:" + text);
             }
             // Separate cap/side vertices preserve hard normals and continuous side UVs.
             var vertices = new List<Vector3>(n * 6);
