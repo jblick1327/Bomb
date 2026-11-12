@@ -35,7 +35,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   internet relay later.
 - [ ] **D4 Couch play.** Couch play moves to Odin later through task N6. Until then Darryn's local
   "Play" mode keeps its own Unity-physics rules (two rule sets, temporarily).
-- [ ] **D5 Currency.** Odin's round award goes into Darryn's local shop wallet as coins. The formulas are
+- [x] **D5 Currency.** (approved by owner 2026-11-12) Odin's round award goes into Darryn's local shop wallet as coins. The formulas are
   already identical: 10 per bomb faced + 1 per second. The shop stays cosmetic and local.
 - [x] **D6 Items.** (approved by owner 2026-11-11) Coins, invincibility, speed and slow become native Odin items, using Darryn's
   durations and chances. Do this after N1–N2.
