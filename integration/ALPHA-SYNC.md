@@ -320,6 +320,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   and Prediction 6/6 (`evidence/M0/Test-Prediction-20261111T194433351Z.json`) pass, 0 Exception lines. No graze occurred in the Rounds runs, so limb removal
   is unverified in a player (see Findings). Failed first export kept: `evidence/M8/e1-n3-yard-export-20261111T142922`.
   [ ] Owner check: a graze visibly removes a limb; two grazes remove two; the third kills; limbs are back next round.
+- [~] **E1-N4** claimed: Claude Opus 5.5 2026-11-11
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
