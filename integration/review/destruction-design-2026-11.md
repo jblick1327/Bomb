@@ -239,7 +239,7 @@ front-door game build that contains `BomG1Presenter`, by default `integration/bu
 (build it with `Build-BomGame.ps1 -Backend Mono`). The launcher writes `%TEMP%om-g1-levels`, which holds the
 game's shipped layouts with `BridgeLevel.json` replaced by the G1 Bridge, and starts the game with `--bom-g1` and
 `--bom-levels` pointing at that folder. Then pick ONLINE > HOST GAME > BRIDGE > START. Every window needs the flag. Without `--bom-g1`
-nothing changes: Build, Content, Rounds and the front-door gate pass with the flag off (section 6.3).
+nothing changes: Build, Content, Rounds and the front-door gate pass with the flag off (section 6.4).
 
 **What the flag does.**
 
@@ -354,6 +354,24 @@ What the numbers say:
    rebuild and replay in particular. The server reported 0 overruns in every run. The stock Bridge shows the same
    native spikes, smaller (5 of 10 hitches), after its blasts.
 4. **Steady state is unchanged:** p50 16.7 ms in all four runs.
+
+### 6.4 Gates with the flag off
+
+All four gates ran on this branch's final code, which is commit 8431ac7: the prototype plus the `--bom-perf-manual`
+probe opt-in. No Unity source changed after it. None of the gate runs passed `--bom-g1`. The native side was the pinned
+owner-native checkpoint (DLL sha256 `f87d0cd6…0a965`).
+
+| Gate | Result | Evidence |
+|---|---|---|
+| Build (`Build-BomPlayers.ps1 -Backend Mono`, and the Game-Mono front-door build) | PASS | `integration/build/validation/Game-Mono` (2026-11-12 15:55; contains `--bom-g1` and `--bom-perf-manual`) |
+| Content (`-Suite Content`) | PASS, 1555 protected files verified | `integration/evidence/M0/Test-Content-20261112T210533027Z.json` |
+| Rounds, yard (`Test-NetworkRounds.ps1`, rebuilt network player) | PASS: both clients and the observer agree on `[1,3,0] [2,3,0]`, and all exit codes are 0 | `integration/evidence/M8/unity-rounds-20261116T161403873540Z` |
+| Rounds, draw | PASS: both clients and the observer agree on `[1,0,1] [2,0,1]`, and all exit codes are 0 | `integration/evidence/M8/unity-rounds-20261116T161551473318Z` |
+| Front door (`Test-FrontDoor.ps1 -SkipBuild -Backend Mono -Level ClassicYard`) | PASS: all 17 checks true, `orphans_killed: []` | `integration/evidence/M8/frontdoor-20261116T161702566311Z` |
+
+The earlier front-door pass (`frontdoor-20261112T203002710838Z`) predates the probe change and is kept for history.
+A Rounds run on 2026-11-12 was stopped mid-build at the owner's request. It produced no result and is not counted as
+an attempt.
 
 ## 7. What needs Lane N
 
