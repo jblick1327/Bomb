@@ -6,6 +6,7 @@ Prediction_Mode :: enum u32 { Disabled, Predicting, Conservative, Warming }
 Prediction_Record :: struct { valid:bool, identity:Input_Identity, tick:u64, position:Vec2 }
 Prediction_Controller :: struct {
  world:Static_Prediction,
+ hulls:Prediction_Hull_Cache,
  mode:Prediction_Mode,
  reason:Prediction_Reason,
  identity:Input_Identity,
@@ -19,7 +20,7 @@ Prediction_Controller :: struct {
  conservative_seconds:f64,
  last_update:f64,
 }
-prediction_controller_destroy :: proc(p:^Prediction_Controller) { if p!=nil { prediction_static_destroy(&p.world);free(p) } }
+prediction_controller_destroy :: proc(p:^Prediction_Controller) { if p!=nil { prediction_static_destroy(&p.world);prediction_hull_cache_destroy(&p.hulls);free(p) } }
 prediction_controller_reset :: proc(c:^Net_Client) {
  p:=c.prediction;if p==nil { return }
  prediction_static_destroy(&p.world);p.visual_offset={};p.has_owner=false;p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
@@ -93,7 +94,7 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  if !p.world.active || p.world.revision!=owner.topology_revision || p.world.epoch!=owner.identity.epoch || p.world.has_region&&!prediction_region_contains(p.world.region,owner.position,3) {
   region:Level_Bounds;window:^Level_Bounds
   if len(topology.scene.subdivisions)>2048 {region={vsub(owner.position,{8,8}),vadd(owner.position,{8,8})};window=&region}
-  if !prediction_static_build(&p.world,&topology.scene,true,window) { prediction_set_mode(p,.Conservative,p.world.reason);return }
+  if !prediction_static_build(&p.world,&topology.scene,true,window,&p.hulls) { prediction_set_mode(p,.Conservative,p.world.reason);return }
  }
  old_position:Vec2;has_old:=false
  if p.mode==.Predicting && p.world.identity==owner.identity {

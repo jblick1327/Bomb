@@ -44,21 +44,43 @@ physics_shape_def :: proc(id: u64) -> b2.ShapeDef {
  return def
 }
 
-physics_create_fixture :: proc(s: ^Scene, body: b2.BodyId, sub: Subdivision, outline: Polygon) -> bool {
+// A region's shapes live in its body's frame: rubber cells are offset by their rest centre.
+physics_region_offset :: proc(s: ^Scene, sub: Subdivision) -> Vec2 {
+ if s.materials[sub.material].flexibility>0 { return sub.rest_center }
+ return {}
+}
 
-
+physics_fixture_hull :: proc(outline: Polygon, offset: Vec2) -> b2.Hull {
  points: [dynamic]b2.Vec2; defer delete(points)
- offset:=Vec2{}
- if s.materials[sub.material].flexibility>0 { offset=sub.rest_center }
  for point in outline.points { append(&points,to_b2(vsub(point,offset))) }
- hull:=b2.ComputeHull(points[:])
+ return b2.ComputeHull(points[:])
+}
+
+physics_create_hull_shape :: proc(s: ^Scene, body: b2.BodyId, id: u64, hull: b2.Hull) {
+ when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
+ shape:=b2.CreatePolygonShape(body,physics_shape_def(id),b2.MakePolygon(hull,0))
+ append(&s.subdivisions[s.sub_rows[id]].shapes,shape)
+ s.subdivisions[s.sub_rows[id]].fixture_count+=1
+}
+
+physics_create_fixture :: proc(s: ^Scene, body: b2.BodyId, sub: Subdivision, outline: Polygon) -> bool {
+ hull:=physics_fixture_hull(outline,physics_region_offset(s,sub))
  // Hull welding can collapse a thin ear below Box2D's collision tolerance.
  if hull.count<3 { return false }
- when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
- shape:=b2.CreatePolygonShape(body,physics_shape_def(sub.id),b2.MakePolygon(hull,0))
- append(&s.subdivisions[s.sub_rows[sub.id]].shapes,shape)
- s.subdivisions[s.sub_rows[sub.id]].fixture_count+=1
+ physics_create_hull_shape(s,body,sub.id,hull)
  return true
+}
+
+// The hulls physics_create_region_shapes creates for a region, in creation
+// order, without the fallback box. They depend only on the outline and offset.
+physics_region_hulls :: proc(outline: Polygon, offset: Vec2, out: ^[dynamic]b2.Hull) {
+ if is_convex(outline) && len(outline.points)<=8 {
+  hull:=physics_fixture_hull(outline,offset);if hull.count>=3 { append(out,hull) }
+  return
+ }
+ parts:=convex_decomposition(outline)
+ for part in parts { hull:=physics_fixture_hull(part,offset);if hull.count>=3 { append(out,hull) };delete(part.points) }
+ delete(parts)
 }
 
 physics_create_region_shapes :: proc(s: ^Scene,id: u64,body: b2.BodyId) {
@@ -69,18 +91,21 @@ physics_create_region_shapes :: proc(s: ^Scene,id: u64,body: b2.BodyId) {
   for part in parts { physics_create_fixture(s,body,sub,part); delete(part.points) }
   delete(parts)
  }
- if s.subdivisions[s.sub_rows[id]].fixture_count==0 {
-  // Preserve the existing microscopic-outline fallback, in the body's frame.
-  offset:=Vec2{}
-  if s.materials[sub.material].flexibility>0 { offset=sub.rest_center }
-  lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
-  for rest in sub.outline.points { p:=vsub(rest,offset); lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
-  polygon:=b2.MakeOffsetBox(max(f32(0.0025),(hi.x-lo.x)*0.5),max(f32(0.0025),(hi.y-lo.y)*0.5),to_b2(vmul(vadd(lo,hi),0.5)),b2.MakeRot(0))
-  when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
+ physics_create_fallback_shape(s,id,body)
+}
+
+// Preserve the existing microscopic-outline fallback, in the body's frame.
+physics_create_fallback_shape :: proc(s: ^Scene,id: u64,body: b2.BodyId) {
+ sub:=s.subdivisions[s.sub_rows[id]]
+ if sub.fixture_count!=0 { return }
+ offset:=physics_region_offset(s,sub)
+ lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30}
+ for rest in sub.outline.points { p:=vsub(rest,offset); lo={min(lo.x,p.x),min(lo.y,p.y)}; hi={max(hi.x,p.x),max(hi.y,p.y)} }
+ polygon:=b2.MakeOffsetBox(max(f32(0.0025),(hi.x-lo.x)*0.5),max(f32(0.0025),(hi.y-lo.y)*0.5),to_b2(vmul(vadd(lo,hi),0.5)),b2.MakeRot(0))
+ when BOM_PROFILE { if blast_profile!=nil { blast_profile.counts[3]+=1 } }
  shape:=b2.CreatePolygonShape(body,physics_shape_def(id),polygon)
-  append(&s.subdivisions[s.sub_rows[id]].shapes,shape)
-  s.subdivisions[s.sub_rows[id]].fixture_count=1
- }
+ append(&s.subdivisions[s.sub_rows[id]].shapes,shape)
+ s.subdivisions[s.sub_rows[id]].fixture_count=1
 }
 
 physics_remove_region_shapes :: proc(sub: ^Subdivision) {

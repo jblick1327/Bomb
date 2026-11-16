@@ -90,12 +90,24 @@ collision_history_record_frame :: proc(h:^Collision_History,epoch:u32,tick:u64,p
 // Poses are sampled at an integer simulation tick. Interpolation uses bracketing
 // received samples; future extrapolation is bounded to 100ms and marked estimated.
 collision_history_pose :: proc(h:^Collision_History,tick,key:u64) -> (pose:Net_Drawn,estimated,valid:bool) {
- lower,upper:^Collision_Frame
+ return collision_history_bracket_pose(collision_history_bracket(h,tick),tick,key)
+}
+// The frames around a tick, independent of the key: the newest at or before it
+// (lower), the oldest at or after it (upper), and the newest before lower.
+Collision_Bracket :: struct { lower,upper,previous:^Collision_Frame }
+collision_history_bracket :: proc(h:^Collision_History,tick:u64) -> (b:Collision_Bracket) {
  for &frame in h.frames {
   if !frame.valid || frame.epoch!=h.epoch { continue }
-  if frame.tick<=tick && (lower==nil || frame.tick>lower.tick) { lower=&frame }
-  if frame.tick>=tick && (upper==nil || frame.tick<upper.tick) { upper=&frame }
+  if frame.tick<=tick {
+   if b.lower==nil || frame.tick>b.lower.tick { b.previous=b.lower;b.lower=&frame }
+   else if frame.tick<b.lower.tick && (b.previous==nil || frame.tick>b.previous.tick) { b.previous=&frame }
+  }
+  if frame.tick>=tick && (b.upper==nil || frame.tick<b.upper.tick) { b.upper=&frame }
  }
+ return
+}
+collision_history_bracket_pose :: proc(b:Collision_Bracket,tick,key:u64) -> (pose:Net_Drawn,estimated,valid:bool) {
+ lower,upper:=b.lower,b.upper
  if lower==nil { return }
  a,found:=lower.poses[key];if !found { return }
  if upper!=nil {
@@ -105,8 +117,7 @@ collision_history_pose :: proc(h:^Collision_History,tick,key:u64) -> (pose:Net_D
   return net_drawn_from(a,b,f32(tick-lower.tick)/f32(upper.tick-lower.tick)),false,true
  }
  if tick-lower.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
- previous:^Collision_Frame
- for &frame in h.frames { if frame.valid && frame.epoch==h.epoch && frame.tick<lower.tick && (previous==nil || frame.tick>previous.tick) { previous=&frame } }
+ previous:=b.previous
  if previous==nil { return }
  if lower.tick-previous.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
  b,exists:=previous.poses[key];if !exists { return }

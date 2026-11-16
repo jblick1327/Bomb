@@ -1,6 +1,8 @@
 package shared
 import b2 "vendor:box2d"
 import math "core:math"
+import slice "core:slice"
+import mem "core:mem"
 
 // First prediction fixture: only validated static terrain. Dynamic topology
 // history/proxies are a separate required M5 step; this is not the final gate.
@@ -17,14 +19,46 @@ Static_Prediction :: struct {
  proxies:[dynamic]Prediction_Proxy,
  has_region:bool,region:Level_Bounds,
 }
+// Convex decomposition dominates a prediction world rebuild, and a collapse
+// rebuilds on every topology revision while most cells keep their outline.
+// The hulls are a pure function of (outline, offset), so an entry is reused only
+// when both match exactly; shapes are then created in the authoritative order.
+Prediction_Hull_Entry :: struct { outline:[]Vec2, offset:Vec2, hulls:[dynamic]b2.Hull, used:u64 }
+Prediction_Hull_Cache :: struct { entries:map[u64]Prediction_Hull_Entry, generation:u64 }
+prediction_hull_entry_destroy :: proc(e:^Prediction_Hull_Entry) { delete(e.outline);delete(e.hulls);e^={} }
+prediction_hull_cache_destroy :: proc(c:^Prediction_Hull_Cache) {
+ for _,&entry in c.entries { prediction_hull_entry_destroy(&entry) }
+ delete(c.entries);c^={}
+}
+prediction_hull_cache_prune :: proc(c:^Prediction_Hull_Cache) {
+ stale:[dynamic]u64;defer delete(stale)
+ for id,entry in c.entries { if entry.used!=c.generation { append(&stale,id) } }
+ for id in stale { entry:=c.entries[id];prediction_hull_entry_destroy(&entry);delete_key(&c.entries,id) }
+}
+prediction_create_region_shapes :: proc(s:^Scene,id:u64,body:b2.BodyId,cache:^Prediction_Hull_Cache) {
+ if cache==nil { physics_create_region_shapes(s,id,body);return }
+ sub:=s.subdivisions[s.sub_rows[id]];offset:=physics_region_offset(s,sub)
+ entry,found:=&cache.entries[id]
+ // Bitwise, not float ==: -0 and 0 must not share an entry.
+ same:=found && transmute([2]u32)entry.offset==transmute([2]u32)offset && len(entry.outline)==len(sub.outline.points) && mem.compare(slice.to_bytes(entry.outline),slice.to_bytes(sub.outline.points))==0
+ if !same {
+  if found { prediction_hull_entry_destroy(entry) } else { entry=map_insert(&cache.entries,id,Prediction_Hull_Entry{}) }
+  entry.outline=slice.clone(sub.outline.points);entry.offset=offset
+  physics_region_hulls(sub.outline,offset,&entry.hulls)
+ }
+ entry.used=cache.generation
+ for hull in entry.hulls { physics_create_hull_shape(s,body,id,hull) }
+ physics_create_fallback_shape(s,id,body)
+}
 prediction_static_destroy :: proc(p:^Static_Prediction) {
  if p.active { scene_destroy(&p.scene) }
  delete(p.proxies)
  p^={}
 }
 prediction_region_contains :: proc(region:Level_Bounds,position:Vec2,margin:f32) -> bool {return position.x>=region.lo.x+margin&&position.x<=region.hi.x-margin&&position.y>=region.lo.y+margin&&position.y<=region.hi.y-margin}
-prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic:bool=false,region:^Level_Bounds=nil) -> bool {
+prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic:bool=false,region:^Level_Bounds=nil,cache:^Prediction_Hull_Cache=nil) -> bool {
  prediction_static_destroy(p)
+ if cache!=nil { cache.generation+=1 }
  anchored:=make(map[u64]bool);defer delete(anchored)
  for piece in source.pieces {if piece.live {anchored[piece.id]=piece_anchored(source,piece.id,source.anchor_y)}}
  selected:=make(map[u64]bool);defer delete(selected)
@@ -69,7 +103,7 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
   }
   p.scene.subdivisions[p.scene.sub_rows[sub.id]].body=body
   // Exactly the authoritative decomposition, hull welding, fallback and filter.
-  physics_create_region_shapes(&p.scene,sub.id,body)
+  prediction_create_region_shapes(&p.scene,sub.id,body,cache)
  }
  if !source.level_policy.active {
  floor_def:=b2.DefaultBodyDef();floor_def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
@@ -78,14 +112,17 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
  _=b2.CreatePolygonShape(floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*.5))
  }
  p.player=player_create(p.scene.physics.world,0,scene_gameplay_config(source).player)
+ if cache!=nil { prediction_hull_cache_prune(cache) }
  return true
 }
 prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64) -> bool {
  if len(p.proxies)==0 { return true }
  if history==nil { p.reason=.Dynamic_History_Required;return false }
+ // The bracketing frames are shared by every proxy at a tick: find them once.
+ from_frames,to_frames:=collision_history_bracket(history,tick),collision_history_bracket(history,tick+1)
  for proxy in p.proxies {
-  a,_,valid_a:=collision_history_pose(history,tick,proxy.key)
-  b,_,valid_b:=collision_history_pose(history,tick+1,proxy.key)
+  a,_,valid_a:=collision_history_bracket_pose(from_frames,tick,proxy.key)
+  b,_,valid_b:=collision_history_bracket_pose(to_frames,tick+1,proxy.key)
   if !valid_a || !valid_b { p.reason=.Dynamic_History_Required;return false }
   from,to:=Vec2{a.x,a.y},Vec2{b.x,b.y}
   if proxy.rigid { from=vsub(from,vrotate(proxy.reference,a.angle));to=vsub(to,vrotate(proxy.reference,b.angle)) }
