@@ -387,6 +387,12 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
      Capture it next to the originals.
   - Done when: `integration/review/destruction-design-2026-11.md` has the captures, the design, the measured effect of the prototype and a task
     breakdown (models/lanes/sizes); Build, Content and Rounds still pass with the flag off. [ ] Owner check: the prototype feels like the original Odin game in Darryn's 2.5D.
+- [~] **G2 Presentation core for every level** (T1, Opus, M; from design doc section 8) claimed: Claude Opus 5.5 2026-11-16
+  Make `BomG1Presenter`'s persistent, chunked, cached bodies the only cell path (no flag): remove the per-revision batch rebuild in `Accept`;
+  keep bodies and caches across an epoch whose cells did not change (F2 fix 1a); assemble chunks with `Mesh.MeshData` / `NativeArray` for
+  zero managed GC per blast; retire per-fragment prism clipping of Darryn's meshes in the play band. Keep the current look (depth/band is G3).
+  - Done when: F2 protocol re-run on Classic Yard, Yard, Bridge and Tower with 1 and 2 windows (before/after GC MB/min, p95, blast draw cost);
+    Content, Build, Rounds (yard + draw), front door `-Level` Yard/Bridge/Tower and Prediction (6/6) pass. [ ] Owner check: it looks the same and feels smoother.
 
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
