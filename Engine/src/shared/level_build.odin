@@ -72,13 +72,34 @@ world_build_level :: proc(w:^World,layout:^Layout,editing:bool) {
   damage:=Damage_Policy.Destructible;if source.damage=="indestructible" { damage=.Indestructible }
   for &sub in s.subdivisions { if sub.id<first_id { continue };sub.provenance={source.identity,part.part_id,motion,damage,false};cell_resolve_pin(s,sub.id) }
  } }
- for link in level.glue {
-  for a in s.subdivisions {
-   if !a.live||a.provenance.source_identity!=link.a.source_identity||a.provenance.source_part_id!=link.a.part_id { continue }
-   for b in s.subdivisions {
-    if !b.live||b.provenance.source_identity!=link.b.source_identity||b.provenance.source_part_id!=link.b.part_id { continue }
-    samples:=glue_samples(a.outline,b.outline);_=glue_add(s,a.id,b.id,samples[:]);delete(samples)
-   }
+ index:=level_part_cell_index(s);defer level_part_cell_index_destroy(&index)
+ for link in level.glue { _=level_glue_link(s,&index,link,true) }
+}
+Level_Part_Cell_Index :: map[Level_Part_Key][dynamic]int
+// Row numbers of the live cells of each authored part, in scene order (same order a full scan would visit).
+level_part_cell_index :: proc(s:^Scene) -> Level_Part_Cell_Index {
+ index:Level_Part_Cell_Index
+ for sub,row in s.subdivisions {
+  if !sub.live { continue }
+  key:=Level_Part_Key{sub.provenance.source_identity,sub.provenance.source_part_id}
+  rows:=index[key];append(&rows,row);index[key]=rows
+ }
+ return index
+}
+level_part_cell_index_destroy :: proc(index:^Level_Part_Cell_Index) { for _,rows in index { delete(rows) };delete(index^) }
+// Applies (add) or only counts (!add) the glue samples of one authored link.
+// A link joins every cell of part A to every touching cell of part B; the
+// returned total is the number of samples that actually took effect.
+level_glue_link :: proc(s:^Scene,index:^Level_Part_Cell_Index,link:Level_Glue,add:bool) -> int {
+ total:=0
+ for row_a in index[link.a] {
+  a:=s.subdivisions[row_a]
+  for row_b in index[link.b] {
+   b:=s.subdivisions[row_b]
+   samples:=glue_samples(a.outline,b.outline);total+=len(samples)
+   if add { _=glue_add(s,a.id,b.id,samples[:]) }
+   delete(samples)
   }
  }
+ return total
 }

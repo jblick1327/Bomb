@@ -8,6 +8,8 @@ import fmt "core:fmt"
 // Version 4 authoring data is separate from legacy editor rectangles. The
 // application loader will opt into it only with the coordinated wire change.
 SOURCE_RESERVED_START :: u64(0xffffffffffffff00)
+// Authored glue links per level. Not a wire or canonical-format limit: only the 200000-byte layout bound constrains links (~80 bytes each).
+LEVEL_MAX_GLUE_LINKS :: 2048
 LEVEL_CONSTRUCTION_WORK_LIMIT :: 500000 // Conservative authoring work estimate, not a cell/upload cap.
 Level_Bounds :: struct { lo,hi:Vec2 }
 Level_Bomb_Settings :: struct { spawn_x:Vec2, spawn_height:f32, cleanup_bounds:Level_Bounds }
@@ -102,7 +104,7 @@ level_layout_problem :: proc(level:^Level_Layout) -> string {
  if len(level.spawns)!=4 { return "Exactly four explicit spawn points are required" }
  for spawn in level.spawns { if !level_bounds_contains(level.simulation_bounds,spawn)||!level_bounds_contains(level.kill_bounds,spawn) { return "Spawn outside simulation/kill bounds" } }
  if !valid_vec(level.bombs.spawn_x)||!finite(level.bombs.spawn_height)||level.bombs.spawn_x.y<level.bombs.spawn_x.x||level.bombs.spawn_x.x<level.simulation_bounds.lo.x||level.bombs.spawn_x.y>level.simulation_bounds.hi.x||level.bombs.spawn_height<level.simulation_bounds.lo.y||level.bombs.spawn_height>level.simulation_bounds.hi.y { return "Invalid bomb spawn limits" }
- if len(level.sources)>512||len(level.materials)>4||len(level.glue)>1024||len(level.allowed_overlaps)>1024 { return "Level record count exceeds limits" }
+ if len(level.sources)>512||len(level.materials)>4||len(level.glue)>LEVEL_MAX_GLUE_LINKS||len(level.allowed_overlaps)>1024 { return "Level record count exceeds limits" }
  palette:Layout;defer { for &m in palette.materials { m.name="" };destroy_layout(&palette) }
  for m in level.materials {
   base,known:=material_base_name(m.base);if !known { return "Unknown custom material base" }
