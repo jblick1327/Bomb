@@ -398,6 +398,11 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   zero managed GC per blast; retire per-fragment prism clipping of Darryn's meshes in the play band. Keep the current look (depth/band is G3).
   - Done when: F2 protocol re-run on Classic Yard, Yard, Bridge and Tower with 1 and 2 windows (before/after GC MB/min, p95, blast draw cost);
     Content, Build, Rounds (yard + draw), front door `-Level` Yard/Bridge/Tower and Prediction (6/6) pass. [ ] Owner check: it looks the same and feels smoother.
+- [~] **G2b First-blast hitch** (T1, Opus, S; after E1-G) claimed: Claude Opus 5.5 2026-11-17
+  Only the first blast of a run hitches (E1-G perf: mouse-down frame 35-48 ms, first CELLS APPLY present 13-15 ms). Prove the causes, warm the
+  blast input path and the first-change presenter path at join with no gameplay side effects, keep the look and zero per-blast presenter GC.
+  - Done when: first-blast worst frame near blasts 2-8 (<= ~20-25 ms) on all 4 levels, 1 and 2 windows (`evidence/G2b`); Build, Content,
+    Rounds yard+draw, front door Yard/Bridge/Tower (and Prediction 6/6 if input code changed) pass. [ ] Owner check: the first blast feels as smooth as the rest.
 
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
