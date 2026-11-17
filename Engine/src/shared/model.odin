@@ -23,6 +23,9 @@ Material :: struct {
  blast_resistance: f32,
  strip_thickness: f32, // Explicit for grained recipes; zero when unused.
  color: [3]u8,
+ // Glue/mortar load capacity multiplier (G-N1): 1 for built-ins, the custom toughness otherwise.
+ // Server-only: replication does not carry it, so replicas hold 0, which reads as 1.
+ glue_toughness: f32,
 }
 
 Subdivision :: struct {

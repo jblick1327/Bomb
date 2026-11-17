@@ -371,6 +371,7 @@ cover_polygons_overlap :: shared.cover_polygons_overlap
 cover_sample_distance :: shared.cover_sample_distance
 cover_shadow :: shared.cover_shadow
 custom_defaults :: shared.custom_defaults
+steel_material :: shared.steel_material
 custom_from_wire :: shared.custom_from_wire
 custom_problem :: shared.custom_problem
 decode_layout :: shared.decode_layout
@@ -420,6 +421,7 @@ layout_material :: shared.layout_material
 layout_object :: shared.layout_object
 longest_dimension :: shared.longest_dimension
 material_base_name :: shared.material_base_name
+material_glue_toughness :: shared.material_glue_toughness
 material_name_problem :: shared.material_name_problem
 mortar_apply_seam :: shared.mortar_apply_seam
 mortar_bounds :: shared.mortar_bounds
@@ -427,6 +429,8 @@ mortar_cells :: shared.mortar_cells
 mortar_force_failures :: shared.mortar_force_failures
 mortar_free_seams :: shared.mortar_free_seams
 mortar_length :: shared.mortar_length
+mortar_seam_ratio :: shared.mortar_seam_ratio
+mortar_seam_toughness :: shared.mortar_seam_toughness
 mortar_local_anchor :: shared.mortar_local_anchor
 mortar_seams :: shared.mortar_seams
 mortar_touch :: shared.mortar_touch

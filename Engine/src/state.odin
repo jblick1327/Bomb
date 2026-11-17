@@ -18,6 +18,7 @@ Wire_Material :: struct {
  shock_loss: union { f32 } `json:"shock_loss,omitempty"`, // Disabled/legacy stays absent.
  strip_thickness: union { f32 } `json:"strip_thickness,omitempty"`,
  color: union { [3]u8 } `json:"color,omitempty"`,
+ glue_toughness: union { f32 } `json:"glue_toughness,omitempty"`, // G-N1; absent means 1, so older snapshots are unchanged.
 }
 Wire_Connection :: struct {
  id,a,b: u64,
@@ -109,6 +110,7 @@ read_state :: proc(s: ^Scene) -> Snapshot {
   if transmute(u32)m.shock_loss!=0 { wire.shock_loss=m.shock_loss }
   if m.aspect_ratio<1 && m.strip_thickness!=0.3 { wire.strip_thickness=m.strip_thickness }
   if m.color!=snapshot_legacy_color(m.name) { wire.color=m.color }
+  if material_glue_toughness(m)!=1 { wire.glue_toughness=material_glue_toughness(m) }
 		if math.is_inf(m.subdivision_strength) { wire.subdivision_infinite=true; wire.subdivision_strength=0 }
 		if math.is_inf(m.connection_strength) { wire.connection_infinite=true; wire.connection_strength=0 }
 		append(&out.materials,wire)
@@ -195,7 +197,9 @@ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
   }
   color:=snapshot_legacy_color(m.name)
   if v,present:=m.color.([3]u8); present { color=v }
-		material := make_material(strip_thickness=strip,color=color,blast_resistance=blast_resistance,impact_scale=impact_scale,shock_loss=shock_loss,name=strings.clone(m.name),subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate)
+  glue_toughness:=f32(1)
+  if v,present:=m.glue_toughness.(f32); present { if !finite(v) || v<=0 { return {},false }; glue_toughness=v }
+		material := make_material(strip_thickness=strip,color=color,blast_resistance=blast_resistance,impact_scale=impact_scale,shock_loss=shock_loss,name=strings.clone(m.name),subdivision_strength=m.subdivision_strength,connection_strength=m.connection_strength,flexibility=m.flexibility,generation_count=m.generation_count,aspect_ratio=m.aspect_ratio,triangulate=m.triangulate,glue_toughness=glue_toughness)
   append(&s.owned_names,material.name)
 		if m.subdivision_infinite { material.subdivision_strength = math.inf_f32(1) }
 		if m.connection_infinite { material.connection_strength = math.inf_f32(1) }

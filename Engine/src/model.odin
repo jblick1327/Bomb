@@ -11,10 +11,10 @@ import b2 "vendor:box2d"
 // Procedural materials use this helper; the fixed palette explicitly lists every field.
 make_material :: proc(name: string = "", subdivision_strength: f32 = 0, connection_strength: f32 = 0,
                       flexibility: f32 = 0, generation_count: int = 1, aspect_ratio: f32 = 1,
-                      triangulate: bool = false, impact_scale: f32 = 1, shock_loss: f32 = 0, blast_resistance: f32 = 0, strip_thickness: f32 = 0, color: [3]u8 = {131,145,152}) -> Material {
+                      triangulate: bool = false, impact_scale: f32 = 1, shock_loss: f32 = 0, blast_resistance: f32 = 0, strip_thickness: f32 = 0, color: [3]u8 = {131,145,152}, glue_toughness: f32 = 1) -> Material {
  return Material{name=name,strip_thickness=strip_thickness,color=color,subdivision_strength=subdivision_strength,connection_strength=connection_strength,
                  flexibility=flexibility,generation_count=generation_count,aspect_ratio=aspect_ratio,
-                 triangulate=triangulate,impact_scale=impact_scale,shock_loss=shock_loss,blast_resistance=blast_resistance}
+                 triangulate=triangulate,impact_scale=impact_scale,shock_loss=shock_loss,blast_resistance=blast_resistance,glue_toughness=glue_toughness}
 }
 
 posed_polygon :: proc(sub: Subdivision) -> Polygon {

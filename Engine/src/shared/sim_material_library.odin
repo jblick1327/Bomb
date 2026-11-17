@@ -20,7 +20,7 @@ layout_material :: proc(layout:^Layout,choice:Slot)->Material {
  if index<4 { return editor_material(builtin_recipe(choice)) }
  custom:=layout.materials[index-4]
  m:=editor_material(custom.base); m.name=custom.name
- m.subdivision_strength*=custom.toughness; m.connection_strength*=custom.toughness
+ m.subdivision_strength*=custom.toughness; m.connection_strength*=custom.toughness; m.glue_toughness=custom.toughness
  m.blast_resistance=custom.blast_resistance; m.color=custom.color
  switch custom.base {
  case .Wood:m.strip_thickness=custom.strip_thickness
@@ -33,6 +33,13 @@ layout_material :: proc(layout:^Layout,choice:Slot)->Material {
 
 layout_base :: proc(layout:^Layout,choice:Slot)->Recipe {
  if int(choice)<4 { return builtin_recipe(choice) }; return layout.materials[int(choice)-4].base
+}
+
+// OD-2 (owner, 2026-11-17): the Bridge truss, posts, girders and braces use this custom.
+// Stone base, toughness 1.25 (subdivision 43.75, connection 25, glue load capacity 350/unit), blast resistance 4, navy.
+// Colour and the unused strip/shock/flex fields match the G1 Bridge generator's steel.
+steel_material :: proc() -> Custom_Material {
+ return {name="steel",base=.Stone,toughness=1.25,blast_resistance=4,color={52,66,86},strip_thickness=0.2,shock_loss=4,flexibility=0.5}
 }
 
 custom_defaults :: proc(base:Recipe)->Custom_Material {
