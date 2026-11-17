@@ -117,6 +117,7 @@ Net_Client :: struct {
  last_ack_sent: u64, has_ack_sent: bool, acks_to_check: [dynamic]u64,
  // presentation
  drawn: map[u64]Net_Drawn,
+ drawn_serial: u64, // counts fresh interpolations of drawn
  anchored: map[u64]bool, anchored_valid: bool,
  presentation_reset_serial: u64, // Incremented when frontend caches must be invalidated.
  events: [dynamic]Net_Event, // Due immutable events, consumed by the caller before the next fixed step.
@@ -392,7 +393,7 @@ net_client_compute_drawn :: proc(c:^Net_Client) {
  net_client_compute_interpolated(c);net_prediction_apply(c)
 }
 net_client_compute_interpolated :: proc(c: ^Net_Client) {
- clear(&c.drawn)
+ clear(&c.drawn);c.drawn_serial+=1
  if !c.has_clock || !c.has_complete || !c.has_epoch { return }
  floor_tick:=u64(max(math.floor(c.clock),0))
  lower,upper:^Complete_Frame

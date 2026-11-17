@@ -3,6 +3,13 @@ import math "core:math"
 import fmt "core:fmt"
 
 Prediction_Mode :: enum u32 { Disabled, Predicting, Conservative, Warming }
+// Conservative (Dynamic_History_Required) -> Predicting needs this many
+// consecutive successful updates, so a transient history gap cannot flip the
+// mode every few ticks. Other reasons clear deterministically and recover at once.
+PREDICTION_RECOVER_UPDATES :: u64(12)
+// Mode changes and corrections blend through visual_offset's 100 ms decay. Only a
+// jump larger than this (respawn-sized) is presented as a snap.
+PREDICTION_BLEND_LIMIT :: f32(3)
 Prediction_Record :: struct { valid:bool, identity:Input_Identity, tick:u64, position:Vec2 }
 Prediction_Controller :: struct {
  world:Static_Prediction,
@@ -13,6 +20,15 @@ Prediction_Controller :: struct {
  last_owner_tick,last_teleport:u64,
  has_owner:bool,
  visual_offset:Vec2,
+ // The own-player position last presented, and what it was presented over: the
+ // predicted world or the interpolated authority. A change of source re-bases
+ // visual_offset so the drawn position stays continuous.
+ presented,presented_base:Vec2,
+ presented_serial:u64,
+ has_presented,presented_predicted:bool,
+ // The last update ended with a valid predicted world at the target tick.
+ world_ok:bool,
+ recover_streak:u64,
  records:[256]Prediction_Record,
  correction_histogram:[2001]u64,
  corrections,snaps,conservative_transitions,recoveries,reset_count:u64,
@@ -24,12 +40,14 @@ prediction_controller_destroy :: proc(p:^Prediction_Controller) { if p!=nil { pr
 prediction_controller_reset :: proc(c:^Net_Client) {
  p:=c.prediction;if p==nil { return }
  prediction_static_destroy(&p.world);p.visual_offset={};p.has_owner=false;p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
+ p.has_presented=false;p.world_ok=false;p.recover_streak=0
 }
 prediction_set_mode :: proc(p:^Prediction_Controller,mode:Prediction_Mode,reason:Prediction_Reason) {
+ if mode!=.Predicting { p.world_ok=false;p.recover_streak=0 }
+ // visual_offset is re-based by net_prediction_apply, never zeroed here.
  if p.mode==mode && p.reason==reason { return }
  if mode==.Conservative && p.mode!=.Conservative { p.conservative_transitions+=1 }
  if mode==.Predicting && p.mode==.Conservative { p.recoveries+=1 }
- if mode!=.Predicting { p.visual_offset={} }
  fmt.printf("PREDICTION mode=%v reason=%v tick=%d\n",mode,reason,p.world.state_tick)
  p.mode=mode;p.reason=reason
 }
@@ -84,7 +102,9 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   // Keep the revision/epoch checked world; replay restores every player field
   // from the new owner before another step. Rebuilding here can turn a single
   // slow topology build into repeated stalls and schedule renegotiations.
-  p.visual_offset={};p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
+  // A teleport is a real discontinuity; a new schedule generation is not.
+  if p.last_teleport!=owner.teleport_serial { p.visual_offset={};p.has_presented=false }
+  p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1;p.world_ok=false;p.recover_streak=0
   p.world.identity={};p.world.state_tick=0;p.world.last_jump_edge=0
   p.identity=owner.identity;p.last_teleport=owner.teleport_serial;p.has_owner=true
  }
@@ -97,7 +117,7 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   if !prediction_static_build(&p.world,&topology.scene,true,window,&p.hulls) { prediction_set_mode(p,.Conservative,p.world.reason);return }
  }
  old_position:Vec2;has_old:=false
- if p.mode==.Predicting && p.world.identity==owner.identity {
+ if p.world_ok && p.world.identity==owner.identity {
   if p.world.state_tick+1==target {
    slot:=history.slots[target%INPUT_HISTORY]
    if slot.occupied && slot.command.target_tick==target { _=prediction_world_step(&p.world,slot.command,&c.collision_history) }
@@ -113,19 +133,48 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
     p.corrections+=1;p.correction_histogram[int(math.ceil(f64(min(correction,2))*1000))]+=1
    }
   }
-  if has_old {
+  if has_old && p.mode==.Predicting {
    offset:=vsub(old_position,p.world.player.pose.position)
-   if vlen(offset)<.25 { p.visual_offset=vadd(p.visual_offset,offset) }
-   else { p.visual_offset={};p.snaps+=1;fmt.printf("PREDICTION SNAP reason=gross_correction distance=%.6f tick=%d\n",vlen(offset),target) }
+   p.visual_offset=vadd(p.visual_offset,offset)
+   if vlen(p.visual_offset)>PREDICTION_BLEND_LIMIT { p.visual_offset={} }
+   if vlen(offset)>=.25 { p.snaps+=1;fmt.printf("PREDICTION SNAP reason=gross_correction distance=%.6f tick=%d\n",vlen(offset),target) }
   }
   p.last_owner_tick=owner.state_tick
  }
  p.records[target%256]={true,owner.identity,target,p.world.player.pose.position}
+ p.world_ok=true
+ if p.mode==.Conservative && p.reason==.Dynamic_History_Required {
+  p.recover_streak+=1
+  if p.recover_streak<PREDICTION_RECOVER_UPDATES { return }
+ }
+ p.recover_streak=0
  prediction_set_mode(p,.Predicting,.None)
 }
+// The own player is drawn from the predicted world while Predicting and from the
+// interpolated authority otherwise, plus visual_offset either way. When the
+// source changes, the offset is re-based to the last presented position and then
+// decays (100 ms), so a mode change blends instead of snapping.
 net_prediction_apply :: proc(c:^Net_Client) {
  p:=c.prediction
- if !c.prediction_enabled || p==nil || p.mode!=.Predicting || p.world.epoch!=c.epoch { return }
- position:=vadd(p.world.player.pose.position,p.visual_offset)
- c.drawn[ent_key(.Player,u64(c.nc_client.client_index))]={x=position.x,y=position.y}
+ if p==nil { return }
+ if !c.prediction_enabled { p.has_presented=false;return }
+ key:=ent_key(.Player,u64(c.nc_client.client_index))
+ predicted:=p.mode==.Predicting && p.world.epoch==c.epoch
+ drawn,exists:=c.drawn[key]
+ base:Vec2
+ if predicted { base=p.world.player.pose.position;drawn={} }
+ else {
+  if !exists { p.has_presented=false;return }
+  base={drawn.x,drawn.y}
+  // Apply can run twice on one interpolation; drawn then already has the offset.
+  if p.has_presented && !p.presented_predicted && p.presented_serial==c.drawn_serial { base=p.presented_base }
+ }
+ if p.has_presented && p.presented_predicted!=predicted {
+  p.visual_offset=vsub(p.presented,base)
+  if vlen(p.visual_offset)>PREDICTION_BLEND_LIMIT { p.visual_offset={} }
+ }
+ position:=vadd(base,p.visual_offset)
+ drawn.x=position.x;drawn.y=position.y;c.drawn[key]=drawn
+ p.presented=position;p.presented_base=base;p.presented_serial=c.drawn_serial
+ p.has_presented=true;p.presented_predicted=predicted
 }
