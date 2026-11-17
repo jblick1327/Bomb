@@ -416,3 +416,45 @@ through E1. Sizes: S < 1 h, M 1–3 h, L = several sessions. The owner decisions
 - **OD-2 Material table** (section 3.2), including whether a "steel" custom joins the palette.
 - **OD-3 Bridge supports** (section 3.4): piles, abutments or both.
 - **OD-4 Band depth and backdrop look** (section 4). Judge it in the prototype with `--bom-g1-band`.
+
+## 9. G2 results: one persistent cell path for every level (2026-11-16)
+
+`Runtime/BomCellPresenter.cs` (renamed from `BomG1Presenter.cs`, same GUID) is now the only cell path; no flag needed.
+- **Persistent bodies:** keyed by pose kind and cell or piece id. Bodies with more than 192 cells are split into chunks by look and a 4×4-unit spatial tile, and a chunk is rebuilt only when its signature changes.
+- **Epochs:** an epoch whose cells did not change rebuilds nothing (round start: 0.5–0.6 ms, `rebuilt=0`).
+- **Geometry cache:** per-cell extrusions live in a native arena, keyed by cell id plus a shape hash, and compacted.
+- **Assembly:** chunks are assembled with `Mesh.AllocateWritableMeshData` / `ApplyAndDisposeWritableMeshData`. Burst is not used because `Packages/manifest.json` is protected.
+- **Warm-up:** one synthetic cell goes through the whole path at join (`BOM CELLS WARM ms=5–7`), so the first blast does not pay for JIT.
+
+**Look.**
+- An intact source (all its registry cells, one static piece) draws Darryn's own meshes: `intact=104/22/87` sources on Yard/Bridge/Tower.
+- Fragments of a source are extruded over the source's own depth with his material. The material comes per (group, submesh) from the triangle under the cell centroid; UVs come from an exact planar fit of his UVs and are kept only when the fit is exact.
+- Per-fragment prism clipping is retired in the play band.
+- Kept for one release: the old per-revision batches with clipped source art, behind `--bom-clipped-source-art`. The source-capture and job-gate tools (`--bom-source-capture`, `--bom-source-job-gate`) imply that flag. The Soak and NativeProof source tools also still use the old path.
+- Known difference on Classic Yard: where a fragment covers two materials (the grass/dirt edge), the edge follows cell outlines instead of the clipper's straight cut. There is also faint horizontal shading banding. See `integration/evidence/G2/zoom-before.png` and `zoom-after.png`. An exact per-material split could go to G3.
+- Owner check: "it looks the same and feels smoother".
+
+**Measurements.**
+- Protocol: F2/G1, 100 s, 60 fps cap, the same 8 scripted host blasts at 30–72 s; 2 windows = host plus a guest.
+- "before" = `--bom-clipped-source-art` in the same build: `integration/evidence/G2/perf/perf-20261116T172538`.
+- "after" = final build with the warm-up: `warm-20261116T234500`.
+- The pre-warm-up after runs are kept in `final-20261116T181559`.
+- Summary script: `integration/tools/g1/Summarize-G2Perf.py`, output in `integration/evidence/G2/perf/summary.csv`. All runs `result=ok`, `resources_drained=True`.
+- What is committed: run records, logs and the summary. The per-frame `host-perf.json`/`guest-perf.json` files and the screenshots (about 450 MB) stay on disk in those folders, untracked.
+
+| Level, windows | GC MB/min | p95 frame ms | p99 frame ms | frames >33 ms /min | max present+geometry ms (blast draw cost) | max present GC bytes/frame |
+|---|---|---|---|---|---|---|
+| Classic Yard 1w | 2682 → 13.7 | 24.06 → 17.40 | 36.75 → 17.94 | 55.8 → 9.6 | 63.5 → 20.1 | 7643 → 748 |
+| Classic Yard 2w | 2596 → 13.7 | 41.35 → 17.47 | 48.58 → 18.17 | 313.8 → 10.8 | 117.1 → 24.9 | 6980 → 497 |
+| Yard 1w | 67.8 → 14.1 | 17.12 → 17.14 | 17.65 → 17.70 | 4.8 → 4.2 | 55.9 → 26.0 | 11073 → 717 |
+| Yard 2w | 67.3 → 14.1 | 17.07 → 17.11 | 17.82 → 17.64 | 6.0 → 4.2 | 56.2 → 30.4 | 11737 → 650 |
+| Bridge 1w | 166.5 → 13.7 | 17.06 → 17.03 | 17.66 → 17.36 | 7.8 → 6.0 | 42.2 → 19.5 | 4934 → 242 |
+| Bridge 2w | 138.9 → 13.6 | 16.95 → 17.00 | 17.59 → 17.44 | 9.0 → 7.2 | 47.5 → 27.6 | 5336 → 320 |
+| Tower 1w | 229.5 → 18.0 | 17.60 → 17.50 | 19.79 → 18.25 | 29.4 → 15.6 | 60.5 → 27.2 | 13903 → 788 |
+| Tower 2w | 234.6 → 18.9 | 17.68 → 17.80 | 34.52 → 19.51 | 37.8 → 22.2 | 54.7 → 34.5 | 14838 → 815 |
+
+- **Remaining GC (13.6–19 MB/min)** is the HUD/frame baseline. Cell presentation allocates ≤0.8 KB per frame (`present_gc`).
+- **Warm-up effect** (max present+geometry, pre-warm-up → warm-up): Yard 36→26, Bridge 37→20, Tower 38→27 ms. That maximum is the first blast's frame. On Classic Yard only 8 ms of that 20 ms frame is the cell apply; the rest is other first-blast presentation outside the cell path. Later blasts cost 4–8 ms (apply log).
+- **Remaining hitches** are the native client update on blasts: `native_ms` up to 50–69 ms (Bridge, Classic 2w). This is Lane N's G-N5, not presentation.
+
+**Gates** (final code; see the G2 commit message for the result lines): Build (Mono), Content, Rounds yard + draw, front door `-Level Yard`/`Bridge`/`Tower` (17/17 each, orphans none; evidence `integration/evidence/M8/frontdoor-{yard,bridge,tower}-20261116T2337…/2338…`), and Prediction.

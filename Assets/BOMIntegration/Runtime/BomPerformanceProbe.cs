@@ -347,13 +347,13 @@ namespace Bom.Unity
                 pooled_actors = client.PooledActorCount,
                 idle_actors = client.IdleActorCount,
             };
+            row.source_intact = client.IntactSources;
+            row.source_fragments = client.FragmentSources;
+            row.source_fallback = client.FallbackSources;
             if (source != null)
             {
                 row.source_read_ms = source.FrameSourceReadMilliseconds;
                 row.upload_ms = source.FrameUploadMilliseconds;
-                row.source_intact = source.IntactSources;
-                row.source_fragments = source.FragmentSources;
-                row.source_fallback = source.FallbackSources;
                 row.jobs_active = source.Jobs.ActiveCount;
                 row.jobs_pending = source.Jobs.PendingCount;
                 row.cache_cpu = source.Jobs.CacheBytes;
@@ -540,6 +540,7 @@ namespace Bom.Unity
                 if (
                     mesh.name.StartsWith("BOM source ", StringComparison.Ordinal)
                     || mesh.name == "Native terrain batch"
+                    || mesh.name == "Native cell chunk"
                 )
                     report.final_runtime_meshes++;
             report.resources_drained =

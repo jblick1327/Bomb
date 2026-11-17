@@ -54,9 +54,20 @@ namespace Bom.Unity
         readonly List<(uint, ulong)> goneActors = new List<(uint, ulong)>();
         public BomSession Session => session;
         BomSourcePresentation sourcePresentation;
-        BomG1Presenter g1; // G1 prototype; only created with --bom-g1 / BOM_G1=1
+        // G2: the only cell path unless ClippedSourceArt (the pre-G2 per-revision batches plus clipped source art,
+        // kept for one release behind --bom-clipped-source-art and for the source-capture/job-gate test tools).
+        BomCellPresenter cellPresenter;
+        bool cellsShown;
+        public bool ClippedSourceArt;
         BomCameraRig cameraRig;
         public BomSourcePresentation SourcePresentation => sourcePresentation;
+        // Source-art counts from whichever presenter draws cells (intact = Darryn's own mesh, fragments = his art on
+        // native cells, fallback = no matching registry art).
+        public bool HasSourceArt => ClippedSourceArt ? sourcePresentation != null : cellPresenter != null;
+        public int IntactSources => ClippedSourceArt ? sourcePresentation?.IntactSources ?? 0 : cellPresenter?.IntactSources ?? 0;
+        public int FragmentSources => ClippedSourceArt ? sourcePresentation?.FragmentSources ?? 0 : cellPresenter?.FragmentSources ?? 0;
+        public int FallbackSources => ClippedSourceArt ? sourcePresentation?.FallbackSources ?? 0 : cellPresenter?.FallbackSources ?? 0;
+        public BomCellPresenter CellPresenter => cellPresenter;
         public bool AutomatedProfile { get; private set; }
 
         public bool TryLocalVisualPosition(out Vector3 position)
@@ -285,8 +296,16 @@ namespace Bom.Unity
                     BomNative.bom_client_set_prediction(session.Handle, Prediction ? 1u : 0u)
                 );
                 // G1 draws every cell from native outlines, so it runs without Darryn's clipped source art (and its manifest pin).
-                if (Array.IndexOf(args, "--bom-no-visual-registry") >= 0 || BomG1Presenter.Enabled)
+                if (Array.IndexOf(args, "--bom-no-visual-registry") >= 0 || BomCellPresenter.G1)
                     VisualRegistry = null;
+                ClippedSourceArt =
+                    !BomCellPresenter.G1
+                    && (
+                        ClippedSourceArt
+                        || Array.IndexOf(args, "--bom-clipped-source-art") >= 0
+                        || Array.IndexOf(args, "--bom-source-capture") >= 0
+                        || Array.IndexOf(args, "--bom-source-job-gate") >= 0
+                    );
                 string expected = Arg(
                     "--bom-expected-manifest",
                     VisualRegistry != null ? VisualRegistry.GameplayManifestHash : ""
@@ -297,11 +316,14 @@ namespace Bom.Unity
                     );
                 if (!string.IsNullOrEmpty(expected))
                     session.ExpectGameplayManifest(expected);
-                sourcePresentation = new BomSourcePresentation(
-                    VisualRegistry,
-                    Material,
-                    Array.IndexOf(args, "--bom-tier1") < 0
-                );
+                if (ClippedSourceArt)
+                    sourcePresentation = new BomSourcePresentation(
+                        VisualRegistry,
+                        Material,
+                        Array.IndexOf(args, "--bom-tier1") < 0
+                    );
+                else
+                    Debug.Log("BOM SOURCE ART " + (VisualRegistry != null ? "ON" : "OFF") + " path=cells clip=off");
                 connectionToken = Environment.GetEnvironmentVariable("BOM_TEST_HOST_TOKEN") ?? "";
                 if (ConnectOnEnable || Array.IndexOf(args, "--bom-auto-connect") >= 0)
                     Connect();
@@ -681,8 +703,8 @@ namespace Bom.Unity
             ClearScene();
             sourcePresentation?.Dispose();
             sourcePresentation = null;
-            g1?.Dispose();
-            g1 = null;
+            cellPresenter?.Dispose();
+            cellPresenter = null;
         }
 
         void OnApplicationQuit()
@@ -716,7 +738,8 @@ namespace Bom.Unity
             {
                 sourcePresentation?.Clear();
                 ClearEffects();
-                g1?.Clear();
+                cellPresenter?.Hide();
+                cellsShown = false;
             }
             if (terrain != null)
             {
@@ -724,10 +747,7 @@ namespace Bom.Unity
                 Destroy(terrain);
                 terrain = null;
             }
-            foreach (var actor in actors.Values)
-                if (!actorPool.Return(actor))
-                    Destroy(actor);
-            actors.Clear();
+            ReturnActors();
             if (!keepSource)
                 actorPool.Dispose();
             bodies.Clear();
@@ -735,6 +755,14 @@ namespace Bom.Unity
                 Destroy(mesh);
             meshes.Clear();
             revision = ulong.MaxValue;
+        }
+
+        void ReturnActors()
+        {
+            foreach (var actor in actors.Values)
+                if (!actorPool.Return(actor))
+                    Destroy(actor);
+            actors.Clear();
         }
 
         GameObject Visual(string name, Transform parent, Mesh mesh, uint rgba, List<Mesh> owned)
@@ -759,6 +787,58 @@ namespace Bom.Unity
             return obj;
         }
 
+        void ConfigureCamera(BomSession client)
+        {
+            var s = client.Sample;
+            if (s.vertex_count == 0 || View == null)
+                return;
+            Vector2 min = new Vector2(float.MaxValue, float.MaxValue),
+                max = new Vector2(float.MinValue, float.MinValue);
+            if ((client.Catalog.level.flags & 1) != 0)
+            {
+                var level = client.Catalog.level;
+                min = new Vector2(level.camera_lo_x, level.camera_lo_y);
+                max = new Vector2(level.camera_hi_x, level.camera_hi_y);
+            }
+            else
+                for (int i = 0; i < s.vertex_count; i++)
+                {
+                    var v = client.Vertices[i];
+                    min = Vector2.Min(min, new Vector2(v.x, v.y));
+                    max = Vector2.Max(max, new Vector2(v.x, v.y));
+                }
+            if (cameraRig == null && !View.TryGetComponent(out cameraRig))
+                cameraRig = View.gameObject.AddComponent<BomCameraRig>();
+            cameraRig.Configure(min, max);
+        }
+
+        void AcceptedTopology(BomSample s, bool newSession, int batches, long cacheBytes)
+        {
+            generation = s.connection_generation;
+            epoch = s.epoch;
+            revision = s.revision;
+            acceptedTopology = s.transaction_id;
+            if (newSession)
+                lastEvent = 0;
+            snapshots++;
+            Debug.Log(
+                "BOM UNITY SNAPSHOT generation="
+                    + generation
+                    + " epoch="
+                    + epoch
+                    + " revision="
+                    + revision
+                    + " cells="
+                    + s.cell_count
+                    + " hash="
+                    + s.canonical_hash
+                    + " terrain_batches="
+                    + batches
+                    + " geometry_cache_bytes="
+                    + cacheBytes
+            );
+        }
+
         void TimedAccept(BomSession client)
         {
             PresentationHadTopology = PresentationHadActorChange = false;
@@ -777,7 +857,7 @@ namespace Bom.Unity
             var s = client.Sample;
             if ((s.flags & 6) != 6)
             {
-                if (terrain != null && (s.flags & 2) == 0)
+                if ((terrain != null || cellsShown) && (s.flags & 2) == 0)
                     ClearScene();
                 return;
             }
@@ -794,6 +874,21 @@ namespace Bom.Unity
             {
                 PresentationHadTopology = true;
                 bool newSession = generation != s.connection_generation || epoch != s.epoch;
+                if (!ClippedSourceArt)
+                {
+                    // G2: persistent bodies and chunks; only touched chunks rebuild, and an epoch with unchanged cells
+                    // rebuilds nothing. Actors are returned only for a new session/epoch, as the old swap did then.
+                    if (newSession)
+                        ReturnActors();
+                    cellPresenter ??= new BomCellPresenter(transform, Material, BomCellPresenter.G1);
+                    cellPresenter.Apply(client, VisualRegistry, bodies);
+                    cellsShown = true;
+                    if (newSession)
+                        ConfigureCamera(client);
+                    AcceptedTopology(s, newSession, cellPresenter.LastChunks, cellPresenter.ArenaBytes);
+                }
+                else
+                {
                 if (newSession)
                     cellGeometry.Clear();
                 var activeCells = new HashSet<ulong>();
@@ -820,13 +915,6 @@ namespace Bom.Unity
                     }
                     renderers.Add(obj.GetComponent<MeshRenderer>());
                 }
-                if (BomG1Presenter.Enabled)
-                {
-                    // G1 prototype (opt-in): persistent depth-from-shape bodies instead of per-revision batches.
-                    g1 ??= new BomG1Presenter(transform, Material);
-                    g1.Apply(client, nextBodies, newSession);
-                }
-                else
                 try
                 {
                     for (int i = 0; i < s.cell_count; i++)
@@ -926,27 +1014,8 @@ namespace Bom.Unity
                     throw new InvalidOperationException(
                         "Fallback geometry cache exceeds its explicit 256 MiB budget"
                     );
-                if (newSession && s.vertex_count > 0 && View != null)
-                {
-                    Vector2 min = new Vector2(float.MaxValue, float.MaxValue),
-                        max = new Vector2(float.MinValue, float.MinValue);
-                    if ((client.Catalog.level.flags & 1) != 0)
-                    {
-                        var level = client.Catalog.level;
-                        min = new Vector2(level.camera_lo_x, level.camera_lo_y);
-                        max = new Vector2(level.camera_hi_x, level.camera_hi_y);
-                    }
-                    else
-                        for (int i = 0; i < s.vertex_count; i++)
-                        {
-                            var v = client.Vertices[i];
-                            min = Vector2.Min(min, new Vector2(v.x, v.y));
-                            max = Vector2.Max(max, new Vector2(v.x, v.y));
-                        }
-                    if (cameraRig == null && !View.TryGetComponent(out cameraRig))
-                        cameraRig = View.gameObject.AddComponent<BomCameraRig>();
-                    cameraRig.Configure(min, max);
-                }
+                if (newSession)
+                    ConfigureCamera(client);
                 ClearScene(true);
                 terrain = next;
                 meshes.AddRange(nextMeshes);
@@ -955,29 +1024,8 @@ namespace Bom.Unity
                 terrain.SetActive(true);
                 sourcePresentation?.SetFallbackBytes(cacheBytes * 3);
                 sourcePresentation?.SetTopology(client, bodies, nextFallbacks);
-                generation = s.connection_generation;
-                epoch = s.epoch;
-                revision = s.revision;
-                acceptedTopology = s.transaction_id;
-                if (newSession)
-                    lastEvent = 0;
-                snapshots++;
-                Debug.Log(
-                    "BOM UNITY SNAPSHOT generation="
-                        + generation
-                        + " epoch="
-                        + epoch
-                        + " revision="
-                        + revision
-                        + " cells="
-                        + s.cell_count
-                        + " hash="
-                        + s.canonical_hash
-                        + " terrain_batches="
-                        + nextMeshes.Count
-                        + " geometry_cache_bytes="
-                        + cacheBytes
-                );
+                AcceptedTopology(s, newSession, nextMeshes.Count, cacheBytes);
+                }
             }
             var seen = seenActors;
             seen.Clear();

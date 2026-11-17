@@ -217,11 +217,9 @@ namespace Bom.Unity
                     !ready
                     && r.mode == 0
                     && (session.Sample.flags & 6) == 6
-                    && Client.SourcePresentation != null
-                    && Client.SourcePresentation.FallbackSources <= (drawScenario ? 0 : 2)
-                    && Client.SourcePresentation.IntactSources
-                        + Client.SourcePresentation.FragmentSources
-                        >= (drawScenario ? 1 : 14)
+                    && Client.HasSourceArt
+                    && Client.FallbackSources <= (drawScenario ? 0 : 2)
+                    && Client.IntactSources + Client.FragmentSources >= (drawScenario ? 1 : 14)
                 )
                 {
                     ready = true;
