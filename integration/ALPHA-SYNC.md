@@ -336,6 +336,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Rounds Yard+Draw, Prediction 6/6 (`evidence/M0/Test-Prediction-20261112T032632412Z.json`) and the 30-minute soak (`evidence/M9/soak-20261112T043608868359Z`, 1800 s, 183 resets)
   pass, 0 Exception lines. Item drawn and landed in `evidence/M8/unity-rounds-20261112T032344202604Z` (evidence run, see Findings). Failed first Prediction and soak kept (see Findings).
   [ ] Owner check: items fall and land; touching one makes it vanish with a sound; coins raise the round award; the glow shows for invincible/speed/slow and ends after ~10 s; a faint outer ring shows the graze zone.
+- [~] **E1-G** (native f3a4e48: G-N5 prediction hull cache + G-N2/G-N3 glue; guest perf harness fix; E1-G perf matrix) claimed: Claude Opus 5.5 2026-11-16
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
