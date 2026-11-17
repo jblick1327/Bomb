@@ -115,20 +115,100 @@ prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic
  if cache!=nil { prediction_hull_cache_prune(cache) }
  return true
 }
+// The client predicts lead+latency ticks past its newest received frame, which
+// is usually just beyond the 6-tick extrapolation window. A proxy there is:
+// - held, when received frames show it at rest: the authority reports that pose
+//   until something disturbs it (bomb contacts are checked separately);
+// - estimated, when moving, by the same linear motion, with an error bound for
+//   gravity, for stopping (its speed) and for turning (its angular speed). The
+//   estimate is used when that bound is within PREDICTION_PROXY_TOLERANCE, or when
+//   its swept, padded bounds cannot reach the player during this step;
+// - otherwise unknown, and the step still requires history.
+PREDICTION_HOLD_TICKS :: u64(60)
+// Below the 0.25 m gross-correction threshold, so an accepted estimate's error
+// is presented as a blended correction. In-window extrapolation (6 ticks) already
+// accepts up to 0.05 m of gravity error unchecked.
+PREDICTION_PROXY_TOLERANCE :: f32(.2)
+// Rest: every received sample over at least this span stays within
+// PREDICTION_REST_QUANTA position steps (1/256 m) and angle steps of the newest.
+// A supported piece under a standing player jitters by a step or so; a body
+// released from rest falls 0.012 m (3 steps) in 3 ticks, so it reads as
+// resting for at most 2 received ticks.
+PREDICTION_REST_TICKS :: u64(4)
+PREDICTION_REST_QUANTA :: i32(2)
+prediction_proxy_at_rest :: proc(h:^Collision_History,lower:^Collision_Frame,key:u64,pose:Pose_State) -> bool {
+ spanned:=false
+ for k in u64(1)..=2*PREDICTION_REST_TICKS {
+  if k>lower.tick { break }
+  frame:=&h.frames[(lower.tick-k)%PREDICTION_HISTORY_TICKS]
+  if !frame.valid || frame.epoch!=h.epoch || frame.tick!=lower.tick-k { continue }
+  old,exists:=frame.poses[key];if !exists { return false }
+  turn:=(i32(old.a)-i32(pose.a)+POSE_ANGLE_STEPS)%POSE_ANGLE_STEPS;turn=min(turn,POSE_ANGLE_STEPS-turn)
+  if abs(old.x-pose.x)>PREDICTION_REST_QUANTA || abs(old.y-pose.y)>PREDICTION_REST_QUANTA || turn>PREDICTION_REST_QUANTA { return false }
+  if k>=PREDICTION_REST_TICKS { spanned=true;break }
+ }
+ return spanned
+}
+// error bounds the distance between the returned position and the authority's;
+// turn bounds the angle error in radians. Both are 0 for received, interpolated,
+// in-window extrapolated and resting poses, exactly as before.
+prediction_proxy_pose :: proc(h:^Collision_History,b:Collision_Bracket,tick,key:u64,gravity:f32) -> (pose:Net_Drawn,error,turn:f32,ok:bool) {
+ if received,_,valid:=collision_history_bracket_pose(b,tick,key);valid { return received,0,0,true }
+ lower:=b.lower;if lower==nil || tick-lower.tick>PREDICTION_HOLD_TICKS { return }
+ a,found:=lower.poses[key];if !found { return }
+ if prediction_proxy_at_rest(h,lower,key,a) { return net_drawn_single(a),0,0,true }
+ newest:=net_drawn_single(a)
+ if b.upper!=nil {
+  // Lost frames between two received ones: interpolate. A parabola stays within
+  // g*t1*t2/2 of its chord; a stop or turn costs at most speed*min(t1,t2).
+  s,exists:=b.upper.poses[key];if !exists { return }
+  gap:=b.upper.tick-lower.tick;if gap>PREDICTION_HOLD_TICKS { return }
+  later:=net_drawn_single(s)
+  t1,t2:=f32(tick-lower.tick)/60,f32(b.upper.tick-tick)/60;near:=min(t1,t2);span:=f32(gap)/60
+  speed:=vlen(Vec2{later.x-newest.x,later.y-newest.y})/span;spin:=math.abs(radians_delta(later.angle,newest.angle))/span
+  return net_drawn_from(a,s,t1/span),.5*gravity*t1*t2+speed*near,spin*near,true
+ }
+ previous:=b.previous;if previous==nil || lower.tick-previous.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
+ s,exists:=previous.poses[key];if !exists { return }
+ old:=net_drawn_single(s);current:=newest
+ delta:=f32(lower.tick-previous.tick);ahead:=f32(tick-lower.tick)
+ current.x+=(newest.x-old.x)/delta*ahead;current.y+=(newest.y-old.y)/delta*ahead
+ current.angle+=radians_delta(newest.angle,old.angle)/delta*ahead
+ if !finite(current.x) || !finite(current.y) || math.abs(current.x)>1e6 || math.abs(current.y)>1e6 { return }
+ t:=ahead/60;speed:=vlen(Vec2{newest.x-old.x,newest.y-old.y})/delta*60;spin:=math.abs(radians_delta(newest.angle,old.angle))/delta*60
+ return current,.5*gravity*t*t+speed*t,spin*t,true
+}
 prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64) -> bool {
  if len(p.proxies)==0 { return true }
  if history==nil { p.reason=.Dynamic_History_Required;return false }
  // The bracketing frames are shared by every proxy at a tick: find them once.
  from_frames,to_frames:=collision_history_bracket(history,tick),collision_history_bracket(history,tick+1)
+ config:=scene_gameplay_config(&p.scene);gravity:=vlen(config.gravity)
+ // The player's reach during this step, as in the collision-window margin.
+ player:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body))
+ reach:=.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed*max(f32(1),player_speed_scale(&p.player)),config.player.jump_speed)/60+gravity*config.player.gravity_scale/3600
  for proxy in p.proxies {
-  a,_,valid_a:=collision_history_bracket_pose(from_frames,tick,proxy.key)
-  b,_,valid_b:=collision_history_bracket_pose(to_frames,tick+1,proxy.key)
+  a,error_a,turn_a,valid_a:=prediction_proxy_pose(history,from_frames,tick,proxy.key,gravity)
+  b,error_b,turn_b,valid_b:=prediction_proxy_pose(history,to_frames,tick+1,proxy.key,gravity)
   if !valid_a || !valid_b { p.reason=.Dynamic_History_Required;return false }
   from,to:=Vec2{a.x,a.y},Vec2{b.x,b.y}
   if proxy.rigid { from=vsub(from,vrotate(proxy.reference,a.angle));to=vsub(to,vrotate(proxy.reference,b.angle)) }
   b2.Body_SetTransform(proxy.body,to_b2(from),b2.MakeRot(a.angle))
   b2.Body_SetLinearVelocity(proxy.body,to_b2(vmul(vsub(to,from),60)))
   b2.Body_SetAngularVelocity(proxy.body,radians_delta(b.angle,a.angle)*60)
+  if error_a>0 || error_b>0 || turn_a>0 || turn_b>0 {
+   // Motion is the pose point's translation plus rotation about it, so every
+   // point of the body moves at most |translation| + radius*|turn|.
+   box:=b2.Body_ComputeAABB(proxy.body);lo,hi:=from_b2(box.lowerBound),from_b2(box.upperBound)
+   point:=Vec2{a.x,a.y};far:=Vec2{max(math.abs(lo.x-point.x),math.abs(hi.x-point.x)),max(math.abs(lo.y-point.y),math.abs(hi.y-point.y))}
+   radius:=vlen(far)
+   error:=max(error_a+radius*min(turn_a,f32(math.PI)),error_b+radius*min(turn_b,f32(math.PI)))
+   if error<=PREDICTION_PROXY_TOLERANCE { continue }
+   pad:=error+vlen(Vec2{b.x-a.x,b.y-a.y})+radius*min(math.abs(radians_delta(b.angle,a.angle)),f32(math.PI))
+   if player.x+PLAYER_RADIUS+reach>lo.x-pad && player.x-PLAYER_RADIUS-reach<hi.x+pad && player.y+PLAYER_HALF_HEIGHT+reach>lo.y-pad && player.y-PLAYER_HALF_HEIGHT-reach<hi.y+pad {
+    p.reason=.Dynamic_History_Required;return false
+   }
+  }
  }
  return true
 }

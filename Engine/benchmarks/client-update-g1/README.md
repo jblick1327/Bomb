@@ -20,3 +20,10 @@ G1 section 6.3. It also writes one CSV row per frame.
 Blast positions are air, not solid: a blast that starts inside solid is rejected. The four positions are
 between the lower deck (top y = 5.25) and the middle girder (bottom y = 8.12), at x = ±3.2 and ±9.7.
 The run uses the wall clock, so the collapse differs between runs. Compare pooled runs, not single runs.
+
+## Prediction flips
+
+The client also prints `prediction_flips` and `per_100s`: the frames where the own player leaves Predicting, which is
+what the G2b Unity logs count as flips. Pass the Yard or Tower layout from `integration/fixtures/levels` to measure the
+other maps; blasts in air near the spawn, for example Yard `'5:2,7.2|9:-8,7.2|13:5,7.2|17:-12,7.2'` and Tower
+`'5:6,21.5|9:-7,21.5|13:8,21.5|17:-9,21.5'`. The native log lines `PREDICTION mode=...` give the same count with reasons.

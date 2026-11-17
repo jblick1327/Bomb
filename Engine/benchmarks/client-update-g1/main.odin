@@ -66,6 +66,9 @@ main :: proc() {
  for r in rows { for c in changes { if r.t>=c-0.5 && r.t<=c+3 { append(&window_rows,r);break } } }
  report(window_rows[:],"blast window",proc(r:Row,rows:[]Row) -> bool { return true })
  predicting:=0;for r in rows { if r.prediction==1 { predicting+=1 } }
+ // Flips: frames where the own player leaves Predicting, as seen by Unity.
+ flips:=0;for i in 1..<len(rows) { if rows[i-1].prediction==1 && rows[i].prediction!=1 { flips+=1 } }
+ fmt.printf("prediction_flips=%d per_100s=%.1f\n",flips,f64(flips)*100/max(rows[len(rows)-1].t,1e-9))
  fmt.printf("revisions=%d final_cells=%d final_poses=%d predicting_frames=%d/%d corrections=%d snaps=%d conservative_transitions=%d resets=%d\n",len(changes),rows[len(rows)-1].cells,rows[len(rows)-1].poses,predicting,len(rows),stats.correction_count,stats.snap_count,stats.conservative_transitions,stats.reset_count)
  _=ffi.bom_client_disconnect(handle);_=ffi.bom_client_destroy(handle)
 }
