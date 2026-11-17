@@ -420,6 +420,11 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   blast input path and the first-change presenter path at join with no gameplay side effects, keep the look and zero per-blast presenter GC.
   - Done when: first-blast worst frame near blasts 2-8 (<= ~20-25 ms) on all 4 levels, 1 and 2 windows (`evidence/G2b`); Build, Content,
     Rounds yard+draw, front door Yard/Bridge/Tower (and Prediction 6/6 if input code changed) pass. [ ] Owner check: the first blast feels as smooth as the rest.
+- [~] **G3 Depth from shape as the default look** (T1, Opus, M; needs G2, OD-4; design doc 4 and 8) claimed: Claude Opus 5.5 2026-11-17
+  Band 1.6 and `d = clamp(√area, 0.1, band)` for every level with no flag, the depth rule in one swappable place; terrain back wall (darker, no top cap,
+  never rebuilt); Darryn's material per source through the registry, not scene paths; stock look behind a flag for one release; per-material split if cheap.
+  - Done when: Content, NativeInterop, Rounds yard+draw, Prediction 6/6 and front door Yard/Bridge/Tower pass; perf matrix shows no frame-time regression
+    against E1-GN6; before/after screenshots on all four levels in `evidence/G3`. [ ] Owner check: debris reads as chunks, craters show dark earth behind, nothing looks walkable that is not.
 
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
