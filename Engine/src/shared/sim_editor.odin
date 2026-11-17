@@ -25,10 +25,10 @@ Authored_Shape :: struct { angle:f32, shape:Shape_Kind, lo,hi: Vec2, material: S
 Layout :: struct { next_identity: u64, objects: [dynamic]Authored_Shape, materials: [dynamic]Custom_Material, glue:[dynamic]Glue_Link, level:^Level_Layout }
 
 PALETTE_MATERIALS :: [Recipe]Material{
- .Wood = {name="wood",color={180,136,82},strip_thickness=0.2,blast_resistance=1.5,subdivision_strength=28,connection_strength=22,flexibility=0,impact_scale=1,generation_count=5,aspect_ratio=0.2},
- .Glass = {name="glass",color={86,153,174},blast_resistance=0.5,subdivision_strength=16,connection_strength=12,flexibility=0,impact_scale=1,generation_count=6,aspect_ratio=1,triangulate=true,shock_loss=4},
- .Rubber = {name="rubber",color={162,112,184},blast_resistance=3,subdivision_strength=45,connection_strength=90,flexibility=0.5,impact_scale=0,generation_count=3,aspect_ratio=1},
- .Stone = {name="stone",color={131,145,152},blast_resistance=3,subdivision_strength=35,connection_strength=20,flexibility=0,impact_scale=1.6,generation_count=3,aspect_ratio=1},
+ .Wood = {name="wood",color={180,136,82},strip_thickness=0.2,blast_resistance=1.5,subdivision_strength=28,connection_strength=22,flexibility=0,impact_scale=1,generation_count=5,aspect_ratio=0.2,glue_toughness=1},
+ .Glass = {name="glass",color={86,153,174},blast_resistance=0.5,subdivision_strength=16,connection_strength=12,flexibility=0,impact_scale=1,generation_count=6,aspect_ratio=1,triangulate=true,shock_loss=4,glue_toughness=1},
+ .Rubber = {name="rubber",color={162,112,184},blast_resistance=3,subdivision_strength=45,connection_strength=90,flexibility=0.5,impact_scale=0,generation_count=3,aspect_ratio=1,glue_toughness=1},
+ .Stone = {name="stone",color={131,145,152},blast_resistance=3,subdivision_strength=35,connection_strength=20,flexibility=0,impact_scale=1.6,generation_count=3,aspect_ratio=1,glue_toughness=1},
 }
 
 editor_material :: proc(choice: Recipe) -> Material { table:=PALETTE_MATERIALS; return table[choice] }

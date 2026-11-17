@@ -34,7 +34,7 @@ demo_trace_state :: proc(g:^Sandbox) {
  for seam in seams {
   mortar,glue:=0,0;for id in seam.members { c:=s.connections[s.conn_rows[id]];if len(c.glue)>0 { glue+=1 } else { mortar+=1 } }
   c:=s.connections[s.conn_rows[seam.members[0]]];a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
-  r:=vlen(seam.force)/(MORTAR_STRENGTH*seam.length)+math.abs(seam.torque)/(0.5*MORTAR_STRENGTH*seam.length*seam.length)
+  r:=shared.mortar_seam_ratio(s,seam)
   fmt.printf("SEAM run=%s tick=%d phase=%s objects=%d/%d bodies=%v/%v mortar=%d glue=%d L=%.9f r=%.9f damage=%.9f collide=%v ids=%v\n",shared.seam_diagnostic_run,shared.seam_diagnostic_tick,shared.seam_diagnostic_phase,seam_object(a),seam_object(b),seam.bodies[0],seam.bodies[1],mortar,glue,seam.length,r,seam.damage,b2.Joint_GetCollideConnected(c.joint),seam.members[:])
   if glue>0 {
    rest_gap,posed_gap:=f32(0),f32(0)

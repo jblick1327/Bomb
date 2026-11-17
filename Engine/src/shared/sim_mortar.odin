@@ -118,8 +118,28 @@ mortar_force_failures :: proc(s: ^Scene,failures: ^Failures,dt: f32) {
  }
 }
 
+material_glue_toughness :: proc(m: Material) -> f32 { if m.glue_toughness>0 { return m.glue_toughness }; return 1 }
+
+// G-N1: a seam's load capacity scales with the weakest material on any of its links.
+mortar_seam_toughness :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
+ if len(seam.members)==0 { return 1 }
+ toughness:=f32(math.F32_MAX)
+ for id in seam.members {
+  c:=s.connections[s.conn_rows[id]]
+  a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
+  toughness=min(toughness,material_glue_toughness(s.materials[a.material]),material_glue_toughness(s.materials[b.material]))
+ }
+ return toughness
+}
+
+// Load ratio r of a seam: 1 at capacity. Strength is MORTAR_STRENGTH per unit length times the seam toughness.
+mortar_seam_ratio :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
+ strength:=MORTAR_STRENGTH*mortar_seam_toughness(s,seam)
+ return vlen(seam.force)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length)
+}
+
 mortar_apply_seam :: proc(s: ^Scene,seam: Mortar_Seam,failures: ^Failures,dt: f32) {
-  r:=vlen(seam.force)/(MORTAR_STRENGTH*seam.length)+math.abs(seam.torque)/(0.5*MORTAR_STRENGTH*seam.length*seam.length)
+  r:=mortar_seam_ratio(s,seam)
   damage:=f32(0); if r>=1 { damage=seam.damage+(r-1)*dt }
   broken:=damage>=SEAM_TOUGHNESS
   seam_diagnostic_force(s,seam,r,broken,damage)
