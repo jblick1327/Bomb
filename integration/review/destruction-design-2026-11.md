@@ -417,6 +417,9 @@ through E1. Sizes: S < 1 h, M 1–3 h, L = several sessions. The owner decisions
 - **OD-3 Bridge supports** (section 3.4): piles, abutments or both.
 - **OD-4 Band depth and backdrop look** (section 4). Judge it in the prototype with `--bom-g1-band`.
 
+**Decided 2026-11-17** (recorded in ALPHA-SYNC): OD-1 B for the Bridge, C for the Yard and Tower; OD-2 the section 3.2 table with steel;
+OD-3 (a) piles, chosen by the orchestrator on the owner's delegation; OD-4 band 1.6 as prototyped, for now. The owner may revisit the depth look later.
+
 ## 9. G2 results: one persistent cell path for every level (2026-11-16)
 
 `Runtime/BomCellPresenter.cs` (renamed from `BomG1Presenter.cs`, same GUID) is now the only cell path; no flag needed.

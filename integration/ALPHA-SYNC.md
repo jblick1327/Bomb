@@ -56,6 +56,18 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   bundle it with N4 so one E1 covers it. Review: `integration/review/alpha-sync-review-20261111.md`.
 - [x] **D13 Windows graphics API.** (approved by owner 2026-11-11) Players use Direct3D 11 on Windows: `ProjectSettings/ProjectSettings.asset` gets a `WindowsStandaloneSupport` entry
   (`m_APIs: 02000000`, `m_Automatic: 0`) and that one file is re-baselined. *Why:* on Direct3D 12 Unity 6000.2.14f1 handles window messages in the middle of a frame and crashed two owner runs (see Findings, 2026-11-11 crash root cause).
+- [x] **OD-1 Boundary** (approved by owner 2026-11-17, design doc 3.5). B for the Bridge: no walls; leaving the arena is death by kill bounds, and debris past
+  the cull bounds is deleted. C for the Yard and Tower: visible destructible bedrock walls (Stone base, toughness ≤ 1.4, high blast resistance),
+  anchored at the bottom. No invisible or indestructible piece anywhere.
+- [x] **OD-2 Material table** (approved by owner 2026-11-17, design doc 3.2 table, as proposed). Bridge decks Wood; Bridge truss, posts, girders and braces a
+  new custom **steel** (Stone base, toughness 1.25, blast resistance 4, navy); Yard ground custom earth; Yard rocks Stone; Tower blocks and pillars Stone.
+  Unblocks G-N1.
+- [x] **OD-3 Bridge supports** (owner delegated to the orchestrator 2026-11-17; chosen: **(a) piles**, design doc 3.4). Anchor the five lowest post feet and draw
+  piles going down into the water, so the support you see is the support you get. *Why:* already prototyped and measured in G1, and it keeps Darryn's
+  deck extents (abutments would move the deck ends to new banks).
+- [x] **OD-4 Band depth and backdrop** (approved by owner 2026-11-17 *for now*, design doc 4). Band 1.6, `d = clamp(√area, 0.1, band)`, terrain back wall.
+  The owner may revisit the depth look later ("naive extrusion in general isn't optimal"), so G3 keeps the depth function in one place and
+  the stock look behind a flag.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
