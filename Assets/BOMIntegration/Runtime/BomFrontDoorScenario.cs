@@ -285,9 +285,13 @@ namespace Bom.Unity
             var client = Client();
             ulong forfeitRound = 0,
                 lastKey = ulong.MaxValue;
+            bool probeEnded = false;
             yield return Until(
                 () =>
                 {
+                    // A perf run's probe (--bom-perf-out) disables the client when its window ends; its Shutdown then writes the report and quits.
+                    if (client.Session == null && !client.enabled && FindFirstObjectByType<BomPerformanceProbe>() != null)
+                        return probeEnded = true;
                     var r = client.Session.Round;
                     ulong key = (r.round_id << 8) | r.state;
                     if (key != lastKey)
@@ -302,6 +306,11 @@ namespace Bom.Unity
                 180,
                 "the elimination round to play"
             );
+            if (probeEnded)
+            {
+                Log("perf probe finished; waiting for it to write its report and quit");
+                yield return Until(() => false, 60, "the perf probe to quit");
+            }
             Log("LEAVE GAME (forfeit) round=" + forfeitRound);
             FindFirstObjectByType<BomNetworkHud>().Leave();
             yield return WaitForMainMenu();

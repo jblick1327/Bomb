@@ -35,6 +35,7 @@ $hostArgs=@('-screen-fullscreen','0','-screen-width','1280','-screen-height','72
  '--bom-perf-manual','--bom-perf-out',(Q (Join-Path $Out 'host-perf.json')),'--bom-perf-seconds',"$Seconds",'--bom-perf-warmup','5')+@($Extra.Split([char]'|')|Where-Object{$_})
 $meta.args=$hostArgs -join ' '
 $p=Start-Process -FilePath $Exe -ArgumentList $hostArgs -WorkingDirectory $pkg -PassThru -RedirectStandardOutput (Join-Path $Out 'host-stdout.log') -RedirectStandardError (Join-Path $Out 'host-stderr.log')
+$null=$p.Handle # keep the process handle open so ExitCode survives (Start-Process -PassThru alone loses it; E1-G)
 $deadline=(Get-Date).AddSeconds(120)
 while(!(Test-Path (Join-Path $Out 'signals-host\host-hosted.signal'))){if($p.HasExited){break};if((Get-Date) -gt $deadline){break};Start-Sleep -Milliseconds 300}
 $hosted=Get-Date;$meta.hosted_after_s=[math]::Round(($hosted-$t0).TotalSeconds,1)
@@ -46,6 +47,7 @@ if($Clients -eq 2){
   '--bom-perf-manual','--bom-perf-out',(Q (Join-Path $Out 'guest-perf.json')),'--bom-perf-seconds',"$($Seconds-20)",'--bom-perf-warmup','5')+@($Extra.Split([char]'|')|Where-Object{$_})
  $meta.guest_args=$guestArgs -join ' '
  $g=Start-Process -FilePath $Exe -ArgumentList $guestArgs -WorkingDirectory $pkg -PassThru -RedirectStandardOutput (Join-Path $Out 'guest-stdout.log') -RedirectStandardError (Join-Path $Out 'guest-stderr.log')
+ $null=$g.Handle
  $gd=(Get-Date).AddSeconds(30);while($g.MainWindowHandle -eq 0 -and !$g.HasExited -and (Get-Date) -lt $gd){Start-Sleep -Milliseconds 300;$g.Refresh()}
  [void][W.U]::MoveWindow($g.MainWindowHandle,1300,300,1296,759,$true);[void][W.U]::MoveWindow($p.MainWindowHandle,0,0,1296,759,$true)
 }
@@ -80,6 +82,7 @@ $left=@(Get-Process BOM-server -EA SilentlyContinue|Where-Object{$_.StartTime -g
 foreach($s in $left){Stop-Process -Id $s.Id -Force;$meta.killed_server+=@($s.Id)}
 $t1=Get-Date
 $power=@(Get-WinEvent -FilterHashtable @{LogName='System';StartTime=$t0;EndTime=$t1} -EA SilentlyContinue|Where-Object{($_.Id -eq 42 -and $_.ProviderName -like '*Kernel-Power*') -or ($_.Id -eq 1 -and $_.ProviderName -like '*Power-Troubleshooter*') -or ($_.Id -eq 107 -and $_.ProviderName -like '*Kernel-Power*')})
+$meta.host_perf_json=Test-Path (Join-Path $Out 'host-perf.json');if($Clients -eq 2){$meta.guest_perf_json=Test-Path (Join-Path $Out 'guest-perf.json')}
 $meta.ended=$t1.ToString('o');$meta.duration_s=[math]::Round(($t1-$t0).TotalSeconds,1);$meta.max_sample_step_s=[math]::Round($maxStep,2);$meta.sleep_events=$power.Count
 $meta.power_end=(Get-CimInstance Win32_Battery -EA SilentlyContinue|ForEach-Object{"status=$($_.BatteryStatus) charge=$($_.EstimatedChargeRemaining)"}) -join ';'
 $meta.result=if($power.Count -gt 0 -or $maxStep -gt 6){'drop_sleep_or_gap'}else{'ok'}

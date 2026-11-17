@@ -458,3 +458,31 @@ through E1. Sizes: S < 1 h, M 1–3 h, L = several sessions. The owner decisions
 - **Remaining hitches** are the native client update on blasts: `native_ms` up to 50–69 ms (Bridge, Classic 2w). This is Lane N's G-N5, not presentation.
 
 **Gates** (final code; see the G2 commit message for the result lines): Build (Mono), Content, Rounds yard + draw, front door `-Level Yard`/`Bridge`/`Tower` (17/17 each, orphans none; evidence `integration/evidence/M8/frontdoor-{yard,bridge,tower}-20261116T2337…/2338…`), and Prediction.
+
+### 9.1 E1-G: native G-N5 in Unity (2026-11-17)
+
+Unity now ships Odin `alpha-sync` f3a4e48 (G-N5 prediction hull cache, G-N2/G-N3 glue reporting; build tag 217547153414412003, DLL f9651cd4…).
+The DLL is `-o:speed` plus `-debug` (`CompilerArguments`), unlike G-N5's headless numbers; the flag was not changed.
+Same protocol and build path as above ("after" only), evidence `integration/evidence/E1-G/perf-20261117T051233`, summary `integration/evidence/E1-G/summary.csv`.
+All 8 runs `result=ok`, 0 sleep events, `resources_drained=True`. The 2-window guest now writes `guest-perf.json` and exits 0 (harness fix below), so guest rows exist for the first time.
+
+Host, G2 `warm-20261116T234500` → E1-G (1 window / 2 windows):
+
+| Level | blast native_ms max | blast-window p95 ms | blast-window max ms | frames >33 ms /min | GC MB/min |
+|---|---|---|---|---|---|
+| Classic Yard | 57.4 / 68.9 → 20.9 / 18.5 | 17.51 / 17.72 → 17.04 / 17.01 | 99.6 / 112.9 → 49.0 / 48.1 | 9.6 / 10.8 → 3.0 / 3.6 | 13.7 → 13.9 / 14.0 |
+| Yard | 18.2 / 24.9 → 3.4 / 3.9 | 17.15 / 17.19 → 16.92 / 16.85 | 54.3 / 60.9 → 35.7 / 48.1 | 4.2 / 4.2 → 0.6 / 1.8 | 14.1 → 13.9 |
+| Bridge | 50.3 / 53.9 → 3.4 / 6.4 | 17.13 / 17.06 → 16.92 / 16.90 | 68.2 / 76.3 → 37.1 / 47.8 | 6.0 / 7.2 → 1.2 / 1.8 | 13.7 / 13.6 → 13.6 |
+| Tower | 27.0 / 36.0 → 10.9 / 11.4 | 17.62 / 18.17 → 17.02 / 17.07 | 57.1 / 85.2 → 38.8 / 41.1 | 15.6 / 22.2 → 0.6 / 1.2 | 18.0 / 18.9 → 17.7 / 19.2 |
+
+Guest (2 windows, 80 s window, new): native_ms max Classic 15.6, Yard 4.1, Bridge 5.6, Tower 10.8; blast-window p95 16.84–16.96 ms, max 46–49 ms; >33 ms 0.8–5.2 /min.
+
+**What still causes the worst blast frames.**
+- Native is no longer the cause except on Classic Yard, where 3 blast frames in a run still have `native_ms` 15–21 ms.
+- Present+geometry peaks at 10–22 ms on the first blast only (Tower 18–21.5 ms, the others 10–17 ms).
+- Most remaining >33 ms frames have native < 1 ms and present < 1 ms. They land 0.05–0.17 s *before* the blast's revision arrives, on host and guest at the same moment.
+  This is the harness's own screenshot 250 ms after each click (`Shot`), not the game. The other one per run is an early frame at ~5 s, right after warm-up (e.g. Bridge 2w: 86 ms frame, `gpu_ms` 49, native and present ~0).
+
+**Harness fix.** `BomFrontDoorScenario.Guest()` now ends cleanly when the perf probe has disabled the client (it waits for the probe to write its report and quit)
+instead of dereferencing a null `Session` (FAIL, `Quit(4)`). `Run-G1Perf.ps1` keeps the process handles so exit codes are recorded, and writes `host_perf_json`/`guest_perf_json` into `run.json`.
+`Summarize-G2Perf.py` adds guest rows and blast-window columns, including the worst blast-window frame split into frame:native:present+geometry:gpu.
