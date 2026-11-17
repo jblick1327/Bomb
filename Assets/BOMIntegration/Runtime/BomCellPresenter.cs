@@ -18,10 +18,14 @@ namespace Bom.Unity
     //   change shape, so a round start whose cells did not change rebuilds nothing (F2 fix 1a).
     // - A body's cells are grouped into chunks (look, and 4x4-unit tiles for large bodies). A chunk is rebuilt only when
     //   its cell signature changes, into the same Mesh, through Mesh.MeshData (no managed garbage).
-    // - Darryn's meshes are never clipped per fragment. A source that is still intact (its registry cells, one static
-    //   piece) draws his own mesh, exactly as before. Any other cell is an extrusion over the source's depth, dressed in
-    //   his surface material, with the interior colour on cut sides (the stock look minus the clipper).
-    // --bom-g1 keeps the G1 prototype look (depth from piece area, tiles hidden, materials by scene path).
+    // - G3 default look (BomDepthLook.Mode.Band, owner decision OD-4): every cell, intact or not, is extruded from its
+    //   native outline at its piece's depth (BomDepthLook.PieceDepth) inside the play band, dressed in Darryn's materials
+    //   from the visual registry (per cell, split exactly where his materials meet). Terrain sources get a static, darker
+    //   back wall behind the band (no top cap, built once per source, never rebuilt).
+    // - Stock look (--bom-stock-look, one release): a source that is still intact (its registry cells, one static piece)
+    //   draws Darryn's own mesh; any other cell is an extrusion over the source's depth with his surface material and
+    //   the interior colour on cut sides. Darryn's meshes are never clipped per fragment in either look.
+    // --bom-g1 keeps the G1 prototype look (band depth, tiles hidden, materials by scene path) for its G1 layouts.
     public sealed class BomCellPresenter : IDisposable
     {
         static bool? g1Flag;
@@ -40,29 +44,13 @@ namespace Bom.Unity
             }
         }
 
-        static float Arg(string key, float value)
-        {
-            var args = Environment.GetCommandLineArgs();
-            int i = Array.IndexOf(args, key);
-            return
-                i >= 0
-                && i + 1 < args.Length
-                && float.TryParse(args[i + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out float parsed)
-                ? parsed
-                : value;
-        }
-
-        // G1 play band: the deepest a piece is drawn (the player capsule is 0.9 deep, so a band >= 0.9 never hides it).
-        public readonly float Band = Arg("--bom-g1-band", 1.6f),
-            MinDepth = Arg("--bom-g1-min-depth", 0.1f),
-            DepthScale = Arg("--bom-g1-depth-scale", 1f);
-        const float DepthStep = 0.02f,
-            ChunkSize = 4f;
+        const float ChunkSize = 4f;
         const int ChunkCells = 192;
         const string ChunkMeshName = "Native cell chunk";
 
-        public static float DepthFor(float area, float scale, float min, float band) =>
-            Mathf.Clamp(Mathf.Sqrt(Mathf.Max(area, 0)) * scale, min, band);
+        // Band look: where a cell's face covers more than one of Darryn's materials, the other materials' parts are drawn
+        // as face-only overlays this far in front of the cell's face (exact edges, no holes, no clipping of the cell).
+        const float OverlayLift = 0.004f;
 
         [StructLayout(LayoutKind.Sequential)]
         struct Vertex
@@ -137,7 +125,9 @@ namespace Bom.Unity
             public Material Face;
             public float Lo,
                 Hi;
-            public GameObject Art;
+            public GameObject Art,
+                BackWall;
+            public Mesh BackWallMesh;
             public bool ArtBuilt,
                 ArtValid;
             public Transform ArtBody;
@@ -161,6 +151,10 @@ namespace Bom.Unity
         {
             public Material Material;
             public bool Mapped;
+            // G3: depth order of Darryn's front faces (0 = deepest). Where two of his materials overlap on screen, the
+            // one in front shows, so overlays are lifted by rank.
+            public float Z;
+            public int Rank;
             public float Ux,
                 Uy,
                 U0,
@@ -184,6 +178,11 @@ namespace Bom.Unity
         readonly Transform root;
         readonly Material fallback;
         readonly bool g1;
+
+        // band: depth from piece area (G3 default and the G1 prototype). bandLook: the G3 default look (registry
+        // materials, no intact art, material overlays, terrain back walls).
+        readonly bool band,
+            bandLook;
         BomVisualRegistry registry;
         readonly Dictionary<ulong, HashSet<ulong>> initial = new Dictionary<ulong, HashSet<ulong>>();
         bool trusted;
@@ -250,17 +249,19 @@ namespace Bom.Unity
             root.SetParent(parent, false);
             this.fallback = fallback;
             this.g1 = g1;
+            bandLook = !g1 && BomDepthLook.Current == BomDepthLook.Mode.Band;
+            band = g1 || bandLook;
             if (g1)
                 Debug.Log(
                     "BOM G1 ON band="
-                        + Band.ToString("0.###", CultureInfo.InvariantCulture)
+                        + BomDepthLook.Band.ToString("0.###", CultureInfo.InvariantCulture)
                         + " min_depth="
-                        + MinDepth.ToString("0.###", CultureInfo.InvariantCulture)
+                        + BomDepthLook.MinDepth.ToString("0.###", CultureInfo.InvariantCulture)
                         + " depth_scale="
-                        + DepthScale.ToString("0.###", CultureInfo.InvariantCulture)
+                        + BomDepthLook.Scale.ToString("0.###", CultureInfo.InvariantCulture)
                 );
             else
-                Debug.Log("BOM CELLS ON path=persistent-chunks clip=off");
+                Debug.Log("BOM CELLS ON path=persistent-chunks clip=off look=" + BomDepthLook.Describe());
             // Warm the pools at join so the first blast does not create dozens of GameObjects/Meshes in one frame
             // (measured: Yard's first blast 22 ms without this, later blasts ~4 ms).
             for (int i = 0; i < WarmChunks; i++)
@@ -395,7 +396,11 @@ namespace Bom.Unity
                     initial.TryGetValue(id, out source.Initial);
                     source.Native = native;
                     if (!entry.Hidden)
+                    {
                         PreparePaints(source);
+                        if (bandLook && BomDepthLook.IsTerrain(source.Lo, source.Hi))
+                            BuildBackWall(source);
+                    }
                 }
                 sources[id] = source;
             }
@@ -450,6 +455,7 @@ namespace Bom.Unity
                         if (normal.sqrMagnitude < 1e-12f || normal.normalized.z > -0.5f)
                             continue;
                         front++;
+                        paint.Z += (p0.z + p1.z + p2.z) / 3;
                         triangles.Add(new PaintTriangle { A = p0, B = p1, C = p2, Paint = index });
                         if (!hasUV)
                             continue;
@@ -497,12 +503,19 @@ namespace Bom.Unity
                             paint.Mapped = worst < 1e-3;
                         }
                     }
+                    if (front > 0)
+                        paint.Z /= front;
                     paints.Add(paint);
                 }
             }
             if (paints.Count == 0)
                 return;
             source.Paints = paints.ToArray();
+            foreach (var a in paints)
+                foreach (var b in paints)
+                    if (b.Z > a.Z || b.Z == a.Z && paints.IndexOf(b) < paints.IndexOf(a))
+                        a.Rank++;
+            source.Triangles = triangles; // the authored front outline (G3 back wall, material overlays)
             if (paints.Count == 1 || triangles.Count == 0)
                 return;
             Vector2 lo = triangles[0].A, hi = lo;
@@ -529,7 +542,6 @@ namespace Bom.Unity
                     bucket.Add(i);
                 }
             }
-            source.Triangles = triangles;
             int mapped = 0;
             foreach (var p in paints)
                 if (p.Mapped)
@@ -652,9 +664,312 @@ namespace Bom.Unity
         {
             if (source.Art != null)
                 UnityEngine.Object.Destroy(source.Art);
+            if (source.BackWall != null)
+                UnityEngine.Object.Destroy(source.BackWall);
+            if (source.BackWallMesh != null)
+                UnityEngine.Object.Destroy(source.BackWallMesh);
+            source.BackWall = null;
+            source.BackWallMesh = null;
             source.Art = null;
             source.ArtBody = null;
             source.ArtBuilt = false;
+        }
+
+        // G3 terrain back wall: Darryn's authored front triangles of this source (its intact outline, from the registry),
+        // flat at BomDepthLook.BackWallZ, darker, no top cap and no sides. Built once when the source is first seen and
+        // never rebuilt: blasts only take away the front layer, so a crater shows dark earth behind.
+        void BuildBackWall(Source source)
+        {
+            var tris = source.Triangles;
+            float z = BomDepthLook.BackWallZ;
+            if (source.Paints == null || tris == null || tris.Count == 0 || source.Hi <= z)
+                return;
+            int paints = source.Paints.Length;
+            var vertices = new List<Vector3>(tris.Count * 3);
+            var uvs = new List<Vector2>(tris.Count * 3);
+            var perPaint = new List<int>[paints];
+            foreach (var t in tris)
+            {
+                var paint = source.Paints[t.Paint];
+                Vector2 b = t.B,
+                    c = t.C;
+                if (Cross(t.A, b, c) > 0) // front faces are clockwise as seen by the camera (as Triangulate emits them)
+                {
+                    b = t.C;
+                    c = t.B;
+                }
+                int at = vertices.Count;
+                foreach (var p in new[] { t.A, b, c })
+                {
+                    vertices.Add(new Vector3(p.x, p.y, z));
+                    uvs.Add(
+                        paint.Mapped
+                            ? new Vector2(paint.Ux * p.x + paint.Uy * p.y + paint.U0, paint.Vx * p.x + paint.Vy * p.y + paint.V0)
+                            : p
+                    );
+                }
+                (perPaint[t.Paint] ??= new List<int>()).AddRange(new[] { at, at + 1, at + 2 });
+            }
+            var mesh = new Mesh { name = "BOM back wall", indexFormat = vertices.Count > 65000 ? IndexFormat.UInt32 : IndexFormat.UInt16 };
+            mesh.SetVertices(vertices);
+            var normals = new Vector3[vertices.Count];
+            for (int k = 0; k < normals.Length; k++)
+                normals[k] = Vector3.back;
+            mesh.normals = normals;
+            mesh.SetUVs(0, uvs);
+            var materials = new List<Material>();
+            var blocks = new List<MaterialPropertyBlock>();
+            for (int p = 0; p < paints; p++)
+            {
+                if (perPaint[p] == null)
+                    continue;
+                var material = source.Paints[p].Material;
+                var block = new MaterialPropertyBlock();
+                Color color =
+                    material != null && material.HasProperty("_BaseColor") ? material.GetColor("_BaseColor")
+                    : material != null && material.HasProperty("_Color") ? material.GetColor("_Color")
+                    : Color.white;
+                float shade = BomDepthLook.BackWallShade;
+                var dark = new Color(color.r * shade, color.g * shade, color.b * shade, 1);
+                block.SetColor("_BaseColor", dark);
+                block.SetColor("_Color", dark);
+                materials.Add(material);
+                blocks.Add(block);
+            }
+            mesh.subMeshCount = materials.Count;
+            for (int p = 0, sub = 0; p < paints; p++)
+                if (perPaint[p] != null)
+                    mesh.SetTriangles(perPaint[p], sub++, true);
+            mesh.RecalculateBounds();
+            var wall = new GameObject("BOM source " + source.Id + " back wall");
+            wall.transform.SetParent(root, false);
+            wall.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = wall.AddComponent<MeshRenderer>();
+            renderer.sharedMaterials = materials.ToArray();
+            renderer.shadowCastingMode = ShadowCastingMode.Off;
+            for (int sub = 0; sub < blocks.Count; sub++)
+                renderer.SetPropertyBlock(blocks[sub], sub);
+            source.BackWall = wall;
+            source.BackWallMesh = mesh;
+            BackWalls++;
+        }
+
+        public int BackWalls { get; private set; }
+
+        // ---- G3 band look: exact material edges. A cell's face is drawn whole in the paint that covers most of it; each
+        // other paint it touches is drawn as a face-only overlay of exactly (cell intersect that paint's triangles), lifted
+        // OverlayLift towards the camera. Cached per cell (native cell outlines never change). ----
+        readonly Dictionary<ulong, (ulong shape, int main, int extra)> cellSplit =
+            new Dictionary<ulong, (ulong, int, int)>();
+        readonly List<Vector2> cellPoly = new List<Vector2>(),
+            clipA = new List<Vector2>(),
+            clipB = new List<Vector2>();
+        readonly List<int> triangleHits = new List<int>();
+        readonly HashSet<int> triangleSeen = new HashSet<int>();
+        readonly float[] paintArea = new float[32];
+        const int MaxSplitPaints = 31;
+
+        void LoadCell(BomSession client, BomCell cell)
+        {
+            cellPoly.Clear();
+            for (uint j = 0; j < cell.vertex_count; j++)
+            {
+                var v = client.Vertices[cell.vertex_start + j];
+                cellPoly.Add(new Vector2(v.x, v.y));
+            }
+        }
+
+        // Darryn's front triangles whose grid buckets overlap the loaded cell's bounds.
+        void CollectTriangles(Source source)
+        {
+            triangleHits.Clear();
+            triangleSeen.Clear();
+            Vector2 lo = cellPoly[0],
+                hi = lo;
+            foreach (var p in cellPoly)
+            {
+                lo = Vector2.Min(lo, p);
+                hi = Vector2.Max(hi, p);
+            }
+            int x0 = Cell(lo.x - source.GridMin.x, source.GridW), x1 = Cell(hi.x - source.GridMin.x, source.GridW),
+                y0 = Cell(lo.y - source.GridMin.y, source.GridH), y1 = Cell(hi.y - source.GridMin.y, source.GridH);
+            for (int y = y0; y <= y1; y++)
+            for (int x = x0; x <= x1; x++)
+            {
+                var bucket = source.Grid[y * source.GridW + x];
+                if (bucket == null)
+                    continue;
+                foreach (int k in bucket)
+                    if (triangleSeen.Add(k))
+                        triangleHits.Add(k);
+            }
+        }
+
+        // The loaded cell clipped to one triangle (Sutherland-Hodgman); the result is in the returned list.
+        List<Vector2> Clip(PaintTriangle t)
+        {
+            Vector2 a = t.A,
+                b = t.B,
+                c = t.C;
+            if (Cross(a, b, c) < 0)
+            {
+                b = t.C;
+                c = t.B;
+            }
+            clipA.Clear();
+            clipA.AddRange(cellPoly);
+            ClipEdge(clipA, clipB, a, b);
+            ClipEdge(clipB, clipA, b, c);
+            ClipEdge(clipA, clipB, c, a);
+            return clipB;
+        }
+
+        static void ClipEdge(List<Vector2> input, List<Vector2> output, Vector2 e0, Vector2 e1)
+        {
+            output.Clear();
+            int n = input.Count;
+            for (int k = 0; k < n; k++)
+            {
+                Vector2 p = input[k],
+                    q = input[(k + 1) % n];
+                float dp = Cross(e0, e1, p),
+                    dq = Cross(e0, e1, q);
+                if (dp >= 0)
+                    output.Add(p);
+                if ((dp >= 0) != (dq >= 0))
+                    output.Add(p + (q - p) * (dp / (dp - dq)));
+            }
+        }
+
+        static float PolygonArea(List<Vector2> poly)
+        {
+            float a = 0;
+            for (int k = 0; k < poly.Count; k++)
+            {
+                Vector2 p = poly[k],
+                    q = poly[(k + 1) % poly.Count];
+                a += p.x * q.y - q.x * p.y;
+            }
+            return a * 0.5f;
+        }
+
+        // main: the paint drawn on the whole cell; extra: bit mask of paints drawn as overlays (0 = none).
+        void Split(BomSession client, Source source, int i, out int main, out int extra)
+        {
+            main = PaintOf(client, source, i);
+            extra = 0;
+            if (!bandLook || source.Grid == null || source.Triangles == null || source.Paints.Length > MaxSplitPaints)
+                return;
+            var cell = client.Cells[i];
+            if (cellSplit.TryGetValue(cell.id, out var known) && known.shape == cellShape[i])
+            {
+                if (known.main >= 0)
+                    main = known.main;
+                extra = known.extra;
+                return;
+            }
+            LoadCell(client, cell);
+            CollectTriangles(source);
+            int paints = source.Paints.Length;
+            Array.Clear(paintArea, 0, paints);
+            foreach (int k in triangleHits)
+            {
+                var t = source.Triangles[k];
+                var clipped = Clip(t);
+                if (clipped.Count >= 3)
+                    paintArea[t.Paint] += Mathf.Abs(PolygonArea(clipped));
+            }
+            float cellArea = Mathf.Abs(PolygonArea(cellPoly));
+            // The whole face takes the deepest material that covers part of the cell; each material in front of it is
+            // an overlay, drawn nearer the camera the further forward Darryn placed it.
+            float minArea = Mathf.Max(1e-5f, cellArea * 0.002f);
+            int best = -1;
+            for (int p = 0; p < paints; p++)
+                if (paintArea[p] > minArea && (best < 0 || source.Paints[p].Rank < source.Paints[best].Rank))
+                    best = p;
+            int mask = 0;
+            if (best >= 0)
+                for (int p = 0; p < paints; p++)
+                    if (p != best && paintArea[p] > minArea)
+                        mask |= 1 << p;
+            cellSplit[cell.id] = (cellShape[i], best, mask);
+            if (best >= 0)
+                main = best;
+            extra = mask;
+        }
+
+        // Face-only overlay for one cell and one paint: exactly the cell's part covered by that paint, in front of the
+        // cell's face, with that paint's UV mapping.
+        Geometry ExtrudeOverlay(BomSession client, BomCell cell, float lo, Source source, int paintIndex)
+        {
+            var paint = source.Paints[paintIndex];
+            var rest = new Vector2(cell.rest_x, cell.rest_y);
+            float z = lo - OverlayLift * Mathf.Max(1, paint.Rank);
+            LoadCell(client, cell);
+            CollectTriangles(source);
+            Reserve(0, 0);
+            var g = new Geometry
+            {
+                V = usedVertices,
+                I = usedIndices,
+                Stamp = stamp,
+            };
+            foreach (int k in triangleHits)
+            {
+                var t = source.Triangles[k];
+                if (t.Paint != paintIndex)
+                    continue;
+                var poly = Clip(t);
+                int m = poly.Count;
+                if (m < 3)
+                    continue;
+                float area = PolygonArea(poly);
+                if (Mathf.Abs(area) < 1e-7f)
+                    continue;
+                EnsureScratch(m);
+                for (int q = 0; q < m; q++)
+                    points[q] = poly[q] - rest;
+                for (int q = 0; q < m; q++)
+                    order[q] = area > 0 ? q : m - 1 - q;
+                if (!Triangulate(m, order, m, false, out int count))
+                    continue; // a degenerate sliver; the cell's own face is under it, so nothing shows through
+                int faces = count / 2;
+                Reserve(m, faces);
+                int vb = usedVertices;
+                for (int q = 0; q < m; q++)
+                {
+                    Vector2 p = poly[q];
+                    arenaVertices[usedVertices++] = new Vertex
+                    {
+                        Position = new Vector3(points[q].x, points[q].y, z),
+                        Normal = Vector3.back,
+                        UV = paint.Mapped
+                            ? new Vector2(paint.Ux * p.x + paint.Uy * p.y + paint.U0, paint.Vx * p.x + paint.Vy * p.y + paint.V0)
+                            : p,
+                    };
+                }
+                for (int e = 0; e < count; e += 6) // Triangulate emits front (a,c,b) then back; keep the front only
+                {
+                    arenaIndices[usedIndices++] = triangles[e] + vb - g.V;
+                    arenaIndices[usedIndices++] = triangles[e + 1] + vb - g.V;
+                    arenaIndices[usedIndices++] = triangles[e + 2] + vb - g.V;
+                }
+            }
+            g.VN = usedVertices - g.V;
+            g.FN = usedIndices - g.I;
+            g.SN = 0;
+            liveVertices += g.VN;
+            liveIndices += g.FN;
+            return g;
+        }
+
+        // Overlay entries in chunk lists are encoded as ~(cell index * 32 + paint).
+        (ulong, ulong) KeyOf(BomSession client, int entry)
+        {
+            if (entry >= 0)
+                return (client.Cells[entry].id, cellShape[entry]);
+            int d = ~entry;
+            return (client.Cells[d >> 5].id, Mix(cellShape[d >> 5], 0x0E5E0000UL + (ulong)(d & 31)));
         }
 
         static float Area(BomSession client, BomCell cell)
@@ -798,6 +1113,16 @@ namespace Bom.Unity
             return looks.Count - 1;
         }
 
+        void AddEntry(long ck, int entry)
+        {
+            if (!chunkCells.TryGetValue(ck, out var list))
+            {
+                list = RentList();
+                chunkCells.Add(ck, list);
+            }
+            list.Add(entry);
+        }
+
         List<int> RentList()
         {
             if (listPool.Count == 0)
@@ -879,7 +1204,7 @@ namespace Bom.Unity
                     )
                         source.Uniform = false;
                 }
-                if (g1)
+                if (band)
                 {
                     pieceArea.TryGetValue(cell.piece_id, out float sum);
                     pieceArea[cell.piece_id] = sum + Area(client, cell);
@@ -921,7 +1246,8 @@ namespace Bom.Unity
                     continue;
                 }
                 if (
-                    trusted
+                    !bandLook
+                    && trusted
                     && source.Uniform
                     && source.Initial != null
                     && source.Count == source.Initial.Count
@@ -972,9 +1298,7 @@ namespace Bom.Unity
                     body.Pivot = w.Pivot;
                     body.Transform.SetPositionAndRotation(new Vector3(w.Pivot.x, w.Pivot.y, 0), Quaternion.identity);
                 }
-                float g1Depth = 0;
-                if (g1)
-                    g1Depth = DepthFor(pieceArea[w.Piece], DepthScale, MinDepth, Band);
+                float pieceDepth = band ? BomDepthLook.PieceDepth(pieceArea[w.Piece]) : 0;
                 // Group the body's cells into chunks: by look, and spatially for large bodies so a blast only
                 // rebuilds the chunks it touched. Intact and hidden sources draw no extrusion.
                 foreach (var list in chunkCells.Values)
@@ -987,7 +1311,8 @@ namespace Bom.Unity
                     if (source != null && (source.Intact || source.Entry != null && source.Entry.Hidden))
                         continue;
                     var cell = client.Cells[i];
-                    int look;
+                    int look,
+                        extra = 0;
                     cellPaintIndex[i] = -1;
                     if (g1)
                     {
@@ -998,7 +1323,7 @@ namespace Bom.Unity
                         look = LookFor(0, null, cell.color_rgba);
                     else
                     {
-                        int paint = PaintOf(client, source, i);
+                        Split(client, source, i, out int paint, out extra);
                         cellPaintIndex[i] = paint;
                         var material = paint >= 0 ? source.Paints[paint].Material : source.Face;
                         look =
@@ -1006,30 +1331,36 @@ namespace Bom.Unity
                                 ? LookFor(2, material, 0)
                                 : LookFor(1, material, cell.color_rgba);
                     }
-                    long ck = look;
-                    if (spatial)
-                        ck |=
-                            ((long)(Mathf.FloorToInt(cell.rest_x / ChunkSize) & 0xffff) << 16)
-                            | ((long)(Mathf.FloorToInt(cell.rest_y / ChunkSize) & 0xffff) << 32);
-                    if (!chunkCells.TryGetValue(ck, out var list))
-                    {
-                        list = RentList();
-                        chunkCells.Add(ck, list);
-                    }
-                    list.Add(i);
+                    // The cell's geometry key: outline, depth, paint and overlay set (computed once per apply, here).
+                    Depth(source, pieceDepth, out float lo, out float hi);
+                    cellShape[i] = Mix(
+                        Mix(Mix(Mix(cellShape[i], Bits(lo)), Bits(hi)), (ulong)(cellPaintIndex[i] + 1)),
+                        (ulong)extra
+                    );
+                    long spatialKey = spatial
+                        ? ((long)(Mathf.FloorToInt(cell.rest_x / ChunkSize) & 0xffff) << 16)
+                            | ((long)(Mathf.FloorToInt(cell.rest_y / ChunkSize) & 0xffff) << 32)
+                        : 0;
+                    AddEntry(look | spatialKey, i);
+                    for (int p = 0; extra != 0 && p < MaxSplitPaints; p++)
+                        if ((extra & (1 << p)) != 0)
+                        {
+                            bool initialCell = source.Initial != null && source.Initial.Contains(cell.id);
+                            int overlay = initialCell
+                                ? LookFor(2, source.Paints[p].Material, 0)
+                                : LookFor(1, source.Paints[p].Material, cell.color_rgba);
+                            AddEntry(overlay | spatialKey, ~(i * 32 + p));
+                        }
                 }
                 foreach (var chunk in body.Chunks.Values)
                     chunk.Seen = false;
                 foreach (var cpair in chunkCells)
                 {
                     ulong signature = Mix(14695981039346656037UL, (ulong)cpair.Value.Count);
-                    foreach (int i in cpair.Value)
+                    foreach (int e in cpair.Value)
                     {
-                        float lo, hi;
-                        Depth(cellSource[i], g1Depth, out lo, out hi);
-                        ulong shape = Mix(Mix(Mix(cellShape[i], Bits(lo)), Bits(hi)), (ulong)(cellPaintIndex[i] + 1));
-                        cellShape[i] = shape;
-                        signature = Mix(Mix(signature, client.Cells[i].id), shape);
+                        var key = KeyOf(client, e);
+                        signature = Mix(Mix(signature, key.Item1), key.Item2);
                     }
                     int look = (int)(cpair.Key & 0xffff);
                     if (!body.Chunks.TryGetValue(cpair.Key, out var chunk))
@@ -1041,12 +1372,12 @@ namespace Bom.Unity
                     chunks++;
                     if (chunk.Signature == signature && chunk.Look == look && !moved)
                     {
-                        foreach (int i in cpair.Value)
-                            Touch((client.Cells[i].id, cellShape[i]));
+                        foreach (int e in cpair.Value)
+                            Touch(KeyOf(client, e));
                         continue;
                     }
                     long bt = BomHitchTrace.On ? Stopwatch.GetTimestamp() : 0;
-                    newCells += Build(client, cpair.Value, w.Pivot, g1Depth, chunk.Mesh);
+                    newCells += Build(client, cpair.Value, w.Pivot, pieceDepth, chunk.Mesh);
                     if (BomHitchTrace.On)
                         BomHitchTrace.BuildTicks += Stopwatch.GetTimestamp() - bt;
                     chunk.Signature = signature;
@@ -1142,6 +1473,7 @@ namespace Bom.Unity
                         + " hidden="
                         + HiddenSources
                         + (g1 ? " tile_materials=" + g1Materials.Count + " hidden_by_path=" + hiddenByPath : "")
+                        + (bandLook ? " back_walls=" + BackWalls + " split_cells=" + cellSplit.Count : "")
                         + " ms="
                         + LastMilliseconds.ToString("0.00", CultureInfo.InvariantCulture)
                 );
@@ -1155,13 +1487,13 @@ namespace Bom.Unity
         // Per-apply log only when asked (--bom-cell-log); otherwise the first two applies and any slow one.
         static readonly bool Log = Array.IndexOf(Environment.GetCommandLineArgs(), "--bom-cell-log") >= 0;
 
-        void Depth(Source source, float g1Depth, out float lo, out float hi)
+        // pieceDepth is already BomDepthLook.PieceDepth (quantised); the band is centred on the player plane.
+        void Depth(Source source, float pieceDepth, out float lo, out float hi)
         {
-            if (g1)
+            if (band)
             {
-                float d = Mathf.Max(1, Mathf.RoundToInt(g1Depth / DepthStep)) * DepthStep;
-                lo = -d / 2;
-                hi = d / 2;
+                lo = -pieceDepth / 2;
+                hi = pieceDepth / 2;
             }
             else if (source != null)
             {
@@ -1201,6 +1533,8 @@ namespace Bom.Unity
                 Compact();
             if (cellPaint.Count > 2 * geometry.Count + 4096)
                 cellPaint.Clear(); // recomputed lazily from the shape-checked cache
+            if (cellSplit.Count > 2 * geometry.Count + 4096)
+                cellSplit.Clear();
         }
 
         void Compact()
@@ -1334,21 +1668,25 @@ namespace Bom.Unity
         Geometry Extrude(BomSession client, BomCell cell, float lo, float hi, Paint paint)
         {
             int n = (int)cell.vertex_count;
-            if (points.Length < n)
-            {
-                int size = Math.Max(n, points.Length * 2);
-                points = new Vector2[size];
-                order = new int[size];
-                remaining = new int[size];
-                cleaned = new int[size];
-                triangles = new int[size * 6];
-            }
+            EnsureScratch(n);
             for (int i = 0; i < n; i++)
             {
                 var v = client.Vertices[cell.vertex_start + (uint)i];
                 points[i] = new Vector2(v.x - cell.rest_x, v.y - cell.rest_y);
             }
             return ExtrudePoints(n, new Vector2(cell.rest_x, cell.rest_y), lo, hi, paint);
+        }
+
+        void EnsureScratch(int n)
+        {
+            if (points.Length >= n)
+                return;
+            int size = Math.Max(n, points.Length * 2);
+            points = new Vector2[size];
+            order = new int[size];
+            remaining = new int[size];
+            cleaned = new int[size];
+            triangles = new int[size * 6];
         }
 
         // Extrudes points[0..n) (relative to rest) into the arena.
@@ -1475,22 +1813,26 @@ namespace Bom.Unity
         }
 
         // Assembles one chunk from cached cell geometry straight into a writable MeshData (native memory only).
-        int Build(BomSession client, List<int> cells, Vector2 pivot, float g1Depth, Mesh mesh)
+        int Build(BomSession client, List<int> cells, Vector2 pivot, float pieceDepth, Mesh mesh)
         {
             int created = 0,
                 vertexCount = 0,
                 faceCount = 0,
                 sideCount = 0;
-            foreach (int i in cells)
+            foreach (int e in cells)
             {
+                int i = e >= 0 ? e : ~e >> 5;
                 var cell = client.Cells[i];
-                var key = (cell.id, cellShape[i]);
+                var key = KeyOf(client, e);
                 if (!geometry.TryGetValue(key, out var g))
                 {
-                    Depth(cellSource[i], g1Depth, out float lo, out float hi);
+                    Depth(cellSource[i], pieceDepth, out float lo, out float hi);
                     var source = cellSource[i];
                     int paint = cellPaintIndex[i];
-                    g = Extrude(client, cell, lo, hi, paint >= 0 && source != null ? source.Paints[paint] : null);
+                    g =
+                        e >= 0
+                            ? Extrude(client, cell, lo, hi, paint >= 0 && source != null ? source.Paints[paint] : null)
+                            : ExtrudeOverlay(client, cell, lo, source, ~e & 31);
                     geometry.Add(key, g);
                     created++;
                 }

@@ -524,3 +524,16 @@ GC MB/min unchanged (13.5–19.2 host, 7.6–14.6 guest); `present_gc` peak stay
 The Bridge guest's 33 ms frame has native 0.1 and present 0.04 ms. It lands 0.16 s before the blast arrives, when the harness first brings the host
 window to the front (the 9.1 harness pattern; not proven further). Every blast frame that lands at 20–29 ms is native 3–6 ms plus present 2–6 ms on top of a ~12 ms frame, so it misses one vsync.
 Gates: Build, Content (1555), Rounds yard+draw, front door Yard/Bridge/Tower, Prediction 6/6 (`evidence/M0/Test-Prediction-20261117T071000168Z.json`) pass.
+
+### 9.3 G3: depth from shape as the default look (2026-11-17)
+
+OD-4 is the default on every level, with no flag. The depth rule lives in one file, `Runtime/BomDepthLook.cs` (piece depth, terrain rule,
+back-wall depth and shade), so the owner can swap it without touching the presenter. `--bom-stock-look` keeps the G2 look for one release.
+- Every cell, intact or not, is drawn from its native outline at its piece's depth inside the 1.6 band, dressed in Darryn's registry materials.
+- Terrain back wall: sources Darryn authored deep (>= 6 units: Yard ground, Tower base, Classic ground) get his front outline drawn flat just
+  behind the band, 0.42x darker, with no top cap; built once per source and never rebuilt. Structures (Bridge, Tower floors) get none.
+- Exact material edges (the known difference in section 9): a cell covering several of his materials is drawn in the deepest one, and the ones in front are
+  exact face-only overlays (cell intersect his triangles), ordered by his depth. Classic Yard's grass/dirt edge is now straight.
+- Still open: faint brightness banding along cell edges on Classic Yard's dirt (likely per-chunk light lists; needs a protected render-pipeline change).
+Perf vs E1-GN6, all 4 levels, 1 and 2 windows: p95/p99 within 0.1 ms, GC and frames >33 ms unchanged; first-blast presentation +1-3 ms (peak 8.6 ms).
+Evidence, screenshots and gate records: `integration/evidence/G3/README.md`.
