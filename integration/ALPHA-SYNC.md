@@ -387,7 +387,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
      Capture it next to the originals.
   - Done when: `integration/review/destruction-design-2026-11.md` has the captures, the design, the measured effect of the prototype and a task
     breakdown (models/lanes/sizes); Build, Content and Rounds still pass with the flag off. [ ] Owner check: the prototype feels like the original Odin game in Darryn's 2.5D.
-- [~] **G2 Presentation core for every level** (T1, Opus, M; from design doc section 8) claimed: Claude Opus 5.5 2026-11-16
+- [x] **G2 Presentation core for every level** (T1, Opus, M; from design doc section 8) claimed: Claude Opus 5.5 2026-11-16 done: Claude Opus 5.5 2026-11-16 b3be0541 — `BomCellPresenter` is the only cell path (old path behind `--bom-clipped-source-art` for one release); GC 2682 → 14 MB/min on Classic Yard (68–235 → 14–19 elsewhere), Classic p95 24.1/41.4 → 17.4/17.5 ms (1w/2w), blast draw max 63–117 → 20–35 ms; Build, Content (1555), Rounds yard+draw, front door Yard/Bridge/Tower (17/17) and Prediction 6/6 pass (doc section 9). Look residual: Classic Yard grass/dirt edge follows cell outlines (zooms in `evidence/G2`).
   Make `BomG1Presenter`'s persistent, chunked, cached bodies the only cell path (no flag): remove the per-revision batch rebuild in `Accept`;
   keep bodies and caches across an epoch whose cells did not change (F2 fix 1a); assemble chunks with `Mesh.MeshData` / `NativeArray` for
   zero managed GC per blast; retire per-fragment prism clipping of Darryn's meshes in the play band. Keep the current look (depth/band is G3).
