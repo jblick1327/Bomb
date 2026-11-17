@@ -431,6 +431,25 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   never rebuilt); Darryn's material per source through the registry, not scene paths; stock look behind a flag for one release; per-material split if cheap.
   - Done when: Content, NativeInterop, Rounds yard+draw, Prediction 6/6 and front door Yard/Bridge/Tower pass; perf matrix shows no frame-time regression
     against E1-GN6; before/after screenshots on all four levels in `evidence/G3`. [ ] Owner check: debris reads as chunks, craters show dark earth behind, nothing looks walkable that is not.
+- **G4 does not exist.** The design doc's task table (section 8) jumps from G3 to G5. This is a numbering gap, not a lost task: no G4 was ever defined in the doc or in chat.
+- **Native G tasks done (Odin `alpha-sync`):**
+  - G-N2/G-N3 and G-N5 merged in `f3a4e48`, brought in by E1-G.
+  - G-N1 (glue capacity from materials, steel) merged in `498f6ab`.
+  - G-N6 (prediction flap fix, not in the doc table; added 2026-11-17 for the owner's "the prediction isn't smooth") merged in `3be3283`.
+  - G-N1 and G-N6 were brought in by E1-GN6.
+  - The doc table's E1-G row still says it brings G-N1; that is stale, because E1-GN6 did it.
+- [ ] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). The design doc section 8 G5 row and section 3 define it:
+  `Editor/BomTileLevelBuilder.cs` applies the section 3 mapping to any tile scene (merge duplicates, partition + glue, material table incl. steel,
+  anchors at real supports only, Bridge piles per OD-3, invariants I1–I5 as export failures); reads mesh silhouettes; replaces the Python generator.
+  - Done when: the doc's G5 row and section 3 invariants hold on Yard, Bridge, Tower and Classic Yard exports.
+  - Gates: Build, Content, Rounds, and front door Yard/Bridge/Tower. Prediction runs only if the DLL changed (rule 7).
+- [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
+- [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
+  - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-1 (C, bedrock).
+  - Classic's blast native cost (up to 19 ms, about 4150 cells) scales with cell count. Re-measure it after the re-author before any native profiling (see the 2026-11-17 orchestrator finding).
+- [ ] **G8 Boundary per OD-1** (T2, Sonnet, S; Lane U). B (no walls) for the Bridge; C (destructible bedrock) for the Yard, Tower and Classic. Check the kill and fragment-cull bounds, and decide Darryn's 26 outside-arena Yard tiles (G3 finding).
+- [ ] **G9 Performance and feel pass** (T1, Opus, M; Lane U; after G2–G8). Run the F2 protocol with 2 windows, a long human Elimination round with blasts on every level, the Prediction suite and the 30-minute soak.
+- [ ] **G10 Repackage** (T2, Sonnet, S; Lane U; after G9 and the owner check). As F4, with the G look as the default.
 
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
@@ -604,3 +623,21 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
 - 2026-11-12 Claude Sonnet (F4): the package now ships the front-door game: `Build-BomGame.ps1 -Backend Mono|IL2CPP|Both` (new, also used by `Test-FrontDoor.ps1 -Backend`), `BomFrontDoorBuilder.BuildIl2Cpp`, `Package-BomWindows.ps1` (takes `Game-Mono`/`Game-IL2CPP`, checks server hash and levels), `Launch-Bom.ps1` (just opens N main-menu windows; the game runs its own server, so `-Bind`/server flags are gone). `Run-FrontDoor.py` crashed building its summary for IL2CPP (no `Managed/Bom.Unity.Runtime.dll`); it now hashes `GameAssembly.dll` there. The scripted run mutes audio, so the audio prefab is not heard in it: owner, listen for music in IL2CPP.
 - 2026-11-17 Claude Opus (E1-GN6): after G-N6, Tower still has 14-18 `Dynamic_History_Required` entries per 100 s (others 2-3), the remaining triggers the G-N6 hand-over names. Yard 2-window first-blast host frame was 37 and 34 ms in two runs (G2b 26) with native ≤ 1.7 ms; not chased (one frame, not native). Passing `-Levels 1,3` from bash to `powershell -File` gives level 13: run one level per call.
 - 2026-11-17 Claude Opus (G3): Classic Yard's dirt still shows faint brightness banding along cell edges in the band look. Not proven; likely URP per-object light lists differing between 4x4-unit chunks. A fix touches the protected render-pipeline asset (same one as D10). Darryn's 26 outside-arena Yard tiles are still drawn at full depth next to the band-deep ground (G5/G8). Prediction failed 3x on cadence only after a Modern Standby on the dev machine (adverse 142.7 -> 132 fps, frame p95 7.4 -> 12.6 ms) with the DLL unchanged; see `evidence/G3/README.md`.
+- 2026-11-17 Claude Opus (orchestrator hand-over). Checked by the outgoing orchestrator against the repos.
+  - **Running or half-done:** nothing.
+    - No `[~]` boxes, no Unity or game processes, and no uncommitted tracked changes in either repo.
+    - Untracked on purpose (as every perf task did): perf PNG/JSON, G2b traces and some `evidence/M0` gate records under E1-G, E1-GN6, G2, G2b and G3.
+    - Odin keeps four worktrees and branches, all already merged into `alpha-sync`: `claude/g-n1-glue-materials-c88a7a`, `claude/g-n2-glue-validate-cdef50`, `claude/g-n5-client-cost-3d0d28` and `claude/prediction-flap-fix-1abcdd`. They are safe to remove, but not removed; that is the owner's call.
+    - Nothing is pushed, in either repo.
+  - **Told the owner, only in chat until now:**
+    - (a) Classic Yard's 33-42 ms blast frames are one dropped 60 fps frame. Native cost of up to 19 ms scales with its 4150 cells. Recommended: no native profiling until G5/G7 re-author Classic (now in G7).
+    - (b) The G3 banding fix needs the owner's OK to edit the protected render-pipeline asset. The owner has not been asked yet.
+    - (c) The dev machine ran slower after the 10:34 Modern Standby. If cadence checks keep failing, a restart is the owner's call; never restart it yourself.
+    - (d) The owner said CPU-heavy work and a busy machine are fine. Keep the laptop on AC during runs: unplugging happened during the standby.
+  - **Old hand-over (`BOM-Release\HANDOFF-opus-main-chat.md`) is stale.** This file supersedes it.
+    - Issues 1 and 2 were closed by E1-G and G2b.
+    - Issue 3: the edge was fixed by G3; the banding is still open (G3 finding).
+    - Issue 5 is already closed here: the PlayerLoop crash by D3D11 (D13), and the 0.75 s input offset by `BomSession.Now` (C2e).
+    - Issue 4 was not tracked here. Residual GC is 14-19 MB/min, not from cell presentation (≤ 0.8 KB/frame), likely the HUD (review #12). It is low priority and has no task.
+  - **Not verified by the outgoing orchestrator:** whether F2 fix 3 (vSync / frame cap in normal play) was ever done.
+  - **Owner checks added today:** E1-G, G2b, E1-GN6 and G3. They are open and not to be ticked by models.
