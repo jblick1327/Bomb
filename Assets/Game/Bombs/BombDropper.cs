@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 // Creates falling bombs and coordinates their crater, blast, and cleanup effects.
 [AddComponentMenu("Arena/Bomb Dropper")]
@@ -76,14 +77,58 @@ public sealed class BombDropper : MonoBehaviour
     [SerializeField] private UnityEngine.Object timeVisualPrefab;
     [SerializeField] private UnityEngine.Object speedBoostVisualPrefab;
     [SerializeField] private UnityEngine.Object shieldVisualPrefab;
-    [SerializeField] private UnityEngine.Object bombVisualPrefab;
     private float itemWaveTimer;
+    [Header("Bomb types")]
+    [Tooltip("Chance that each drop is a timed bomb. 0 = all impact, 1 = all timed.")]
+    [SerializeField, Range(0f, 1f)] private float timedBombChance = 0.5f;
+    [Tooltip("Countdown starts on the timed bomb's first solid impact.")]
+    [SerializeField, Min(0.1f), InspectorName("Timed bomb fuse (seconds)")]
+    private float timedBombFuse = 3f;
+
+    [Header("Impact bomb appearance")]
+    [Tooltip("Drag a model asset or prefab from the Project window here. Its meshes, child objects, and materials are kept.")]
+    [FormerlySerializedAs("bombVisualPrefab")]
+    [SerializeField] private GameObject impactBombModel;
+    [FormerlySerializedAs("bombMeshRotation"), FormerlySerializedAs("impactBombMeshRotation")]
+    [SerializeField] private Vector3 impactBombModelRotation;
+    [Tooltip("The model is centered and fitted to the bomb diameter, then multiplied by this value. Its collision size automatically follows the final model height.")]
+    [FormerlySerializedAs("bombMeshScale"), FormerlySerializedAs("impactBombMeshScale")]
+    [SerializeField, Min(0.01f)] private float impactBombModelScale = 1f;
+
+    [Header("Timed bomb appearance")]
+    [Tooltip("Separate model asset or prefab for timed bombs, including its materials. Leave empty to use the impact bomb model and its rotation/scale settings.")]
+    [SerializeField] private GameObject timedBombModel;
+    [FormerlySerializedAs("timedBombMeshRotation")]
+    [SerializeField] private Vector3 timedBombModelRotation;
+    [FormerlySerializedAs("timedBombMeshScale")]
+    [SerializeField, Min(0.01f)] private float timedBombModelScale = 1f;
+
+    [Header("Explosion size by bomb type")]
+    [Tooltip("Multiplier for carving, player damage, destruction, and blast ring radii. 0.8 is 20% smaller than the base radii above.")]
+    [SerializeField, Min(0.05f)] private float impactExplosionScale = 0.8f;
+    [Tooltip("Multiplier for carving, player damage, destruction, and blast ring radii. 1.3 is 30% larger than the base radii above.")]
+    [SerializeField, Min(0.05f)] private float timedExplosionScale = 1.3f;
+
     [SerializeField] private Material bombMaterial;
     [SerializeField] private Material blastMaterial;
     [SerializeField, Min(0.05f), InspectorName("Blast duration (seconds)")]
     private float blastDuration = 0.35f;
     [Tooltip("Draw the spawn range, carve radius and lethal radius when selected in the Scene view.")]
     [SerializeField] private bool showSizePreviews;
+
+    [Header("Explosion audio")]
+    [Tooltip("Optional sound played at each explosion. Import an audio file and assign its AudioClip here.")]
+    [SerializeField] private AudioClip explosionClip;
+    [SerializeField, Range(0f, 1f)] private float explosionVolume = 1f;
+    [Tooltip("0 = equal volume everywhere; 1 = positional 3D sound.")]
+    [SerializeField, Range(0f, 1f)] private float explosionSpatialBlend = 1f;
+    [SerializeField, Min(0.01f)] private float explosionMinDistance = 5f;
+    [SerializeField, Min(0.01f)] private float explosionMaxDistance = 50f;
+
+    [Header("Timed bomb countdown audio")]
+    [Tooltip("Optional sound that loops from first impact until detonation. Uses the explosion audio's spatial blend and distance settings.")]
+    [SerializeField] private AudioClip countdownClip;
+    [SerializeField, Range(0f, 1f)] private float countdownVolume = 1f;
 
     [SerializeField] private ArenaLayout layout;
     [SerializeField] private ArenaSession session;
@@ -101,7 +146,7 @@ public sealed class BombDropper : MonoBehaviour
     private readonly Dictionary<int, FallingCollectibleItem> networkItems = new Dictionary<int, FallingCollectibleItem>();
 
     // Models used for the result screen icons.
-    public UnityEngine.Object BombPrefab => bombVisualPrefab;
+    public UnityEngine.Object BombPrefab => impactBombModel;
 
     private void Awake()
     {
@@ -355,40 +400,39 @@ public sealed class BombDropper : MonoBehaviour
 
     public FallingBomb DropBomb()
     {
-        if (!CanRun || layout == null) return null;
-        float leftEdge = layout.LeftEdge;
-        float rightEdge = layout.RightEdge;
-        float minX = leftEdge + bombRadius + spawnEdgePadding;
-        float maxX = rightEdge - bombRadius - spawnEdgePadding;
+        float chance = Mathf.Clamp01(timedBombChance);
+        BombType type = chance >= 1f || (chance > 0f && Random.value < chance)
+            ? BombType.Timed : BombType.Impact;
+        return DropBomb(type);
+    }
+
+    public FallingBomb DropBomb(BombType type)
+    {
+        if (!CanRun || layout == null || (OnlineMatch.IsRunning && !OnlineMatch.IsHost)) return null;
+        float minX = layout.LeftEdge + bombRadius + spawnEdgePadding;
+        float maxX = layout.RightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
         int id = nextNetworkId++;
-        FallingBomb dropped = SpawnBomb(x, id);
-        if (dropped != null && OnlineMatch.IsRunning) OnlineMatch.SendBombSpawn(id, x);
+        FallingBomb dropped = SpawnBomb(x, id, type);
+        if (dropped != null && OnlineMatch.IsRunning) OnlineMatch.SendBombSpawn(id, x, type);
         return dropped;
     }
 
-    // Online: the host dropped a bomb.
-    public void SpawnNetworkBomb(int id, float x)
+    // The host chooses the type once; clients never roll independently.
+    public void SpawnNetworkBomb(int id, float x, BombType type = BombType.Impact)
     {
-        if (CanRun && layout != null) SpawnBomb(x, id);
+        if (CanRun && layout != null && !networkBombs.ContainsKey(id)) SpawnBomb(x, id, type);
     }
 
-    private FallingBomb SpawnBomb(float x, int id)
+    private FallingBomb SpawnBomb(float x, int id, BombType type)
     {
-        GameObject body = SpawnPrefab(bombVisualPrefab, GetTransientRoot(),
-            layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
-            itemVisualScale, "Falling Bomb");
-        if (body == null)
-        {
-            body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            body.name = "Falling Bomb";
-            body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
-            body.transform.SetParent(GetTransientRoot(), true);
-            body.transform.localScale = Vector3.one * bombRadius * 2f;
-            body.GetComponent<Renderer>().sharedMaterial = bombMaterial;
-        }
-
-        SphereCollider collider = PreparePhysicsCollider(body, bombRadius) as SphereCollider;
+        var body = new GameObject(type == BombType.Timed ? "Timed Bomb" : "Impact Bomb");
+        body.transform.position = layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f);
+        body.transform.SetParent(GetTransientRoot(), true);
+        var collider = body.AddComponent<SphereCollider>();
+        collider.radius = bombRadius;
+        CreateBombVisual(body.transform, type);
+        FitBombCollider(body.transform, collider);
         var rigidbody = body.AddComponent<Rigidbody>();
         rigidbody.useGravity = false;
         rigidbody.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
@@ -397,33 +441,30 @@ public sealed class BombDropper : MonoBehaviour
         if (upperBoundary != null) Physics.IgnoreCollision(collider, upperBoundary);
         foreach (GroundRubble rubble in GroundRubble.Active)
             if (rubble.Collider != null) Physics.IgnoreCollision(collider, rubble.Collider);
-
-        var fuse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-        fuse.name = "Fuse";
-        fuse.transform.SetParent(body.transform, false);
-        fuse.transform.localPosition = new Vector3(0.12f, 0.52f, 0f);
-        fuse.transform.localRotation = Quaternion.Euler(0f, 0f, -20f);
-        fuse.transform.localScale = new Vector3(0.1f, 0.15f, 0.1f);
-        // Disable immediately: Destroy is deferred until the end of the frame.
-        fuse.GetComponent<Collider>().enabled = false;
-        Destroy(fuse.GetComponent<Collider>());
-        fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
-
-        // Online, only the host's bombs decide where they go off. Elsewhere a
-        // bomb falls through players and waits for the host's explosion.
         if (OnlineMatch.IsRunning && !OnlineMatch.IsHost) IgnorePlayers(collider, false);
-
+        if (type == BombType.Timed) CreateCountdownAudio(body);
         var bomb = body.AddComponent<FallingBomb>();
-        bomb.Initialize(this, fallAcceleration, bombLifetime);
         bomb.NetworkId = id;
+        bomb.Initialize(this, fallAcceleration, bombLifetime, type, timedBombFuse);
         networkBombs[id] = bomb;
         DroppedBombCount++;
         return bomb;
     }
 
-    // Online: the host's bomb went off. Remove this computer's copy and
-    // explode at the host's spot.
-    public void ExplodeNetworkBomb(int id, Vector2 center)
+    public void StartNetworkBombFuse(int id, Vector3 position, float remaining)
+    {
+        if (!CanRun) return;
+        if (networkBombs.TryGetValue(id, out FallingBomb bomb) && bomb != null)
+            bomb.ApplyNetworkFuse(position, remaining);
+    }
+
+    public void ForgetNetworkBomb(int id)
+    {
+        networkBombs.Remove(id);
+    }
+
+    // Only a host message detonates a client's bomb; use the host's size too.
+    public void ExplodeNetworkBomb(int id, Vector2 center, BombType type = BombType.Impact, float sizeScale = -1f)
     {
         if (networkBombs.TryGetValue(id, out FallingBomb bomb) && bomb != null)
         {
@@ -432,44 +473,202 @@ public sealed class BombDropper : MonoBehaviour
         }
         networkBombs.Remove(id);
         if (!CanRun) return;
-        GameAudio.PlayBombExplosion(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
-        Explode(center);
+        Explode(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f), type, sizeScale);
+    }
+
+    private void CreateBombVisual(Transform bomb, BombType type)
+    {
+        bool hasTimedModel = type == BombType.Timed && timedBombModel != null;
+        GameObject modelPrefab = hasTimedModel ? timedBombModel : impactBombModel;
+        Vector3 modelRotation = hasTimedModel ? timedBombModelRotation : impactBombModelRotation;
+        float modelScale = hasTimedModel ? timedBombModelScale : impactBombModelScale;
+        GameObject visual;
+        if (modelPrefab != null)
+        {
+            // A separate visual hierarchy preserves all material assignments and
+            // child transforms while the bomb root owns gameplay physics.
+            visual = new GameObject("Bomb Model");
+            visual.transform.SetParent(bomb, false);
+            GameObject model = Instantiate(modelPrefab, visual.transform, false);
+            model.SetActive(true);
+            foreach (MonoBehaviour visualScript in model.GetComponentsInChildren<MonoBehaviour>(true))
+                visualScript.enabled = false;
+            foreach (AudioSource visualAudio in model.GetComponentsInChildren<AudioSource>(true))
+                visualAudio.enabled = false;
+            foreach (Collider modelCollider in model.GetComponentsInChildren<Collider>(true))
+                modelCollider.enabled = false;
+            foreach (Rigidbody modelBody in model.GetComponentsInChildren<Rigidbody>(true))
+            {
+                modelBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+                modelBody.isKinematic = true;
+                modelBody.detectCollisions = false;
+                Destroy(modelBody);
+            }
+            foreach (Animator animator in model.GetComponentsInChildren<Animator>(true))
+                animator.applyRootMotion = false;
+
+            if (TryGetModelBounds(visual.transform, out Bounds bounds))
+            {
+                float longestSide = Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+                float fitScale = bombRadius * 2f * Mathf.Max(0.01f, modelScale) / Mathf.Max(0.0001f, longestSide);
+                Quaternion rotation = Quaternion.Euler(modelRotation);
+                visual.transform.localScale = Vector3.one * fitScale;
+                visual.transform.localRotation = rotation;
+                visual.transform.localPosition = -(rotation * bounds.center) * fitScale;
+            }
+            return;
+        }
+
+        visual = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        visual.name = "Bomb Mesh";
+        visual.transform.SetParent(bomb, false);
+        visual.transform.localScale = Vector3.one * bombRadius * 2f;
+        visual.GetComponent<Renderer>().sharedMaterial = bombMaterial;
+        visual.GetComponent<Collider>().enabled = false;
+        Destroy(visual.GetComponent<Collider>());
+
+        var fuse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        fuse.name = "Fuse";
+        fuse.transform.SetParent(visual.transform, false);
+        fuse.transform.localPosition = new Vector3(0.12f, 0.52f, 0f);
+        fuse.transform.localRotation = Quaternion.Euler(0f, 0f, -20f);
+        fuse.transform.localScale = new Vector3(0.1f, 0.15f, 0.1f);
+        // Disable immediately: Destroy is deferred until the end of the frame.
+        fuse.GetComponent<Collider>().enabled = false;
+        Destroy(fuse.GetComponent<Collider>());
+        fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
+    }
+
+    private static bool TryGetModelBounds(Transform root, out Bounds bounds)
+    {
+        bounds = default;
+        bool found = false;
+        foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+        {
+            if (!renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+            Bounds meshBounds;
+            if (renderer is SkinnedMeshRenderer skinned)
+                meshBounds = skinned.localBounds;
+            else if (renderer is MeshRenderer)
+            {
+                MeshFilter filter = renderer.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null) continue;
+                meshBounds = filter.sharedMesh.bounds;
+            }
+            else continue;
+
+            // Use mesh-local geometry, not Renderer.bounds: world renderer bounds
+            // can still be stale immediately after Instantiate or a scale change.
+            Matrix4x4 toRoot = root.worldToLocalMatrix * renderer.transform.localToWorldMatrix;
+            for (int x = -1; x <= 1; x += 2)
+            for (int y = -1; y <= 1; y += 2)
+            for (int z = -1; z <= 1; z += 2)
+            {
+                Vector3 corner = meshBounds.center + Vector3.Scale(meshBounds.extents, new Vector3(x, y, z));
+                Vector3 local = toRoot.MultiplyPoint3x4(corner);
+                if (!found)
+                {
+                    bounds = new Bounds(local, Vector3.zero);
+                    found = true;
+                }
+                else bounds.Encapsulate(local);
+            }
+        }
+        return found;
+    }
+
+    private void FitBombCollider(Transform bomb, SphereCollider collider)
+    {
+        if (!TryGetModelBounds(bomb, out Bounds bounds)) return;
+        // Measure AFTER model centering, rotation and visual scale. Matching the
+        // collider's lowest point to the visible model's lowest point makes the
+        // bomb rest on the ground at any per-type Model Scale.
+        collider.center = bounds.center;
+        collider.radius = Mathf.Max(0.01f, bounds.extents.y);
+    }
+
+    private void CreateCountdownAudio(GameObject bomb)
+    {
+        if (countdownClip == null || countdownVolume <= 0f) return;
+        var source = bomb.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = true;
+        source.clip = countdownClip;
+        source.volume = Mathf.Clamp01(countdownVolume);
+        source.spatialBlend = Mathf.Clamp01(explosionSpatialBlend);
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.dopplerLevel = 0f;
+        source.minDistance = Mathf.Max(0.01f, explosionMinDistance);
+        source.maxDistance = Mathf.Max(source.minDistance + 0.01f, explosionMaxDistance);
+    }
+
+    private void PlayExplosionSound(Vector3 position)
+    {
+        if (explosionVolume <= 0f) return;
+        if (explosionClip == null)
+        {
+            GameAudio.PlayBombExplosion(position);
+            return;
+        }
+        // Independent of the bomb and round effects, so a lethal explosion or
+        // round restart cannot cut the clip off when those objects are cleared.
+        var sound = new GameObject("Explosion Sound");
+        sound.transform.position = position;
+        var source = sound.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.clip = explosionClip;
+        source.volume = Mathf.Clamp01(explosionVolume);
+        source.spatialBlend = Mathf.Clamp01(explosionSpatialBlend);
+        source.rolloffMode = AudioRolloffMode.Linear;
+        source.minDistance = Mathf.Max(0.01f, explosionMinDistance);
+        source.maxDistance = Mathf.Max(source.minDistance + 0.01f, explosionMaxDistance);
+        source.Play();
+        Destroy(sound, explosionClip.length);
     }
 
     public void Explode(Vector2 center)
     {
+        Explode(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
+    }
+
+    public void Explode(Vector3 position, BombType type = BombType.Impact, float explosionScale = -1f)
+    {
         if (!CanRun) return;
+        Vector2 center = new Vector2(position.x, position.y);
+        float sizeScale = explosionScale >= 0f ? Mathf.Max(0.05f, explosionScale) : GetExplosionScale(type);
+        PlayExplosionSound(position);
         List<DestructibleObject> supportedPieces = DestructibleObject.FindSupportedPieces();
-        DestroyDebrisInBlast(center);
-        Material cutMaterial = AffectBlastReceivers(center);
+        DestroyDebrisInBlast(center, outerShatterRadius * sizeScale);
+        Material cutMaterial = AffectBlastReceivers(center, sizeScale);
         DestructibleObject.DropUnsupportedPieces(supportedPieces);
         WakeRestingBodies();
         // Rubble takes the colour of the block the bomb dug into, so a blast
         // in open air makes none.
-        if (enableRubble && cutMaterial != null) SpawnRubble(center, cutMaterial);
+        if (enableRubble && cutMaterial != null) SpawnRubble(center, cutMaterial, sizeScale);
         if (session != null)
         {
             // Online, each computer only checks its own player and reports the result.
             List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
             foreach (ArenaPlayerController target in session.Players)
-                if (target != null && !target.IsRemote && HitPlayer(target, center)) hitPlayers.Add(target);
+                if (target != null && !target.IsRemote && HitPlayer(target, center, sizeScale)) hitPlayers.Add(target);
             session.KillPlayers(hitPlayers, center);
         }
-        else if (HitPlayer(player, center))
+        else if (HitPlayer(player, center, sizeScale))
             player.gameObject.SetActive(false);
 
-        ShowBlast(center);
+        ShowBlast(center, lethalRadius * sizeScale);
     }
 
     // Close hits kill; hits from the edge of the blast knock a limb off, and
     // kill only once the player has taken too many. Killed players burst into
     // chunks. Returns true if the player should be removed.
-    private bool HitPlayer(ArenaPlayerController target, Vector2 center)
+    private bool HitPlayer(ArenaPlayerController target, Vector2 center, float sizeScale)
     {
         if (target == null || !target.gameObject.activeInHierarchy || target.IsInvincible) return false;
         float distance = target.DistanceToBody(center);
-        if (distance > lethalRadius) return false;
-        bool killed = distance <= oneShotRadius || target.TakeGraze(center);
+        if (distance > lethalRadius * sizeScale) return false;
+        bool killed = distance <= oneShotRadius * sizeScale || target.TakeGraze(center);
         if (killed) target.Burst(center);
         else if (OnlineMatch.IsRunning) OnlineMatch.ReportGraze(target.PlayerNumber - 1, center);
         return killed;
@@ -485,9 +684,9 @@ public sealed class BombDropper : MonoBehaviour
             if (!body.isKinematic) body.WakeUp();
     }
 
-    private void DestroyDebrisInBlast(Vector2 center)
+    private void DestroyDebrisInBlast(Vector2 center, float radius)
     {
-        DestructibleObject.DestroyFragmentsWithin(center, outerShatterRadius);
+        DestructibleObject.DestroyFragmentsWithin(center, radius);
         // Copy first: deactivating rubble removes it from the active list.
         var rubbleList = new List<GroundRubble>(GroundRubble.Active);
         foreach (GroundRubble rubble in rubbleList)
@@ -498,13 +697,13 @@ public sealed class BombDropper : MonoBehaviour
             Vector2 closest = new Vector2(
                 Mathf.Clamp(center.x, bounds.min.x, bounds.max.x),
                 Mathf.Clamp(center.y, bounds.min.y, bounds.max.y));
-            if (Vector2.Distance(center, closest) > outerShatterRadius) continue;
+            if (Vector2.Distance(center, closest) > radius) continue;
             rubble.gameObject.SetActive(false);
             Destroy(rubble.gameObject);
         }
     }
 
-    private void ShowBlast(Vector2 center)
+    private void ShowBlast(Vector2 center, float radius)
     {
         var visual = new GameObject("Blast");
         visual.transform.SetParent(GetTransientRoot(), true);
@@ -525,7 +724,7 @@ public sealed class BombDropper : MonoBehaviour
         Vector3 forward = Camera.main != null ? Camera.main.transform.forward : Vector3.forward;
         float frontDistance = ((layout != null ? layout.Depth : 0f) * 0.5f + 0.1f) / Mathf.Max(Mathf.Abs(forward.z), 0.1f);
         visual.transform.position = origin - forward * frontDistance;
-        visual.AddComponent<BombBlastVisual>().Initialize(lethalRadius, blastDuration);
+        visual.AddComponent<BombBlastVisual>().Initialize(radius, blastDuration);
     }
 
     public bool IsBelowArena(Vector3 position)
@@ -535,11 +734,11 @@ public sealed class BombDropper : MonoBehaviour
 
     // Use a broad phase query, then deduplicate receiver components found on overlapping colliders.
     // Returns the material of a block the blast cut into, or null if it cut nothing.
-    private Material AffectBlastReceivers(Vector2 center)
+    private Material AffectBlastReceivers(Vector2 center, float sizeScale)
     {
         Vector3 queryCenter = new Vector3(center.x, center.y, layout != null ? layout.Origin.z : transform.position.z);
         float halfDepth = layout != null ? layout.Depth * 0.5f + 0.5f : 10f;
-        float receiverRadius = Mathf.Max(lethalRadius, outerShatterRadius);
+        float receiverRadius = Mathf.Max(lethalRadius, outerShatterRadius) * sizeScale;
         Collider[] colliders = Physics.OverlapBox(queryCenter, new Vector3(receiverRadius, receiverRadius, halfDepth));
         var receivers = new HashSet<IBlastReceiver>();
         foreach (Collider collider in colliders)
@@ -551,7 +750,7 @@ public sealed class BombDropper : MonoBehaviour
             }
         }
 
-        var blast = new BlastPayload(center, innerDestructionRadius, outerShatterRadius, shatterImpulse);
+        var blast = new BlastPayload(center, innerDestructionRadius * sizeScale, outerShatterRadius * sizeScale, shatterImpulse);
         Material groundMaterial = null;
         Material anyMaterial = null;
         foreach (IBlastReceiver receiver in receivers)
@@ -565,14 +764,14 @@ public sealed class BombDropper : MonoBehaviour
         return groundMaterial != null ? groundMaterial : anyMaterial;
     }
 
-    private void SpawnRubble(Vector2 center, Material material)
+    private void SpawnRubble(Vector2 center, Material material, float sizeScale)
     {
         if (rubblePieces <= 0) return;
         float planeZ = layout != null ? layout.Origin.z : transform.position.z;
         for (int index = 0; index < rubblePieces; index++)
         {
             float angle = index * Mathf.PI * 2f / rubblePieces + Random.Range(-0.25f, 0.25f);
-            float distance = Random.Range(innerDestructionRadius * 0.8f, Mathf.Max(innerDestructionRadius, outerShatterRadius));
+            float distance = Random.Range(innerDestructionRadius * 0.8f, Mathf.Max(innerDestructionRadius, outerShatterRadius)) * sizeScale;
             Vector2 position = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
             Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle) * 0.6f).normalized;
             Vector2 flat = direction * Random.Range(rubbleImpulse * 0.7f, rubbleImpulse * 1.3f) + Vector2.up * 0.5f;
@@ -605,6 +804,11 @@ public sealed class BombDropper : MonoBehaviour
         return transientRoot;
     }
 
+    public float GetExplosionScale(BombType type)
+    {
+        return Mathf.Max(0.05f, type == BombType.Timed ? timedExplosionScale : impactExplosionScale);
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (!showSizePreviews || layout == null) return;
@@ -615,10 +819,18 @@ public sealed class BombDropper : MonoBehaviour
         float y = layout.CameraBounds.max.y + dropHeightAboveArena;
         Gizmos.DrawLine(new Vector3(minX, y, origin.z), new Vector3(maxX, y, origin.z));
         Vector2 center = (Vector2)origin + Vector2.up * layout.GroundTop;
-        Gizmos.color = Color.cyan;
-        DrawCircleGizmo(center, outerShatterRadius, origin.z);
-        Gizmos.color = Color.red;
-        DrawCircleGizmo(center, lethalRadius, origin.z);
+        DrawBlastPreview(center, origin.z, GetExplosionScale(BombType.Impact), Color.cyan, Color.red);
+        DrawBlastPreview(center, origin.z, GetExplosionScale(BombType.Timed), Color.blue, Color.yellow);
+    }
+
+    private void DrawBlastPreview(Vector2 center, float z, float sizeScale, Color carveColor, Color damageColor)
+    {
+        Gizmos.color = carveColor;
+        DrawCircleGizmo(center, outerShatterRadius * sizeScale, z);
+        Gizmos.color = damageColor;
+        DrawCircleGizmo(center, lethalRadius * sizeScale, z);
+        Gizmos.color = Color.magenta;
+        DrawCircleGizmo(center, oneShotRadius * sizeScale, z);
     }
 
     private static void DrawCircleGizmo(Vector2 center, float radius, float z)

@@ -35,6 +35,7 @@ public static class OnlineMatch
         Death,       // owner -> all: my player was knocked out
         Left,        // host -> all: a player left the game
         ToLobby,     // host -> all: back to the lobby
+        BombFuse,    // host -> all: armed bomb pose and remaining fuse
     }
 
     public enum LobbyScreen : byte { Players, ChooseLevel }
@@ -244,12 +245,14 @@ public static class OnlineMatch
 
     // ---------- Game events ----------
 
-    public static void SendBombSpawn(int id, float x)
+    public static void SendBombSpawn(int id, float x, BombType type = BombType.Impact)
     {
         if (!IsHost) return;
         FastBufferWriter writer = Begin(Message.Bomb);
         writer.WriteValueSafe(id);
         writer.WriteValueSafe(x);
+        writer.WriteValueSafe((byte)type);
+        writer.WriteValueSafe(round);
         SendToClients(writer, NetworkDelivery.ReliableSequenced);
     }
 
@@ -263,12 +266,26 @@ public static class OnlineMatch
         SendToClients(writer, NetworkDelivery.ReliableSequenced);
     }
 
-    public static void SendExplosion(int id, Vector2 center)
+    public static void SendExplosion(int id, Vector2 center, BombType type = BombType.Impact, float sizeScale = 1f)
     {
         if (!IsHost) return;
         FastBufferWriter writer = Begin(Message.Boom);
         writer.WriteValueSafe(id);
         writer.WriteValueSafe(center);
+        writer.WriteValueSafe((byte)type);
+        writer.WriteValueSafe(sizeScale);
+        writer.WriteValueSafe(round);
+        SendToClients(writer, NetworkDelivery.ReliableSequenced);
+    }
+
+    public static void SendBombFuse(int id, Vector3 position, float remaining)
+    {
+        if (!IsHost) return;
+        FastBufferWriter writer = Begin(Message.BombFuse);
+        writer.WriteValueSafe(id);
+        writer.WriteValueSafe(position);
+        writer.WriteValueSafe(remaining);
+        writer.WriteValueSafe(round);
         SendToClients(writer, NetworkDelivery.ReliableSequenced);
     }
 
@@ -393,7 +410,10 @@ public static class OnlineMatch
                 if (!fromHost || IsHost) return;
                 reader.ReadValueSafe(out int id);
                 reader.ReadValueSafe(out float x);
-                if (bombs != null) bombs.SpawnNetworkBomb(id, x);
+                reader.ReadValueSafe(out byte type);
+                reader.ReadValueSafe(out byte bombRound);
+                if (bombRound != round) return;
+                if (bombs != null) bombs.SpawnNetworkBomb(id, x, (BombType)type);
                 break;
             }
             case Message.Item:
@@ -410,7 +430,22 @@ public static class OnlineMatch
                 if (!fromHost || IsHost) return;
                 reader.ReadValueSafe(out int id);
                 reader.ReadValueSafe(out Vector2 center);
-                if (bombs != null) bombs.ExplodeNetworkBomb(id, center);
+                reader.ReadValueSafe(out byte type);
+                reader.ReadValueSafe(out float sizeScale);
+                reader.ReadValueSafe(out byte bombRound);
+                if (bombRound != round) return;
+                if (bombs != null) bombs.ExplodeNetworkBomb(id, center, (BombType)type, sizeScale);
+                break;
+            }
+            case Message.BombFuse:
+            {
+                if (!fromHost || IsHost) return;
+                reader.ReadValueSafe(out int id);
+                reader.ReadValueSafe(out Vector3 position);
+                reader.ReadValueSafe(out float remaining);
+                reader.ReadValueSafe(out byte bombRound);
+                if (bombRound != round) return;
+                if (bombs != null) bombs.StartNetworkBombFuse(id, position, remaining);
                 break;
             }
             case Message.Take:
