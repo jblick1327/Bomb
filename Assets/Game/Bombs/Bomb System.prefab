@@ -69,6 +69,23 @@ MonoBehaviour:
   dropHeightAboveArena: 2
   fallAcceleration: 8
   bombLifetime: 15
+  impactBombModel: {fileID: 9021979860543945138, guid: e02b31792a067c74a81e275fcda3930b, type: 3}
+  timedBombChance: 0.5
+  timedBombFuse: 3
+  impactBombModelRotation: {x: 0, y: 0, z: 0}
+  impactBombModelScale: 1
+  timedBombModel: {fileID: 0}
+  timedBombModelRotation: {x: 0, y: 0, z: 0}
+  timedBombModelScale: 1
+  impactExplosionScale: 0.8
+  timedExplosionScale: 1.3
+  explosionClip: {fileID: 8300000, guid: 2a72aef1c637edd4cbaae4bcf5296ab2, type: 3}
+  explosionVolume: 1
+  explosionSpatialBlend: 1
+  explosionMinDistance: 5
+  explosionMaxDistance: 100
+  countdownClip: {fileID: 8300000, guid: 45d1a33263ca470cabdba464cb253bfb, type: 3}
+  countdownVolume: 1
   enableItemSpawning: 1
   minimumItemInterval: 2
   maximumItemInterval: 6
@@ -82,7 +99,6 @@ MonoBehaviour:
   timeVisualPrefab: {fileID: 8864624805005668522, guid: 05c1bb08d5c7e3b40a87536483a89f10, type: 3}
   speedBoostVisualPrefab: {fileID: 7370043300670028658, guid: 19b7e95a091652640b4df605bec6a161, type: 3}
   shieldVisualPrefab: {fileID: 8475833574052523601, guid: a1614f0cf649e3a4e894d20bda9008e7, type: 3}
-  bombVisualPrefab: {fileID: 9021979860543945138, guid: e02b31792a067c74a81e275fcda3930b, type: 3}
   bombMaterial: {fileID: 2100000, guid: dd8718130aa44a44cb76011b06045805, type: 2}
   blastMaterial: {fileID: 2100000, guid: f6d173ef94c686445a8da4d4d6f8d2da, type: 2}
   yardGrassMaterial: {fileID: 2100000, guid: 3cad3c1828da6e446b09c575fdcfbb14, type: 2}
