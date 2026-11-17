@@ -353,7 +353,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Blast native_ms max (host 1w/2w) Classic 57/69→21/19, Yard 18/25→3/4, Bridge 50/54→3/6, Tower 27/36→11/11; guests now write `guest-perf.json` and exit 0
   (`evidence/E1-G/perf-20261117T051233`, doc section 9.1). First Prediction failed before any profile (fresh checkpoint had no `build/interop/bomcore.dll`; E1-N4 finding, record kept).
   [ ] Owner check: blasts on Bridge and Classic Yard feel smooth in play.
-- [x] **E1-GN6** (native 3be3283: G-N1 glue capacity from materials + steel, G-N6 prediction flap fix with 100 ms correction fade; flip count and blast frames vs G2b) claimed: Claude Opus 5.5 2026-11-17 done: Claude Opus 5.5 2026-11-17 (this commit) — native 3be3283 (DLL 5b88bd1f…, `-o:speed -debug`);
+- [x] **E1-GN6** (native 3be3283: G-N1 glue capacity from materials + steel, G-N6 prediction flap fix with 100 ms correction fade; flip count and blast frames vs G2b) claimed: Claude Opus 5.5 2026-11-17 done: Claude Opus 5.5 2026-11-17 1e59381d — native 3be3283 (DLL 5b88bd1f…, `-o:speed -debug`);
   NativeInterop, NativeProof, Build, Content (1555), Rounds Yard+Draw, front door Yard/Bridge/Tower (17/17), Prediction 6/6 (`evidence/M0/Test-Prediction-20261117T124416709Z.json`) pass.
   Host Conservative entries per 100 s (G2b → now): Bridge 1w 148→4, Yard 2w 72→5, Tower 2w 46→19, Tower 1w 33→19, Yard 1w 10→5, Classic 8/9→5/5, Bridge 2w 6→4.
   Blast-window p95 and native max unchanged; one 2w first-blast frame higher on Yard (26→37/34 ms, native ≤1.7 ms, cause not found) (`evidence/E1-GN6/README.md`).
