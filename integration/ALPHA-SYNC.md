@@ -133,6 +133,11 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
      `robocopy Assets <validation>\Assets /MIR /XD BOMIntegration Library`, then
      `robocopy Packages <validation>\Packages /MIR` and `robocopy ProjectSettings <validation>\ProjectSettings /MIR`.
      `<validation>` is `UnityValidationProject` in the config.
+   - **Which gates to run** (owner decision 2026-11-17): match the gates to what changed.
+     - The Prediction suite (about 1 hour) tests only the native DLL through the .NET harness. Run it **only when `bomcore.dll` changes** (E1 tasks, Phase E).
+     - Unity-only tasks run Build, Content, Rounds and the front door. Add the perf matrix only if rendering or frame cost changed.
+     - Record a skipped Prediction run as "not required: DLL unchanged since <task> 6/6", never as a pass.
+     - Its fps-cadence check is sensitive to the machine's state: it failed after a laptop standby in G3. If only cadence fails while prediction stats are clean, check for standby or power changes before suspecting the code.
 8. **Presentation tasks** end with an *Owner check* box. Models never tick it; the owner plays the build and ticks it.
 
 ---
