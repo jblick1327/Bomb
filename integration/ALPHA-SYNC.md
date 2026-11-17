@@ -353,6 +353,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Blast native_ms max (host 1w/2w) Classic 57/69→21/19, Yard 18/25→3/4, Bridge 50/54→3/6, Tower 27/36→11/11; guests now write `guest-perf.json` and exit 0
   (`evidence/E1-G/perf-20261117T051233`, doc section 9.1). First Prediction failed before any profile (fresh checkpoint had no `build/interop/bomcore.dll`; E1-N4 finding, record kept).
   [ ] Owner check: blasts on Bridge and Classic Yard feel smooth in play.
+- [ ] **E1-GN6** (native 3be3283: G-N1 glue capacity from materials + steel, G-N6 prediction flap fix with 100 ms correction fade; flip count and blast frames vs G2b) claimed: Claude Opus 5.5 2026-11-17
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
