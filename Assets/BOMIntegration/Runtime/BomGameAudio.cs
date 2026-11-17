@@ -57,6 +57,21 @@ namespace Bom.Unity
             Debug.Log("BOM AUDIO whistle round=" + round + " state=" + state);
         }
 
+        // G2b: Darryn's effect clips are decompress-on-load with preloadAudioData off, so the first PlayOneShot of the
+        // explosion loaded and decoded the mp3 inside the first blast's frame (4.6 ms on Yard). Load them once at join
+        // instead. Reads his fields only; his script and assets are unchanged.
+        public static void PreloadEffects()
+        {
+            Type audio = Type.GetType(AudioType);
+            const BindingFlags any = BindingFlags.Public | BindingFlags.NonPublic;
+            object instance = audio?.GetField("instance", any | BindingFlags.Static)?.GetValue(null);
+            if (instance == null)
+                return;
+            foreach (string name in new[] { "bombExplosion", "coinPickup", "whistle", "buttonPop" })
+                if (audio.GetField(name, any | BindingFlags.Instance)?.GetValue(instance) is AudioClip clip && clip.loadState == AudioDataLoadState.Unloaded)
+                    clip.LoadAudioData();
+        }
+
         static void Bind()
         {
             if (bound)

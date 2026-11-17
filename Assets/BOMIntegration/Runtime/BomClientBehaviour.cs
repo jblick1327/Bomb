@@ -360,52 +360,10 @@ namespace Bom.Unity
                     );
                 blast = new InputAction("Blast", InputActionType.Button, "<Mouse>/leftButton");
                 blast.performed += c =>
-                    SendInput(() =>
-                    {
-                        var permissions = new BomStats
-                        {
-                            struct_size = (uint)
-                                System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),
-                            version = 1,
-                        };
-                        BomSession.Check(
-                            BomNative.bom_client_get_stats(session.Handle, ref permissions)
-                        );
-                        if ((permissions.flags & 4) == 0 || session.Round.mode == 1)
-                            return;
-                        if (View == null || Mouse.current == null)
-                            return;
-                        var ray = View.ScreenPointToRay(Mouse.current.position.ReadValue());
-                        if (
-                            new Plane(Vector3.forward, Vector3.zero).Raycast(
-                                ray,
-                                out float distance
-                            )
-                        )
-                        {
-                            Vector3 point = ray.GetPoint(distance);
-                            // A click is a one-off host diagnostic, so stamp it with the native clock now. The input event's own
-                            // timestamp (c.time + inputOffset) lagged by more than the native 0.5 s bound on the owner's machine,
-                            // so every click came back Expired (status 3). The age is logged so that is visible.
-                            double now = BomSession.Now;
-                            Debug.Log(
-                                "BOM UNITY BLAST click_age_s="
-                                    + (now - (c.time + inputOffset)).ToString("F3")
-                                    + " x="
-                                    + point.x.ToString("F2")
-                                    + " y="
-                                    + point.y.ToString("F2")
-                            );
-                            BomSession.Check(
-                                BomNative.bom_client_enqueue_action(
-                                    session.Handle,
-                                    now,
-                                    point.x,
-                                    point.y
-                                )
-                            );
-                        }
-                    });
+                {
+                    if (!BomPointerWarm.Swallowing)
+                        SendInput(() => Blast(c.time, false));
+                };
                 move.Enable();
                 jump.Enable();
                 blast.Enable();
@@ -413,6 +371,71 @@ namespace Bom.Unity
             catch (Exception e)
             {
                 Fail(e);
+            }
+        }
+
+        // The blast click. warm=true (G2b, once per session at join) runs the read-only stats query, the raycast and the log
+        // formatting so the first real click does not pay Mono JIT/marshal-stub cost, and returns before anything is logged,
+        // enqueued or sent.
+        void Blast(double time, bool warm)
+        {
+            BomHitchTrace.Begin("blast");
+            var permissions = new BomStats
+            {
+                struct_size = (uint)
+                    System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),
+                version = 1,
+            };
+            BomSession.Check(
+                BomNative.bom_client_get_stats(session.Handle, ref permissions)
+            );
+            BomHitchTrace.Lap("stats");
+            if (!warm && ((permissions.flags & 4) == 0 || session.Round.mode == 1))
+            {
+                BomHitchTrace.End("denied");
+                return;
+            }
+            if (View == null || !warm && Mouse.current == null)
+                return;
+            var ray = View.ScreenPointToRay(warm ? new Vector2(Screen.width / 2f, Screen.height / 2f) : Mouse.current.position.ReadValue());
+            if (
+                new Plane(Vector3.forward, Vector3.zero).Raycast(
+                    ray,
+                    out float distance
+                )
+            )
+            {
+                Vector3 point = ray.GetPoint(distance);
+                BomHitchTrace.Lap("ray");
+                // A click is a one-off host diagnostic, so stamp it with the native clock now. The input event's own
+                // timestamp (c.time + inputOffset) lagged by more than the native 0.5 s bound on the owner's machine,
+                // so every click came back Expired (status 3). The age is logged so that is visible.
+                double now = BomSession.Now;
+                if (warm)
+                {
+                    // G2b: JIT the formatting the click log uses; never log, enqueue or send.
+                    _ = (now - time).ToString("F3") + point.x.ToString("F2");
+                    BomHitchTrace.End("warm");
+                    return;
+                }
+                Debug.Log(
+                    "BOM UNITY BLAST click_age_s="
+                        + (now - (time + inputOffset)).ToString("F3")
+                        + " x="
+                        + point.x.ToString("F2")
+                        + " y="
+                        + point.y.ToString("F2")
+                );
+                BomHitchTrace.Lap("log");
+                BomSession.Check(
+                    BomNative.bom_client_enqueue_action(
+                        session.Handle,
+                        now,
+                        point.x,
+                        point.y
+                    )
+                );
+                BomHitchTrace.End("enqueue");
             }
         }
 
@@ -454,6 +477,13 @@ namespace Bom.Unity
         }
 
         void Update()
+        {
+            long traced = BomHitchTrace.On ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+            UpdateCore();
+            BomHitchTrace.Section("client_update", traced);
+        }
+
+        void UpdateCore()
         {
             if (session == null || !ConnectionRequested)
                 return;
@@ -845,6 +875,7 @@ namespace Bom.Unity
             long started = System.Diagnostics.Stopwatch.GetTimestamp(),
                 bytes = BomAllocationCounter.Read();
             Accept(client);
+            BomHitchTrace.End("rest");
             PresentationMilliseconds =
                 (System.Diagnostics.Stopwatch.GetTimestamp() - started)
                 * 1000.0
@@ -881,11 +912,31 @@ namespace Bom.Unity
                     if (newSession)
                         ReturnActors();
                     cellPresenter ??= new BomCellPresenter(transform, Material, BomCellPresenter.G1);
+                    if (newSession)
+                    {
+                        // G2b: pay the first blast's one-time costs at join (explosion clip load, click handler, UI pointer path).
+                        BomGameAudio.PreloadEffects();
+                        Blast(0, true);
+                        BomPointerWarm.Run();
+                        if (BlastPrefab != null)
+                        {
+                            // The blast view binds Darryn's ring by reflection on its first Show (1.2 ms in the first blast);
+                            // do that once far off-screen. It removes itself after its 0.35 s lifetime and is not counted.
+                            BomAuthorityAudit.Validate(BlastPrefab);
+                            var warmEffect = Instantiate(BlastPrefab, EffectsRoot());
+                            BomAuthorityAudit.Validate(warmEffect);
+                            warmEffect.name = "BOM warm blast view";
+                            warmEffect.GetComponent<BomLegacyBlastView>().Show(new Vector3(100000, 100000, 0), .01f);
+                        }
+                    }
+                    BomHitchTrace.Begin("apply");
                     cellPresenter.Apply(client, VisualRegistry, bodies);
+                    BomHitchTrace.Lap("cells");
                     cellsShown = true;
                     if (newSession)
                         ConfigureCamera(client);
                     AcceptedTopology(s, newSession, cellPresenter.LastChunks, cellPresenter.ArenaBytes);
+                    BomHitchTrace.Lap("snapshot_log");
                 }
                 else
                 {
@@ -1167,8 +1218,10 @@ namespace Bom.Unity
                                 : (Vector2)pair.Value.transform.position
                         );
             }
+            BomHitchTrace.Lap("poses");
             BomGameAudio.RoundState(client.Round.flags, client.Round.round_id, client.Round.state);
             ObserveRoster(client);
+            BomHitchTrace.Lap("roster");
             for (int i = 0; i < s.event_count; i++)
             {
                 var e = client.Events[i];
@@ -1185,11 +1238,15 @@ namespace Bom.Unity
                         front = Mathf.Min(front, source.Binding.depth_lo - .1f);
                     var center = new Vector3(e.x, e.y, front);
                     grazes.Explosion(e.tick, new Vector2(e.x, e.y));
+                    BomHitchTrace.Lap("e_graze");
                     BomGameAudio.BombExplosion(center);
+                    BomHitchTrace.Lap("e_audio");
                     if (BlastPrefab != null)
                     {
                         BomAuthorityAudit.Validate(BlastPrefab);
+                        BomHitchTrace.Lap("e_audit");
                         var effect = Instantiate(BlastPrefab, EffectsRoot());
+                        BomHitchTrace.Lap("e_inst");
                         BomAuthorityAudit.Validate(effect);
                         effect.name = "Native blast " + e.id;
                         effect
@@ -1215,6 +1272,7 @@ namespace Bom.Unity
                         effect.transform.SetParent(EffectsRoot(), false);
                         effect.AddComponent<BomExplosionView>().Show(Material, center, e.radius);
                     }
+                    BomHitchTrace.Lap("e_show");
                     ExplosionVisuals++;
                     cameraRig?.Shake(
                         new Vector2(e.x, e.y),
@@ -1232,6 +1290,7 @@ namespace Bom.Unity
                         + s.presentation_tick
                 );
             }
+            BomHitchTrace.Lap("events");
             PresentDeaths(client);
             PresentLimbLoss(client);
             PresentItemEffects(client, s.presentation_tick);

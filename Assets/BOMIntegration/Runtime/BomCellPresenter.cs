@@ -814,6 +814,21 @@ namespace Bom.Unity
             Dictionary<(uint, ulong), Transform> outBodies
         )
         {
+            if (!warmedApply && WarmApply)
+            {
+                // G2b: at the first presentation, run the apply once with every source treated as broken, so the
+                // fragment path (looks, chunk renderers, Build, cache) runs at join instead of in the first blast's
+                // frame. The real apply below replaces it in the same frame, so nothing is drawn from it.
+                warmedApply = warming = true;
+                try
+                {
+                    Apply(client, visualRegistry, outBodies);
+                }
+                finally
+                {
+                    warming = false;
+                }
+            }
             long started = Stopwatch.GetTimestamp();
             Applies++;
             stamp = Applies;
@@ -823,6 +838,7 @@ namespace Bom.Unity
                 HideTiles();
             UseRegistry(visualRegistry);
             UpdateTrust(client);
+            BomHitchTrace.Lap("c_trust");
             var s = client.Sample;
             int count = (int)s.cell_count;
             if (cellSource.Length < count)
@@ -879,6 +895,7 @@ namespace Bom.Unity
                 }
                 w.Cells.Add(i);
             }
+            BomHitchTrace.Lap("c_group");
             // Which sources still show Darryn's own mesh (the old "intact" rule: trusted manifest, exactly the
             // registry's initial cells, one static piece).
             IntactSources = FragmentSources = FallbackSources = HiddenSources = 0;
@@ -914,6 +931,8 @@ namespace Bom.Unity
                         BuildArt(source);
                     source.Intact = source.ArtValid;
                 }
+                if (warming)
+                    source.Intact = false;
                 if (source.Intact)
                     IntactSources++;
                 else
@@ -927,6 +946,7 @@ namespace Bom.Unity
                 DestroyArt(sources[id]);
                 sources.Remove(id);
             }
+            BomHitchTrace.Lap("c_sources");
             foreach (var body in bodies.Values)
                 body.Seen = false;
             int rebuilt = 0,
@@ -937,6 +957,7 @@ namespace Bom.Unity
                 var w = pair.Value;
                 if (!bodies.TryGetValue(pair.Key, out var body))
                 {
+                    BomHitchTrace.NewBodies++;
                     body = new Body();
                     body.Transform = bodyPool.Count > 0 ? bodyPool.Pop() : new GameObject("Native body").transform;
                     body.Transform.SetParent(root, false);
@@ -1024,7 +1045,10 @@ namespace Bom.Unity
                             Touch((client.Cells[i].id, cellShape[i]));
                         continue;
                     }
+                    long bt = BomHitchTrace.On ? Stopwatch.GetTimestamp() : 0;
                     newCells += Build(client, cpair.Value, w.Pivot, g1Depth, chunk.Mesh);
+                    if (BomHitchTrace.On)
+                        BomHitchTrace.BuildTicks += Stopwatch.GetTimestamp() - bt;
                     chunk.Signature = signature;
                     if (chunk.Look != look)
                     {
@@ -1046,6 +1070,10 @@ namespace Bom.Unity
                     body.Chunks.Remove(ck);
                 }
             }
+            BomHitchTrace.Lap("c_chunks");
+            BomHitchTrace.Note("build", BomHitchTrace.BuildTicks, BomHitchTrace.NewBodies);
+            BomHitchTrace.BuildTicks = 0;
+            BomHitchTrace.NewBodies = 0;
             bodyDrop.Clear();
             foreach (var pair in bodies)
                 if (!pair.Value.Seen)
@@ -1080,7 +1108,9 @@ namespace Bom.Unity
                     source.Art.SetActive(true);
                 }
             }
+            BomHitchTrace.Lap("c_art");
             DropUnseenGeometry();
+            BomHitchTrace.Lap("c_drop");
             LastRebuiltChunks = rebuilt;
             LastNewCells = newCells;
             LastChunks = chunks;
@@ -1116,6 +1146,11 @@ namespace Bom.Unity
                         + LastMilliseconds.ToString("0.00", CultureInfo.InvariantCulture)
                 );
         }
+
+        // G2b: on by default; --bom-no-warm-apply turns it off for A/B timing.
+        static readonly bool WarmApply = Array.IndexOf(Environment.GetCommandLineArgs(), "--bom-no-warm-apply") < 0;
+        bool warmedApply,
+            warming;
 
         // Per-apply log only when asked (--bom-cell-log); otherwise the first two applies and any slow one.
         static readonly bool Log = Array.IndexOf(Environment.GetCommandLineArgs(), "--bom-cell-log") >= 0;

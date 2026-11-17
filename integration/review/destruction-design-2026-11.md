@@ -486,3 +486,38 @@ Guest (2 windows, 80 s window, new): native_ms max Classic 15.6, Yard 4.1, Bridg
 **Harness fix.** `BomFrontDoorScenario.Guest()` now ends cleanly when the perf probe has disabled the client (it waits for the probe to write its report and quit)
 instead of dereferencing a null `Session` (FAIL, `Quit(4)`). `Run-G1Perf.ps1` keeps the process handles so exit codes are recorded, and writes `host_perf_json`/`guest_perf_json` into `run.json`.
 `Summarize-G2Perf.py` adds guest rows and blast-window columns, including the worst blast-window frame split into frame:native:present+geometry:gpu.
+
+### 9.2 G2b: first-blast hitch (2026-11-17)
+
+Only the first blast of a run hitched. Proven with the opt-in `--bom-hitch-trace` (laps in the blast handler and topology apply,
+input-system update time, and a timestamp before every player-loop subsystem; evidence `integration/evidence/G2b/trace-yard-1w-1..9`).
+The orchestrator's guess (Mono JIT/marshal in the blast handler) was wrong for most of it. The handler itself costs 0.3–0.4 ms on its first call.
+- (a) **Mouse-down frame (35–48 ms):** UI Toolkit's first pointer dispatch, `PreLateUpdate.UIElementsUpdatePanels` 24.8 ms, plus the
+  Input System's first button event (`PreUpdate.NewInputUpdate` 3–4 ms). Fix: `BomPointerWarm` queues one synthetic left press/release on the
+  real mouse at (-4096,-4096) at join and restores the pointer position. The blast callback ignores clicks for those 2 frames (`Swallowing`),
+  so nothing is enqueued or sent. The handler body is now `Blast(time, warm)`, and a warm call (stats query, raycast, formatting; no log or enqueue) runs at join.
+- (b) **First CELLS APPLY (present 13–18 ms):** not "every chunk": at join every source is intact, so no chunk exists, and the first blast builds
+  only its new debris chunks (Yard 58 of 58). The cost was first use: Darryn's explosion clip is decompress-on-load with `preloadAudioData: 0`,
+  so the first `PlayOneShot` decoded the mp3 (4.6 ms). The fragment chunk path had never run (looks, renderers, Build; 4.4 ms over the later blasts),
+  and the blast view's reflection bind took 1.2 ms. Fixes: `BomGameAudio.PreloadEffects` (`LoadAudioData` on his effect clips, read by reflection,
+  his script/assets unchanged). `BomCellPresenter` warm apply: at the first presentation the apply runs once with every source treated as broken, then
+  the real apply replaces it in the same frame, so nothing from it is drawn (`--bom-no-warm-apply` turns it off). Join cost: Yard 26 ms, Bridge 34 ms.
+  Last, one off-screen blast-view `Show` at join (removes itself after 0.35 s; not counted in `ExplosionVisuals`).
+- Tried and dropped: `RuntimeHelpers.PrepareMethod` is a no-op on Mono (1167 methods in 7 ms, no change). Forcing JIT through
+  `MethodHandle.GetFunctionPointer` cost 107 ms at join and gained ~1 ms once the warm apply was in.
+
+Perf matrix `integration/evidence/G2b/perf-20261117T081300` (same protocol as 9.1; all 8 runs `ok`). Summary: `evidence/G2b/summary-first-blast.txt`
+(`firstblast.py`: a blast = a cluster of frames with present > 1 ms, window −0.6/+1.4 s). E1-G → G2b, first-blast worst frame ms (present ms):
+
+| Level | host 1w | host 2w | guest | blasts 2–8 max (host 1w/2w, guest) | >33 ms/min (1w/2w/guest) |
+|---|---|---|---|---|---|
+| Classic Yard | 49.0 (10.8) → 42.1 (5.3) | 48.1 → 40.6 | 48.7 → 42.6 | 39.5 / 43.5, 43.2 | 1.8 / 3.6 / 5.2 |
+| Yard | 35.7 (14.2) → 23.7 (5.6) | 48.1 → 25.9 | 47.9 → 28.5 | 20.0 / 20.3, 20.7 | 0.0 / 0.6 / 0.0 |
+| Bridge | 37.1 (13.0) → 23.7 (2.7) | 47.8 → 24.1 | 47.5 → 33.0 | 22.2 / 21.7, 20.7 | 0.6 / 0.6 / 0.8 |
+| Tower | 38.8 (14.8) → 22.9 (3.7) | 41.1 → 28.2 | 46.3 → 28.1 | 26.8 / 29.0, 26.4 | 0.0 / 0.6 / 0.0 |
+
+GC MB/min unchanged (13.5–19.2 host, 7.6–14.6 guest); `present_gc` peak stays a few hundred bytes (237–730 B, as in E1-G).
+**What remains.** The first blast is now in line with the later ones. Classic Yard's blast frames (first and later, 40–43 ms) are native (13–19 ms) plus present, which is Lane N.
+The Bridge guest's 33 ms frame has native 0.1 and present 0.04 ms. It lands 0.16 s before the blast arrives, when the harness first brings the host
+window to the front (the 9.1 harness pattern; not proven further). Every blast frame that lands at 20–29 ms is native 3–6 ms plus present 2–6 ms on top of a ~12 ms frame, so it misses one vsync.
+Gates: Build, Content (1555), Rounds yard+draw, front door Yard/Bridge/Tower, Prediction 6/6 (`evidence/M0/Test-Prediction-20261117T071000168Z.json`) pass.

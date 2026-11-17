@@ -362,6 +362,13 @@ namespace Bom.Unity
 
         void Update()
         {
+            long traced = BomHitchTrace.On ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+            UpdateCore();
+            BomHitchTrace.Section("hud_update", traced);
+        }
+
+        void UpdateCore()
+        {
             if (Client == null || root == null)
                 return;
             if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
