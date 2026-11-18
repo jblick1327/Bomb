@@ -31,8 +31,10 @@ Level_Validation_Report :: struct {
  sources:[dynamic]Level_Source_Report,
  glue_link_count,glue_zero_sample_links:int,
  glue:[dynamic]Level_Glue_Report,
+ settle:Level_Settle_Report,
 }
-level_validate_cli :: proc(input,report_path:string) -> bool {
+level_validate_cli :: proc(input,report_path:string,settle_ticks:int=0,settle_window:int=120) -> bool {
+ if settle_ticks<0 || settle_window<0 || (settle_ticks>0 && settle_ticks<=settle_window) {fmt.eprintln("Settle ticks must exceed the nonnegative settle window");return false}
  data,err:=os.read_entire_file(input,context.allocator);if err!=nil {fmt.eprintln("Cannot read layout:",input);return false};defer delete(data)
  layout,seed,valid,reason:=decode_layout(data);if !valid {fmt.eprintln("Invalid exported layout:",reason);return false};defer destroy_layout(&layout)
  if layout.level==nil {fmt.eprintln("This export validator requires layout v4; the server still loads legacy layouts normally");return false}
@@ -50,6 +52,8 @@ level_validate_cli :: proc(input,report_path:string) -> bool {
  report.glue_link_count=len(report.glue)
  for row in report.glue { if row.samples==0 { report.glue_zero_sample_links+=1 } }
  if report.glue_zero_sample_links>0 { report.status="failed" }
+ if settle_ticks>0 {report.settle=level_settle_run(&w,layout.level,settle_ticks,settle_window)}
+ defer level_settle_destroy(&report.settle)
  encoded,encoded_ok:=exact_json_encode(report,true);defer delete(encoded)
  if !encoded_ok||os.write_entire_file(report_path,encoded)!=nil {fmt.eprintln("Cannot write validation report:",report_path);return false}
  normalized:=fmt.aprintf("%s.layout.json",report_path);defer delete(normalized)

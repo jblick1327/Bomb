@@ -30,6 +30,7 @@ seam_diagnostic_death :: proc(s:^Scene,c:Connection,path:string) {
 seam_damage_scene:^Scene
 seam_damage_peak:map[u64]f32
 seam_diagnostic_force :: proc(s:^Scene,seam:Mortar_Seam,r:f32,broken:bool,damage:f32) {
+ level_settle_force(s,seam,r,broken,damage)
  if s==seam_damage_scene && s!=nil { for id in seam.members { seam_damage_peak[id]=max(seam_damage_peak[id],damage) } }
  if s!=seam_diagnostic_scene { return }
  fmt.printf("FORCE run=%s tick=%d bodies=%v/%v r=%.9f damage_before=%.9f damage_after=%.9f broken=%v ids=%v\n",seam_diagnostic_run,seam_diagnostic_tick,seam.bodies[0],seam.bodies[1],r,seam.damage,damage,broken,seam.members[:])

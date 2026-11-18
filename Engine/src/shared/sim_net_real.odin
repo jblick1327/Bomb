@@ -158,8 +158,22 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
 
 net_real_cli_server :: proc(args: []string) -> bool {
  if len(args)>0&&args[0]=="--validate-layout" {
-  if len(args)!=4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json");return false}
-  return level_validate_cli(args[1],args[3])
+  if len(args)<4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json [--settle-ticks N] [--settle-window-ticks N]");return false}
+  ticks,window:=0,120
+  seen_ticks,seen_window:=false,false
+  i:=4
+  for i<len(args) {
+   if i+1>=len(args) {return false}
+   n,ok:=strconv.parse_int(args[i+1]);if !ok || n<0 {return false}
+   switch args[i] {
+   case "--settle-ticks": if seen_ticks || n==0 {return false};ticks=n;seen_ticks=true
+   case "--settle-window-ticks": if seen_window {return false};window=n;seen_window=true
+   case: return false
+   }
+   i+=2
+  }
+  if seen_window && !seen_ticks {return false}
+  return level_validate_cli(args[1],args[3],ticks,window)
  }
  port:=NET_REAL_PORT
  layout:=""
