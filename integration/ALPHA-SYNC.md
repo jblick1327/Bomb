@@ -465,15 +465,14 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
   - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
   - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.
-  - Blocked (2026-11-18, Claude Opus 5.5): Done-when 6 fails for the Bridge. Lines 1-5 and 7 and all gates pass; the numbers and paths are in `evidence/G5/README.md`.
-    Commits: c283ad93 (export), b6c15239 (glue rule matches native, re-export, evidence).
-    The Bridge I5 settle failed: 4 revision changes, 1264 -> 1297 cells, max displacement 6.4, two braces fall (`evidence/G5/settle-g5-final`).
-    Yard passes. Tower has 3 small cracks (max 0.03), recorded as G6 input.
-    G5's Bridge parts and glue are identical to G1's (52 parts, 97 links). Nine variants were tried, and every one cracks on native 3be3283,
-    G1's own layout included (`evidence/G5/settle-bridge-experiments/README.md`). Fixing it means changing physics or materials, which G5 may not do.
-    Unblock options: Lane N G-N4 (a per-source settle report in `--validate-layout`, showing which seam cracks at which tick) and G-N1
-    (glue load capacity for short 0.23-long brace end seams under a diagonal's weight); and/or G6 owner tuning of steel/wood seams
-    (steel toughness 1.4 still cracked, max 1.06). The exporter itself needs no change once the settle passes; re-run `Run-G5Settle.py` and tick.
+  - Blocked (2026-11-18, Claude Opus 5.5): **Bridge needs a Lane N fix to G-N1 short-seam capacity.** Done-when 6 (I5, OD-6 rule) fails for the Bridge
+    on the shipped native 3be3283. Lines 1-5 and 7 and all gates pass; the numbers and paths are in `evidence/G5/README.md`.
+    Commits: c283ad93 (export), b6c15239 (glue rule), 34ddea43 (gates), ac8044fc (pre-G-N1 diagnostic), plus the OD-6 harness commit.
+    OD-6 (`evidence/G5/settle-od6`), 3be3283: Yard passes (max move 0.000). Tower passes (0.035).
+    Bridge FAILS: after the window a truss fragment breaks off and falls 22.2, and cells grow 1264 -> 1297.
+    On f3a4e48 (before G-N1), the Bridge also fails, but only just: top-deck piece #830 slides 0.594 after the window. Reverting G-N1 alone
+    would not pass. Lane N needs short-seam glue capacity that holds the brace ends (0.23-long seams under a diagonal's weight) and the top-deck
+    left-end seam. G-N4 (a per-source settle report) would name the failing seam. Once native changes, re-run `Run-G5Settle.py` (OD-6 defaults) and tick if the Bridge passes.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
