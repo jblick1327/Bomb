@@ -389,8 +389,9 @@ public static class BomTileLevelBuilder
             if (component != null && component.GetType().Name == "DestructibleObject")
             {
                 var tile = Measure(component);
-                if (tileObjects.ContainsKey(tile.Path))
-                    throw new InvalidOperationException(spec.Name + ": two tiles share the path " + tile.Path + "; rename one in a copy");
+                // Darryn's Tower has same-named siblings (two "Tower/Cube (55)"): later ones get "#2", "#3" in scene order.
+                for (int n = 2; tileObjects.ContainsKey(tile.Path); n++)
+                    tile.Path = ObjectPath(component.transform) + " #" + n;
                 tileObjects[tile.Path] = component.transform;
                 input.Tiles.Add(tile);
             }
