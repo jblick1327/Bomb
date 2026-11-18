@@ -39,8 +39,10 @@ The game player `Bomb.exe` (built by `Test-FrontDoor.ps1`, `BomFrontDoorBuilder.
 
 Gate: `./integration/tools/Test-FrontDoor.ps1 -ConfigPath integration/local.config.owner-validation.json [-Level Yard|Bridge|Tower]`
 (evidence in `evidence/M8/frontdoor-*`, `frontdoor-<level>-*` with `-Level`). The build also exports Darryn's three tile levels
-(`Editor/BomTileLevelBuilder.cs`) to `integration/fixtures/levels/<Scene>.json` (+ `.tiles.json`, the per-tile mapping) and
-copies them to `Server/levels/`. It mirrors nothing outside `Assets/BOMIntegration`: copy `Assets/Game/Scripts/MatchMenuUI.cs`
+(`Editor/BomTileLevelBuilder.cs` v2, G5: the design doc section 3 mapping in `Editor/BomTileMapping.cs`) to
+`integration/fixtures/levels/<Scene>.json` (+ `.tiles.json`, the per-tile mapping and parts; `.tiles-input.json`, the mapping
+input) and copies them to `Server/levels/`. Invariants I1-I4 fail the export; their negative tests run without Unity:
+`dotnet run --project integration/tools/g5/TileMappingTests -- test`. It mirrors nothing outside `Assets/BOMIntegration`: copy `Assets/Game/Scripts/MatchMenuUI.cs`
 to the validation project first if it changed (the tool checks).
 
 ## Play the network yard

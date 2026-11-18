@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- G5: runs the tile mapping (Assets/BOMIntegration/Editor/BomTileMapping.cs, the same file the Unity exporter compiles)
+       outside Unity. `dotnet run test` runs the negative tests (one deliberately broken input per invariant I1-I4);
+       `dotnet run map INPUT.json [REPORT.json]` maps a tile dump written by BomTileLevelBuilder. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../../../Assets/BOMIntegration/Editor/BomTileMapping.cs" Link="BomTileMapping.cs" />
+  </ItemGroup>
+</Project>

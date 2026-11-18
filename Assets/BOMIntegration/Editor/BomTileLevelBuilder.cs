@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Bom.Native;
 using Bom.Unity;
@@ -9,25 +10,16 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using M = BomTileMapping;
 
-// C6: exports Darryn's tile-built levels (YardLevel, BridgeLevel, TowerLevel) as native v4 layouts and derived network
-// scenes. His scenes are only opened and immediately saved *as a copy* under Assets/BOMIntegration; the originals are
-// never written. Rules (each recorded per tile in <layout>.tiles.json):
-//   - Every DestructibleObject is a candidate tile. A tile whose depth (Z) interval misses the player's plane
-//     (ArenaLayout origin z +/- the player's 0.45 CharacterController radius) is off-plane: Darryn's players can never touch
-//     it (the bridge truss, the yard/tower pillars), so it stays as visible, non-destructible decoration. Native physics is XY.
-//   - Carve -> Anchored, anchor segments on every outline edge (pieces still touching the tile's original outline stay;
-//     only islands cut free fall). CarveAndFragment -> Dynamic when something in the plane (a tile or the floor) holds it;
-//     when it only rests on off-plane pillars it is Anchored at those pillar contacts, so it falls when a blast removes the
-//     contact cells (Darryn's fallWhenUnsupported); with no support at all it is anchored on its bottom edge.
-//   - Left Wall / Right Wall / Bottom Boundary are Fixed + Indestructible stone; walls without a renderer are hidden.
-//   - Tiles are clipped to the walls' inner faces and the floor's top (never overlap a Fixed part, C2b), and tiles wholly
-//     outside the arena stay decoration. Darryn's tiles overlap their neighbours by small seams, which native rejects, so
-//     each overlapping tile is trimmed along its shallowest side against tiles already kept (kept first: higher top, then
-//     lower x). A trim deeper than MaxTrim or a quarter of the tile fails the export instead of guessing.
-//   - Spawns: ArenaSession/ArenaLayout spawn height and spacing (4 players), dropped onto the first surface below.
-//     Camera bounds: the Level Bounds collider (Darryn's ArenaCamera uses the same). Bombs drop at its top + 2 (his
-//     BombDropper). Kill bounds: inner wall faces and Level Bounds; other bounds follow the classic yard's margins.
+// G5 (tile exporter v2): exports Darryn's tile-built levels (YardLevel, BridgeLevel, TowerLevel) as native v4 layouts and
+// derived network scenes with the design doc section 3 mapping (BomTileMapping): every visible tile inside the arena is a
+// simulated part with an OD-2 material, front/rear duplicates merge, overlaps become glued seams, anchors sit only at real
+// support (terrain bedrock, post feet on terrain, the Bridge's five OD-3 piles), and invariants I1-I4 fail the export.
+// Darryn's scenes are only opened and saved *as a copy* under Assets/BOMIntegration; the originals are never written.
+// The side walls and bottom boundary stay as hidden fixed stone until G8 replaces them (I2: destructible, listed by name).
+// Per level it writes <layout>.json, <layout>.tiles.json (summary + one row per tile + parts) and <layout>.tiles-input.json
+// (the exact mapping input, replayable with integration/tools/g5/TileMappingTests).
 public static class BomTileLevelBuilder
 {
     public sealed class Spec
@@ -35,79 +27,51 @@ public static class BomTileLevelBuilder
         public string Name,
             Source,
             Scene,
-            LevelId,
-            Material;
+            LevelId;
+        public (string Prefix, string Material)[] Materials;
+        public int Piles;
     }
 
+    // OD-2 (2026-11-17): Bridge decks wood; truss, posts, girders, braces steel; Yard ground earth, rocks stone; Tower stone.
+    // Yard "Cube" (its 8 pillars and 2 top slabs) is not in the OD-2 table; it takes stone like the Tower's blocks and pillars (G6 tunes).
     public static readonly Spec[] Levels =
     {
-        new Spec { Name = "YardLevel", Source = "Assets/Game/Scenes/YardLevel.unity", Scene = "Assets/BOMIntegration/NetworkYardTiles.unity", LevelId = "bomb-yard-tiles-v1", Material = "earth" },
-        new Spec { Name = "BridgeLevel", Source = "Assets/Game/Scenes/BridgeLevel.unity", Scene = "Assets/BOMIntegration/NetworkBridge.unity", LevelId = "bomb-bridge-v1", Material = "wood" },
-        new Spec { Name = "TowerLevel", Source = "Assets/Game/Scenes/TowerLevel.unity", Scene = "Assets/BOMIntegration/NetworkTower.unity", LevelId = "bomb-tower-v1", Material = "stone" },
+        new Spec
+        {
+            Name = "YardLevel",
+            Source = "Assets/Game/Scenes/YardLevel.unity",
+            Scene = "Assets/BOMIntegration/NetworkYardTiles.unity",
+            LevelId = "bomb-yard-tiles-v2",
+            Materials = new[] { ("Yard Ground Tile", "earth"), ("Rock", "stone"), ("Cube", "stone") },
+        },
+        new Spec
+        {
+            Name = "BridgeLevel",
+            Source = "Assets/Game/Scenes/BridgeLevel.unity",
+            Scene = "Assets/BOMIntegration/NetworkBridge.unity",
+            LevelId = "bomb-bridge-v2",
+            Materials = new[] { ("Bridge Deck Tile", "wood"), ("Bridge Girder", "steel"), ("Bridge Truss Post", "steel"), ("Bridge Truss Brace", "steel") },
+            Piles = 5, // OD-3 (a)
+        },
+        new Spec
+        {
+            Name = "TowerLevel",
+            Source = "Assets/Game/Scenes/TowerLevel.unity",
+            Scene = "Assets/BOMIntegration/NetworkTower.unity",
+            LevelId = "bomb-tower-v2",
+            Materials = new[] { ("Cube", "stone") },
+        },
     };
 
-    const float PlayerHalfDepth = .45f, // Darryn's Player.prefab CharacterController radius
-        MaxTrim = .5f,
-        SupportGap = .3f,
-        MinTile = .2f,
-        Seam = 1e-5f;
+    // Custom palette entries (native allows 4 per level). Steel per OD-2; earth as C6.
+    static BomCustomMaterial Custom(string name) =>
+        name == "steel" ? new BomCustomMaterial { Name = "steel", Base = "stone", Toughness = 1.25f, BlastResistance = 4, StripThickness = .2f, ShockLoss = 4, Flexibility = .5f, Color = new Color32(52, 66, 86, 255) }
+        : name == "earth" ? new BomCustomMaterial { Name = "earth", Base = "stone", Color = new Color32(132, 95, 64, 255) }
+        : null;
+
+    static readonly string[] BuiltInMaterials = { "stone", "wood", "glass", "rubber" };
 
     static readonly string[] PresentationRoots = { "BOM native yard session", "Network menu and arena HUD", "BOM native yard camera" };
-
-    [Serializable]
-    sealed class TileRow
-    {
-        public string path,
-            behaviour,
-            classification,
-            motion,
-            note;
-        public Vector2 depth,
-            original_min,
-            original_max,
-            final_min,
-            final_max;
-        public float trimmed;
-        public int anchors;
-    }
-
-    [Serializable]
-    sealed class TileReport
-    {
-        public string level,
-            source_scene,
-            derived_scene,
-            level_id;
-        public float player_plane_z,
-            max_trim;
-        public int tiles,
-            exported,
-            off_plane,
-            outside_arena,
-            anchored,
-            dynamic,
-            trimmed;
-        public Vector2[] spawns;
-        public TileRow[] rows;
-    }
-
-    sealed class Tile
-    {
-        public Transform T;
-        public string Path,
-            Behaviour;
-        public bool Fragment,
-            Rect,
-            InPlane,
-            Exported;
-        public Vector2[] Hull,
-            OriginalHull;
-        public Vector2 Lo,
-            Hi,
-            Depth;
-        public float ClippedArea;
-        public TileRow Row;
-    }
 
     static string Env(string name)
     {
@@ -137,21 +101,20 @@ public static class BomTileLevelBuilder
         return null;
     }
 
-    static object Get(Component component, string property) =>
-        component.GetType().GetProperty(property).GetValue(component);
+    static object Get(Component component, string property) => component.GetType().GetProperty(property).GetValue(component);
 
-    static Vector2[] Hull(List<Vector2> points)
+    static M.P[] Hull(List<M.P> points)
     {
-        points.Sort((a, b) => a.x != b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
-        var hull = new List<Vector2>();
-        float Cross(Vector2 o, Vector2 a, Vector2 b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+        points.Sort((a, b) => a.X != b.X ? a.X.CompareTo(b.X) : a.Y.CompareTo(b.Y));
+        var hull = new List<M.P>();
+        double Cross(M.P o, M.P a, M.P b) => (a.X - o.X) * (b.Y - o.Y) - (a.Y - o.Y) * (b.X - o.X);
         for (int pass = 0; pass < 2; pass++)
         {
             int start = hull.Count;
             for (int i = 0; i < points.Count; i++)
             {
                 var p = points[pass == 0 ? i : points.Count - 1 - i];
-                while (hull.Count >= start + 2 && Cross(hull[hull.Count - 2], hull[hull.Count - 1], p) <= 1e-7f)
+                while (hull.Count >= start + 2 && Cross(hull[hull.Count - 2], hull[hull.Count - 1], p) <= 1e-7)
                     hull.RemoveAt(hull.Count - 1);
                 hull.Add(p);
             }
@@ -160,114 +123,37 @@ public static class BomTileLevelBuilder
         return hull.ToArray();
     }
 
-    static bool Measure(Tile tile)
+    // The tile's XY silhouette: convex hull of every mesh vertex in world space (rounded to 1e-5), and its Z interval.
+    static M.Tile Measure(Component destructible)
     {
-        var points = new List<Vector2>();
-        float zmin = float.MaxValue,
-            zmax = float.MinValue;
-        foreach (var filter in tile.T.GetComponentsInChildren<MeshFilter>(true))
+        var t = destructible.transform;
+        var tile = new M.Tile { Path = ObjectPath(t), Name = t.name };
+        var behaviour = new SerializedObject(destructible).FindProperty("behavior").intValue;
+        tile.Behaviour = behaviour == 1 ? "CarveAndFragment" : "Carve";
+        var points = new List<M.P>();
+        double zmin = double.MaxValue,
+            zmax = double.MinValue;
+        foreach (var filter in t.GetComponentsInChildren<MeshFilter>(true))
         {
             if (filter.sharedMesh == null)
                 continue;
+            var renderer = filter.GetComponent<MeshRenderer>();
+            if (renderer != null && renderer.sharedMaterial != null && tile.DarrynMaterial.Length == 0)
+                tile.DarrynMaterial = AssetDatabase.GetAssetPath(renderer.sharedMaterial) + ":" + renderer.sharedMaterial.name;
             var matrix = filter.transform.localToWorldMatrix;
             foreach (var v in filter.sharedMesh.vertices)
             {
                 var p = matrix.MultiplyPoint3x4(v);
-                points.Add(new Vector2((float)Math.Round(p.x, 5), (float)Math.Round(p.y, 5)));
-                zmin = Mathf.Min(zmin, p.z);
-                zmax = Mathf.Max(zmax, p.z);
+                points.Add(new M.P(Math.Round(p.x, 5), Math.Round(p.y, 5)));
+                zmin = Math.Min(zmin, p.z);
+                zmax = Math.Max(zmax, p.z);
             }
         }
-        if (points.Count < 3)
-            return false;
-        tile.Hull = Hull(points);
-        tile.OriginalHull = tile.Hull;
-        tile.Depth = new Vector2(zmin, zmax);
-        tile.Lo = new Vector2(float.MaxValue, float.MaxValue);
-        tile.Hi = -tile.Lo;
-        foreach (var p in tile.Hull)
-        {
-            tile.Lo = Vector2.Min(tile.Lo, p);
-            tile.Hi = Vector2.Max(tile.Hi, p);
-        }
-        tile.Rect = tile.Hull.Length == 4;
-        for (int i = 0; tile.Rect && i < 4; i++)
-        {
-            var a = tile.Hull[i];
-            var b = tile.Hull[(i + 1) % 4];
-            tile.Rect = Mathf.Abs(a.x - b.x) < 1e-4f || Mathf.Abs(a.y - b.y) < 1e-4f;
-        }
-        return true;
+        tile.Hull = points.Count >= 3 ? Hull(points) : Array.Empty<M.P>();
+        tile.ZMin = Math.Round(zmin, 5);
+        tile.ZMax = Math.Round(zmax, 5);
+        return tile;
     }
-
-    static float Area(Vector2[] p)
-    {
-        double s = 0;
-        for (int i = 0; i < p.Length; i++)
-            s += (double)p[i].x * p[(i + 1) % p.Length].y - (double)p[(i + 1) % p.Length].x * p[i].y;
-        return (float)(s / 2);
-    }
-
-    // Keep the part of a convex outline where dot(n, p) >= d.
-    static Vector2[] HalfPlane(Vector2[] poly, Vector2 n, float d)
-    {
-        var result = new List<Vector2>();
-        for (int i = 0; i < poly.Length; i++)
-        {
-            Vector2 p = poly[i],
-                q = poly[(i + 1) % poly.Length];
-            float sp = Vector2.Dot(n, p) - d,
-                sq = Vector2.Dot(n, q) - d;
-            if (sp >= 0)
-                result.Add(p);
-            if (sp >= 0 != sq >= 0)
-                result.Add(p + (q - p) * (sp / (sp - sq)));
-        }
-        return result.ToArray();
-    }
-
-    // A non-box tile (Darryn's rocks) sunk into a box: cut its convex outline at the box face that removes the least area.
-    static void ClipShape(Tile tile, Tile box)
-    {
-        float before = Area(tile.Hull);
-        Vector2[] best = null;
-        float bestArea = -1;
-        foreach (var (n, d) in new[] { (Vector2.up, box.Hi.y), (Vector2.down, -box.Lo.y), (Vector2.right, box.Hi.x), (Vector2.left, -box.Lo.x) })
-        {
-            var clipped = HalfPlane(tile.Hull, n, d);
-            if (clipped.Length < 3)
-                continue;
-            float area = Area(clipped);
-            if (area > bestArea)
-            {
-                bestArea = area;
-                best = clipped;
-            }
-        }
-        float total = tile.ClippedArea + before - bestArea;
-        if (best == null || total > Area(tile.OriginalHull) * .25f)
-            throw new InvalidOperationException(tile.Path + " is sunk into " + box.Path + " too deeply to clip (" + (before - bestArea).ToString("0.###", CultureInfo.InvariantCulture) + " of " + before.ToString("0.###", CultureInfo.InvariantCulture) + ")");
-        var cleaned = new List<Vector2>();
-        foreach (var p in best)
-            if (cleaned.Count == 0 || (p - cleaned[cleaned.Count - 1]).magnitude >= .002f)
-                cleaned.Add(p);
-        if (cleaned.Count > 1 && (cleaned[0] - cleaned[cleaned.Count - 1]).magnitude < .002f)
-            cleaned.RemoveAt(cleaned.Count - 1);
-        tile.Hull = cleaned.ToArray();
-        tile.ClippedArea = total;
-        tile.Lo = new Vector2(float.MaxValue, float.MaxValue);
-        tile.Hi = -tile.Lo;
-        foreach (var p in tile.Hull)
-        {
-            tile.Lo = Vector2.Min(tile.Lo, p);
-            tile.Hi = Vector2.Max(tile.Hi, p);
-        }
-    }
-
-    static bool Overlaps(Vector2 alo, Vector2 ahi, Vector2 blo, Vector2 bhi) =>
-        Mathf.Min(ahi.x, bhi.x) - Mathf.Max(alo.x, blo.x) > Seam && Mathf.Min(ahi.y, bhi.y) - Mathf.Max(alo.y, blo.y) > Seam;
-
-    static float Overlap1(float alo, float ahi, float blo, float bhi) => Mathf.Min(ahi, bhi) - Mathf.Max(alo, blo);
 
     static string MeshKey(Transform group)
     {
@@ -286,6 +172,8 @@ public static class BomTileLevelBuilder
         return "tiles/" + Hash128.Compute(text.ToString());
     }
 
+    static Vector2 V(M.P p) => new Vector2((float)p.X, (float)p.Y);
+
     static BomPhysicsPart Part(Transform owner, string name, Vector2[] outline, string material, BomAnchorSegment[] anchors, string note)
     {
         var child = new GameObject(name);
@@ -302,20 +190,136 @@ public static class BomTileLevelBuilder
 
     static Vector2[] RectOutline(Vector2 lo, Vector2 hi) => new[] { lo, new Vector2(hi.x, lo.y), hi, new Vector2(lo.x, hi.y) };
 
-    static BomAnchorSegment[] EdgeAnchors(Vector2[] outline)
-    {
-        var anchors = new BomAnchorSegment[outline.Length];
-        for (int i = 0; i < outline.Length; i++)
-            anchors[i] = new BomAnchorSegment { A = outline[i], B = outline[(i + 1) % outline.Length] };
-        return anchors;
-    }
-
     static GameObject Root(Scene scene, string name)
     {
         foreach (var root in scene.GetRootGameObjects())
             if (root.name == name)
                 return root;
         return null;
+    }
+
+    // A renderer-only copy of one of Darryn's meshes under a part's visual group (world pose kept). The copy dresses the
+    // part's cells in the visual registry; the original tile is hidden, so nothing is drawn twice.
+    static void CopyMesh(MeshFilter filter, Transform group, Vector3 position, Vector3 scale)
+    {
+        var copy = new GameObject(filter.name + " (G5 visual)");
+        copy.transform.SetParent(group, false);
+        copy.transform.SetPositionAndRotation(position, filter.transform.rotation);
+        copy.transform.localScale = scale;
+        copy.AddComponent<MeshFilter>().sharedMesh = filter.sharedMesh;
+        copy.AddComponent<MeshRenderer>().sharedMaterials = filter.GetComponent<MeshRenderer>().sharedMaterials;
+    }
+
+    [Serializable]
+    sealed class PartRow
+    {
+        public int part;
+        public long source_identity;
+        public string role,
+            material,
+            motion,
+            note;
+        public string[] tiles,
+            visual,
+            anchors;
+        public int piles;
+        public Vector2[] outline;
+    }
+
+    [Serializable]
+    sealed class BoundaryRow
+    {
+        public string name,
+            motion,
+            damage,
+            note;
+        public bool visible;
+        public Vector2 lo,
+            hi;
+    }
+
+    [Serializable]
+    sealed class TileRowOut
+    {
+        public string path,
+            name,
+            behaviour,
+            darryn_material,
+            role,
+            classification,
+            material,
+            note;
+        public float zmin,
+            zmax;
+        public bool brought_onto_plane;
+        public int[] parts;
+    }
+
+    [Serializable]
+    sealed class TileReport
+    {
+        public string level,
+            source_scene,
+            derived_scene,
+            level_id,
+            exporter = "G5 tile exporter v2 (BomTileMapping)";
+        public float player_plane_z;
+        public int tiles,
+            in_arena,
+            outside_arena,
+            backdrop_tiles,
+            merged_duplicates,
+            post_column_joins,
+            brought_onto_plane,
+            covered_tiles,
+            parts,
+            glue_links,
+            anchored_parts,
+            anchor_segments,
+            piles,
+            dropped_slivers,
+            native_glue_links = -1,
+            native_glue_zero_sample_links = -1,
+            native_parts = -1,
+            native_cells = -1,
+            allowed_overlaps;
+        public float dropped_area,
+            max_dropped_area;
+        public string[] parts_by_role,
+            parts_by_material,
+            custom_materials,
+            fixed_sources;
+        public BoundaryRow[] boundaries;
+        public Vector2[] spawns;
+        public TileRowOut[] rows;
+        public PartRow[] part_rows;
+    }
+
+    [Serializable]
+    sealed class NativeGlueReport
+    {
+        public string status;
+        public int part_count,
+            cell_count,
+            glue_link_count,
+            glue_zero_sample_links;
+    }
+
+    static string Json(M.P p) => "[" + p.X.ToString("R", CultureInfo.InvariantCulture) + "," + p.Y.ToString("R", CultureInfo.InvariantCulture) + "]";
+
+    static string Q(string s) => "\"" + (s ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+
+    // The mapping input as JSON (TileMappingTests "map" replays it without Unity).
+    static string InputJson(M.Input input)
+    {
+        var s = new StringBuilder("{\"rules\":{\"level\":").Append(Q(input.Rules.Level)).Append(",\"plane_z\":").Append(input.Rules.PlaneZ.ToString("R", CultureInfo.InvariantCulture));
+        s.Append(",\"materials\":[").Append(string.Join(",", input.Rules.Materials.Select(m => "[" + Q(m.Prefix) + "," + Q(m.Material) + "]"))).Append(']');
+        s.Append(",\"piles\":").Append(input.Rules.Piles).Append(",\"pile_material\":").Append(Q(input.Rules.PileMaterial)).Append("},\"boundaries\":[");
+        s.Append(string.Join(",", input.Boundaries.Select(b => "{\"name\":" + Q(b.Name) + ",\"lo\":" + Json(b.Lo) + ",\"hi\":" + Json(b.Hi) + ",\"indestructible\":" + (b.Indestructible ? "true" : "false") + ",\"visible\":" + (b.Visible ? "true" : "false") + "}")));
+        s.Append("],\"tiles\":[\n");
+        s.Append(string.Join(",\n", input.Tiles.Select(t => "{\"path\":" + Q(t.Path) + ",\"name\":" + Q(t.Name) + ",\"behaviour\":" + Q(t.Behaviour) + ",\"darryn_material\":" + Q(t.DarrynMaterial)
+            + ",\"hull\":[" + string.Join(",", t.Hull.Select(Json)) + "],\"zmin\":" + t.ZMin.ToString("R", CultureInfo.InvariantCulture) + ",\"zmax\":" + t.ZMax.ToString("R", CultureInfo.InvariantCulture) + "}")));
+        return s.Append("\n]}\n").ToString();
     }
 
     public static BomVisualRegistry Export(Spec spec, string output)
@@ -359,135 +363,42 @@ public static class BomTileLevelBuilder
                 desired.y += .75f; // ArenaSession.ResetPlayer's YardLevel lift
         }
 
-        // Walls and floor.
-        var fixedParts = new List<(Transform t, Vector2 lo, Vector2 hi, Vector2 depth)>();
-        foreach (string name in new[] { "Bottom Boundary", "Left Wall", "Right Wall" })
+        // Mapping input: boundaries (kept as they are until G8, but destructible: I2), Darryn's tiles, the level's rules.
+        var input = new M.Input
+        {
+            Rules = new M.Rules { Level = spec.Name, PlaneZ = planeZ, Materials = spec.Materials, Piles = spec.Piles, PileMaterial = spec.Piles > 0 ? "steel" : "" },
+        };
+        var boundaryTransforms = new Dictionary<string, Transform>();
+        foreach (string name in M.BoundaryNames)
         {
             var t = layout.transform.Find(name);
             var collider = t != null ? t.GetComponent<Collider>() : null;
             if (collider == null)
                 throw new InvalidOperationException(spec.Name + ": missing boundary " + name);
+            bool visible = false;
+            foreach (var renderer in t.GetComponentsInChildren<MeshRenderer>(true))
+                if (renderer.enabled && renderer.GetComponent<MeshFilter>() != null && renderer.GetComponent<MeshFilter>().sharedMesh != null)
+                    visible = true;
             var cb = collider.bounds;
-            fixedParts.Add((t, new Vector2(cb.min.x, cb.min.y), new Vector2(cb.max.x, cb.max.y), new Vector2(cb.min.z, cb.max.z)));
+            input.Boundaries.Add(new M.Boundary { Name = name, Lo = new M.P(cb.min.x, cb.min.y), Hi = new M.P(cb.max.x, cb.max.y), Visible = visible });
+            boundaryTransforms[name] = t;
         }
-        float innerLeft = fixedParts[1].hi.x,
-            innerRight = fixedParts[2].lo.x,
-            floor = fixedParts[0].hi.y;
-
-        // Tiles.
-        var tiles = new List<Tile>();
+        var tileObjects = new Dictionary<string, Transform>();
         foreach (var root in scene.GetRootGameObjects())
         foreach (var component in root.GetComponentsInChildren<Component>(true))
             if (component != null && component.GetType().Name == "DestructibleObject")
             {
-                var behaviour = new SerializedObject(component).FindProperty("behavior").intValue;
-                var tile = new Tile
-                {
-                    T = component.transform,
-                    Path = ObjectPath(component.transform),
-                    Fragment = behaviour == 1,
-                    Behaviour = behaviour == 1 ? "CarveAndFragment" : "Carve",
-                };
-                tile.Row = new TileRow { path = tile.Path, behaviour = tile.Behaviour };
-                tiles.Add(tile);
-                if (!Measure(tile))
-                {
-                    tile.Row.classification = "decoration";
-                    tile.Row.note = "No mesh to measure";
-                    continue;
-                }
-                tile.Row.depth = tile.Depth;
-                tile.Row.original_min = tile.Lo;
-                tile.Row.original_max = tile.Hi;
-                tile.InPlane = tile.Depth.y > planeZ - PlayerHalfDepth && tile.Depth.x < planeZ + PlayerHalfDepth;
-                if (!tile.InPlane)
-                {
-                    tile.Row.classification = "off-plane decoration";
-                    tile.Row.note = "Depth " + tile.Depth.x.ToString("0.###", CultureInfo.InvariantCulture) + ".." + tile.Depth.y.ToString("0.###", CultureInfo.InvariantCulture)
-                        + " misses the player plane z=" + planeZ.ToString("0.###", CultureInfo.InvariantCulture) + "+/-" + PlayerHalfDepth + "; visible art, not destructible on Odin";
-                    continue;
-                }
-                // Clip to the arena (inner wall faces, floor top).
-                var lo = new Vector2(Mathf.Max(tile.Lo.x, innerLeft), Mathf.Max(tile.Lo.y, floor));
-                var hi = new Vector2(Mathf.Min(tile.Hi.x, innerRight), tile.Hi.y);
-                if (hi.x - lo.x < MinTile || hi.y - lo.y < MinTile)
-                {
-                    tile.Row.classification = "outside arena decoration";
-                    tile.Row.note = "Outside the walls/floor; visible art only";
-                    continue;
-                }
-                if (!tile.Rect && (lo != tile.Lo || hi != tile.Hi))
-                    throw new InvalidOperationException(tile.Path + ": a non-rectangular tile crosses a wall or the floor; author a proxy");
-                if (lo != tile.Lo || hi != tile.Hi)
-                    tile.Row.note = "Clipped to the arena walls/floor. ";
-                tile.Lo = lo;
-                tile.Hi = hi;
-                tile.Exported = true;
+                var tile = Measure(component);
+                if (tileObjects.ContainsKey(tile.Path))
+                    throw new InvalidOperationException(spec.Name + ": two tiles share the path " + tile.Path + "; rename one in a copy");
+                tileObjects[tile.Path] = component.transform;
+                input.Tiles.Add(tile);
             }
+        Directory.CreateDirectory(Path.GetDirectoryName(output));
+        File.WriteAllText(output + ".tiles-input.json", InputJson(input));
 
-        // Seam trimming: boxes first, then other shapes (rocks), each by higher top, then lower x, then path (deterministic).
-        var order = tiles.FindAll(t => t.Exported);
-        order.Sort((a, c) =>
-        {
-            int r = c.Rect.CompareTo(a.Rect);
-            if (r == 0)
-                r = c.Hi.y.CompareTo(a.Hi.y);
-            if (r == 0)
-                r = a.Lo.x.CompareTo(c.Lo.x);
-            return r != 0 ? r : string.CompareOrdinal(a.Path, c.Path);
-        });
-        var kept = new List<Tile>();
-        float maxTrim = 0;
-        foreach (var tile in order)
-        {
-            var origLo = tile.Lo;
-            var origHi = tile.Hi;
-            foreach (var other in kept)
-            {
-                if (!Overlaps(tile.Lo, tile.Hi, other.Lo, other.Hi))
-                    continue;
-                if (!other.Rect)
-                    throw new InvalidOperationException(tile.Path + " overlaps " + other.Path + " and neither is an axis-aligned box; author a proxy");
-                if (!tile.Rect)
-                {
-                    ClipShape(tile, other);
-                    continue;
-                }
-                float left = other.Hi.x - tile.Lo.x,
-                    right = tile.Hi.x - other.Lo.x,
-                    bottom = other.Hi.y - tile.Lo.y,
-                    top = tile.Hi.y - other.Lo.y;
-                float best = Mathf.Min(Mathf.Min(left, right), Mathf.Min(bottom, top));
-                // Relative to the tile as Darryn placed it (before the wall clip).
-                var full = tile.Row.original_max - tile.Row.original_min;
-                float size = best == left || best == right ? full.x : full.y;
-                if (best > MaxTrim || best > size * .25f)
-                    throw new InvalidOperationException(
-                        tile.Path + " overlaps " + other.Path + " by " + best.ToString("0.###", CultureInfo.InvariantCulture) + "; too deep to trim as a seam"
-                    );
-                if (best == left)
-                    tile.Lo.x = other.Hi.x;
-                else if (best == right)
-                    tile.Hi.x = other.Lo.x;
-                else if (best == bottom)
-                    tile.Lo.y = other.Hi.y;
-                else
-                    tile.Hi.y = other.Lo.y;
-            }
-            if (tile.Hi.x - tile.Lo.x < MinTile || tile.Hi.y - tile.Lo.y < MinTile)
-            {
-                tile.Exported = false;
-                tile.Row.classification = "outside arena decoration";
-                tile.Row.note += "Only a sliver inside the walls is left once the seams are trimmed; visible art only";
-                continue;
-            }
-            float trim = tile.Rect ? (tile.Lo - origLo).magnitude + (tile.Hi - origHi).magnitude : tile.ClippedArea;
-            tile.Row.trimmed = trim;
-            if (trim > 0)
-                tile.Row.note += (tile.Rect ? "Seam trimmed by " : "Outline clipped at box faces, area removed ") + trim.ToString("0.###", CultureInfo.InvariantCulture) + " against tiles kept whole. ";
-            maxTrim = Mathf.Max(maxTrim, trim);
-            kept.Add(tile);
-        }
+        // The section 3 mapping; any invariant I1-I4 failure throws here and the level does not export.
+        var mapped = M.Map(input);
 
         // Authoring root and materials.
         var levelRoot = new GameObject("BOM " + spec.Name + " Authoring");
@@ -496,8 +407,7 @@ public static class BomTileLevelBuilder
         level.LevelId = spec.LevelId;
         level.NextIdentityDecimal = "1";
         var yardScene = EditorSceneManager.OpenScene(BomNetworkMenuBuilder.ScenePath, OpenSceneMode.Additive);
-        var yardLevel = UnityEngine.Object.FindObjectsByType<BomLevelAuthoring>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (var candidate in yardLevel)
+        foreach (var candidate in UnityEngine.Object.FindObjectsByType<BomLevelAuthoring>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             if (candidate.gameObject.scene == yardScene)
             {
                 // Same tuning as the classic yard (one gameplay config for every level).
@@ -505,100 +415,90 @@ public static class BomTileLevelBuilder
                 level.GameplayConfigId = candidate.GameplayConfigId;
                 level.Seed = candidate.Seed;
             }
-        if (spec.Material == "earth")
-            level.Materials.Add(new BomCustomMaterial { Name = "earth", Base = "stone", Color = new Color32(132, 95, 64, 255) });
+        foreach (string name in mapped.Parts.Select(p => p.Material).Distinct().OrderBy(n => n, StringComparer.Ordinal))
+        {
+            if (Array.IndexOf(BuiltInMaterials, name) >= 0)
+                continue;
+            var custom = Custom(name);
+            if (custom == null)
+                throw new M.InvariantException("I4", spec.Name, "material '" + name + "' is neither built in nor a known custom");
+            level.Materials.Add(custom);
+        }
+        if (level.Materials.Count > 4)
+            throw new InvalidOperationException(spec.Name + ": more than 4 custom materials");
 
         var shape = new BomActorShapeInfo { struct_size = (uint)System.Runtime.InteropServices.Marshal.SizeOf<BomActorShapeInfo>(), version = 1 };
         BomSession.Check(BomNative.bom_actor_shape_info(ref shape));
 
-        // Fixed boundaries.
+        // Boundaries: fixed, hidden where Darryn hid them, destructible (I2). G8 replaces them (OD-1).
+        var boundaryRows = new List<BoundaryRow>();
         var allSolid = new List<(Vector2 lo, Vector2 hi)>();
-        foreach (var wall in fixedParts)
+        foreach (var boundary in input.Boundaries)
         {
-            bool visible = false;
-            foreach (var renderer in wall.t.GetComponentsInChildren<MeshRenderer>(true))
-                if (renderer.enabled && renderer.GetComponent<MeshFilter>() != null && renderer.GetComponent<MeshFilter>().sharedMesh != null)
-                    visible = true;
-            var source = wall.t.gameObject.AddComponent<BomAssetInstance>();
-            source.AssetKey = "tiles/" + spec.Name + "/" + wall.t.name;
-            source.OriginalObjectPath = ObjectPath(wall.t);
+            var t = boundaryTransforms[boundary.Name];
+            var source = t.gameObject.AddComponent<BomAssetInstance>();
+            source.AssetKey = "tiles/" + spec.Name + "/" + t.name;
+            source.OriginalObjectPath = ObjectPath(t);
             source.Motion = BomMotionPolicy.Fixed;
-            source.Damage = BomDamagePolicy.Indestructible;
-            source.FallbackDepth = wall.depth;
-            source.HiddenVisual = !visible;
-            source.ApproximationNote = "Explicit XY boundary from the original ArenaLayout collider" + (visible ? "" : "; invisible in the original, so hidden");
-            Part(wall.t, "Native fixed boundary", RectOutline(wall.lo, wall.hi), "stone", Array.Empty<BomAnchorSegment>(), "");
-            allSolid.Add((wall.lo, wall.hi));
+            source.Damage = BomDamagePolicy.Destructible;
+            var cb = t.GetComponent<Collider>().bounds;
+            source.FallbackDepth = new Vector2(cb.min.z, cb.max.z);
+            source.HiddenVisual = !boundary.Visible;
+            source.ApproximationNote = "Existing XY boundary from the original ArenaLayout collider, fixed until G8 (OD-1); destructible (I2)" + (boundary.Visible ? "" : "; invisible in the original, so hidden");
+            Part(t, "Native fixed boundary", RectOutline(V(boundary.Lo), V(boundary.Hi)), "stone", Array.Empty<BomAnchorSegment>(), "");
+            allSolid.Add((V(boundary.Lo), V(boundary.Hi)));
+            boundaryRows.Add(new BoundaryRow { name = boundary.Name, motion = "fixed", damage = "destructible", visible = boundary.Visible, lo = V(boundary.Lo), hi = V(boundary.Hi), note = "kept until G8 (OD-1)" });
         }
 
-        // Tiles: motion and anchors.
-        var offPlane = tiles.FindAll(t => !t.InPlane && t.Hull != null);
-        foreach (var tile in kept)
-            allSolid.Add((tile.Lo, tile.Hi));
-        int anchored = 0,
-            dynamic = 0;
-        foreach (var tile in kept)
+        // Parts: one source per part, its visual group holding copies of the Darryn meshes it stands for.
+        var partsRoot = new GameObject("BOM G5 parts").transform;
+        partsRoot.SetParent(levelRoot.transform, false);
+        var physics = new List<BomPhysicsPart>();
+        var sources = new List<BomAssetInstance>();
+        foreach (var part in mapped.Parts)
         {
-            var outline = tile.Rect ? RectOutline(tile.Lo, tile.Hi) : tile.Hull;
-            BomMotionPolicy motion;
-            BomAnchorSegment[] anchors;
-            if (!tile.Fragment)
+            var group = new GameObject("G5 part " + part.Index + " " + part.Role + " " + (part.Tiles.FirstOrDefault() ?? "pile").Replace('/', '_'));
+            group.transform.SetParent(partsRoot, false);
+            foreach (string path in part.Visual)
+                foreach (var filter in tileObjects[path].GetComponentsInChildren<MeshFilter>(true))
+                    if (filter.sharedMesh != null && filter.GetComponent<MeshRenderer>() != null)
+                        CopyMesh(filter, group.transform, filter.transform.position, filter.transform.lossyScale);
+            foreach (var pile in part.Piles)
             {
-                motion = BomMotionPolicy.Anchored;
-                anchors = EdgeAnchors(outline);
-                tile.Row.note += "Carve: anchored on every edge.";
+                // The pile is drawn with the post's own mesh, stretched from the post foot down to the riverbed.
+                var template = tileObjects[pile.TemplatePath].GetComponentsInChildren<MeshFilter>(true).First(f => f.sharedMesh != null && f.GetComponent<MeshRenderer>() != null);
+                var bounds = template.GetComponent<MeshRenderer>().bounds;
+                float height = (float)(pile.Hi.Y - pile.Lo.Y),
+                    factor = height / Mathf.Max(bounds.size.y, 1e-4f);
+                var scale = template.transform.lossyScale;
+                var up = template.transform.rotation * Vector3.up;
+                var axis = Mathf.Abs(up.y) > .9f ? 1 : Mathf.Abs((template.transform.rotation * Vector3.right).y) > .9f ? 0 : 2;
+                scale[axis] *= factor;
+                var center = new Vector3((float)(pile.Lo.X + pile.Hi.X) / 2, (float)(pile.Lo.Y + pile.Hi.Y) / 2, bounds.center.z);
+                var offset = template.transform.position - bounds.center;
+                offset.y *= factor;
+                CopyMesh(template, group.transform, center + offset, scale);
             }
-            else
-            {
-                bool held = false;
-                foreach (var solid in allSolid)
-                    if (solid.hi.y <= tile.Lo.y + Seam && tile.Lo.y - solid.hi.y <= SupportGap && Overlap1(tile.Lo.x, tile.Hi.x, solid.lo.x, solid.hi.x) >= .05f)
-                        held = true;
-                if (held)
-                {
-                    motion = BomMotionPolicy.Dynamic;
-                    anchors = Array.Empty<BomAnchorSegment>();
-                    tile.Row.note += "CarveAndFragment: dynamic, resting on a tile or the floor.";
-                }
-                else
-                {
-                    motion = BomMotionPolicy.Anchored;
-                    var contacts = new List<BomAnchorSegment>();
-                    foreach (var pillar in offPlane)
-                    {
-                        float a = Mathf.Max(tile.Lo.x, pillar.Lo.x),
-                            c = Mathf.Min(tile.Hi.x, pillar.Hi.x);
-                        if (Mathf.Abs(pillar.Hi.y - tile.Lo.y) <= SupportGap && c - a >= .05f)
-                            contacts.Add(new BomAnchorSegment { A = new Vector2(a, tile.Lo.y), B = new Vector2(c, tile.Lo.y) });
-                    }
-                    if (contacts.Count > 0)
-                        tile.Row.note += "CarveAndFragment on off-plane pillars: anchored at " + contacts.Count + " pillar contact(s) (falls when a blast removes them).";
-                    else
-                    {
-                        contacts.Add(new BomAnchorSegment { A = new Vector2(tile.Lo.x, tile.Lo.y), B = new Vector2(tile.Hi.x, tile.Lo.y) });
-                        tile.Row.note += "CarveAndFragment with nothing under it in the original: anchored on its bottom edge.";
-                    }
-                    anchors = contacts.ToArray();
-                }
-            }
-            if (motion == BomMotionPolicy.Anchored)
-                anchored++;
-            else
-                dynamic++;
-            var source = tile.T.gameObject.AddComponent<BomAssetInstance>();
-            source.AssetKey = MeshKey(tile.T);
-            source.OriginalObjectPath = tile.Path;
-            source.Motion = motion;
+            var source = group.AddComponent<BomAssetInstance>();
+            source.AssetKey = MeshKey(group.transform);
+            source.OriginalObjectPath = part.Tiles.FirstOrDefault() ?? "pile";
+            source.Motion = part.Anchors.Count > 0 ? BomMotionPolicy.Anchored : BomMotionPolicy.Dynamic;
             source.Damage = BomDamagePolicy.Destructible;
-            source.FallbackDepth = tile.Depth;
-            source.ApproximationNote = "C6 tile (" + tile.Behaviour + "): " + tile.Row.note;
-            Part(tile.T, "Native tile proxy", outline, spec.Material, anchors, tile.Row.trimmed > 0 ? tile.Row.note : "");
-            tile.Row.classification = "native tile";
-            tile.Row.motion = motion.ToString();
-            tile.Row.final_min = tile.Lo;
-            tile.Row.final_max = tile.Hi;
-            tile.Row.anchors = anchors.Length;
+            source.FallbackDepth = new Vector2((float)part.ZMin, (float)part.ZMax);
+            source.ApproximationNote = "G5 " + part.Role + " (" + part.Material + "): " + part.Note;
+            var anchors = part.Anchors.Select(a => new BomAnchorSegment { A = V(a.A), B = V(a.B) }).ToArray();
+            physics.Add(Part(group.transform, "Native part", part.Outline.Select(V).ToArray(), part.Material, anchors, ""));
+            sources.Add(source);
+            var (lo, hi) = M.Box(part.Outline);
+            allSolid.Add((V(lo), V(hi)));
         }
+        foreach (var link in mapped.Glue)
+            level.Glue.Add(new BomGlueAuthoring { A = physics[link.A], B = physics[link.B] });
+        // Darryn's tiles that became parts (or lie wholly inside parts) are drawn by the parts now.
+        foreach (var row in mapped.Rows)
+            if (row.classification != "outside arena")
+                foreach (var renderer in tileObjects[row.path].GetComponentsInChildren<Renderer>(true))
+                    renderer.enabled = false;
 
         // Spawns: Darryn's spacing around the layout spawn, dropped onto the first surface below.
         float half = shape.player_segment + shape.player_radius;
@@ -608,14 +508,17 @@ public static class BomTileLevelBuilder
             float x = desired.x + (i - 1.5f) * spacing;
             float top = float.MinValue;
             foreach (var solid in allSolid)
-                if (Overlap1(x - shape.player_radius, x + shape.player_radius, solid.lo.x, solid.hi.x) > 0 && solid.hi.y <= desired.y + .5f)
+                if (Mathf.Min(x + shape.player_radius, solid.hi.x) - Mathf.Max(x - shape.player_radius, solid.lo.x) > 0 && solid.hi.y <= desired.y + .5f)
                     top = Mathf.Max(top, solid.hi.y);
             spawns[i] = new Vector2(x, top > float.MinValue ? top + half + .05f : desired.y);
         }
+        float innerLeft = (float)input.Boundaries.First(x => x.Name == "Left Wall").Hi.X,
+            innerRight = (float)input.Boundaries.First(x => x.Name == "Right Wall").Lo.X,
+            bottomLo = (float)input.Boundaries.First(x => x.Name == "Bottom Boundary").Lo.Y;
         level.Spawns = spawns;
         level.CameraBounds = new BomBounds2(new Vector2(b.min.x, b.min.y), new Vector2(b.max.x, b.max.y));
         float bombHeight = b.max.y + 2; // BombDropper: CameraBounds.max.y + dropHeightAboveArena (2)
-        level.SimulationBounds = new BomBounds2(new Vector2(b.min.x - 4, fixedParts[0].lo.y - 2), new Vector2(b.max.x + 4, bombHeight + 2));
+        level.SimulationBounds = new BomBounds2(new Vector2(b.min.x - 4, bottomLo - 2), new Vector2(b.max.x + 4, bombHeight + 2));
         level.KillBounds = new BomBounds2(new Vector2(innerLeft, b.min.y), new Vector2(innerRight, b.max.y)); // classic yard: walls + Level Bounds
         level.AimBounds = new BomBounds2(level.SimulationBounds.Minimum + Vector2.one, level.SimulationBounds.Maximum - Vector2.one);
         level.FragmentCullBounds = new BomBounds2(level.SimulationBounds.Minimum - new Vector2(8, 4), level.SimulationBounds.Maximum + new Vector2(8, 7));
@@ -694,6 +597,13 @@ public static class BomTileLevelBuilder
         BomAuthoringIdentity.Assign(level);
         EditorSceneManager.SaveScene(scene, spec.Scene);
 
+        var registry = BomLevelExporter.Export(level, output);
+
+        // I4 on the real validator: every glue link carries native samples (G-N2), and native saw the same parts and links.
+        var native = JsonUtility.FromJson<NativeGlueReport>(File.ReadAllText(output + ".native-report.json"));
+        if (native.status != "passed" || native.glue_zero_sample_links != 0 || native.glue_link_count != mapped.Glue.Count || native.part_count != mapped.Parts.Count + input.Boundaries.Count)
+            throw new M.InvariantException("I4", spec.Name, "native --validate-layout: status=" + native.status + " glue_links=" + native.glue_link_count + " (mapped " + mapped.Glue.Count + ") zero_sample=" + native.glue_zero_sample_links + " parts=" + native.part_count + " (mapped " + (mapped.Parts.Count + input.Boundaries.Count) + ")");
+
         var report = new TileReport
         {
             level = spec.Name,
@@ -701,29 +611,59 @@ public static class BomTileLevelBuilder
             derived_scene = spec.Scene,
             level_id = spec.LevelId,
             player_plane_z = planeZ,
-            max_trim = maxTrim,
-            tiles = tiles.Count,
-            exported = kept.Count,
-            off_plane = tiles.FindAll(t => t.Row.classification == "off-plane decoration").Count,
-            outside_arena = tiles.FindAll(t => t.Row.classification == "outside arena decoration").Count,
-            anchored = anchored,
-            dynamic = dynamic,
-            trimmed = kept.FindAll(t => t.Row.trimmed > 0).Count,
+            tiles = mapped.Tiles,
+            in_arena = mapped.InArena,
+            outside_arena = mapped.OutsideArena,
+            backdrop_tiles = mapped.Backdrop,
+            merged_duplicates = mapped.MergedDuplicates,
+            post_column_joins = mapped.ColumnJoins,
+            brought_onto_plane = mapped.BroughtOntoPlane,
+            covered_tiles = mapped.Rows.Count(r => r.classification == "covered"),
+            parts = mapped.Parts.Count,
+            glue_links = mapped.Glue.Count,
+            anchored_parts = mapped.Parts.Count(p => p.Anchors.Count > 0),
+            anchor_segments = mapped.Parts.Sum(p => p.Anchors.Count),
+            piles = mapped.Parts.Sum(p => p.Piles.Count),
+            dropped_slivers = mapped.DroppedSlivers,
+            dropped_area = (float)mapped.DroppedArea,
+            max_dropped_area = (float)mapped.MaxDroppedArea,
+            native_glue_links = native.glue_link_count,
+            native_glue_zero_sample_links = native.glue_zero_sample_links,
+            native_parts = native.part_count,
+            native_cells = native.cell_count,
+            allowed_overlaps = level.AllowedOverlaps.Count,
+            parts_by_role = mapped.Parts.GroupBy(p => p.Role.ToString()).Select(g => g.Key + "=" + g.Count()).ToArray(),
+            parts_by_material = mapped.Parts.GroupBy(p => p.Material).Select(g => g.Key + "=" + g.Count()).ToArray(),
+            custom_materials = level.Materials.Select(m => m.Name + " (base " + m.Base + ", toughness " + m.Toughness.ToString(CultureInfo.InvariantCulture) + ", blast resistance " + m.BlastResistance.ToString(CultureInfo.InvariantCulture) + ")").ToArray(),
+            fixed_sources = input.Boundaries.Select(x => x.Name).ToArray(),
+            boundaries = boundaryRows.ToArray(),
             spawns = spawns,
-            rows = tiles.ConvertAll(t => t.Row).ToArray(),
+            rows = mapped.Rows.Select(r => new TileRowOut { path = r.path, name = r.name, behaviour = r.behaviour, darryn_material = r.darryn_material, role = r.role, classification = r.classification, material = r.material, note = r.note, zmin = (float)r.zmin, zmax = (float)r.zmax, brought_onto_plane = r.brought_onto_plane, parts = r.parts }).ToArray(),
+            part_rows = mapped.Parts.Select(p => new PartRow
+            {
+                part = p.Index,
+                source_identity = (long)sources[p.Index].Identity,
+                role = p.Role.ToString(),
+                material = p.Material,
+                motion = p.Anchors.Count > 0 ? "anchored" : "dynamic",
+                note = p.Note,
+                tiles = p.Tiles.ToArray(),
+                visual = p.Visual.ToArray(),
+                anchors = p.Anchors.Select(a => a.Support + " " + a.A + "-" + a.B).ToArray(),
+                piles = p.Piles.Count,
+                outline = p.Outline.Select(V).ToArray(),
+            }).ToArray(),
         };
-        Directory.CreateDirectory(Path.GetDirectoryName(output));
         File.WriteAllText(output + ".tiles.json", JsonUtility.ToJson(report, true));
 
-        var registry = BomLevelExporter.Export(level, output);
         client.VisualRegistry = registry;
         EditorUtility.SetDirty(client);
         EditorSceneManager.SaveScene(scene, spec.Scene);
         AssetDatabase.SaveAssets();
         Debug.Log(
-            "BOM TILE LEVEL EXPORTED " + spec.Name + " tiles=" + report.tiles + " exported=" + report.exported + " off_plane=" + report.off_plane
-                + " outside=" + report.outside_arena + " anchored=" + anchored + " dynamic=" + dynamic + " trimmed=" + report.trimmed
-                + " max_trim=" + maxTrim.ToString("0.###", CultureInfo.InvariantCulture) + " layout=" + output
+            "BOM TILE LEVEL EXPORTED v2 " + spec.Name + " tiles=" + report.tiles + " in_arena=" + report.in_arena + " outside=" + report.outside_arena + " backdrop=" + report.backdrop_tiles
+                + " merged=" + report.merged_duplicates + " parts=" + report.parts + " glue=" + report.glue_links + " native_glue=" + report.native_glue_links + " zero_sample=" + report.native_glue_zero_sample_links
+                + " anchored=" + report.anchored_parts + " piles=" + report.piles + " cells=" + report.native_cells + " layout=" + output
         );
         return registry;
     }
