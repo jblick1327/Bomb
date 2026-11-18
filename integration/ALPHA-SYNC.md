@@ -460,6 +460,13 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
   - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
   - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.
+  - Where G5 stopped (2026-11-18, waiting for rule 3; orchestrator: wait, keep [~]): code is committed (96940b99, a89901a3). It has
+    `Editor/BomTileMapping.cs` (mapping + I1-I4 checks), builder v2 (level ids `-v2`; compiles against the Unity 6000.2 DLLs, never run in Unity),
+    the negative tests (`tools/g5/TileMappingTests`, ALL PASS), the settle harness (`tools/g5/settle/Run-G5Settle.py`) and `evidence/G5/dry-run`.
+    Next steps: (1) check rule 3, then run `Build-BomGame.ps1 -Backend Mono` (it exports the three levels into the validation project and
+    `fixtures/levels`). (2) Copy `NetworkYardTiles/NetworkBridge/NetworkTower.unity` and `Levels/bomb-*-v2` (+ .meta) back into the repo and
+    `git rm` `Levels/bomb-{yard-tiles,bridge,tower}-v1`. (3) `Test-LevelManifest.py` x3, `Run-G5Settle.py` on the three layouts, screenshots.
+    (4) Gates: Build, Content, Rounds, front door x3. (5) `evidence/G5/README.md`, then tick.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
