@@ -474,6 +474,24 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     would not pass. Lane N needs short-seam glue capacity that holds the brace ends (0.23-long seams under a diagonal's weight) and the top-deck
     left-end seam. G-N4 (a per-source settle report) would name the failing seam. Once native changes, re-run `Run-G5Settle.py` (OD-6 defaults) and tick if the Bridge passes.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
+- [ ] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`,
+  branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
+  - Facts so far (`Desktop\Bomb-integration\integration\evidence\G5\settle-pre-gn1\README.md`, `settle-od6\README.md`, `settle-bridge-experiments\README.md`): the G5 Bridge
+    (`integration/fixtures/levels/BridgeLevel.json`: 52 parts, 22 wood + 30 steel, 97 glue links, 5 anchored pile feet) fails I5 as revised by OD-6 on both natives:
+    on 3be3283 a lower-truss brace breaks off and falls 22 units; on f3a4e48 top-deck piece #830 at (-9.93, 6.33), the deck's unsupported left end, slides 0.594.
+    Yard and Tower pass. Small layout changes flip which piece goes (non-monotonic in pile length).
+  - **Correction for whoever reads G5's note:** G-N1 cannot have weakened a seam. `mortar_seam_toughness` takes the minimum of the two materials' `glue_toughness`, built-ins are 1 and steel is 1.25,
+    so wood-steel seams are unchanged and steel-steel seams got 25 % stronger. The f3a4e48 → 3be3283 difference is therefore load moving to other seams, or sensitivity, not a capacity drop. Find out which.
+    A likely suspect independent of G-N1: `mortar_seam_ratio`'s torque term divides by `0.5 * strength * length²`, so a 0.23-long brace-end seam has about 1/19 of the torque capacity of a 1-long seam.
+  - Do (diagnosis first, no physics change on `alpha-sync`):
+    1. G-N4: add the per-source settle report to `--validate-layout` (simulate N ticks headless, no players, no blasts; report per seam: the two sources, length, max load ratio `r`, force part vs torque part,
+       damage, the tick it broke; and per source: cells lost, max displacement). Unit tests next to the code. This is a tool, not a rule change.
+    2. Run it on the G5 Bridge (and G1's `fixtures/levels-g1/BridgeLevel.json`, Tower as a control) at f3a4e48 and 3be3283 (use `git worktree` for the old commit; do not move `alpha-sync`). Run each twice to prove determinism.
+    3. Name the failing seams and why (torque from short length, a diagonal's own weight, the deck end with nothing under it, or something else).
+    4. Fix options, ranked by how well they keep the owner's tuned materials and "what's there is what you get". At least: a native rule change (for example a torque-capacity floor for short seams, or measuring seam length including the glue fillet),
+       a layout/support change for G6 (for example OD-3 (b) abutments under the deck ends), and material tuning for G6. Prototype native options only on a throwaway branch `g-n7-experiments` (never merged), with the settle report for each.
+  - Done when: `Documents\BOM\evidence\G-N7\REPORT.md` has the per-seam tables for both commits, the determinism check, the cause, and the ranked options with measured effect; native gates (`.\scripts\bom.ps1 Test`, `NetTest`, `test-client-core.ps1`) pass on `alpha-sync` with the G-N4 tool merged.
+    **Stop there.** Changing seam strength or any physics rule needs the owner's pick (Odin AGENTS rule 1); the chosen fix becomes G-N7b, then E1-GN7, then G5 re-runs `Run-G5Settle.py`.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
@@ -683,3 +701,5 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - G7/G8 gave Classic Yard bedrock, which OD-1 does not cover. Now owner decision OD-5; G7/G8 wait for it.
   - G5's "Done when" will be made checkable (I1–I5 each as an export failure, no Hidden/Indestructible parts, Bridge piles, per-level counts) before anyone claims it.
 - 2026-11-18 Claude Opus (G5 pre-G-N1 diagnostic, `evidence/G5/settle-pre-gn1/README.md`): on f3a4e48, before G-N1, the G5 Bridge cracks once in the first 1.8 s (one piece shifts 0.56), then holds. On 3be3283 its lower truss collapses (30 pieces move, max 6.42), so G-N1 causes the collapse. Still, I5 does not pass before G-N1 either: stands on f3a4e48: G5 Bridge no, G1 Bridge no (late cracks at ~18.5 s and ~29.5 s, 731 -> 726), Tower no (identical on both). Every layout changes revision in the first ~2 s; whether to allow a start-up window is the orchestrator's or owner's call. G5 stays [!].
+- 2026-11-18 Claude Opus (orchestrator): G5's blocked note says "Lane N fix to G-N1 short-seam capacity". G-N1 never lowers a seam's capacity (min of the two materials' `glue_toughness`; built-ins 1, steel 1.25),
+  so it is not a capacity drop. The Bridge also fails OD-6 before G-N1. The task is now G-N7: diagnose first (with the G-N4 per-seam settle report), then the owner picks a fix.
