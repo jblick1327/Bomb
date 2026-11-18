@@ -474,7 +474,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     would not pass. Lane N needs short-seam glue capacity that holds the brace ends (0.23-long seams under a diagonal's weight) and the top-deck
     left-end seam. G-N4 (a per-source settle report) would name the failing seam. Once native changes, re-run `Run-G5Settle.py` (OD-6 defaults) and tick if the Bridge passes.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
-- [ ] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`,
+- [~] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
   - Facts so far (`Desktop\Bomb-integration\integration\evidence\G5\settle-pre-gn1\README.md`, `settle-od6\README.md`, `settle-bridge-experiments\README.md`): the G5 Bridge
     (`integration/fixtures/levels/BridgeLevel.json`: 52 parts, 22 wood + 30 steel, 97 glue links, 5 anchored pile feet) fails I5 as revised by OD-6 on both natives:
