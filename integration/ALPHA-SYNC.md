@@ -71,6 +71,11 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 - [x] **OD-5 Classic Yard boundary** (raised by the orchestrator 2026-11-17; approved by owner 2026-11-18: **C, bedrock walls**). OD-1 names the Bridge (B), Yard and Tower (C), not Classic Yard, whose side walls
   are still hidden Fixed + Indestructible stone at x ±18 (yard rules, C2b). Recommended: **C (destructible bedrock)**, as on Darryn's Yard: its ground is a deep
   mass that meets both screen edges, and B would leave the ground ending in a cliff at ±18. G7 and G8 apply this only after it is ticked.
+- [x] **OD-6 Settle rule I5, revised** (raised by the orchestrator 2026-11-18; approved by owner 2026-11-18). Old rule: world revision constant for 35 s from the first sample.
+  It failed every layout on both natives, G1's own Bridge and the all-stone Tower included, because pieces seat in the first ~2 s (`evidence/G5/settle-pre-gn1`).
+  **New I5:** spectator only, no players, no blasts. Ticks 0–120 (2 s) are a start-up window: cracks are allowed there. Then for 35 s: **no cell is lost**
+  (cell count never drops below its value at tick 120) and **no piece moves more than 0.1 units** from its position at tick 120. Anything visible that falls,
+  slides or breaks off still fails. The harness records revision changes after the window too (reported, not failing).
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
@@ -456,7 +461,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     3. A negative test per invariant I1–I4: a small deliberately broken input fails the export with a message naming the tile and the invariant.
     4. Per level, record tiles, parts, backdrop tiles, merged duplicates, glue links and anchored parts; parts ≤ 1024 and glue links within the native budget (2048 after G-N3).
     5. `Test-LevelManifest.py` passes for all three layouts.
-    6. I5 settle check (C2b harness, 35 s, no blasts) on all three: the Bridge must keep its world revision constant; a Yard or Tower failure is recorded as a G6 input, not hidden.
+    6. I5 settle check as revised by OD-6 (2 s start-up window, then 35 s with no cell lost and no piece moving > 0.1) on all three: the Bridge must pass; a Yard or Tower failure is recorded as a G6 input, not hidden.
     7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
   - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
   - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.

@@ -90,7 +90,8 @@ connecting (slow 12 s first load); the two-window rerun was clean. The sandbox's
   the owner keeps walls). Never "anchored on every edge".
 - **I4 Toughness from materials and glue.** Each part has a palette material; joins are glue links. No `allowed_overlaps`.
 - **I5 Settles.** A spectator on the real server sees the world revision stay constant for 35 s with no blasts
-  (C2b check).
+  (C2b check). *Revised 2026-11-18 by owner decision OD-6 (`ALPHA-SYNC.md`): a 2 s start-up window allows seating cracks; after it, for 35 s, no cell is lost
+  and no piece moves more than 0.1 units.*
 
 ### 3.2 Mapping rules (the G1 Bridge generator implements them: `integration/tools/g1/Build-BridgeG1.py`)
 
