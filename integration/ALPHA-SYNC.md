@@ -441,7 +441,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - G-N6 (prediction flap fix, not in the doc table; added 2026-11-17 for the owner's "the prediction isn't smooth") merged in `3be3283`.
   - G-N1 and G-N6 were brought in by E1-GN6.
   - The doc table's E1-G row still says it brings G-N1; that is stale, because E1-GN6 did it.
-- [ ] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). The design doc section 8 G5 row and section 3 define it:
+- [~] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). claimed: Claude Opus 5.5 2026-11-18 The design doc section 8 G5 row and section 3 define it:
   `Editor/BomTileLevelBuilder.cs` applies the section 3 mapping to any tile scene (merge duplicates, partition + glue, material table incl. steel,
   anchors at real supports only, Bridge piles per OD-3, invariants I1–I5 as export failures); reads mesh silhouettes; replaces the Python generator.
   - Scope (orchestrator, 2026-11-18): Darryn's three tile scenes (YardLevel, BridgeLevel, TowerLevel) only. Classic Yard is built by `BomYardBuilder`, not from tiles: that is G7.
