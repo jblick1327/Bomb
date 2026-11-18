@@ -60,6 +60,7 @@ while($true){
  $since=((Get-Date)-$hosted).TotalSeconds
  foreach($c in $plan){if(!$c.done -and $since -ge $c.t){ClickXY $p $c.x $c.y;$c.done=$true;$meta["click_$($c.t)"]=[math]::Round($since,1)
   Start-Sleep -Milliseconds 250;Shot $p ("blast-{0:000}s-0.35s" -f $c.t)|Out-Null}}
+ if($since -ge 25 -and !$meta.Contains('start_shot')){Shot $p 'start-25s'|Out-Null;$meta.start_shot=[math]::Round($since,1)} # G5: the level before the first scripted blast (30 s)
  if($since -ge 80 -and $shots -eq 0){Shot $p 'settled-80s'|Out-Null;$shots=1}
  $servers=@(Get-Process BOM-server -EA SilentlyContinue|Where-Object{$_.StartTime -ge $t0})
  $list=@($p)+@($g|Where-Object{$_})+$servers

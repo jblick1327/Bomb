@@ -185,7 +185,7 @@ public static class BomTileMapping
         MaxDroppedArea = .05,
         ColumnGap = .05,
         TerrainFloorBand = .5, // Darryn places ground tiles with offsets up to ~0.4; a bottom edge this close to the lowest one is the mass's underside
-        MinGlueWeight = .05,
+        MinGlueWeight = 1e-6, // at least one native sample from each side (native keeps a link with any sample; G1's 1-sample brace/deck corner links hold the truss)
         SupportGap = GlueFillet,
         Eps = 1e-9;
 
