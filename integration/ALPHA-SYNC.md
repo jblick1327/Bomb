@@ -68,7 +68,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
 - [x] **OD-4 Band depth and backdrop** (approved by owner 2026-11-17 *for now*, design doc 4). Band 1.6, `d = clamp(√area, 0.1, band)`, terrain back wall.
   The owner may revisit the depth look later ("naive extrusion in general isn't optimal"), so G3 keeps the depth function in one place and
   the stock look behind a flag.
-- [ ] **OD-5 Classic Yard boundary** (raised by the orchestrator 2026-11-17). OD-1 names the Bridge (B), Yard and Tower (C), not Classic Yard, whose side walls
+- [x] **OD-5 Classic Yard boundary** (raised by the orchestrator 2026-11-17; approved by owner 2026-11-18: **C, bedrock walls**). OD-1 names the Bridge (B), Yard and Tower (C), not Classic Yard, whose side walls
   are still hidden Fixed + Indestructible stone at x ±18 (yard rules, C2b). Recommended: **C (destructible bedrock)**, as on Darryn's Yard: its ground is a deep
   mass that meets both screen edges, and B would leave the ground ending in a cliff at ±18. G7 and G8 apply this only after it is ticked.
 
@@ -448,9 +448,9 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - Gates: Build, Content, Rounds, and front door Yard/Bridge/Tower. Prediction runs only if the DLL changed (rule 7).
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
-  - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (Classic's boundary; needs the owner's tick).
+  - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
   - Classic's blast native cost (up to 19 ms, about 4150 cells) scales with cell count. Re-measure it after the re-author before any native profiling (see the 2026-11-17 orchestrator finding).
-- [ ] **G8 Boundary per OD-1** (T2, Sonnet, S; Lane U). B (no walls) for the Bridge; C (destructible bedrock) for the Yard and Tower; Classic per OD-5 (not decided yet). Check the kill and fragment-cull bounds, and decide Darryn's 26 outside-arena Yard tiles (G3 finding).
+- [ ] **G8 Boundary per OD-1** (T2, Sonnet, S; Lane U). B (no walls) for the Bridge; C (destructible bedrock) for the Yard and Tower, and for Classic Yard (OD-5, 2026-11-18). Check the kill and fragment-cull bounds, and decide Darryn's 26 outside-arena Yard tiles (G3 finding).
 - [ ] **G8b Frame cap in normal play** (F2 fix 3; T2, Sonnet, S; Lane U; any time before G9).
   - Every `vSyncCount`/`targetFrameRate` call today is in a scripted path (`BomClientBehaviour.cs:268` behind `--bom-level-smoke`, `BomRoundScenario`, `BomFrontDoorScenario`,
     `BomPerformanceProbe`, `BomPresentationProfile`), so owner play runs uncapped (one player thread at ~92 % of a core, C2d finding).
