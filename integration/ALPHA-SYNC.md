@@ -444,8 +444,23 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
 - [ ] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). The design doc section 8 G5 row and section 3 define it:
   `Editor/BomTileLevelBuilder.cs` applies the section 3 mapping to any tile scene (merge duplicates, partition + glue, material table incl. steel,
   anchors at real supports only, Bridge piles per OD-3, invariants I1–I5 as export failures); reads mesh silhouettes; replaces the Python generator.
-  - Done when: the doc's G5 row and section 3 invariants hold on Yard, Bridge, Tower and Classic Yard exports.
-  - Gates: Build, Content, Rounds, and front door Yard/Bridge/Tower. Prediction runs only if the DLL changed (rule 7).
+  - Scope (orchestrator, 2026-11-18): Darryn's three tile scenes (YardLevel, BridgeLevel, TowerLevel) only. Classic Yard is built by `BomYardBuilder`, not from tiles: that is G7.
+    The side walls and bottom boundary stay as they are until G8 replaces them; material tuning with the owner is G6. Read design doc sections 3, 4 and 6.1 and `tools/g1/Build-BridgeG1.py` first.
+  - Done when (each line is checked and its numbers go in the tick line or `evidence/G5/README.md`):
+    1. One export path: `BomTileLevelBuilder` v2 writes `fixtures/levels/{Yard,Bridge,Tower}Level.json` plus `.tiles.json` from Darryn's scenes (opened, never saved).
+       No build or launch path calls `Build-BridgeG1.py` any more (`Start-BridgeG1.ps1` still does today); the script stays on disk as G1 history.
+    2. Invariants are export failures. I1: zero off-plane decoration entries; every in-arena tile is a part or a declared backdrop. I2: no `indestructible` source;
+       `fixed` only on the existing boundary walls, listed by name in the report (G8 removes them). I3: anchor segments only on supported edges, never "every edge";
+       the Bridge's anchors are exactly the five pile feet with piles drawn (OD-3). I4: every part has the OD-2 material (steel as specified); zero `allowed_overlaps`;
+       `--validate-layout` reports no zero-sample glue link (G-N2).
+    3. A negative test per invariant I1–I4: a small deliberately broken input fails the export with a message naming the tile and the invariant.
+    4. Per level, record tiles, parts, backdrop tiles, merged duplicates, glue links and anchored parts; parts ≤ 1024 and glue links within the native budget (2048 after G-N3).
+    5. `Test-LevelManifest.py` passes for all three layouts.
+    6. I5 settle check (C2b harness, 35 s, no blasts) on all three: the Bridge must keep its world revision constant; a Yard or Tower failure is recorded as a G6 input, not hidden.
+    7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
+  - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
+  - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.
+  - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
