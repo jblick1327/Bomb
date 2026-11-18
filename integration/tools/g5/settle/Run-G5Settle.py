@@ -1,11 +1,12 @@
 """G5 I5 settle check (design doc 3.1 I5; the C2b harness): for each layout, start the real BOM-server with it, join a spectator
 native client (Settle.csproj) and watch the world revision for --seconds with no players and no blasts.
 Passes a level when the revision never changes. Evidence (server log, client log, summary.json) goes to --out.
-Usage: python Run-G5Settle.py --config integration/local.config.owner-validation.json --out DIR LAYOUT.json [LAYOUT.json ...]"""
+Usage: python Run-G5Settle.py --config integration/local.config.owner-validation.json --out DIR [--native-root CHECKPOINT/source] LAYOUT.json [LAYOUT.json ...]
+--native-root runs another owner-native checkpoint's BOM-server and bomcore.dll instead of the config's OdinRoot."""
 import argparse, json, os, pathlib, re, shutil, socket, subprocess, sys, time
 p = argparse.ArgumentParser(); p.add_argument('--config', required=True); p.add_argument('--out', required=True)
-p.add_argument('--seconds', type=float, default=35); p.add_argument('layouts', nargs='+'); a = p.parse_args()
-cfg = json.loads(pathlib.Path(a.config).read_text(encoding='utf-8-sig')); odin = pathlib.Path(cfg['OdinRoot'])
+p.add_argument('--seconds', type=float, default=35); p.add_argument('--native-root', default=''); p.add_argument('layouts', nargs='+'); a = p.parse_args()
+cfg = json.loads(pathlib.Path(a.config).read_text(encoding='utf-8-sig')); odin = pathlib.Path(a.native_root or cfg['OdinRoot'])
 here = pathlib.Path(__file__).resolve().parent; out = pathlib.Path(a.out).resolve(); out.mkdir(parents=True, exist_ok=True)
 build = here.parents[2] / 'build' / 'g5-settle'  # git-ignored; the harness and a copy of the checkpoint's bomcore.dll
 subprocess.run(['dotnet', 'build', str(here / 'Settle.csproj'), '-c', 'Release', '-o', str(build), '--nologo', '-v', 'q'], check=True)
