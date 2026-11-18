@@ -441,7 +441,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - G-N6 (prediction flap fix, not in the doc table; added 2026-11-17 for the owner's "the prediction isn't smooth") merged in `3be3283`.
   - G-N1 and G-N6 were brought in by E1-GN6.
   - The doc table's E1-G row still says it brings G-N1; that is stale, because E1-GN6 did it.
-- [~] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). claimed: Claude Opus 5.5 2026-11-18 The design doc section 8 G5 row and section 3 define it:
+- [!] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). claimed: Claude Opus 5.5 2026-11-18 The design doc section 8 G5 row and section 3 define it:
   `Editor/BomTileLevelBuilder.cs` applies the section 3 mapping to any tile scene (merge duplicates, partition + glue, material table incl. steel,
   anchors at real supports only, Bridge piles per OD-3, invariants I1–I5 as export failures); reads mesh silhouettes; replaces the Python generator.
   - Scope (orchestrator, 2026-11-18): Darryn's three tile scenes (YardLevel, BridgeLevel, TowerLevel) only. Classic Yard is built by `BomYardBuilder`, not from tiles: that is G7.
@@ -460,13 +460,15 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
   - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
   - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.
-  - Where G5 stopped (2026-11-18, waiting for rule 3; orchestrator: wait, keep [~]): code is committed (96940b99, a89901a3). It has
-    `Editor/BomTileMapping.cs` (mapping + I1-I4 checks), builder v2 (level ids `-v2`; compiles against the Unity 6000.2 DLLs, never run in Unity),
-    the negative tests (`tools/g5/TileMappingTests`, ALL PASS), the settle harness (`tools/g5/settle/Run-G5Settle.py`) and `evidence/G5/dry-run`.
-    Next steps: (1) check rule 3, then run `Build-BomGame.ps1 -Backend Mono` (it exports the three levels into the validation project and
-    `fixtures/levels`). (2) Copy `NetworkYardTiles/NetworkBridge/NetworkTower.unity` and `Levels/bomb-*-v2` (+ .meta) back into the repo and
-    `git rm` `Levels/bomb-{yard-tiles,bridge,tower}-v1`. (3) `Test-LevelManifest.py` x3, `Run-G5Settle.py` on the three layouts, screenshots.
-    (4) Gates: Build, Content, Rounds, front door x3. (5) `evidence/G5/README.md`, then tick.
+  - Blocked (2026-11-18, Claude Opus 5.5): Done-when 6 fails for the Bridge. Lines 1-5 and 7 and all gates pass; the numbers and paths are in `evidence/G5/README.md`.
+    Commits: c283ad93 (export), b6c15239 (glue rule matches native, re-export, evidence).
+    The Bridge I5 settle failed: 4 revision changes, 1264 -> 1297 cells, max displacement 6.4, two braces fall (`evidence/G5/settle-g5-final`).
+    Yard passes. Tower has 3 small cracks (max 0.03), recorded as G6 input.
+    G5's Bridge parts and glue are identical to G1's (52 parts, 97 links). Nine variants were tried, and every one cracks on native 3be3283,
+    G1's own layout included (`evidence/G5/settle-bridge-experiments/README.md`). Fixing it means changing physics or materials, which G5 may not do.
+    Unblock options: Lane N G-N4 (a per-source settle report in `--validate-layout`, showing which seam cracks at which tick) and G-N1
+    (glue load capacity for short 0.23-long brace end seams under a diagonal's weight); and/or G6 owner tuning of steel/wood seams
+    (steel toughness 1.4 still cracked, max 1.06). The exporter itself needs no change once the settle passes; re-run `Run-G5Settle.py` and tick.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
