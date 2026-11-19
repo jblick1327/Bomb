@@ -503,7 +503,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     (a "pre-G-N1 capacity" toggle on 3be3283 reproduces f3a4e48 byte for byte). Measured options (G5 Bridge unless named; OD-6 rule): torque floor 1 passes (0.056) but fails G1 (1.677) and Tower (0.116);
     floors 0.25/0.5/2 fail (21.6/0.46/0.23, non-monotonic); steel 1.4 fails (18.5); fixed stone abutments fail (70). Experiments: branch `g-n7-experiments` `5dc2a87`, never merge.
     Sandbox: Codex's sandbox keeps every `.git` read-only and blocked writing `evidence/M0`, so Content was not run by Codex (no Unity file changed, so it is not needed).
-- [ ] **G-N8 Start-up shock: does easing structures in let the Bridge settle?** (Lane N, Opus, M; owner approved the investigation 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`.
+- [~] **G-N8 Start-up shock: does easing structures in let the Bridge settle?** (Lane N, Opus, M; owner approved the investigation 2026-11-18; unblocks G5). claimed: Claude Opus 5.5 2026-11-18. Work in `C:\Users\jblic\Documents\BOM`.
   No Unity process may run meanwhile; Lane U stays idle (G5 is parked `[!]`).
   - Why: G5's brace-joinery check (`Desktop\Bomb-integration\integration\evidence\G5\brace-joinery\README.md`, table `reports/shipped.brace-seams.txt`) shows the brace seams, including full-face
     post (0.27–0.33) and girder (1.20–1.29) seams, mostly break in ticks 0–14 at r up to 46, and outline changes of 0.00005 flip the result (22.3 vs 0.389). That points to a start-up transient,
