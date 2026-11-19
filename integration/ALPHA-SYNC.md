@@ -478,6 +478,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     Outlines moved by at most 0.00005 swing the result from 22.3 to 0.389, the same knife edge G-N7 saw.
     Exporter and layouts are unchanged, so OD-6 and the gates were not re-run.
     Next (owner, 2026-11-18): G-N8 (start-up shock) runs first; G5 re-runs `Run-G5Settle.py` after its fix lands (G-N8b, E1-GN8).
+    G-N8 found no start-up fix (standing load); the owner approved G-N9 (contact bearing) next. G5 re-runs after G-N9b and E1-GN9 if the owner picks a variant.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
@@ -527,6 +528,23 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     Variants (OD-6, both runs byte-identical, 35 pairs): ramp 30/60/120 and hold-30 all fail the G5 Bridge (0.165/0.315/25.1/26.4), regress G1 (31.8/32.1/1.93/0.955) and ramp 120 regresses the Tower (1.26);
     ramp 60 passes the rounded control only (0.056), so the knife edge stays. No prototype built (`g-n8-experiments` not created). Tool: `--settle-gravity-hold-ticks/-ramp-ticks/-trace-ticks` on `--validate-layout`, no rule change.
     Gates: client-core shared 133 + FFI 22, Test 229, NetTest 27 PASS. Owner options in report §5 (glued pieces bearing by contact, G-N7 options, visible bearing art), none measured.
+- [ ] **G-N9 Contact bearing: glued pieces also rest on each other** (Lane N, Opus, M; owner approved the measurement 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`.
+  No Unity process may run meanwhile; Lane U stays idle (G5 is parked `[!]`).
+  - Why (G-N8 report §1–2, §5 option 1): glue seams are Box2D weld joints made with `b2.DefaultWeldJointDef()` (`src/shared/sim_physics.odin`, the `c.mortar` branch and the flexibility branch),
+    which leaves `collideConnected` false. Glued pieces never touch, so a deck resting on pile tops carries its weight through the glue as torque (9–23× capacity on the Bridge) instead of bearing on the piles.
+    The Tower passes only after cracking ~100 seams at start-up, which also goes against "what's there is what you get".
+  - Do (measurement first, no physics change on `alpha-sync`):
+    1. Confirm the mechanism: list every reason two glued pieces cannot collide today (weld `collideConnected`, shape filters/groups, anything else), with file:line.
+    2. Prototype on throwaway branch `g-n9-experiments` from `alpha-sync` (worktree under `.claude\worktrees\`, never merged). Variants, at least: (i) mortar welds collide;
+       (ii) mortar and flexibility welds collide. Report tick-0 contact points and penetration (touching or overlapping pieces now fight their weld) and any jitter.
+    3. Settle (OD-6 rule, two runs each, byte-identity): G5 Bridge, G5 Bridge rounded control (`brace-joinery/reports/round4.layout.json`), Yard, Tower, G1 Bridge.
+       Also report start-up seams broken per level (target: close to 0 on Tower and Bridges) and peak r, so a pass that comes from cracking first is visible.
+    4. Blast and debris regression, headless: with one fixed scripted blast per level after settle (same point and strength for base and variant), compare cells lost, fragment count and size spread,
+       debris rest positions/spread, seams broken by the blast, and step time (contact pairs added). If the validator has no blast option, add a diagnostic one on `alpha-sync` (tool only, tests next to it, gates pass).
+    5. Costs: what changes for players (they should be unaffected), gameplay config / protocol / ABI version bumps, prediction and replay effects, performance.
+  - Done when: `Documents\BOM\evidence\G-N9\REPORT.md` has the mechanism (file:line), the variant tables (settle per level with both runs, start-up breaks, blast/debris comparison, step time), and the costs,
+    ranked by how well each keeps "what's there is what you get". `alpha-sync` is unchanged except for tools or tests (native gates pass if so). If no variant passes, say so plainly with the data; do not tune toward a pass.
+    **Stop there.** The owner picks; the chosen fix becomes G-N9b on `alpha-sync`, then E1-GN9 (Prediction gate required), then G5 re-runs `Run-G5Settle.py`.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
