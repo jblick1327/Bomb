@@ -465,14 +465,18 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     7. Start and post-blast screenshots of each level in `evidence/G5`, next to the G1/G3 captures.
   - Gates: Build, Content, Rounds yard+draw, front door Yard/Bridge/Tower, 0 Exception lines. Prediction: not required, DLL unchanged since E1-GN6 6/6 (rule 7).
   - Machine: the owner may be on a Discord video call. Check rule 3 before every Unity run; if a Rounds timing check fails while the machine is busy, re-run it once and keep both evidence folders.
-  - Blocked (2026-11-18, Claude Opus 5.5): **Bridge needs a Lane N fix to G-N1 short-seam capacity.** Done-when 6 (I5, OD-6 rule) fails for the Bridge
-    on the shipped native 3be3283. Lines 1-5 and 7 and all gates pass; the numbers and paths are in `evidence/G5/README.md`.
-    Commits: c283ad93 (export), b6c15239 (glue rule), 34ddea43 (gates), ac8044fc (pre-G-N1 diagnostic), plus the OD-6 harness commit.
-    OD-6 (`evidence/G5/settle-od6`), 3be3283: Yard passes (max move 0.000). Tower passes (0.035).
-    Bridge FAILS: after the window a truss fragment breaks off and falls 22.2, and cells grow 1264 -> 1297.
-    On f3a4e48 (before G-N1), the Bridge also fails, but only just: top-deck piece #830 slides 0.594 after the window. Reverting G-N1 alone
-    would not pass. Lane N needs short-seam glue capacity that holds the brace ends (0.23-long seams under a diagonal's weight) and the top-deck
-    left-end seam. G-N4 (a per-source settle report) would name the failing seam. Once native changes, re-run `Run-G5Settle.py` (OD-6 defaults) and tick if the Bridge passes.
+  - Blocked (2026-11-18, Claude Opus 5.5, after G-N7 and the brace-joinery check): **no exporter-side joinery fix exists; the Bridge needs an owner decision**
+    (new drawn structure at the brace ends, or a G-N7 native or material option). Done-when 6 (I5, OD-6) fails for the Bridge on 3be3283 (`evidence/G5/settle-od6`).
+    Yard and Tower pass. Lines 1-5 and 7 and all gates pass (`evidence/G5/README.md`).
+    `evidence/G5/brace-joinery/README.md`: the braces are not corner-only. Each one already sits on the full faces its geometry allows:
+    a post face w/cos θ = 0.232 (native seam 0.27–0.33) and, at a girder, w/sin θ = 0.687 (native 1.20–1.29).
+    The 0.047 contact is an extra pin, because Darryn's brace ends at the post centreline and its lower edge meets the girder exactly at the post face.
+    The face seams break too, measured with G-N4 at 0b1f765: 13 of 16 post faces (r up to 45.8) and 5 of 8 girder faces (r 15.8–31.7).
+    Holding them would take seams 2.5–6.7× longer than any face in the art. Variants measured:
+    - dropping the 8 corner links: fails, 23.957;
+    - braces over posts: rejected by native (the centre braces overlap inside post 32), and it could add at most ~0.36 per edge.
+    Outlines moved by at most 0.00005 swing the result from 22.3 to 0.389, the same knife edge G-N7 saw.
+    Exporter and layouts are unchanged, so OD-6 and the gates were not re-run.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
@@ -713,3 +717,4 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   so a seam-strength rule would be tuning a knife edge. The cause is geometric: G5's partition leaves each diagonal brace touching posts/girders only at a ~0.047 corner (a pin, which carries no torque).
   Design doc 3.2 rule 3 says braces are clipped to the post and girder faces, which should give a full-face seam about brace-width / sin(angle) long (roughly 0.25-0.8), i.e. 25-300x the torque capacity.
   Recommended next step (exporter side, no physics change): G5 checks and fixes the brace-end joinery, measures it with the G-N4 report (`--validate-layout --settle-ticks 2220`), then re-runs OD-6.
+- 2026-11-18 Claude Opus (G5 brace joinery, `evidence/G5/brace-joinery/README.md`): the G-N7 premise that the braces hang on 0.047 corners only does not hold. Each brace also has full-face seams (post 0.27–0.33, girder 1.20–1.29 native length), the most Darryn's geometry allows, and those break as well (r up to 45.8). No partition/glue change within design doc 3.2 fixes the Bridge. Measured variants fail or are rejected. The next step is the owner's: drawn gussets or knee braces, or a G-N7 option.
