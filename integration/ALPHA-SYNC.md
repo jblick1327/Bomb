@@ -76,6 +76,10 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   **New I5:** spectator only, no players, no blasts. Ticks 0–120 (2 s) are a start-up window: cracks are allowed there. Then for 35 s: **no cell is lost**
   (cell count never drops below its value at tick 120) and **no piece moves more than 0.1 units** from its position at tick 120. Anything visible that falls,
   slides or breaks off still fails. The harness records revision changes after the window too (reported, not failing).
+- [x] **OD-7 Exported geometry may be nudged for structure** (owner, 2026-11-18, in chat: "you can feel free to nudge bits around if they help the structure").
+  The exporter or a level fixture may move, extend or trim pieces slightly (for example brace ends, deck bearing on piles) so structures carry load by geometry.
+  Limits: Darryn's original Unity assets stay protected (Content gate); nudges are small, are listed per level with before and after values in the task's evidence, and keep the look.
+  Not covered: new drawn pieces (gussets, caps), material or physics changes, which still need the owner.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
