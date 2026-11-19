@@ -91,7 +91,7 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   Destruction-rule change: in the seam load ratio, the part of a seam's weld force that is compression across the seam face is not charged to the glue (G-N10 variant v3). Tension, shear and torque are charged as today; the moment term (v4) is **not** taken.
   Geometry: OD-7 nudge so the Tower pillars meet the slabs they hold (99–104 are 0.036 short, 105–110 0.006).
   Accepted costs (G-N10 §5): 1 late break per Bridge and a few on the Tower remain; seams held back today let go when the first blast wakes the structure (no visible movement measured); start-up corner-pin cracks stay.
-  Order: G5b Tower nudge → G-N10b ships v3 → E1-GN10. Byte goldens that change under v3: re-record only if the owner says so (same terms as OD-9).
+  Order: G5b Tower nudge → G-N10b ships v3 → E1-GN10. Byte goldens that change under v3 are re-recorded (owner, 2026-11-19, "Yes, re-record"; same terms as OD-9: old captures kept renamed `*.pre-od10.*`, assertions stay byte-exact).
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
@@ -635,7 +635,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
        The seam normal must be well defined for every link: compute it once per link when the link is built (shared rest segment; cell-centre direction for glue across a gap) and cache it, not per tick.
        It must be a pure function of the level, so replays, snapshot rebuilds and round restarts match.
     2. Tests next to the code: a compressed seam is not charged; tension, shear and torque are; L-shaped and diagonal seams get a sensible normal; gap glue; determinism (two runs byte-identical); a rebuild matches an uninterrupted run.
-       Existing tests whose expected values change: update only with the reason in the commit message; never weaken an assertion. Byte goldens that change: stop and list them unless the owner has said to re-record (OD-10).
+       Existing tests whose expected values change: update only with the reason in the commit message; never weaken an assertion. Byte goldens that change: re-record them per OD-10 (old captures kept as `*.pre-od10.*`), and list each one with the reason in the commit and the README.
     3. No gameplay config, protocol, ABI or file-layout change (G-N10 says none is needed; if that turns out wrong, stop and say why).
   - Done when: native gates pass (`.\scripts\bom.ps1 Test`, `NetTest`, `test-client-core.ps1`). `evidence\G-N10b\README.md` has the settle table (OD-6, two runs, byte-identity) for the nudged Bridge, the rounded control, Yard, the G5b-nudged Tower and the G1 Bridge, with breaks after tick 120 next to G-N10's v3 row.
     It also has the blast table (G-N9 §4 points) against G-N10's v3 and today's v0, and step time. If any level fails OD-6 or a blast's cut or fragments change, stop with the data; don't tune.
