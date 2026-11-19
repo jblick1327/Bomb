@@ -2,6 +2,9 @@ package shared
 
 import math "core:math"
 import b2 "vendor:box2d"
+import time "core:time"
+import strings "core:strings"
+import strconv "core:strconv"
 
 // Diagnostic data only: never enters a Scene, snapshot, manifest or wire packet.
 Level_Settle_Seam :: struct {
@@ -16,7 +19,13 @@ Level_Settle_Seam :: struct {
 }
 // G-N8 diagnostic options. Gravity scale at step t: 0 while t<=hold, then (t-hold)/ramp until it reaches 1.
 // The defaults (all zero) leave the run exactly as before.
-Level_Settle_Options :: struct {gravity_hold_ticks,gravity_ramp_ticks,trace_ticks:int}
+Level_Settle_Options :: struct {
+ gravity_hold_ticks,gravity_ramp_ticks,trace_ticks:int,
+ // G-N9 diagnostic: one scripted blast applied just before step blast_tick (0 = none).
+ blast_tick:int,blast_point:Vec2,blast_radius:f32,
+}
+// G-N9: rows of Level_Settle_Report.blast.trace cover ticks blast_tick..blast_tick+LEVEL_SETTLE_BLAST_TRACE_TICKS.
+LEVEL_SETTLE_BLAST_TRACE_TICKS :: 600
 // Per-tick summary for ticks 0..trace_ticks. Contact figures come from Box2D's manifolds after the step.
 Level_Settle_Tick :: struct {
  tick:int,gravity_scale:f32,
@@ -25,6 +34,15 @@ Level_Settle_Tick :: struct {
  contact_points,penetrating_points:int,
  max_penetration,max_contact_force:f32,
  max_contact_source_a,max_contact_source_b:u64,
+ world_contacts:int, // G-N9: Box2D's live contact pair count after the step (touching or not).
+}
+// G-N9: one live piece; position is the area-weighted centre of its live cells.
+Level_Settle_Piece :: struct {id,source:u64,cells:int,area:f32,position:Vec2,dynamic_body:bool}
+Level_Settle_Blast :: struct {
+ tick:int,point:Vec2,radius:f32,aim_valid:bool,
+ cells_before,cells_after_blast:int,
+ pieces_before,pieces_final:[dynamic]Level_Settle_Piece,
+ trace:[dynamic]Level_Settle_Tick,
 }
 Level_Settle_Source :: struct {
  identity:u64,name:string,
@@ -39,10 +57,13 @@ Level_Settle_Report :: struct {
  max_piece_tick:int,
  options:Level_Settle_Options,
  trace:[dynamic]Level_Settle_Tick,
+ blast:Level_Settle_Blast,
  sources:[dynamic]Level_Settle_Source,
  seams:[dynamic]Level_Settle_Seam,
 }
 Level_Settle_Observer :: struct {scene:^Scene,report:^Level_Settle_Report,tick:int}
+// G-N9: wall-clock step timing for the CLI's stdout only; never written to the report, so reports stay byte-identical.
+Level_Settle_Timing :: struct {step_ms,blast_ms,blast_window_step_ms:f64}
 @(thread_local) level_settle_observer:^Level_Settle_Observer
 
 // Split the actual native ratio rather than assuming a particular material law.
@@ -128,13 +149,43 @@ level_settle_contacts :: proc(s:^Scene,row:^Level_Settle_Tick,dt:f32) {
   }
  }
 }
+// "TICK,X,Y,RADIUS" -> options with only the blast fields set.
+level_settle_parse_blast :: proc(text:string) -> (options:Level_Settle_Options,ok:bool) {
+ parts:=strings.split(text,",");defer delete(parts)
+ if len(parts)!=4 {return}
+ tick,tick_ok:=strconv.parse_int(parts[0]);x,x_ok:=strconv.parse_f32(parts[1]);y,y_ok:=strconv.parse_f32(parts[2]);r,r_ok:=strconv.parse_f32(parts[3])
+ if !tick_ok || !x_ok || !y_ok || !r_ok || tick<1 || !(r>0) || math.is_nan(x) || math.is_nan(y) || math.is_inf(x) || math.is_inf(y) || math.is_inf(r) {return}
+ return Level_Settle_Options{blast_tick=tick,blast_point={x,y},blast_radius=r},true
+}
+level_settle_pieces :: proc(s:^Scene) -> [dynamic]Level_Settle_Piece {
+ rows:[dynamic]Level_Settle_Piece
+ ids:[dynamic]u64;defer delete(ids)
+ for p in s.pieces {if p.live {append(&ids,p.id)}};sort_ids(ids[:])
+ for id in ids {
+  p:=s.pieces[s.piece_rows[id]];row:=Level_Settle_Piece{id=id}
+  weighted:Vec2
+  for sub_id in p.subdivisions {
+   index,found:=s.sub_rows[sub_id];if !found {continue}
+   sub:=s.subdivisions[index];if !sub.live {continue}
+   area:=polygon_area(sub.outline);row.cells+=1;row.area+=area;weighted=vadd(weighted,vmul(sub.pose.position,area))
+   if row.source==0 {row.source=sub.provenance.source_identity}
+   if sub.body!=b2.nullBodyId && b2.Body_IsValid(sub.body) && b2.Body_GetType(sub.body)==.dynamicBody {row.dynamic_body=true}
+  }
+  if row.cells==0 {continue}
+  if row.area>0 {row.position=vmul(weighted,1/row.area)}
+  append(&rows,row)
+ }
+ return rows
+}
 level_settle_destroy :: proc(report:^Level_Settle_Report) {
+ delete(report.blast.pieces_before);delete(report.blast.pieces_final);delete(report.blast.trace)
  for seam in report.seams {delete(seam.members)}
  for seam in report.seams {delete(seam.trace_r)}
  delete(report.seams);delete(report.sources);delete(report.trace);report^={}
 }
-level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int,options:=Level_Settle_Options{}) -> Level_Settle_Report {
+level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int,options:=Level_Settle_Options{},timing:^Level_Settle_Timing=nil) -> Level_Settle_Report {
  assert(ticks>window && window>=0 && options.gravity_hold_ticks>=0 && options.gravity_ramp_ticks>=0 && options.trace_ticks>=0)
+ assert(options.blast_tick>=0 && options.blast_tick<=ticks && (options.blast_tick==0 || options.blast_radius>0))
  report:=Level_Settle_Report{status="passed",ticks=ticks,window_ticks=window,options=options}
  gravity:=scene_gameplay_config(&w.scene).gravity;gravity_scale:=f32(1)
  for i in 0..<len(w.players) {_=world_remove_player(w,i)}
@@ -161,8 +212,30 @@ level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int,options:=
     gravity_scale=scale;b2.World_SetGravity(w.scene.physics.world,to_b2(vmul(gravity,scale)))
     bodies:=level_settle_bodies(&w.scene);for body in bodies {if b2.Body_GetType(body)==.dynamicBody {b2.Body_SetAwake(body,true)}};delete(bodies)
    }
+   blasted:=options.blast_tick>0 && tick==options.blast_tick
+   if blasted {
+    // G-N9: the same entry a host blast uses, minus the player aim/permission checks (there are no players).
+    blast:=&report.blast;blast^=Level_Settle_Blast{tick=tick,point=options.blast_point,radius=options.blast_radius,aim_valid=sandbox_valid_aim(&w.scene,options.blast_point)}
+    for sub in w.scene.subdivisions {if sub.live {blast.cells_before+=1}}
+    blast.pieces_before=level_settle_pieces(&w.scene)
+    blast_events:Tick_Events;start:=time.tick_now()
+    world_explode(w,options.blast_point,options.blast_radius,&blast_events)
+    if timing!=nil {timing.blast_ms=f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond)}
+    delete(blast_events.explosions)
+    for sub in w.scene.subdivisions {if sub.live {blast.cells_after_blast+=1}}
+   }
+   start:=time.tick_now()
    events:=world_tick(w,{},f32(1.0/60.0));assert(len(events.explosions)==0 && events.bombs_spawned==0);delete(events.explosions)
-   if tick<=options.trace_ticks {level_settle_contacts(&w.scene,&report.trace[len(report.trace)-1],f32(1.0/60.0))}
+   if timing!=nil {
+    elapsed:=f64(time.tick_diff(start,time.tick_now()))/f64(time.Millisecond);timing.step_ms+=elapsed
+    if options.blast_tick>0 && tick>=options.blast_tick && tick<=options.blast_tick+LEVEL_SETTLE_BLAST_TRACE_TICKS {timing.blast_window_step_ms+=elapsed}
+   }
+   if tick<=options.trace_ticks {row:=&report.trace[len(report.trace)-1];level_settle_contacts(&w.scene,row,f32(1.0/60.0));row.world_contacts=int(b2.World_GetCounters(w.scene.physics.world).contactCount)}
+   if options.blast_tick>0 && tick>=options.blast_tick && tick<=options.blast_tick+LEVEL_SETTLE_BLAST_TRACE_TICKS {
+    row:=Level_Settle_Tick{tick=tick,gravity_scale=gravity_scale};level_settle_contacts(&w.scene,&row,f32(1.0/60.0))
+    row.world_contacts=int(b2.World_GetCounters(w.scene.physics.world).contactCount)
+    append(&report.blast.trace,row)
+   }
   }
   if tick==0 {
    seams:=mortar_seams(&w.scene);for seam in seams {level_settle_force(&w.scene,seam,0,false,seam.damage)};mortar_free_seams(seams)
@@ -203,6 +276,7 @@ level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int,options:=
   }
   report.final_cells=live
  }
+ if options.blast_tick>0 {report.blast.pieces_final=level_settle_pieces(&w.scene)}
  if report.min_cells_after_window<report.baseline_cells || report.max_piece_displacement>0.1 {report.status="failed"}
  return report
 }

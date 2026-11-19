@@ -52,7 +52,12 @@ level_validate_cli :: proc(input,report_path:string,settle_ticks:int=0,settle_wi
  report.glue_link_count=len(report.glue)
  for row in report.glue { if row.samples==0 { report.glue_zero_sample_links+=1 } }
  if report.glue_zero_sample_links>0 { report.status="failed" }
- if settle_ticks>0 {report.settle=level_settle_run(&w,layout.level,settle_ticks,settle_window,settle_options)}
+ if settle_ticks>0 {
+  timing:Level_Settle_Timing
+  report.settle=level_settle_run(&w,layout.level,settle_ticks,settle_window,settle_options,&timing)
+  // Wall-clock only, on stdout: kept out of the report so two runs stay byte-identical.
+  fmt.printf("SETTLE TIMING step_ms_total=%.3f step_ms_mean=%.4f blast_ms=%.3f blast_window_step_ms=%.3f\n",timing.step_ms,timing.step_ms/f64(settle_ticks),timing.blast_ms,timing.blast_window_step_ms)
+ }
  defer level_settle_destroy(&report.settle)
  encoded,encoded_ok:=exact_json_encode(report,true);defer delete(encoded)
  if !encoded_ok||os.write_entire_file(report_path,encoded)!=nil {fmt.eprintln("Cannot write validation report:",report_path);return false}

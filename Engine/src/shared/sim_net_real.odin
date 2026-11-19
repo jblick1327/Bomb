@@ -158,13 +158,20 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
 
 net_real_cli_server :: proc(args: []string) -> bool {
  if len(args)>0&&args[0]=="--validate-layout" {
-  if len(args)<4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json [--settle-ticks N] [--settle-window-ticks N] [--settle-gravity-hold-ticks N] [--settle-gravity-ramp-ticks N] [--settle-trace-ticks N]");return false}
+  if len(args)<4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json [--settle-ticks N] [--settle-window-ticks N] [--settle-gravity-hold-ticks N] [--settle-gravity-ramp-ticks N] [--settle-trace-ticks N] [--settle-blast TICK,X,Y,RADIUS]");return false}
   ticks,window:=0,120
   seen_ticks,seen_window:=false,false
   options:Level_Settle_Options;seen_options:=false
   i:=4
   for i<len(args) {
    if i+1>=len(args) {return false}
+   if args[i]=="--settle-blast" {
+    // G-N9 diagnostic: TICK,X,Y,RADIUS with TICK>=1 and RADIUS>0.
+    if options.blast_tick>0 {return false}
+    blast,blast_ok:=level_settle_parse_blast(args[i+1]);if !blast_ok {return false}
+    options.blast_tick=blast.blast_tick;options.blast_point=blast.blast_point;options.blast_radius=blast.blast_radius
+    seen_options=true;i+=2;continue
+   }
    n,ok:=strconv.parse_int(args[i+1]);if !ok || n<0 {return false}
    switch args[i] {
    case "--settle-ticks": if seen_ticks || n==0 {return false};ticks=n;seen_ticks=true
@@ -177,6 +184,7 @@ net_real_cli_server :: proc(args: []string) -> bool {
    i+=2
   }
   if (seen_window || seen_options) && !seen_ticks {return false}
+  if options.blast_tick>ticks {return false}
   return level_validate_cli(args[1],args[3],ticks,window,options)
  }
  port:=NET_REAL_PORT
