@@ -515,7 +515,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     2. **Prototype the fix that matches the cause**, on a throwaway branch `g-n8-experiments` from `alpha-sync` (never merged, worktree under `.claude\worktrees\`). For (a), try ramping gravity
        on structure bodies only (pieces, not players; player movement and prediction must not change) over, for example, 30 / 60 / 120 ticks, all inside the OD-6 start-up window (ticks 0–120).
        For (b), try the matching start-up fix (for example removing initial overlaps, or a short start-up damping/sleep), and say what it touches.
-    3. Measure each variant with the OD-6 rule on the G5 Bridge, Yard and Tower, and on G1's `fixtures/levels-g1/BridgeLevel.json` and the G1 Tower (G-N7's floor-1 option failed those).
+    3. Measure each variant with the OD-6 rule on the G5 Bridge, Yard and Tower, and on G1's `fixtures/levels-g1/BridgeLevel.json` (G-N7's floor-1 option failed G1 and the Tower; there is no G1 Tower fixture).
        Run each twice for determinism. Also check the Bridge with the outline-rounding control from `brace-joinery/` to show whether the knife edge is gone.
     4. Say what each variant costs: what changes for blasts and debris after start-up (it must not), gameplay config / protocol / ABI version bumps, and replay or prediction effects.
   - Done when: `Documents\BOM\evidence\G-N8\REPORT.md` has the transient diagnosis (per-tick r, cause a or b, with the evidence), and the variant table (OD-6 result per level, both runs), with costs, ranked by
