@@ -563,7 +563,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     i (mortar welds collide), OD-6, both runs byte-identical: G5 pass 0.020, rounded pass 0.020, Yard pass, Tower pass 0.002, **G1 FAIL 38.8** (shipped G1 also falls by tick 7212 in a 10-min run). Breaks 48/46/104/42 → 23/24/43/30; deck–pile seams still break on ticks 1–4, though their static load drops 9.4–18.7 → 0.73–1.26; corner pins stay 2–7×.
     Diagnostic only: i + ramp 30/60/120 passes all five (5–43 breaks move after tick 120). Costs: Yard blast debris scatters less (moved 57 → 49, farthest 5.58 → 3.40, seams broken 5 → 2); Bridges and Tower blasts unchanged; Bridge weld/contact chatter (r 0.01–5.5, never sleeps, no breaks in 10 min) and server step +57–65 % on Bridges, +27 % Tower.
     62 settle/blast pairs byte-identical. Gates with the tool: shared 134 + FFI 22, Test 229, NetTest 27 PASS. Prototype `g-n9-experiments` `882b3b2` (never merge). Not verified: replication/prediction near a chattering Bridge, snapshot-rebuild jolts, Unity.
-- [ ] **G-N9b Ship contact bearing + 60-tick structure ramp (OD-8)** (Lane N, Opus, M; after G-N9; then E1-GN9). Work in `C:\Users\jblic\Documents\BOM` on `alpha-sync` (clean `git status` first).
+- [~] **G-N9b Ship contact bearing + 60-tick structure ramp (OD-8)** (Lane N, Opus, M; after G-N9; then E1-GN9). Work in `C:\Users\jblic\Documents\BOM` on `alpha-sync` (clean `git status` first). claimed: Claude Opus 5.5 2026-11-18
   No Unity process may run meanwhile; Lane U stays idle.
   - Do:
     1. Mortar welds get `collideConnected = true` (`src/shared/sim_physics.odin`, `c.mortar` branch). Flexibility welds stay as they are (no fixture uses them; G-N9 §1).
