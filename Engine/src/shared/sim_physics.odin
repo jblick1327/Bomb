@@ -9,6 +9,21 @@ PHYSICS_SUBSTEPS :: 4
 
 GLOBAL_DAMPING :: f32(0.7)
 
+// OD-8 (G-N9b): structure gravity eases in over the first 60 steps after each level start
+// (world_start_physics resets World.tick; world snapshots save it). Players keep their own scale.
+STRUCTURE_GRAVITY_RAMP_TICKS :: u64(60)
+
+// Gravity scale of structure bodies during the step that ends on `step` ticks since the level start.
+structure_gravity_scale :: proc(step: u64) -> f32 { return f32(min(step,STRUCTURE_GRAVITY_RAMP_TICKS))/f32(STRUCTURE_GRAVITY_RAMP_TICKS) }
+
+// Sets every dynamic structure body (pieces, rubber cells, fragments) to scale and wakes it.
+physics_set_structure_gravity :: proc(s: ^Scene, scale: f32) {
+ for sub in s.subdivisions {
+  if !sub.live || sub.body==b2.nullBodyId || !b2.Body_IsValid(sub.body) || b2.Body_GetType(sub.body)!=.dynamicBody { continue }
+  b2.Body_SetGravityScale(sub.body,scale); b2.Body_SetAwake(sub.body,true)
+ }
+}
+
 to_b2 :: proc(v: Vec2) -> b2.Vec2 { return {v.x,v.y} }
 
 from_b2 :: proc(v: b2.Vec2) -> Vec2 { return {v.x,v.y} }
@@ -267,6 +282,8 @@ physics_sync_structure :: proc(s: ^Scene) {
    def.localAnchorA=to_b2(mortar_local_anchor(s,a,c.rest_point))
    def.localAnchorB=to_b2(mortar_local_anchor(s,b,c.rest_point))
    def.referenceAngle=0; def.linearHertz=0; def.angularHertz=0
+   // OD-8: glued pieces also rest on each other (contact bearing), so the weld does not carry the standing load alone.
+   def.collideConnected=true
    s.connections[s.conn_rows[id]].joint=b2.CreateWeldJoint(s.physics.world,def)
    continue
   }

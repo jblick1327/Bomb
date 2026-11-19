@@ -151,6 +151,9 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  for &player,i in w.players {
   if player.active { player_before_step(&player,commands.players[i].move,commands.players[i].jump,dt) }
  }
+ // OD-8: structure gravity ramp, a pure function of World.tick (reset at each level start, saved in snapshots).
+ // Sync first so bodies made by this tick's blasts or failures get the scale before the step.
+ if w.tick<STRUCTURE_GRAVITY_RAMP_TICKS { physics_sync_structure(&w.scene); physics_set_structure_gravity(&w.scene,structure_gravity_scale(w.tick+1)) }
  physics_tick(&w.scene,dt)
  world_refresh_poses(w)
  if w.elimination_playing { item_rain_step(w,dt,&events) }

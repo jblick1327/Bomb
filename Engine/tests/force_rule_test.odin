@@ -17,6 +17,8 @@ force_rule_links :: proc(s:^Scene)->[dynamic]u64 {
 // the first tick at which any glue link has broken (0 if none within ticks).
 force_rule_load :: proc(label:string,block_lo,block_hi:Vec2,ticks:int)->int {
  g:=glue_cantilever(true,block_lo,block_hi);s:=&g.world.scene
+ // G-N9b fixture: the force rule is measured at full gravity, as before OD-8, by starting past the 60-tick start-up structure ramp.
+ g.world.tick=shared.STRUCTURE_GRAVITY_RAMP_TICKS
  links:=force_rule_links(s);defer delete(links)
  for p in s.pieces { if p.live { fmt.printf("Force rule %s piece=%d material=%s mass=%.9f\n",label,p.id,s.materials[p.material].name,b2.Body_GetMass(p.body)) } }
  first,peak_tick,run,longest:=0,0,0,0;peak:=f32(0)

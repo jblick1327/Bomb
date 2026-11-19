@@ -183,6 +183,8 @@ prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_Histo
  if history==nil { p.reason=.Dynamic_History_Required;return false }
  // The bracketing frames are shared by every proxy at a tick: find them once.
  from_frames,to_frames:=collision_history_bracket(history,tick),collision_history_bracket(history,tick+1)
+ // Full config gravity bounds proxy error. OD-8's structure ramp only lowers structure gravity during the first
+ // 60 steps of a level start, so the bound stays conservative then and exact afterwards (structure_gravity_ramp_test).
  config:=scene_gameplay_config(&p.scene);gravity:=vlen(config.gravity)
  // The player's reach during this step, as in the collision-window margin.
  player:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body))

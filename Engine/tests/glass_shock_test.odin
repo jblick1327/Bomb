@@ -112,6 +112,8 @@ glass_blast_and_impact_use_one_structural_commit :: proc(t: ^testing.T) {
  blast_commits:=shared.glass_commit_test_calls-before
  drop:=sandbox_editor_create(); defer sandbox_destroy(&drop); drop.editor.palette=recipe_slot(.Glass)
  testing.expect(t,editor_place(&drop,{0,0},{2,1})); sandbox_toggle_editor(&drop)
+ // G-N9b fixture: the impact is measured at full gravity, as before OD-8, by starting past the 60-tick start-up structure ramp.
+ drop.world.tick=shared.STRUCTURE_GRAVITY_RAMP_TICKS
  for p in drop.world.scene.pieces {
   if drop.world.scene.materials[p.material].name!="glass" { continue }
   position:=b2.Body_GetPosition(p.body); position.y+=0.8; b2.Body_SetTransform(p.body,position,b2.MakeRot(0))

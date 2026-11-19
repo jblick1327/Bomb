@@ -3,6 +3,7 @@ package main
 import "core:fmt"
 import "core:os"
 import b2 "vendor:box2d"
+import shared "shared"
 
 Glass_Study :: struct { pieces,cells: int, surviving,largest_fraction: f32, medians,cell_medians: [3]f32, band_counts,cell_band_counts: [3]int }
 glass_study_stats :: proc(s: ^Scene,origin: Vec2) -> Glass_Study {
@@ -38,6 +39,8 @@ glass_pane_yard :: proc(radius: f32,tuning:Player_Tuning=PLAYER_TUNING) -> Sandb
 glass_impact_yard :: proc() -> (Sandbox,int) {
  g:=sandbox_editor_create(); g.editor.palette=recipe_slot(.Glass)
  assert(editor_place(&g,{0,0},{2,1})); sandbox_toggle_editor(&g)
+ // G-N9b fixture: drop at full gravity, as before OD-8, by starting past the 60-tick start-up structure ramp.
+ g.world.tick=shared.STRUCTURE_GRAVITY_RAMP_TICKS
  s:=&g.world.scene; moved:=make(map[b2.BodyId]bool); defer delete(moved)
  for sub in s.subdivisions {
   if s.materials[sub.material].name!="glass" || moved[sub.body] { continue }; moved[sub.body]=true
