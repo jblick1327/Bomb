@@ -250,6 +250,7 @@ decode_scene_state :: proc(wire: ^Snapshot) -> (Scene,bool) {
   if value,exists:=c.damage.(f32); exists { if !finite(value) || value<0 { return {},false }; damage=value }
 		append(&s.connections,Connection{mortar=mortar,damage=damage,id=c.id,a=c.a,b=c.b,rest_point=point,local_a=vsub(point,a.rest_center),local_b=vsub(point,b.rest_center),rest_segments=shared_segments(a.outline,b.outline),live=true})
   if len(c.glue)>0 { target:=&s.connections[len(s.connections)-1];delete(target.rest_segments);target.rest_segments=nil;append(&target.glue,..c.glue) }
+  if mortar { link:=&s.connections[len(s.connections)-1]; link.seam_normal=mortar_link_normal(&s,link^) }
 	}
 	if valid,_ := validate_scene(&s); !valid { return {},false }
 	ok = true

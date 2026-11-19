@@ -79,6 +79,7 @@ glue_add :: proc(s:^Scene,a,b:u64,samples:[]Glue_Sample,inherit:bool=false)->u64
  _,point:=seam_geometry(c);c.rest_point=point
  sa,sb:=s.subdivisions[s.sub_rows[a]],s.subdivisions[s.sub_rows[b]]
  c.local_a=vsub(point,sa.rest_center);c.local_b=vsub(point,sb.rest_center)
+ c.seam_normal=mortar_link_normal(s,c)
  s.conn_rows[c.id]=len(s.connections);append(&s.connections,c);s.connection_pairs[pair_key(a,b)]=c.id
  append(&s.subdivisions[s.sub_rows[a]].incident_links,c.id);append(&s.subdivisions[s.sub_rows[b]].incident_links,c.id)
  s.structure_revision+=1;return c.id

@@ -380,6 +380,7 @@ replica_add_connection :: proc(rep: ^Replica,c: Repl_Connection) {
  } else { conn.rest_segments=shared_segments(a.outline,b.outline) }
  _ = length
  conn.rest_point=point; conn.local_a=vsub(point,a.rest_center); conn.local_b=vsub(point,b.rest_center)
+ if conn.mortar { conn.seam_normal=mortar_link_normal(s,conn) }
  s.conn_rows[c.id]=len(s.connections); append(&s.connections,conn)
  s.connection_pairs[pair_key(c.a,c.b)]=c.id
  append(&s.subdivisions[a_row].incident_links,c.id); append(&s.subdivisions[b_row].incident_links,c.id)

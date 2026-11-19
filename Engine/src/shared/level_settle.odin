@@ -68,8 +68,9 @@ Level_Settle_Timing :: struct {step_ms,blast_ms,blast_window_step_ms:f64}
 
 // Split the actual native ratio rather than assuming a particular material law.
 // This also lets the identical diagnostic source run on the pre-G-N1 native.
+// r split into its force and torque terms. The force term is the charged force (OD-10: bearing is not charged).
 level_settle_parts :: proc(seam:Mortar_Seam,r:f32) -> (force,torque:f32) {
- f:=vlen(seam.force)/seam.length
+ f:=vlen(seam.charged)/seam.length
  q:=math.abs(seam.torque)/(0.5*seam.length*seam.length)
  if f+q>0 {force=r*f/(f+q);torque=r*q/(f+q)}
  return

@@ -56,6 +56,7 @@ Connection :: struct {
 	live: bool,
  mortar: bool,
  damage: f32, // seconds of excess capacity absorbed by this mortar/glue seam (shared by its members)
+ seam_normal: Vec2 `json:"-"`, // OD-10: mortar links only; unit, rest frame, cell a -> cell b (mortar_link_normal), set when the link is built
 }
 
 Piece :: struct {

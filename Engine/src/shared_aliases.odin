@@ -430,6 +430,8 @@ mortar_force_failures :: shared.mortar_force_failures
 mortar_free_seams :: shared.mortar_free_seams
 mortar_length :: shared.mortar_length
 mortar_seam_ratio :: shared.mortar_seam_ratio
+mortar_link_normal :: shared.mortar_link_normal
+mortar_seam_split :: shared.mortar_seam_split
 mortar_seam_toughness :: shared.mortar_seam_toughness
 mortar_local_anchor :: shared.mortar_local_anchor
 mortar_seams :: shared.mortar_seams

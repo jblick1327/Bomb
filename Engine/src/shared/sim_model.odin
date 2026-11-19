@@ -95,6 +95,7 @@ add_connection :: proc(s: ^Scene, a, b: u64, mortar: bool = false, known_segment
 	s.connection_pairs[pair_key(a,b)]=id
 	append(&s.subdivisions[s.sub_rows[a]].incident_links,id)
 	append(&s.subdivisions[s.sub_rows[b]].incident_links,id)
+	if mortar { link:=&s.connections[s.conn_rows[id]]; link.seam_normal=mortar_link_normal(s,link^) }
 	if !mortar { append(&s.pieces[s.piece_rows[sa.owner]].connections,id) }
 	s.pieces[s.piece_rows[sa.owner]].render_revision+=1
  if mortar { s.pieces[s.piece_rows[sb.owner]].render_revision+=1 }

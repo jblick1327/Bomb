@@ -36,7 +36,7 @@ mortar_seam_group_counters_and_snap :: proc(t: ^testing.T) {
  failures:=Failures{}; defer free_failures(&failures)
  dt:=f32(1.0/60); step:=f32(0.1)*dt // r=1.1 absorbs 0.1*dt of damage per tick
  near:=proc(a,b: f32) -> bool { return math.abs(a-b)<1e-7 }
- seam.force={MORTAR_STRENGTH*seam.length*1.1,0}; seam.torque=0
+ seam.force={MORTAR_STRENGTH*seam.length*1.1,0}; seam.torque=0; mortar_seam_split(&seam)
  testing.expect(t,2*step<SEAM_TOUGHNESS)
  for tick in 1..=2 {
   seam.damage=f32(tick-1)*step; mortar_apply_seam(s,seam,&failures,dt)
@@ -58,20 +58,20 @@ mortar_seam_group_counters_and_snap :: proc(t: ^testing.T) {
  for id,i in seam.members { testing.expect(t,failures.connections[i]==id && s.connections[s.conn_rows[id]].damage==0) }
  resize(&failures.connections,0)
  // The rule is an impulse: the same (r-1)*dt breaks whether it comes in one tick or over several.
- seam.damage=0; seam.force={MORTAR_STRENGTH*seam.length*(1+1.01*SEAM_TOUGHNESS/dt),0}
+ seam.damage=0; seam.force={MORTAR_STRENGTH*seam.length*(1+1.01*SEAM_TOUGHNESS/dt),0}; mortar_seam_split(&seam)
  mortar_apply_seam(s,seam,&failures,dt)
  testing.expect(t,len(failures.connections)==len(seam.members))
  resize(&failures.connections,0)
- seam.damage=0; seam.force={MORTAR_STRENGTH*seam.length*(1+0.99*SEAM_TOUGHNESS/dt),0}
+ seam.damage=0; seam.force={MORTAR_STRENGTH*seam.length*(1+0.99*SEAM_TOUGHNESS/dt),0}; mortar_seam_split(&seam)
  mortar_apply_seam(s,seam,&failures,dt)
  testing.expect(t,len(failures.connections)==0)
  for id in seam.members { testing.expect(t,s.connections[s.conn_rows[id]].damage>0) }
  // At or below capacity a seam heals completely.
- seam.damage=SEAM_TOUGHNESS*0.9; seam.force={MORTAR_STRENGTH*seam.length*0.99,0}; mortar_apply_seam(s,seam,&failures,dt)
+ seam.damage=SEAM_TOUGHNESS*0.9; seam.force={MORTAR_STRENGTH*seam.length*0.99,0}; mortar_seam_split(&seam); mortar_apply_seam(s,seam,&failures,dt)
  testing.expect(t,len(failures.connections)==0)
  for id in seam.members { testing.expect(t,s.connections[s.conn_rows[id]].damage==0) }
  // Pure torque uses the whole seam's squared length as well.
- seam.damage=SEAM_TOUGHNESS; seam.force={0,0}; seam.torque=MORTAR_STRENGTH*seam.length*seam.length
+ seam.damage=SEAM_TOUGHNESS; seam.force={0,0}; seam.torque=MORTAR_STRENGTH*seam.length*seam.length; mortar_seam_split(&seam)
  mortar_apply_seam(s,seam,&failures,dt)
  testing.expect(t,len(failures.connections)==len(seam.members))
  expect_valid(t,s)

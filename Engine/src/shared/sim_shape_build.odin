@@ -50,6 +50,7 @@ build_shaped_object :: proc(s:^Scene,r:Authored_Shape,owner:u64) {
   for &c in s.connections { if c.a<first || c.b<first { continue };c.rest_point=vadd(center,vrotate(vsub(c.rest_point,center),frame))
    c.local_a=vsub(c.rest_point,s.subdivisions[s.sub_rows[c.a]].rest_center);c.local_b=vsub(c.rest_point,s.subdivisions[s.sub_rows[c.b]].rest_center)
    for &segment in c.rest_segments { segment.a=vadd(center,vrotate(vsub(segment.a,center),frame));segment.b=vadd(center,vrotate(vsub(segment.b,center),frame)) }
+   if c.mortar { c.seam_normal=mortar_link_normal(s,c) }
   }
  }
 }

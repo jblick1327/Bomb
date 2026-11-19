@@ -63,9 +63,11 @@ glue_material_beam_ratio :: proc(material: string,end_x: f32) -> (peak,low,tough
  return
 }
 
-// Fixture, chosen by probing end_x 2.8..4.4 (seed 42): at 3.6 the most loaded stone seam sits steady at r 1.155 and
+// Fixture, chosen by probing end_x 2.8..4.4 (seed 42): at 3.6 the most loaded stone seam sat steady at r 1.155 and
 // the steel one at 0.924; the footing-to-ground seam stays near r 0.05. Wood seams are far over capacity at every length.
-GLUE_MATERIAL_END_X :: f32(3.6)
+// G-N10b (OD-10, bearing not charged): re-probed 3.6..4.8 (evidence/G-N10b/README.md). At 3.6 stone dropped from r 1.091
+// (5610dc2) to 0.985, below capacity; 3.9 puts it back over (stone 1.142 steady, steel 0.914). The checks are unchanged.
+GLUE_MATERIAL_END_X :: f32(3.9)
 
 // Same base and geometry, so the same forces: the steel seam's load ratio is the stone one divided by 1.25.
 @(test)

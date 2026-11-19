@@ -15,7 +15,8 @@ settle_records_actual_force_torque_damage_and_break_tick :: proc(test:^t.T) {
  report:Level_Settle_Report;defer level_settle_destroy(&report)
  observer:=Level_Settle_Observer{scene=&s,report=&report,tick=7}
  previous:=level_settle_observer;level_settle_observer=&observer;defer {level_settle_observer=previous}
- seam:=Mortar_Seam{length=0.25,force={70,0},torque=8.75};append(&seam.members,u64(30));defer delete(seam.members)
+ // OD-10: the force part of r comes from the charged force (the weld force less any bearing); here all of it is charged.
+ seam:=Mortar_Seam{length=0.25,force={70,0},charged={70,0},torque=8.75};append(&seam.members,u64(30));defer delete(seam.members)
  level_settle_force(&s,seam,5,true,.43)
  t.expect_value(test,len(report.seams),1)
  row:=report.seams[0]
@@ -24,6 +25,12 @@ settle_records_actual_force_torque_damage_and_break_tick :: proc(test:^t.T) {
  t.expect(test,row.max_r==5 && row.damage==.43 && row.break_tick==7 && row.peak_tick==7)
  observer.tick=8;level_settle_force(&s,seam,1,false,0)
  t.expect(test,len(report.seams)==1 && report.seams[0].damage==.43 && report.seams[0].last_tick==8)
+ // A seam carrying 70 N of bearing besides the same charged force splits r the same way; the weld force magnitude is still recorded.
+ bearing:=seam;bearing.force={70,70};bearing.bearing=70
+ observer.tick=9;level_settle_force(&s,bearing,6,false,0)
+ row=report.seams[0]
+ t.expect(test,math.abs(row.force_at_max_r-3)<1e-6 && math.abs(row.torque_at_max_r-3)<1e-6 && row.peak_tick==9)
+ t.expect(test,math.abs(row.force_magnitude_at_max_r-70*math.sqrt(f32(2)))<1e-3)
 }
 
 @(test)

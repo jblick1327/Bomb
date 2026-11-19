@@ -63,9 +63,35 @@ Mortar_Seam :: struct {
  bodies: [2]b2.BodyId,
  members: [dynamic]u64,
  length: f32,
- center, force: Vec2,
+ center, force: Vec2,   // force: the welds' force on bodies[1]
  torque: f32,
  damage: f32,
+ normal: Vec2,          // OD-10: unit seam normal, world frame, bodies[0] -> bodies[1] (zero if none is defined)
+ bearing: f32,          // OD-10: compression across the seam face (force·normal when > 0); not charged to the glue
+ charged: Vec2,         // OD-10: force with the bearing part removed; this, not force, drives the load ratio
+}
+
+// OD-10 (G-N10b): the seam normal of one mortar/glue link, unit length in rest coordinates, pointing from cell a to cell b.
+// This is G-N10's measured variant v3, byte for byte (owner decision OD-10):
+//  - a link with rest segments (sandbox mortar, `build_mortar`) uses the perpendicular of its longest rest segment
+//    (a tie keeps the first);
+//  - a glue-sample link has no rest segments. Every glued seam in a level is one (`level_glue_link`), touching or across
+//    a gap. It uses the direction between the two cell centres.
+// G-N10b also measured the shared-face normal for glue links and rejected it: at G1 point a it brings back v4's
+// post-blast sag (evidence/G-N10b/README.md).
+// A pure function of the link's rest geometry, so builds, snapshot rebuilds, replicas and round restarts agree. It is
+// computed once when the link is built and cached on the Connection (seam_normal).
+mortar_link_normal :: proc(s: ^Scene,c: Connection) -> Vec2 {
+ a,b:=s.subdivisions[s.sub_rows[c.a]],s.subdivisions[s.sub_rows[c.b]]
+ toward:=vsub(b.rest_center,a.rest_center)
+ n:=toward
+ if len(c.rest_segments)>0 {
+  face:=c.rest_segments[0]; best:=f32(0)
+  for x in c.rest_segments { l:=vlen(vsub(x.b,x.a)); if l>best { best=l; face=x } }
+  d:=vsub(face.b,face.a); if vlen(d)>1e-7 { n=Vec2{d.y,-d.x}; if vdot(n,toward)<0 { n=vmul(n,-1) } }
+ }
+ if l:=vlen(n); l>0 { n=vmul(n,1/l) }
+ return n
 }
 
 mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
@@ -83,6 +109,9 @@ mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
   seam:=&seams[row]; length:=mortar_length(c)
   append(&seam.members,id)
   seam.length+=length
+  // OD-10: length-weighted link normals, oriented bodies[0] -> bodies[1] (the joint's body B is cell b's body).
+  normal:=c.seam_normal; if bodies[1]!=seam.bodies[1] { normal=vmul(normal,-1) }
+  seam.normal=vadd(seam.normal,vmul(normal,length))
   seam.center=vadd(seam.center,vmul(connection_sample(s,c),length))
   // New members / merged groups can have different histories: retain the
   // largest surviving history, then write the group value to every member.
@@ -90,6 +119,10 @@ mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
  }
  for &seam in seams {
   seam.center=vmul(seam.center,1/seam.length)
+  // Rest frame -> world: rigid bodies are built at their rest angle 0 and rebuilt bodies keep their frame.
+  if l:=vlen(seam.normal); l>0 { seam.normal=vmul(seam.normal,1/l) }
+  rot:=b2.Body_GetRotation(seam.bodies[1])
+  seam.normal=vrotate(seam.normal,math.atan2(rot.s,rot.c))
   for id in seam.members {
    c:=s.connections[s.conn_rows[id]]
    force:=from_b2(b2.Joint_GetConstraintForce(c.joint))
@@ -103,8 +136,16 @@ mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
    seam.force=vadd(seam.force,force)
    seam.torque+=torque+vcross(vsub(point,seam.center),force)
   }
+  mortar_seam_split(&seam)
  }
  return seams
+}
+
+// OD-10: weight resting on the seam (the weld pushing bodies[1] away from bodies[0] across the face) is not charged to the glue.
+// Tension, shear and torque are charged as before; there is no moment relief. Splits seam.force by seam.normal.
+mortar_seam_split :: proc(seam: ^Mortar_Seam) {
+ seam.bearing=0; seam.charged=seam.force
+ if fn:=vdot(seam.force,seam.normal); fn>0 { seam.bearing=fn; seam.charged=vsub(seam.force,vmul(seam.normal,fn)) }
 }
 
 mortar_free_seams :: proc(seams: [dynamic]Mortar_Seam) {
@@ -133,9 +174,10 @@ mortar_seam_toughness :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
 }
 
 // Load ratio r of a seam: 1 at capacity. Strength is MORTAR_STRENGTH per unit length times the seam toughness.
+// The force term uses the charged force: compression across the seam face is not charged (OD-10).
 mortar_seam_ratio :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
  strength:=MORTAR_STRENGTH*mortar_seam_toughness(s,seam)
- return vlen(seam.force)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length)
+ return vlen(seam.charged)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length)
 }
 
 mortar_apply_seam :: proc(s: ^Scene,seam: Mortar_Seam,failures: ^Failures,dt: f32) {
