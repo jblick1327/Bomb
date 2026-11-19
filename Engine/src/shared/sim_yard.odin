@@ -192,7 +192,14 @@ world_remove_out_of_bounds :: proc(game: ^World) -> bool {
 	defer delete(f.discard_subdivisions)
 	for sub in game.scene.subdivisions {
   if !sub.live {continue}
-  if sub.provenance.motion==.Fixed||sub.provenance.motion==.Anchored {continue}
+  if sub.provenance.motion==.Fixed {continue}
+  // G-N11: Anchored is source provenance; released children are no longer held.
+  if sub.provenance.motion==.Anchored {
+   if game.scene.physics.active {
+    if sub.body==b2.nullBodyId || b2.Body_GetType(sub.body)!=.dynamicBody {continue}
+   }
+   if piece_anchored(&game.scene,sub.owner,game.scene.anchor_y) {continue}
+  }
   if sub.provenance.motion==.Legacy {
    if game.scene.physics.active&&sub.body!=b2.nullBodyId {
     if b2.Body_GetType(sub.body)!=.dynamicBody {continue}

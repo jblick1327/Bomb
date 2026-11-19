@@ -77,12 +77,39 @@ owner_cleanup_removes_dynamic_indestructible_cells_and_pieces_but_keeps_fixed_an
  damaged:=owner_rule_rectangle(&w.scene,{12,10},{13,11},.Destructible,.Dynamic)
  fixed:=owner_rule_rectangle(&w.scene,{14,10},{15,11},.Indestructible,.Fixed)
  anchored:=owner_rule_rectangle(&w.scene,{16,10},{17,11},.Destructible,.Anchored)
+ held:=owner_rule_rectangle(&w.scene,{18,10},{19,11},.Destructible,.Anchored)
+ part:=Source_Part_Anchors{source_identity=SOURCE_DIAGNOSTIC,source_part_id=w.scene.subdivisions[w.scene.sub_rows[held]].provenance.source_part_id}
+ append(&part.segments,Segment{{18,10},{19,10}});append(&w.scene.source_parts,part);cell_resolve_pin(&w.scene,held)
  dynamic_owner:=w.scene.subdivisions[w.scene.sub_rows[dynamic_cell]].owner
  t.expect(test,world_remove_out_of_bounds(&w))
  t.expect(test,!is_live_subdivision(&w.scene,dynamic_cell)&&!is_live_subdivision(&w.scene,damaged))
  owner_row,owner_exists:=w.scene.piece_rows[dynamic_owner]
  t.expect(test,!owner_exists||!w.scene.pieces[owner_row].live,"empty dynamic piece is removed as well as its cell")
- t.expect(test,w.scene.subdivisions[w.scene.sub_rows[fixed]].live&&w.scene.subdivisions[w.scene.sub_rows[anchored]].live)
+ // G-N11 owner approval replaces only the old unpinned Anchored exemption.
+ t.expect(test,!is_live_subdivision(&w.scene,anchored),"released anchored-source cells are culled")
+ t.expect(test,is_live_subdivision(&w.scene,fixed)&&is_live_subdivision(&w.scene,held),"Fixed and still-anchored cells stay")
+}
+
+@(test)
+owner_cleanup_anchored_requires_no_anchor_contact_and_a_dynamic_body :: proc(test:^t.T) {
+ for rubber in ([2]bool{false,true}) { for active in ([2]bool{false,true}) {
+  s,lower,upper,link:=test_policy_scene(.Anchored,.Destructible,rubber)
+  w:=World{scene=s};defer scene_destroy(&w.scene)
+  if !active { physics_destroy(&w.scene) }
+  w.scene.level_policy.active=true;w.scene.level_policy.fragment_cull={{10,10},{20,20}}
+  t.expect(test,!w.scene.subdivisions[w.scene.sub_rows[upper]].provenance.pinned&&piece_anchored(&w.scene,w.scene.subdivisions[w.scene.sub_rows[upper]].owner,w.scene.anchor_y))
+  t.expect(test,!world_remove_out_of_bounds(&w),"an unpinned member of a held piece stays, even with a dynamic flexible body")
+  f:Failures;append(&f.connections,link);apply_failures(&w.scene,f);free_failures(&f);physics_sync_structure(&w.scene)
+  if active {
+   body:=w.scene.subdivisions[w.scene.sub_rows[upper]].body
+   t.expect(test,b2.Body_GetType(body)==.dynamicBody)
+   b2.Body_SetType(body,.kinematicBody)
+   t.expect(test,!world_remove_out_of_bounds(&w),"an unheld but non-dynamic body stays")
+   b2.Body_SetType(body,.dynamicBody)
+  }
+  t.expect(test,world_remove_out_of_bounds(&w))
+  t.expect(test,is_live_subdivision(&w.scene,lower)&&!is_live_subdivision(&w.scene,upper),"only the released cell is culled, with and without physics")
+ } }
 }
 
 owner_four_player_round :: proc(count:int=4) -> Round_Controller {
