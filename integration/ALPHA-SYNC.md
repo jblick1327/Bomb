@@ -161,9 +161,9 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
      `robocopy Packages <validation>\Packages /MIR` and `robocopy ProjectSettings <validation>\ProjectSettings /MIR`.
      `<validation>` is `UnityValidationProject` in the config.
    - **Which gates to run** (owner decision 2026-11-17): match the gates to what changed.
-     - The Prediction suite (about 1 hour) tests only the native DLL through the .NET harness. Run it **only when `bomcore.dll` changes** (E1 tasks, Phase E).
+     - The Prediction suite (about 1 hour) tests only the native DLL through the .NET harness. Run it **only when a `bomcore.dll` change touches player movement, prediction, netcode or snapshots**, and always once in G9 before release (owner, 2026-11-19, "Yes, change the rule"; it replaces "every DLL change").
      - Unity-only tasks run Build, Content, Rounds and the front door. Add the perf matrix only if rendering or frame cost changed.
-     - Record a skipped Prediction run as "not required: DLL unchanged since <task> 6/6", never as a pass.
+     - Record a skipped Prediction run as "not required: DLL unchanged since <task> 6/6" or "not required: change outside prediction scope (<why>)", never as a pass.
      - Its fps-cadence check is sensitive to the machine's state: it failed after a laptop standby in G3. If only cadence fails while prediction stats are clean, check for standby or power changes before suspecting the code.
 8. **Presentation tasks** end with an *Owner check* box. Models never tick it; the owner plays the build and ticks it.
 
@@ -666,7 +666,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - Do: cull a cell outside `fragment_cull` when it is no longer held: its piece is not anchored (no anchor contact) and, with physics active, its body is dynamic. Fixed cells and cells still anchored stay (the `.Legacy` branch already works this way). No other cleanup, physics, destruction or wire change.
     Tests: the pinning test `owner_cleanup_removes_dynamic_indestructible_cells_and_pieces_but_keeps_fixed_and_anchored_sources` changes only for the approved case (a released anchored-source fragment is culled; a still-anchored one stays), with the reason in the commit. Add a test where a real blast on an anchored source sends a fragment out of bounds; determinism (two runs byte-identical); a rebuild matches. Byte goldens that change: re-record as OD-9/OD-10 (old kept as `*.pre-gn11.*`), listed with reasons.
   - Done when: `.\scripts\bom.ps1 Test`, `NetTest` and `test-client-core.ps1` pass; the G7+G8 cleanup probe (outer-skin shot on Classic) leaves no live piece outside the cull bounds; OD-6 settle on the four G7G8 layouts is unchanged (two runs, byte-identical); evidence `evidence\G-N11\README.md`. Then E1-GN11.
-- [ ] **E1-GN11 Unity checkpoint for G-N11** (T1, Lane U; after G-N11). As E1-GN10: `Build-OwnerNative.py`, NativeInterop, NativeProof, Build, Content, Rounds, front door x4, Prediction 6/6 (DLL changes; about 1 hour, unattended); then re-check G8 cleanup and tick G8.
+- [ ] **E1-GN11 Unity checkpoint for G-N11** (T1, Lane U; after G-N11). As E1-GN10: `Build-OwnerNative.py`, NativeInterop, NativeProof, Build, Content, Rounds, front door x4; Prediction not required (cleanup of out-of-bounds debris only, outside prediction scope; 2026-11-19 rule); then re-check G8 cleanup and tick G8.
 - [ ] **G9 Performance and feel pass** (T1, Opus, M; Lane U; after G2–G8b). Run the F2 protocol with 2 windows, a long human Elimination round with blasts on every level, the Prediction suite and the 30-minute soak.
 - [ ] **G10 Repackage** (T2, Sonnet, S; Lane U; after G9 and the owner check). As F4, with the G look as the default.
 
