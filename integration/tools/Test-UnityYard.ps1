@@ -9,7 +9,7 @@ if(!$PlayerPath){$PlayerPath=Join-Path $output 'BombNetworkYard.exe'}
 $validation=[IO.Path]::GetFullPath($config.UnityValidationProject)
 if(!$SkipBuild){
  if($validation.TrimEnd('\','/') -eq [IO.Path]::GetFullPath($unityRoot).TrimEnd('\','/')){throw 'Use a separate Unity validation project.'}
- $open=Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'"|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}
+ $open=try{Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'" -ErrorAction Stop|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}}catch{Get-Process Unity -ErrorAction SilentlyContinue}
  if($open){throw 'Close the dedicated validation Editor before updating its native plugin.'}
  $assets=Join-Path $validation 'Assets/BOMIntegration'
  Copy-Item -Path (Join-Path $unityRoot 'Assets/BOMIntegration/*') -Destination $assets -Recurse -Force

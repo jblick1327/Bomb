@@ -8,7 +8,7 @@ if($validation.TrimEnd('\','/') -eq [IO.Path]::GetFullPath($unityRoot).TrimEnd('
 if(!(Test-Path -LiteralPath (Join-Path $validation 'ProjectSettings/ProjectVersion.txt'))){throw 'Prepare a separate copy of Assets, Packages and ProjectSettings and set UnityValidationProject in local.config.json.'}
 $version=Get-Content -LiteralPath (Join-Path $validation 'ProjectSettings/ProjectVersion.txt') -Raw
 if($version -notmatch '6000\.2\.14f1'){throw 'The validation copy must use the pinned Unity 6000.2.14f1 Editor.'}
-$open=Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'"|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}
+$open=try{Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'" -ErrorAction Stop|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}}catch{Get-Process Unity -ErrorAction SilentlyContinue}
 if($open){throw 'The dedicated validation Editor is already open; close it before copying or building its plugin.'}
 $assets=Join-Path $validation 'Assets/BOMIntegration';New-Item -ItemType Directory -Path $assets -Force|Out-Null
 Copy-Item -Path (Join-Path $unityRoot 'Assets/BOMIntegration/*') -Destination $assets -Recurse -Force

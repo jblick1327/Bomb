@@ -21,7 +21,7 @@ if(!$YardPlayerPath){$YardPlayerPath=Join-Path $yardOutput 'BombNetworkYard.exe'
 if(!$SkipBuild){
  if($validation.TrimEnd('\','/') -eq [IO.Path]::GetFullPath($unityRoot).TrimEnd('\','/')){throw 'Use the separate validation project configured in local.config.json.'}
  if(!(Test-Path (Join-Path $unityRoot 'Assets/BOMIntegration/Runtime/BomSourcePresentation.cs'))){throw 'The M7 SDK must be present in Assets/BOMIntegration.'}
- $open=Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'"|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}
+ $open=try{Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'" -ErrorAction Stop|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}}catch{Get-Process Unity -ErrorAction SilentlyContinue}
  if($open){throw 'The dedicated validation Editor is already open; wait for its current job to finish.'}
  $assets=Join-Path $validation 'Assets/BOMIntegration'
  New-Item -ItemType Directory -Path $assets,$fixtureOutput,$yardOutput -Force|Out-Null

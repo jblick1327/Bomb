@@ -12,7 +12,7 @@ $source=[IO.Path]::GetFullPath($SourceProject).TrimEnd('\','/')
 $validation=[IO.Path]::GetFullPath($config.UnityValidationProject).TrimEnd('\','/')
 if($source -eq $validation){throw 'Use a separate validation copy so build settings do not modify the source project.'}
 if(!(Test-Path -LiteralPath (Join-Path $source 'Assets/BOMIntegration/Runtime/BomClientBehaviour.cs'))){throw 'SourceProject must contain the completed Assets/BOMIntegration SDK.'}
-$open=Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'"|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}
+$open=try{Get-CimInstance Win32_Process -Filter "Name = 'Unity.exe'" -ErrorAction Stop|Where-Object {$_.CommandLine -and $_.CommandLine.Contains($validation)}}catch{Get-Process Unity -ErrorAction SilentlyContinue}
 if($open){throw 'Close the dedicated validation Editor before rebuilding its plugin.'}
 if(!(Test-Path -LiteralPath (Join-Path $validation 'ProjectSettings/ProjectVersion.txt'))){
  New-Item -ItemType Directory -Path $validation -Force|Out-Null
