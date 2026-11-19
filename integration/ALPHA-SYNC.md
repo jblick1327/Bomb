@@ -528,7 +528,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     Variants (OD-6, both runs byte-identical, 35 pairs): ramp 30/60/120 and hold-30 all fail the G5 Bridge (0.165/0.315/25.1/26.4), regress G1 (31.8/32.1/1.93/0.955) and ramp 120 regresses the Tower (1.26);
     ramp 60 passes the rounded control only (0.056), so the knife edge stays. No prototype built (`g-n8-experiments` not created). Tool: `--settle-gravity-hold-ticks/-ramp-ticks/-trace-ticks` on `--validate-layout`, no rule change.
     Gates: client-core shared 133 + FFI 22, Test 229, NetTest 27 PASS. Owner options in report §5 (glued pieces bearing by contact, G-N7 options, visible bearing art), none measured.
-- [ ] **G-N9 Contact bearing: glued pieces also rest on each other** (Lane N, Opus, M; owner approved the measurement 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`.
+- [~] **G-N9 Contact bearing: glued pieces also rest on each other** (Lane N, Opus, M; owner approved the measurement 2026-11-18; unblocks G5). claimed: Claude Opus 5.5 2026-11-18. Work in `C:\Users\jblic\Documents\BOM`.
   No Unity process may run meanwhile; Lane U stays idle (G5 is parked `[!]`).
   - Why (G-N8 report §1–2, §5 option 1): glue seams are Box2D weld joints made with `b2.DefaultWeldJointDef()` (`src/shared/sim_physics.odin`, the `c.mortar` branch and the flexibility branch),
     which leaves `collideConnected` false. Glued pieces never touch, so a deck resting on pile tops carries its weight through the glue as torque (9–23× capacity on the Bridge) instead of bearing on the piles.
