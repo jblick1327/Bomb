@@ -21,8 +21,8 @@
     "dropped_slivers": 10,
     "native_glue_links": 97,
     "native_glue_zero_sample_links": 0,
-    "native_parts": 55,
-    "native_cells": 1280,
+    "native_parts": 52,
+    "native_cells": 977,
     "allowed_overlaps": 0,
     "dropped_area": 0.08500000089406967,
     "max_dropped_area": 0.008500000461935997,
@@ -38,11 +38,7 @@
     "custom_materials": [
         "steel (base stone, toughness 1.25, blast resistance 4)"
     ],
-    "fixed_sources": [
-        "Bottom Boundary",
-        "Left Wall",
-        "Right Wall"
-    ],
+    "fixed_sources": [],
     "nudges": [
         "part 0 Bridge/Bridge Deck Tile 01 (4): bottom y 12.93 -> 12.905 (rests on the part below; x -14.5..-11.34)",
         "part 1 Bridge/Bridge Deck Tile 02 (3): bottom y 12.93 -> 12.905 (rests on the part below; x -11.27..-8.11)",
@@ -75,53 +71,7 @@
         "part 46 Bridge/Bridge Truss Brace - Front East Center (2): brace end (6.3294, 3.875) -> (6.33, 3.875) on the post face, seat corner (6.33, 3.625) added",
         "part 47 Bridge/Bridge Truss Brace - Front East (2): brace end (6.6706, 3.875) -> (6.67, 3.875) on the post face, seat corner (6.67, 3.625) added"
     ],
-    "boundaries": [
-        {
-            "name": "Bottom Boundary",
-            "motion": "fixed",
-            "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
-            "visible": false,
-            "lo": {
-                "x": -18.600000381469728,
-                "y": -26.559999465942384
-            },
-            "hi": {
-                "x": 18.600000381469728,
-                "y": -25.96000099182129
-            }
-        },
-        {
-            "name": "Left Wall",
-            "motion": "fixed",
-            "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
-            "visible": false,
-            "lo": {
-                "x": -18.599998474121095,
-                "y": -25.360000610351564
-            },
-            "hi": {
-                "x": -18.0,
-                "y": 34.63999938964844
-            }
-        },
-        {
-            "name": "Right Wall",
-            "motion": "fixed",
-            "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
-            "visible": false,
-            "lo": {
-                "x": 18.0,
-                "y": -25.360000610351564
-            },
-            "hi": {
-                "x": 18.599998474121095,
-                "y": 34.63999938964844
-            }
-        }
-    ],
+    "boundaries": [],
     "spawns": [
         {
             "x": -3.0,

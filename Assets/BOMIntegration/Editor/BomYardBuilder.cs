@@ -529,6 +529,7 @@ public static class BomYardBuilder
             EditorUtility.SetDirty(level);
             EditorSceneManager.SaveScene(level.gameObject.scene, ScenePath);
         }
+        BomArenaBoundaryBuilder.Classic(level);
         var registry = BomLevelExporter.Export(level, output);
         var client = UnityEngine.Object.FindFirstObjectByType<BomClientBehaviour>();
         if (client == null)

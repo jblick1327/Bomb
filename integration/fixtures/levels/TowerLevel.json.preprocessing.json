@@ -11,6 +11,62 @@
             "source_identity": ""
         },
         {
+            "object_path": "Left bedrock",
+            "classification": "physics source",
+            "approximation": "OD-1/OD-5 bedrock: visible arena edge, anchored only along its bottom; Stone 1.4/4",
+            "visual_fallback": "",
+            "source_identity": "118"
+        },
+        {
+            "object_path": "Left bedrock/Bedrock rock face",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Left bedrock/Bedrock west",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Left bedrock/Bedrock east",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Right bedrock",
+            "classification": "physics source",
+            "approximation": "OD-1/OD-5 bedrock: visible arena edge, anchored only along its bottom; Stone 1.4/4",
+            "visual_fallback": "",
+            "source_identity": "119"
+        },
+        {
+            "object_path": "Right bedrock/Bedrock rock face",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Right bedrock/Bedrock west",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
+            "object_path": "Right bedrock/Bedrock east",
+            "classification": "decorative",
+            "approximation": "",
+            "visual_fallback": "",
+            "source_identity": ""
+        },
+        {
             "object_path": "BOM G5 parts",
             "classification": "decorative",
             "approximation": "",
@@ -2468,49 +2524,7 @@
             "source_identity": ""
         },
         {
-            "object_path": "Arena/Bottom Boundary",
-            "classification": "physics source",
-            "approximation": "Existing XY boundary from the original ArenaLayout collider, fixed until G8 (OD-1); destructible (I2)",
-            "visual_fallback": "",
-            "source_identity": "117"
-        },
-        {
-            "object_path": "Arena/Bottom Boundary/Native fixed boundary",
-            "classification": "decorative",
-            "approximation": "",
-            "visual_fallback": "",
-            "source_identity": ""
-        },
-        {
             "object_path": "Arena/Level Background",
-            "classification": "decorative",
-            "approximation": "",
-            "visual_fallback": "",
-            "source_identity": ""
-        },
-        {
-            "object_path": "Arena/Left Wall",
-            "classification": "physics source",
-            "approximation": "Existing XY boundary from the original ArenaLayout collider, fixed until G8 (OD-1); destructible (I2); invisible in the original, so hidden",
-            "visual_fallback": "",
-            "source_identity": "118"
-        },
-        {
-            "object_path": "Arena/Left Wall/Native fixed boundary",
-            "classification": "decorative",
-            "approximation": "",
-            "visual_fallback": "",
-            "source_identity": ""
-        },
-        {
-            "object_path": "Arena/Right Wall",
-            "classification": "physics source",
-            "approximation": "Existing XY boundary from the original ArenaLayout collider, fixed until G8 (OD-1); destructible (I2); invisible in the original, so hidden",
-            "visual_fallback": "",
-            "source_identity": "119"
-        },
-        {
-            "object_path": "Arena/Right Wall/Native fixed boundary",
             "classification": "decorative",
             "approximation": "",
             "visual_fallback": "",
@@ -5854,63 +5868,43 @@
             }
         },
         {
-            "source_identity": "117",
-            "object_path": "Arena/Bottom Boundary",
-            "asset_key": "tiles/TowerLevel/Bottom Boundary",
+            "source_identity": "118",
+            "object_path": "Left bedrock",
+            "asset_key": "bedrock/Left bedrock",
             "classification": "supported closed solid collection",
             "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
             "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
             "triangles": 12,
             "materials": 1,
             "minimum": {
-                "x": -18.600000381469728,
-                "y": -26.559999465942384,
-                "z": -4.0
+                "x": -26.0,
+                "y": -28.0,
+                "z": -0.800000011920929
             },
             "maximum": {
-                "x": 18.600000381469728,
-                "y": -25.96000099182129,
-                "z": 4.0
-            }
-        },
-        {
-            "source_identity": "118",
-            "object_path": "Arena/Left Wall",
-            "asset_key": "tiles/TowerLevel/Left Wall",
-            "classification": "hidden boundary",
-            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
-            "remedy": "None",
-            "triangles": 0,
-            "materials": 0,
-            "minimum": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "maximum": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": -18.0,
+                "y": 35.80738830566406,
+                "z": 0.800000011920929
             }
         },
         {
             "source_identity": "119",
-            "object_path": "Arena/Right Wall",
-            "asset_key": "tiles/TowerLevel/Right Wall",
-            "classification": "hidden boundary",
-            "expected_fallback": "none (drawn as nothing, like the original invisible wall)",
-            "remedy": "None",
-            "triangles": 0,
-            "materials": 0,
+            "object_path": "Right bedrock",
+            "asset_key": "bedrock/Right bedrock",
+            "classification": "supported closed solid collection",
+            "expected_fallback": "extrusion while asynchronous cuts load, or for an explicitly failed cut",
+            "remedy": "None for closed-solid preprocessing; individual native regions still require clipped-shell validation.",
+            "triangles": 12,
+            "materials": 1,
             "minimum": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": 18.0,
+                "y": -28.0,
+                "z": -0.800000011920929
             },
             "maximum": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": 26.0,
+                "y": 35.80738830566406,
+                "z": 0.800000011920929
             }
         }
     ]

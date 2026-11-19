@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &909823246
+--- !u!1 &272526321
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,11 +127,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 909823247}
-  - component: {fileID: 909823251}
-  - component: {fileID: 909823250}
-  - component: {fileID: 909823249}
-  - component: {fileID: 909823248}
+  - component: {fileID: 272526322}
+  - component: {fileID: 272526326}
+  - component: {fileID: 272526325}
+  - component: {fileID: 272526324}
+  - component: {fileID: 272526323}
   m_Layer: 0
   m_Name: Fixed floor
   m_TagString: Untagged
@@ -139,28 +139,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &909823247
+--- !u!4 &272526322
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909823246}
+  m_GameObject: {fileID: 272526321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1082635261}
+  m_Father: {fileID: 1784823638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &909823248
+--- !u!114 &272526323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909823246}
+  m_GameObject: {fileID: 272526321}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
@@ -175,13 +175,13 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 0
   ApproximationNote: 
---- !u!114 &909823249
+--- !u!114 &272526324
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909823246}
+  m_GameObject: {fileID: 272526321}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
@@ -190,7 +190,7 @@ MonoBehaviour:
   identityDecimal: 9007199254750001
   NextPartIdDecimal: 2
   PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-909823248-0
+  - ObjectGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-272526323-0
     IdentityDecimal: 1
   AssetKey: round-fixture/fixed-floor
   VisualGroup: {fileID: 0}
@@ -202,13 +202,13 @@ MonoBehaviour:
   ApproximationNote: 
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!23 &909823250
+--- !u!23 &272526325
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909823246}
+  m_GameObject: {fileID: 272526321}
   m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -251,15 +251,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &909823251
+--- !u!33 &272526326
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 909823246}
+  m_GameObject: {fileID: 272526321}
   m_Mesh: {fileID: 4300000, guid: f44a7201e9ae9ac4f96b3757bc6d802f, type: 2}
---- !u!1 &1023906611
+--- !u!1 &363681589
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -267,81 +267,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1023906614}
-  - component: {fileID: 1023906613}
-  - component: {fileID: 1023906612}
-  m_Layer: 0
-  m_Name: Network fixture HUD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1023906612
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023906611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0ffb888e7bb3324c91e5c7435ec6c24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomNetworkHud
-  Client: {fileID: 1572170529}
-  ArenaHudTemplate: {fileID: 9197481963319205126, guid: 7a55910b11903be40b79949fd708e06d, type: 3}
-  ArenaHudStyle: {fileID: 7433441132597879392, guid: df03c397ed0765a4fb87aba0a592556f, type: 3}
-  NetworkMenuStyle: {fileID: 7433441132597879392, guid: 2b3e09eb9ca81194b86be8f5c7d282b9, type: 3}
---- !u!114 &1023906613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023906611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e38489645cd09ed48bdd876cffe949f0, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &1023906614
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1023906611}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1080228015
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1080228018}
-  - component: {fileID: 1080228017}
-  - component: {fileID: 1080228016}
+  - component: {fileID: 363681592}
+  - component: {fileID: 363681591}
+  - component: {fileID: 363681590}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -349,21 +277,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1080228016
+--- !u!81 &363681590
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1080228015}
+  m_GameObject: {fileID: 363681589}
   m_Enabled: 1
---- !u!20 &1080228017
+--- !u!20 &363681591
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1080228015}
+  m_GameObject: {fileID: 363681589}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -408,13 +336,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &1080228018
+--- !u!4 &363681592
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1080228015}
+  m_GameObject: {fileID: 363681589}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2.5, z: -20}
@@ -423,7 +351,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1082635259
+--- !u!1 &1022559037
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -431,110 +359,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1082635261}
-  - component: {fileID: 1082635260}
-  m_Layer: 0
-  m_Name: Native simultaneous-death fixture
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1082635260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1082635259}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2045cc867e364e64c9f8b74b274949a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
-  LevelId: bom-elimination-draw-fixture-v1
-  YardBuilderVersion: 0
-  NextIdentityDecimal: 9007199254750002
-  StoredSceneGuid: e196fb03a23825242bd6ea0c3ac5725b
-  StoredRootGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-1082635260-0
-  IdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-909823249-0
-    IdentityDecimal: 9007199254750001
-  Seed: 42
-  GameplayConfigId: bom-default-v5
-  Gameplay:
-    Gravity: {x: 0, y: -9.8}
-    PlayerSpeed: 7
-    PlayerAcceleration: 70
-    PlayerJumpSpeed: 11.18034
-    PlayerCoyoteTime: 0.1
-    PlayerJumpBuffer: 0.1
-    PlayerGravityScale: 2.5510204
-    BombRadius: 5
-    BombFuse: 1
-    LethalRadius: 1.2
-    GrazeRadius: 2.2
-    GrazesToDie: 3
-    SandboxBombInterval: {x: 1, y: 2.5}
-    EliminationStartInterval: {x: 1, y: 2.5}
-    EliminationEndInterval: {x: 0.4, y: 1}
-    EliminationRampSeconds: 90
-  SimulationBounds:
-    Minimum: {x: -7, y: -4}
-    Maximum: {x: 7, y: 10}
-  KillBounds:
-    Minimum: {x: -6, y: -3}
-    Maximum: {x: 6, y: 8}
-  CameraBounds:
-    Minimum: {x: -6, y: -1}
-    Maximum: {x: 6, y: 6}
-  AimBounds:
-    Minimum: {x: -6, y: -2}
-    Maximum: {x: 6, y: 8}
-  FragmentCullBounds:
-    Minimum: {x: -10, y: -6}
-    Maximum: {x: 10, y: 12}
-  Spawns:
-  - {x: -3, y: 0.565}
-  - {x: -0.8, y: 0.565}
-  - {x: 0.8, y: 0.565}
-  - {x: 3, y: 0.565}
-  BombSpawnX: {x: -0.05, y: 0.05}
-  BombSpawnHeight: 4
-  BombCleanupBounds:
-    Minimum: {x: -8, y: -4}
-    Maximum: {x: 8, y: 10}
-  Glue: []
-  AllowedOverlaps: []
-  Materials: []
-  VisualRegistry: {fileID: 11400000, guid: ca7a3101d318df94cbde17ba296a6370, type: 2}
---- !u!4 &1082635261
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1082635259}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 909823247}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1572170528
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1572170531}
-  - component: {fileID: 1572170529}
-  - component: {fileID: 1572170530}
+  - component: {fileID: 1022559040}
+  - component: {fileID: 1022559038}
+  - component: {fileID: 1022559039}
   m_Layer: 0
   m_Name: Native round fixture client
   m_TagString: Untagged
@@ -542,20 +369,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1572170529
+--- !u!114 &1022559038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572170528}
+  m_GameObject: {fileID: 1022559037}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a0f4fe47206e7743b04c5958a7e19a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomClientBehaviour
   Material: {fileID: 2100000, guid: 160876804ae2e3d42ac3d659835cc7bb, type: 2}
-  View: {fileID: 1080228017}
+  View: {fileID: 363681591}
   PlayerPrefab: {fileID: 3914388416614864481, guid: 0776f098973e40e4b86885d83fc35229, type: 3}
   BombPrefab: {fileID: 8642442638985349948, guid: 9bb20eb5d8bd286499f54fadf5448b4e, type: 3}
   BlastPrefab: {fileID: 643950438087958761, guid: db0ee267936605e41b2a8f46a519ecb3, type: 3}
@@ -570,29 +397,30 @@ MonoBehaviour:
   Address: 127.0.0.1
   Prediction: 1
   VisualRegistry: {fileID: 11400000, guid: ca7a3101d318df94cbde17ba296a6370, type: 2}
+  ClippedSourceArt: 0
   ConnectOnEnable: 0
   InputBlocked: 0
   DiagnosticOverlay: 0
---- !u!114 &1572170530
+--- !u!114 &1022559039
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572170528}
+  m_GameObject: {fileID: 1022559037}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b07f49a1e5f18764d9938f585fba0b2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomRoundScenario
-  Client: {fileID: 1572170529}
---- !u!4 &1572170531
+  Client: {fileID: 1022559038}
+--- !u!4 &1022559040
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1572170528}
+  m_GameObject: {fileID: 1022559037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -601,7 +429,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1972791091
+--- !u!1 &1182845538
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -609,8 +437,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1972791093}
-  - component: {fileID: 1972791092}
+  - component: {fileID: 1182845540}
+  - component: {fileID: 1182845539}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -618,13 +446,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &1972791092
+--- !u!108 &1182845539
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972791091}
+  m_GameObject: {fileID: 1182845538}
   m_Enabled: 1
   serializedVersion: 11
   m_Type: 1
@@ -683,13 +511,13 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!4 &1972791093
+--- !u!4 &1182845540
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1972791091}
+  m_GameObject: {fileID: 1182845538}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
@@ -698,12 +526,185 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1784823636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784823638}
+  - component: {fileID: 1784823637}
+  m_Layer: 0
+  m_Name: Native simultaneous-death fixture
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1784823637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784823636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2045cc867e364e64c9f8b74b274949a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
+  LevelId: bom-elimination-draw-fixture-v1
+  YardBuilderVersion: 0
+  NextIdentityDecimal: 9007199254750002
+  StoredSceneGuid: e196fb03a23825242bd6ea0c3ac5725b
+  StoredRootGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-1784823637-0
+  IdentityRegistry:
+  - ObjectGlobalId: GlobalObjectId_V1-2-e196fb03a23825242bd6ea0c3ac5725b-272526324-0
+    IdentityDecimal: 9007199254750001
+  Seed: 42
+  GameplayConfigId: bom-default-v5
+  Gameplay:
+    Gravity: {x: 0, y: -9.8}
+    PlayerSpeed: 7
+    PlayerAcceleration: 70
+    PlayerJumpSpeed: 11.18034
+    PlayerCoyoteTime: 0.1
+    PlayerJumpBuffer: 0.1
+    PlayerGravityScale: 2.5510204
+    BombRadius: 5
+    BombFuse: 1
+    LethalRadius: 1.2
+    GrazeRadius: 2.2
+    GrazesToDie: 3
+    SandboxBombInterval: {x: 1, y: 2.5}
+    EliminationStartInterval: {x: 1, y: 2.5}
+    EliminationEndInterval: {x: 0.4, y: 1}
+    EliminationRampSeconds: 90
+  SimulationBounds:
+    Minimum: {x: -7, y: -4}
+    Maximum: {x: 7, y: 10}
+  KillBounds:
+    Minimum: {x: -6, y: -3}
+    Maximum: {x: 6, y: 8}
+  CameraBounds:
+    Minimum: {x: -6, y: -1}
+    Maximum: {x: 6, y: 6}
+  AimBounds:
+    Minimum: {x: -6, y: -2}
+    Maximum: {x: 6, y: 8}
+  FragmentCullBounds:
+    Minimum: {x: -10, y: -6}
+    Maximum: {x: 10, y: 12}
+  Spawns:
+  - {x: -3, y: 0.565}
+  - {x: -0.8, y: 0.565}
+  - {x: 0.8, y: 0.565}
+  - {x: 3, y: 0.565}
+  BombSpawnX: {x: -0.05, y: 0.05}
+  BombSpawnHeight: 4
+  BombCleanupBounds:
+    Minimum: {x: -8, y: -4}
+    Maximum: {x: 8, y: 10}
+  Glue: []
+  AllowedOverlaps: []
+  Materials: []
+  VisualRegistry: {fileID: 11400000, guid: ca7a3101d318df94cbde17ba296a6370, type: 2}
+--- !u!4 &1784823638
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784823636}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 272526322}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2006784149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2006784152}
+  - component: {fileID: 2006784151}
+  - component: {fileID: 2006784150}
+  m_Layer: 0
+  m_Name: Network fixture HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2006784150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006784149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0ffb888e7bb3324c91e5c7435ec6c24, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomNetworkHud
+  Client: {fileID: 1022559038}
+  ArenaHudTemplate: {fileID: 9197481963319205126, guid: 7a55910b11903be40b79949fd708e06d, type: 3}
+  ArenaHudStyle: {fileID: 7433441132597879392, guid: df03c397ed0765a4fb87aba0a592556f, type: 3}
+  NetworkMenuStyle: {fileID: 7433441132597879392, guid: 2b3e09eb9ca81194b86be8f5c7d282b9, type: 3}
+--- !u!114 &2006784151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006784149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: e38489645cd09ed48bdd876cffe949f0, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &2006784152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2006784149}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1080228018}
-  - {fileID: 1972791093}
-  - {fileID: 1082635261}
-  - {fileID: 1572170531}
-  - {fileID: 1023906614}
+  - {fileID: 363681592}
+  - {fileID: 1182845540}
+  - {fileID: 1784823638}
+  - {fileID: 1022559040}
+  - {fileID: 2006784152}

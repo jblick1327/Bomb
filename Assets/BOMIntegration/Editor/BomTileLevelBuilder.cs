@@ -17,7 +17,7 @@ using M = BomTileMapping;
 // simulated part with an OD-2 material, front/rear duplicates merge, overlaps become glued seams, anchors sit only at real
 // support (terrain bedrock, post feet on terrain, the Bridge's five OD-3 piles), and invariants I1-I4 fail the export.
 // Darryn's scenes are only opened and saved *as a copy* under Assets/BOMIntegration; the originals are never written.
-// The side walls and bottom boundary stay as hidden fixed stone until G8 replaces them (I2: destructible, listed by name).
+// G8: boundaries are mapping metadata; native walls are visible bedrock (Yard/Tower), or absent (Bridge).
 // Per level it writes <layout>.json, <layout>.tiles.json (summary + one row per tile + parts) and <layout>.tiles-input.json
 // (the exact mapping input, replayable with integration/tools/g5/TileMappingTests).
 public static class BomTileLevelBuilder
@@ -407,6 +407,7 @@ public static class BomTileLevelBuilder
         SceneManager.MoveGameObjectToScene(levelRoot, scene);
         var level = levelRoot.AddComponent<BomLevelAuthoring>();
         level.LevelId = spec.LevelId;
+        // G5 assigns member identities first, then the old bottom/left/right boundary. Keep member seeds stable.
         level.NextIdentityDecimal = "1";
         var yardScene = EditorSceneManager.OpenScene(BomNetworkMenuBuilder.ScenePath, OpenSceneMode.Additive);
         foreach (var candidate in UnityEngine.Object.FindObjectsByType<BomLevelAuthoring>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -432,24 +433,20 @@ public static class BomTileLevelBuilder
         var shape = new BomActorShapeInfo { struct_size = (uint)System.Runtime.InteropServices.Marshal.SizeOf<BomActorShapeInfo>(), version = 1 };
         BomSession.Check(BomNative.bom_actor_shape_info(ref shape));
 
-        // Boundaries: fixed, hidden where Darryn hid them, destructible (I2). G8 replaces them (OD-1).
+        // OD-1: no native boundary pieces on Bridge; visible bottom-anchored bedrock on Yard/Tower.
+        // Input boundaries remain the original clipping metadata, so the arena and outside-tile classification do not change.
         var boundaryRows = new List<BoundaryRow>();
         var allSolid = new List<(Vector2 lo, Vector2 hi)>();
-        foreach (var boundary in input.Boundaries)
+        int boundaryCount = spec.Piles > 0 ? 0 : 2;
+        if (boundaryCount > 0)
         {
-            var t = boundaryTransforms[boundary.Name];
-            var source = t.gameObject.AddComponent<BomAssetInstance>();
-            source.AssetKey = "tiles/" + spec.Name + "/" + t.name;
-            source.OriginalObjectPath = ObjectPath(t);
-            source.Motion = BomMotionPolicy.Fixed;
-            source.Damage = BomDamagePolicy.Destructible;
-            var cb = t.GetComponent<Collider>().bounds;
-            source.FallbackDepth = new Vector2(cb.min.z, cb.max.z);
-            source.HiddenVisual = !boundary.Visible;
-            source.ApproximationNote = "Existing XY boundary from the original ArenaLayout collider, fixed until G8 (OD-1); destructible (I2)" + (boundary.Visible ? "" : "; invisible in the original, so hidden");
-            Part(t, "Native fixed boundary", RectOutline(V(boundary.Lo), V(boundary.Hi)), "stone", Array.Empty<BomAnchorSegment>(), "");
-            allSolid.Add((V(boundary.Lo), V(boundary.Hi)));
-            boundaryRows.Add(new BoundaryRow { name = boundary.Name, motion = "fixed", damage = "destructible", visible = boundary.Visible, lo = V(boundary.Lo), hi = V(boundary.Hi), note = "kept until G8 (OD-1)" });
+            float left = (float)input.Boundaries.First(x => x.Name == "Left Wall").Hi.X;
+            float right = (float)input.Boundaries.First(x => x.Name == "Right Wall").Lo.X;
+            BomArenaBoundaryBuilder.AddWalls(level, left, right, -28, 35.80739f, 26);
+            foreach (var wall in level.GetComponentsInChildren<BomAssetInstance>(true))
+                wall.SetEditorIdentity((ulong)mapped.Parts.Count + (wall.OriginalObjectPath == "Left bedrock" ? 2UL : 3UL));
+            boundaryRows.Add(new BoundaryRow { name = "Left bedrock", motion = "anchored", damage = "destructible", visible = true, lo = new Vector2(-26, -28), hi = new Vector2(left, 35.80739f), note = "OD-1: bottom edge only; original inner face" });
+            boundaryRows.Add(new BoundaryRow { name = "Right bedrock", motion = "anchored", damage = "destructible", visible = true, lo = new Vector2(right, -28), hi = new Vector2(26, 35.80739f), note = "OD-1: bottom edge only; original inner face" });
         }
 
         // Parts: one source per part, its visual group holding copies of the Darryn meshes it stands for.
@@ -482,6 +479,7 @@ public static class BomTileLevelBuilder
                 CopyMesh(template, group.transform, center + offset, scale);
             }
             var source = group.AddComponent<BomAssetInstance>();
+            source.SetEditorIdentity((ulong)part.Index + 1);
             source.AssetKey = MeshKey(group.transform);
             source.OriginalObjectPath = part.Tiles.FirstOrDefault() ?? "pile";
             source.Motion = part.Anchors.Count > 0 ? BomMotionPolicy.Anchored : BomMotionPolicy.Dynamic;
@@ -496,6 +494,13 @@ public static class BomTileLevelBuilder
         }
         foreach (var link in mapped.Glue)
             level.Glue.Add(new BomGlueAuthoring { A = physics[link.A], B = physics[link.B] });
+        // Every real wall/terrain contact also carries sampled glue (same G5 fillet and rule).
+        var walls = levelRoot.GetComponentsInChildren<BomPhysicsPart>(true).Where(p => p.MaterialKey == "bedrock").ToArray();
+        foreach (var wall in walls)
+        foreach (var part in physics)
+            if (M.GlueWeight(BomArenaBoundaryBuilder.Points(wall), BomArenaBoundaryBuilder.Points(part)) >= M.MinGlueWeight)
+                level.Glue.Add(new BomGlueAuthoring { A = wall, B = part });
+        foreach (var t in boundaryTransforms.Values) UnityEngine.Object.DestroyImmediate(t.gameObject);
         // Darryn's tiles that became parts (or lie wholly inside parts) are drawn by the parts now.
         foreach (var row in mapped.Rows)
             if (row.classification != "outside arena")
@@ -525,6 +530,8 @@ public static class BomTileLevelBuilder
         level.AimBounds = new BomBounds2(level.SimulationBounds.Minimum + Vector2.one, level.SimulationBounds.Maximum - Vector2.one);
         level.FragmentCullBounds = new BomBounds2(level.SimulationBounds.Minimum - new Vector2(8, 4), level.SimulationBounds.Maximum + new Vector2(8, 7));
         level.BombCleanupBounds = new BomBounds2(level.SimulationBounds.Minimum - new Vector2(2, 1), level.SimulationBounds.Maximum + new Vector2(2, 5));
+        level.SimulationBounds = new BomBounds2(new Vector2(-30, -32), new Vector2(30, 40));
+        BomArenaBoundaryBuilder.SetCullBounds(level);
         level.BombSpawnX = new Vector2(innerLeft + .75f, innerRight - .75f);
         level.BombSpawnHeight = bombHeight;
 
@@ -599,12 +606,13 @@ public static class BomTileLevelBuilder
         BomAuthoringIdentity.Assign(level);
         EditorSceneManager.SaveScene(scene, spec.Scene);
 
+        BomArenaBoundaryBuilder.Check(level);
         var registry = BomLevelExporter.Export(level, output);
 
         // I4 on the real validator: every glue link carries native samples (G-N2), and native saw the same parts and links.
         var native = JsonUtility.FromJson<NativeGlueReport>(File.ReadAllText(output + ".native-report.json"));
-        if (native.status != "passed" || native.glue_zero_sample_links != 0 || native.glue_link_count != mapped.Glue.Count || native.part_count != mapped.Parts.Count + input.Boundaries.Count)
-            throw new M.InvariantException("I4", spec.Name, "native --validate-layout: status=" + native.status + " glue_links=" + native.glue_link_count + " (mapped " + mapped.Glue.Count + ") zero_sample=" + native.glue_zero_sample_links + " parts=" + native.part_count + " (mapped " + (mapped.Parts.Count + input.Boundaries.Count) + ")");
+        if (native.status != "passed" || native.glue_zero_sample_links != 0 || native.glue_link_count != level.Glue.Count || native.part_count != mapped.Parts.Count + boundaryCount * 2)
+            throw new M.InvariantException("I4", spec.Name, "native --validate-layout: status=" + native.status + " glue_links=" + native.glue_link_count + " (authored " + level.Glue.Count + ") zero_sample=" + native.glue_zero_sample_links + " parts=" + native.part_count + " (mapped + bedrock " + (mapped.Parts.Count + boundaryCount * 2) + ")");
 
         var report = new TileReport
         {
@@ -622,7 +630,7 @@ public static class BomTileLevelBuilder
             brought_onto_plane = mapped.BroughtOntoPlane,
             covered_tiles = mapped.Rows.Count(r => r.classification == "covered"),
             parts = mapped.Parts.Count,
-            glue_links = mapped.Glue.Count,
+            glue_links = level.Glue.Count,
             anchored_parts = mapped.Parts.Count(p => p.Anchors.Count > 0),
             anchor_segments = mapped.Parts.Sum(p => p.Anchors.Count),
             piles = mapped.Parts.Sum(p => p.Piles.Count),
@@ -638,7 +646,7 @@ public static class BomTileLevelBuilder
             parts_by_material = mapped.Parts.GroupBy(p => p.Material).Select(g => g.Key + "=" + g.Count()).ToArray(),
             custom_materials = level.Materials.Select(m => m.Name + " (base " + m.Base + ", toughness " + m.Toughness.ToString(CultureInfo.InvariantCulture) + ", blast resistance " + m.BlastResistance.ToString(CultureInfo.InvariantCulture) + ")").ToArray(),
             nudges = mapped.Nudges.ToArray(),
-            fixed_sources = input.Boundaries.Select(x => x.Name).ToArray(),
+            fixed_sources = Array.Empty<string>(),
             boundaries = boundaryRows.ToArray(),
             spawns = spawns,
             rows = mapped.Rows.Select(r => new TileRowOut { path = r.path, name = r.name, behaviour = r.behaviour, darryn_material = r.darryn_material, role = r.role, classification = r.classification, material = r.material, note = r.note, zmin = (float)r.zmin, zmax = (float)r.zmax, brought_onto_plane = r.brought_onto_plane, parts = r.parts }).ToArray(),

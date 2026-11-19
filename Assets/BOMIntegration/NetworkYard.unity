@@ -119,6 +119,114 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &4973358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4973359}
+  - component: {fileID: 4973360}
+  m_Layer: 0
+  m_Name: G7 earth -18 -19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4973359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973358}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4973360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4973358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 9
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -18, y: -19}
+  Maximum: {x: -12, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &50913596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50913597}
+  - component: {fileID: 50913598}
+  m_Layer: 0
+  m_Name: G7 earth -12 -13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &50913597
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50913596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &50913598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50913596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 16
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -12, y: -13}
+  Maximum: {x: -6, y: -7}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &68649666
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 68649666}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: -4, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -229,15 +337,70 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
+--- !u!1 &102539729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 102539730}
+  - component: {fileID: 102539731}
+  m_Layer: 0
+  m_Name: G7 earth 12 -13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &102539730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102539729}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &102539731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 102539729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 20
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 12, y: -13}
+  Maximum: {x: 18, y: -7}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &105352335
 GameObject:
   m_ObjectHideFlags: 0
@@ -353,6 +516,114 @@ Transform:
   m_Children: []
   m_Father: {fileID: 447945285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &170448437
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 170448438}
+  - component: {fileID: 170448439}
+  m_Layer: 0
+  m_Name: G7 earth -6 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &170448438
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170448437}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &170448439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170448437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 29
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -6, y: -1}
+  Maximum: {x: 0, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &171697436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 171697437}
+  - component: {fileID: 171697438}
+  m_Layer: 0
+  m_Name: G7 earth -12 -19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &171697437
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171697436}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &171697438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171697436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 10
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -12, y: -19}
+  Maximum: {x: -6, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!4 &198842431 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
@@ -759,10 +1030,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1649731348}
-  - {fileID: 1025926924}
   - {fileID: 491165871}
-  - {fileID: 1641916535}
-  - {fileID: 510415493}
   - {fileID: 226705444}
   m_Father: {fileID: 447945285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -811,6 +1079,7 @@ MonoBehaviour:
   Address: 127.0.0.1
   Prediction: 1
   VisualRegistry: {fileID: 11400000, guid: dfd9541503761fe46ac1532adf818024, type: 2}
+  ClippedSourceArt: 0
   ConnectOnEnable: 1
   InputBlocked: 0
   DiagnosticOverlay: 1
@@ -913,7 +1182,7 @@ Transform:
   m_GameObject: {fileID: 326111238}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.5, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: 9.5, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -939,13 +1208,14 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (3)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
 --- !u!4 &344013749 stripped
@@ -953,6 +1223,60 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
   m_PrefabInstance: {fileID: 871280423}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &368574067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 368574068}
+  - component: {fileID: 368574069}
+  m_Layer: 0
+  m_Name: G7 earth 12 -19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &368574068
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368574067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &368574069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 368574067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 14
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 12, y: -19}
+  Maximum: {x: 18, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &381619278
 GameObject:
   m_ObjectHideFlags: 0
@@ -1027,8 +1351,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomLevelAuthoring
   LevelId: bomb-yard-network-v1
-  YardBuilderVersion: 5
-  NextIdentityDecimal: 9007199254741021
+  YardBuilderVersion: 7
+  NextIdentityDecimal: 9007199254741023
   StoredSceneGuid: 21955e4276bdc8046b756157dbcb4387
   StoredRootGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-447945284-0
   IdentityRegistry:
@@ -1072,6 +1396,10 @@ MonoBehaviour:
     IdentityDecimal: 9007199254741019
   - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-326111244-0
     IdentityDecimal: 9007199254741020
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-639598018-0
+    IdentityDecimal: 9007199254741021
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1233852252-0
+    IdentityDecimal: 9007199254741022
   Seed: 42
   GameplayConfigId: bom-default-v5
   Gameplay:
@@ -1092,8 +1420,8 @@ MonoBehaviour:
     EliminationEndInterval: {x: 0.4, y: 1}
     EliminationRampSeconds: 90
   SimulationBounds:
-    Minimum: {x: -22, y: -28}
-    Maximum: {x: 22, y: 38}
+    Minimum: {x: -36, y: -28}
+    Maximum: {x: 36, y: 40}
   KillBounds:
     Minimum: {x: -18, y: -25.36}
     Maximum: {x: 18, y: 34.64}
@@ -1104,8 +1432,8 @@ MonoBehaviour:
     Minimum: {x: -21, y: -25}
     Maximum: {x: 21, y: 35}
   FragmentCullBounds:
-    Minimum: {x: -30, y: -32}
-    Maximum: {x: 30, y: 45}
+    Minimum: {x: -127, y: -148}
+    Maximum: {x: 127, y: 172}
   Spawns:
   - {x: -11.5, y: 10.065}
   - {x: 11.5, y: 10.065}
@@ -1117,8 +1445,186 @@ MonoBehaviour:
     Minimum: {x: -24, y: -29}
     Maximum: {x: 24, y: 43}
   Glue:
-  - A: {fileID: 1859489744}
-    B: {fileID: 734677335}
+  - A: {fileID: 1647661099}
+    B: {fileID: 1171030243}
+  - A: {fileID: 1647661099}
+    B: {fileID: 4973360}
+  - A: {fileID: 1647661099}
+    B: {fileID: 1120694318}
+  - A: {fileID: 1171030243}
+    B: {fileID: 1617064941}
+  - A: {fileID: 1171030243}
+    B: {fileID: 171697438}
+  - A: {fileID: 1617064941}
+    B: {fileID: 1064281533}
+  - A: {fileID: 1617064941}
+    B: {fileID: 546669341}
+  - A: {fileID: 1064281533}
+    B: {fileID: 1781116649}
+  - A: {fileID: 1064281533}
+    B: {fileID: 2136156889}
+  - A: {fileID: 1781116649}
+    B: {fileID: 1713927268}
+  - A: {fileID: 1781116649}
+    B: {fileID: 999697818}
+  - A: {fileID: 1713927268}
+    B: {fileID: 368574069}
+  - A: {fileID: 1713927268}
+    B: {fileID: 1253908127}
+  - A: {fileID: 4973360}
+    B: {fileID: 171697438}
+  - A: {fileID: 4973360}
+    B: {fileID: 1881532299}
+  - A: {fileID: 4973360}
+    B: {fileID: 1120694318}
+  - A: {fileID: 171697438}
+    B: {fileID: 546669341}
+  - A: {fileID: 171697438}
+    B: {fileID: 50913598}
+  - A: {fileID: 546669341}
+    B: {fileID: 2136156889}
+  - A: {fileID: 546669341}
+    B: {fileID: 1618593485}
+  - A: {fileID: 2136156889}
+    B: {fileID: 999697818}
+  - A: {fileID: 2136156889}
+    B: {fileID: 1865498832}
+  - A: {fileID: 999697818}
+    B: {fileID: 368574069}
+  - A: {fileID: 999697818}
+    B: {fileID: 639281310}
+  - A: {fileID: 368574069}
+    B: {fileID: 102539731}
+  - A: {fileID: 368574069}
+    B: {fileID: 1253908127}
+  - A: {fileID: 1881532299}
+    B: {fileID: 50913598}
+  - A: {fileID: 1881532299}
+    B: {fileID: 509752497}
+  - A: {fileID: 1881532299}
+    B: {fileID: 1120694318}
+  - A: {fileID: 50913598}
+    B: {fileID: 1618593485}
+  - A: {fileID: 50913598}
+    B: {fileID: 2060871313}
+  - A: {fileID: 1618593485}
+    B: {fileID: 1865498832}
+  - A: {fileID: 1618593485}
+    B: {fileID: 2107357107}
+  - A: {fileID: 1865498832}
+    B: {fileID: 639281310}
+  - A: {fileID: 1865498832}
+    B: {fileID: 1004826708}
+  - A: {fileID: 639281310}
+    B: {fileID: 102539731}
+  - A: {fileID: 639281310}
+    B: {fileID: 972797305}
+  - A: {fileID: 102539731}
+    B: {fileID: 1974357131}
+  - A: {fileID: 102539731}
+    B: {fileID: 1253908127}
+  - A: {fileID: 509752497}
+    B: {fileID: 2060871313}
+  - A: {fileID: 509752497}
+    B: {fileID: 1962297832}
+  - A: {fileID: 509752497}
+    B: {fileID: 1120694318}
+  - A: {fileID: 2060871313}
+    B: {fileID: 2107357107}
+  - A: {fileID: 2060871313}
+    B: {fileID: 497285063}
+  - A: {fileID: 2107357107}
+    B: {fileID: 1004826708}
+  - A: {fileID: 2107357107}
+    B: {fileID: 170448439}
+  - A: {fileID: 1004826708}
+    B: {fileID: 972797305}
+  - A: {fileID: 1004826708}
+    B: {fileID: 1200146981}
+  - A: {fileID: 972797305}
+    B: {fileID: 1974357131}
+  - A: {fileID: 972797305}
+    B: {fileID: 1219768600}
+  - A: {fileID: 1974357131}
+    B: {fileID: 1345905819}
+  - A: {fileID: 1974357131}
+    B: {fileID: 1253908127}
+  - A: {fileID: 1962297832}
+    B: {fileID: 497285063}
+  - A: {fileID: 1962297832}
+    B: {fileID: 1629853968}
+  - A: {fileID: 1962297832}
+    B: {fileID: 1120694318}
+  - A: {fileID: 497285063}
+    B: {fileID: 170448439}
+  - A: {fileID: 497285063}
+    B: {fileID: 1832665588}
+  - A: {fileID: 170448439}
+    B: {fileID: 1200146981}
+  - A: {fileID: 170448439}
+    B: {fileID: 1854853957}
+  - A: {fileID: 1200146981}
+    B: {fileID: 1219768600}
+  - A: {fileID: 1200146981}
+    B: {fileID: 675491312}
+  - A: {fileID: 1219768600}
+    B: {fileID: 1345905819}
+  - A: {fileID: 1219768600}
+    B: {fileID: 617941005}
+  - A: {fileID: 1345905819}
+    B: {fileID: 499371615}
+  - A: {fileID: 1345905819}
+    B: {fileID: 1253908127}
+  - A: {fileID: 1629853968}
+    B: {fileID: 1832665588}
+  - A: {fileID: 1629853968}
+    B: {fileID: 1566517273}
+  - A: {fileID: 1629853968}
+    B: {fileID: 1120694318}
+  - A: {fileID: 1832665588}
+    B: {fileID: 1854853957}
+  - A: {fileID: 1832665588}
+    B: {fileID: 959880187}
+  - A: {fileID: 1854853957}
+    B: {fileID: 675491312}
+  - A: {fileID: 1854853957}
+    B: {fileID: 766964539}
+  - A: {fileID: 675491312}
+    B: {fileID: 617941005}
+  - A: {fileID: 675491312}
+    B: {fileID: 1872337430}
+  - A: {fileID: 617941005}
+    B: {fileID: 499371615}
+  - A: {fileID: 617941005}
+    B: {fileID: 1118605645}
+  - A: {fileID: 499371615}
+    B: {fileID: 1652370675}
+  - A: {fileID: 499371615}
+    B: {fileID: 1253908127}
+  - A: {fileID: 766964539}
+    B: {fileID: 1312793976}
+  - A: {fileID: 1715763585}
+    B: {fileID: 1312793976}
+  - A: {fileID: 1715763585}
+    B: {fileID: 1787045795}
+  - A: {fileID: 1169031910}
+    B: {fileID: 1312793976}
+  - A: {fileID: 1169031910}
+    B: {fileID: 1787045795}
+  - A: {fileID: 1312793976}
+    B: {fileID: 1872337430}
+  - A: {fileID: 1652370675}
+    B: {fileID: 1078979169}
+  - A: {fileID: 1566517273}
+    B: {fileID: 2078267632}
+  - A: {fileID: 2078267632}
+    B: {fileID: 959880187}
+  - A: {fileID: 1078979169}
+    B: {fileID: 1118605645}
+  - A: {fileID: 1621607252}
+    B: {fileID: 1120694318}
+  - A: {fileID: 1253908127}
+    B: {fileID: 533121137}
   AllowedOverlaps: []
   Materials:
   - Name: earth
@@ -1138,6 +1644,16 @@ MonoBehaviour:
       rgba: 4282816871
     Toughness: 1
     BlastResistance: 3
+    StripThickness: 0.2
+    ShockLoss: 4
+    Flexibility: 0.5
+  - Name: bedrock
+    Base: stone
+    Color:
+      serializedVersion: 2
+      rgba: 4282793786
+    Toughness: 1.4
+    BlastResistance: 4
     StripThickness: 0.2
     ShockLoss: 4
     Flexibility: 0.5
@@ -1184,6 +1700,8 @@ Transform:
   - {fileID: 1778954784}
   - {fileID: 326111243}
   - {fileID: 716488326}
+  - {fileID: 639598017}
+  - {fileID: 1233852251}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &451768560 stripped
@@ -1222,6 +1740,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 295586447}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &497285061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 497285062}
+  - component: {fileID: 497285063}
+  m_Layer: 0
+  m_Name: G7 earth -12 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &497285062
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497285061}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &497285063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 497285061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 28
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -12, y: -1}
+  Maximum: {x: -6, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &498952998
 GameObject:
   m_ObjectHideFlags: 0
@@ -1252,6 +1824,60 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 447945285}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &499371614
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 499371616}
+  - component: {fileID: 499371615}
+  m_Layer: 0
+  m_Name: G7 grass 12 5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &499371615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499371614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 38
+  MaterialKey: grass
+  Shape: 0
+  Minimum: {x: 12, y: 5}
+  Maximum: {x: 18, y: 6}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!4 &499371616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499371614}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &507516045 stripped
 Transform:
@@ -1342,7 +1968,7 @@ Transform:
   m_GameObject: {fileID: 508588032}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.5, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: -13.5, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1368,16 +1994,17 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (11)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &510415492
+--- !u!1 &509752495
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1385,59 +2012,52 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 510415493}
-  - component: {fileID: 510415494}
+  - component: {fileID: 509752496}
+  - component: {fileID: 509752497}
   m_Layer: 0
-  m_Name: Right Wall
+  m_Name: G7 earth -18 -7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &510415493
+--- !u!4 &509752496
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 510415492}
+  m_GameObject: {fileID: 509752495}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.3, y: 29, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1709001291}
-  m_Father: {fileID: 295586447}
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &510415494
+--- !u!114 &509752497
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 510415492}
+  m_GameObject: {fileID: 509752495}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
-  identityDecimal: 9007199254741003
-  NextPartIdDecimal: 2
-  PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1709001292-0
-    IdentityDecimal: 1
-  AssetKey: yard/1909f56bfc062723c751e8b465ee728b/Right Wall
-  VisualGroup: {fileID: 0}
-  Motion: 1
-  Damage: 1
-  FallbackDepth: {x: -4, y: 4}
-  CapMaterial: {fileID: 0}
-  OriginalObjectPath: Arena/Right Wall
-  ApproximationNote: Explicit XY boundary from the original gameplay wall collider;
-    no collider is retained at runtime
-  IncludeInExport: 1
-  HiddenVisual: 1
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 21
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -18, y: -7}
+  Maximum: {x: -12, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &512878572
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,6 +2111,115 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: Rock silhouette is deliberately simplified to this visible rectangle
+--- !u!1 &533121136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 533121138}
+  - component: {fileID: 533121137}
+  m_Layer: 0
+  m_Name: Bedrock east
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &533121137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533121136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 2
+  MaterialKey: bedrock
+  Shape: 0
+  Minimum: {x: 18.3, y: -25}
+  Maximum: {x: 22.6, y: 34.64}
+  Outline: []
+  Anchors:
+  - A: {x: 18.3, y: -25}
+    B: {x: 22.6, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
+--- !u!4 &533121138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533121136}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233852251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &546669339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 546669340}
+  - component: {fileID: 546669341}
+  m_Layer: 0
+  m_Name: G7 earth -6 -19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &546669340
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546669339}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &546669341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546669339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 11
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -6, y: -19}
+  Maximum: {x: 0, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &556422231
 GameObject:
   m_ObjectHideFlags: 0
@@ -1575,7 +2304,7 @@ Transform:
   m_GameObject: {fileID: 556422231}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -9.5, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: -9.5, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1601,13 +2330,14 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (9)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
 --- !u!1001 &591575835
@@ -1683,12 +2413,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bee651b89d6b3ef48b19cfe8a4c9fa42, type: 3}
---- !u!4 &623651084 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
-  m_PrefabInstance: {fileID: 229326213}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &637504422
+--- !u!1 &617941003
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1696,51 +2421,319 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 637504423}
-  - component: {fileID: 637504424}
+  - component: {fileID: 617941004}
+  - component: {fileID: 617941005}
   m_Layer: 0
-  m_Name: Native fixed boundary
+  m_Name: G7 grass 6 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &637504423
+--- !u!4 &617941004
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637504422}
+  m_GameObject: {fileID: 617941003}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1641916535}
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &637504424
+--- !u!114 &617941005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 637504422}
+  m_GameObject: {fileID: 617941003}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
+  PartIdDecimal: 37
+  MaterialKey: grass
   Shape: 0
-  Minimum: {x: -18.599998, y: -25.36}
-  Maximum: {x: -18, y: 34.64}
+  Minimum: {x: 6, y: 5}
+  Maximum: {x: 12, y: 6}
   Outline: []
   Anchors: []
   WorldRestCoordinates: 1
-  ApproximationNote: 
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!4 &623651084 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
+  m_PrefabInstance: {fileID: 229326213}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &639281308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 639281309}
+  - component: {fileID: 639281310}
+  m_Layer: 0
+  m_Name: G7 earth 6 -13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &639281309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639281308}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &639281310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639281308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 19
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 6, y: -13}
+  Maximum: {x: 12, y: -7}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &639598016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 639598017}
+  - component: {fileID: 639598018}
+  m_Layer: 0
+  m_Name: Left bedrock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &639598017
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639598016}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 935304619}
+  - {fileID: 1621607253}
+  - {fileID: 1120694317}
+  m_Father: {fileID: 447945285}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &639598018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639598016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
+  identityDecimal: 9007199254741021
+  NextPartIdDecimal: 3
+  PartIdentityRegistry:
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1621607252-0
+    IdentityDecimal: 1
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1120694318-0
+    IdentityDecimal: 2
+  AssetKey: bedrock/Left bedrock
+  VisualGroup: {fileID: 0}
+  Motion: 2
+  Damage: 0
+  FallbackDepth: {x: -0.8, y: 0.8}
+  CapMaterial: {fileID: 0}
+  OriginalObjectPath: Left bedrock
+  ApproximationNote: 'OD-1/OD-5 bedrock: visible arena edge, anchored only along
+    its bottom; Stone 1.4/4'
+  IncludeInExport: 1
+  HiddenVisual: 0
+--- !u!1 &675491310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 675491311}
+  - component: {fileID: 675491312}
+  m_Layer: 0
+  m_Name: G7 grass 0 5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &675491311
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675491310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &675491312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 675491310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 36
+  MaterialKey: grass
+  Shape: 0
+  Minimum: {x: 0, y: 5}
+  Maximum: {x: 6, y: 6}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &698057660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 698057661}
+  - component: {fileID: 698057663}
+  - component: {fileID: 698057662}
+  m_Layer: 0
+  m_Name: Bedrock rock face
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &698057661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698057660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.3, y: 4.8199997, z: 0}
+  m_LocalScale: {x: 4.6000004, y: 59.64, z: 1.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233852251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &698057662
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698057660}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ea118d8d624c36846b99140e26f4154f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &698057663
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698057660}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &706443159
 GameObject:
   m_ObjectHideFlags: 0
@@ -2020,60 +3013,6 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: Rock silhouette is deliberately simplified to this visible rectangle
---- !u!1 &734677334
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 734677336}
-  - component: {fileID: 734677335}
-  m_Layer: 0
-  m_Name: Native grass proxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &734677335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734677334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 2
-  MaterialKey: grass
-  Shape: 0
-  Minimum: {x: -18, y: 5}
-  Maximum: {x: 18, y: 6}
-  Outline: []
-  Anchors: []
-  WorldRestCoordinates: 1
-  ApproximationNote: The grass art overlaps earth from y=4..5; physical layers meet
-    only at y=5
---- !u!4 &734677336
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734677334}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 543450652661687198}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &766964537
 GameObject:
   m_ObjectHideFlags: 0
@@ -2124,7 +3063,9 @@ MonoBehaviour:
   Minimum: {x: -4.5, y: 6}
   Maximum: {x: -3.5, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: -4.5, y: 6}
+    B: {x: -3.5, y: 6}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!4 &769405289 stripped
@@ -2304,7 +3245,7 @@ Transform:
   m_GameObject: {fileID: 837259707}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.5, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: 13.5, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2330,13 +3271,14 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (5)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
 --- !u!4 &846435694 stripped
@@ -2509,6 +3451,95 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5534383620200805132, guid: ef8374d642969b14baa54045236c5fb0, type: 3}
   m_PrefabInstance: {fileID: 874712614}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &935304618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 935304619}
+  - component: {fileID: 935304621}
+  - component: {fileID: 935304620}
+  m_Layer: 0
+  m_Name: Bedrock rock face
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &935304619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935304618}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.3, y: 4.8199997, z: 0}
+  m_LocalScale: {x: 4.6000004, y: 59.64, z: 1.6}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 639598017}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &935304620
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935304618}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ea118d8d624c36846b99140e26f4154f, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &935304621
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 935304618}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &959880185
 GameObject:
   m_ObjectHideFlags: 0
@@ -2559,9 +3590,65 @@ MonoBehaviour:
   Minimum: {x: -10, y: 6}
   Maximum: {x: -9, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: -10, y: 6}
+    B: {x: -9, y: 6}
   WorldRestCoordinates: 1
   ApproximationNote: 
+--- !u!1 &972797303
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 972797304}
+  - component: {fileID: 972797305}
+  m_Layer: 0
+  m_Name: G7 earth 6 -7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &972797304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972797303}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &972797305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 972797303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 25
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 6, y: -7}
+  Maximum: {x: 12, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &997030281
 GameObject:
   m_ObjectHideFlags: 0
@@ -2646,7 +3733,7 @@ Transform:
   m_GameObject: {fileID: 997030281}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2, y: 10.75, z: 1.41}
+  m_LocalPosition: {x: -2, y: 10.75, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2674,14 +3761,15 @@ MonoBehaviour:
   VisualGroup: {fileID: 0}
   Motion: 0
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (6)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &1025926923
+--- !u!1 &999697816
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2689,117 +3777,106 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1025926924}
-  - component: {fileID: 1025926927}
-  - component: {fileID: 1025926925}
-  - component: {fileID: 1025926928}
+  - component: {fileID: 999697817}
+  - component: {fileID: 999697818}
   m_Layer: 0
-  m_Name: Bottom Boundary
+  m_Name: G7 earth 6 -19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1025926924
+--- !u!4 &999697817
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025926923}
+  m_GameObject: {fileID: 999697816}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.8999996, z: 0}
-  m_LocalScale: {x: 37.2, y: 0.6, z: 8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1893607201}
-  m_Father: {fileID: 295586447}
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1025926925
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025926923}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1025926927
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025926923}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1025926928
+--- !u!114 &999697818
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1025926923}
+  m_GameObject: {fileID: 999697816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
-  identityDecimal: 9007199254741001
-  NextPartIdDecimal: 2
-  PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1893607202-0
-    IdentityDecimal: 1
-  AssetKey: yard/dd58574a1747abba2f7a5de97358b000/Bottom Boundary
-  VisualGroup: {fileID: 0}
-  Motion: 1
-  Damage: 1
-  FallbackDepth: {x: -4, y: 4}
-  CapMaterial: {fileID: 0}
-  OriginalObjectPath: Arena/Bottom Boundary
-  ApproximationNote: Explicit XY boundary from the original gameplay wall collider;
-    no collider is retained at runtime
-  IncludeInExport: 1
-  HiddenVisual: 0
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 13
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 6, y: -19}
+  Maximum: {x: 12, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1004826706
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1004826707}
+  - component: {fileID: 1004826708}
+  m_Layer: 0
+  m_Name: G7 earth 0 -7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1004826707
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004826706}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1004826708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004826706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 24
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 0, y: -7}
+  Maximum: {x: 6, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &1027005942
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3001,6 +4078,62 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1064281531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1064281532}
+  - component: {fileID: 1064281533}
+  m_Layer: 0
+  m_Name: G7 earth 0 -25
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1064281532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064281531}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1064281533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1064281531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 6
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 0, y: -25}
+  Maximum: {x: 6, y: -19}
+  Outline: []
+  Anchors:
+  - A: {x: 0, y: -25}
+    B: {x: 6, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &1078395850
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3175,7 +4308,64 @@ MonoBehaviour:
   Minimum: {x: 9, y: 6}
   Maximum: {x: 10, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: 9, y: 6}
+    B: {x: 10, y: 6}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
+--- !u!1 &1120694316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1120694317}
+  - component: {fileID: 1120694318}
+  m_Layer: 0
+  m_Name: Bedrock east
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1120694317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1120694316}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 639598017}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1120694318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1120694316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 2
+  MaterialKey: bedrock
+  Shape: 0
+  Minimum: {x: -18.3, y: -25}
+  Maximum: {x: -18, y: 34.64}
+  Outline: []
+  Anchors:
+  - A: {x: -18.3, y: -25}
+    B: {x: -18, y: -25}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1001 &1140808658
@@ -3310,6 +4500,62 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: 
+--- !u!1 &1171030241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1171030242}
+  - component: {fileID: 1171030243}
+  m_Layer: 0
+  m_Name: G7 earth -12 -25
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1171030242
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171030241}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1171030243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1171030241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 4
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -12, y: -25}
+  Maximum: {x: -6, y: -19}
+  Outline: []
+  Anchors:
+  - A: {x: -12, y: -25}
+    B: {x: -6, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &1186129818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3383,6 +4629,114 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5228c984e5be7284d8d83c18096254dd, type: 3}
+--- !u!1 &1200146979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1200146980}
+  - component: {fileID: 1200146981}
+  m_Layer: 0
+  m_Name: G7 earth 0 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1200146980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200146979}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1200146981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1200146979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 30
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 0, y: -1}
+  Maximum: {x: 6, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1219768598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1219768599}
+  - component: {fileID: 1219768600}
+  m_Layer: 0
+  m_Name: G7 earth 6 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1219768599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219768598}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1219768600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1219768598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 31
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 6, y: -1}
+  Maximum: {x: 12, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &1226535978
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3457,6 +4811,71 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
+--- !u!1 &1233852250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1233852251}
+  - component: {fileID: 1233852252}
+  m_Layer: 0
+  m_Name: Right bedrock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1233852251
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233852250}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 698057661}
+  - {fileID: 1253908126}
+  - {fileID: 533121138}
+  m_Father: {fileID: 447945285}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1233852252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233852250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
+  identityDecimal: 9007199254741022
+  NextPartIdDecimal: 3
+  PartIdentityRegistry:
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1253908127-0
+    IdentityDecimal: 1
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-533121137-0
+    IdentityDecimal: 2
+  AssetKey: bedrock/Right bedrock
+  VisualGroup: {fileID: 0}
+  Motion: 2
+  Damage: 0
+  FallbackDepth: {x: -0.8, y: 0.8}
+  CapMaterial: {fileID: 0}
+  OriginalObjectPath: Right bedrock
+  ApproximationNote: 'OD-1/OD-5 bedrock: visible arena edge, anchored only along
+    its bottom; Stone 1.4/4'
+  IncludeInExport: 1
+  HiddenVisual: 0
 --- !u!4 &1234347839 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
@@ -3535,6 +4954,61 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5228c984e5be7284d8d83c18096254dd, type: 3}
+--- !u!1 &1253908125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1253908126}
+  - component: {fileID: 1253908127}
+  m_Layer: 0
+  m_Name: Bedrock west
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1253908126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253908125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1233852251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1253908127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253908125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: bedrock
+  Shape: 0
+  Minimum: {x: 18, y: -25}
+  Maximum: {x: 18.3, y: 34.64}
+  Outline: []
+  Anchors:
+  - A: {x: 18, y: -25}
+    B: {x: 18.3, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
 --- !u!1001 &1276189878
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3813,6 +5287,60 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5228c984e5be7284d8d83c18096254dd, type: 3}
+--- !u!1 &1345905817
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1345905818}
+  - component: {fileID: 1345905819}
+  m_Layer: 0
+  m_Name: G7 earth 12 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1345905818
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345905817}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1345905819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345905817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 32
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 12, y: -1}
+  Maximum: {x: 18, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &1350883906
 GameObject:
   m_ObjectHideFlags: 0
@@ -4273,7 +5801,9 @@ MonoBehaviour:
   Minimum: {x: -14, y: 6}
   Maximum: {x: -13, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: -14, y: 6}
+    B: {x: -13, y: 6}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1001 &1579140886
@@ -4447,7 +5977,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3620098201178672556, guid: 58cd8dc8c2359174baa15aa31e302c8b, type: 3}
   m_PrefabInstance: {fileID: 1783399252}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1641916534
+--- !u!1 &1617064939
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4455,64 +5985,278 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1641916535}
-  - component: {fileID: 1641916536}
+  - component: {fileID: 1617064940}
+  - component: {fileID: 1617064941}
   m_Layer: 0
-  m_Name: Left Wall
+  m_Name: G7 earth -6 -25
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1641916535
+--- !u!4 &1617064940
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641916534}
+  m_GameObject: {fileID: 1617064939}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -18.3, y: 29, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 637504423}
-  m_Father: {fileID: 295586447}
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1641916536
+--- !u!114 &1617064941
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1641916534}
+  m_GameObject: {fileID: 1617064939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f5c7a4a5a972d24d87729788187346e, type: 3}
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
-  identityDecimal: 9007199254741002
-  NextPartIdDecimal: 2
-  PartIdentityRegistry:
-  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-637504424-0
-    IdentityDecimal: 1
-  AssetKey: yard/1909f56bfc062723c751e8b465ee728b/Left Wall
-  VisualGroup: {fileID: 0}
-  Motion: 1
-  Damage: 1
-  FallbackDepth: {x: -4, y: 4}
-  CapMaterial: {fileID: 0}
-  OriginalObjectPath: Arena/Left Wall
-  ApproximationNote: Explicit XY boundary from the original gameplay wall collider;
-    no collider is retained at runtime
-  IncludeInExport: 1
-  HiddenVisual: 1
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 5
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -6, y: -25}
+  Maximum: {x: 0, y: -19}
+  Outline: []
+  Anchors:
+  - A: {x: -6, y: -25}
+    B: {x: 0, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1618593483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1618593484}
+  - component: {fileID: 1618593485}
+  m_Layer: 0
+  m_Name: G7 earth -6 -13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1618593484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618593483}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1618593485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618593483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 17
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -6, y: -13}
+  Maximum: {x: 0, y: -7}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1621607251
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1621607253}
+  - component: {fileID: 1621607252}
+  m_Layer: 0
+  m_Name: Bedrock west
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1621607252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621607251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 1
+  MaterialKey: bedrock
+  Shape: 0
+  Minimum: {x: -22.6, y: -25}
+  Maximum: {x: -18.3, y: 34.64}
+  Outline: []
+  Anchors:
+  - A: {x: -22.6, y: -25}
+    B: {x: -18.3, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: 
+--- !u!4 &1621607253
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621607251}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 639598017}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1629853966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1629853967}
+  - component: {fileID: 1629853968}
+  m_Layer: 0
+  m_Name: G7 grass -18 5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1629853967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629853966}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1629853968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629853966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 33
+  MaterialKey: grass
+  Shape: 0
+  Minimum: {x: -18, y: 5}
+  Maximum: {x: -12, y: 6}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!4 &1644416406 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
   m_PrefabInstance: {fileID: 2091751874}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1647661097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1647661098}
+  - component: {fileID: 1647661099}
+  m_Layer: 0
+  m_Name: G7 earth -18 -25
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1647661098
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647661097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1647661099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647661097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 3
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -18, y: -25}
+  Maximum: {x: -12, y: -19}
+  Outline: []
+  Anchors:
+  - A: {x: -18, y: -25}
+    B: {x: -12, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &1649731347
 GameObject:
   m_ObjectHideFlags: 0
@@ -4594,7 +6338,9 @@ MonoBehaviour:
   Minimum: {x: 13, y: 6}
   Maximum: {x: 14, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: 13, y: 6}
+    B: {x: 14, y: 6}
   WorldRestCoordinates: 1
   ApproximationNote: 
 --- !u!1 &1698771969
@@ -4800,7 +6546,7 @@ Transform:
   m_GameObject: {fileID: 1706540575}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2, y: 10.75, z: 1.41}
+  m_LocalPosition: {x: 2, y: 10.75, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4828,14 +6574,15 @@ MonoBehaviour:
   VisualGroup: {fileID: 0}
   Motion: 0
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (7)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
---- !u!1 &1709001290
+--- !u!1 &1713927266
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4843,51 +6590,54 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1709001291}
-  - component: {fileID: 1709001292}
+  - component: {fileID: 1713927267}
+  - component: {fileID: 1713927268}
   m_Layer: 0
-  m_Name: Native fixed boundary
+  m_Name: G7 earth 12 -25
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1709001291
+--- !u!4 &1713927267
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1709001290}
+  m_GameObject: {fileID: 1713927266}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 510415493}
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1709001292
+--- !u!114 &1713927268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1709001290}
+  m_GameObject: {fileID: 1713927266}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
+  PartIdDecimal: 8
+  MaterialKey: earth
   Shape: 0
-  Minimum: {x: 18, y: -25.36}
-  Maximum: {x: 18.599998, y: 34.64}
+  Minimum: {x: 12, y: -25}
+  Maximum: {x: 18, y: -19}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: 12, y: -25}
+    B: {x: 18, y: -25}
   WorldRestCoordinates: 1
-  ApproximationNote: 
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &1715763583
 GameObject:
   m_ObjectHideFlags: 0
@@ -5167,7 +6917,7 @@ Transform:
   m_GameObject: {fileID: 1771847016}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4, y: 7.25, z: 1.41}
+  m_LocalPosition: {x: 4, y: 7.25, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5193,13 +6943,14 @@ MonoBehaviour:
     IdentityDecimal: 1
   AssetKey: yard/31ee9a4435af99aca53541943f6491a5
   VisualGroup: {fileID: 0}
-  Motion: 0
+  Motion: 2
   Damage: 0
-  FallbackDepth: {x: 1.06, y: 1.76}
+  FallbackDepth: {x: -0.35, y: 0.35}
   CapMaterial: {fileID: 0}
   OriginalObjectPath: Cube (1)
   ApproximationNote: Explicit box proxy exactly matches the axis-aligned placeholder
-    cube in XY; depth remains visual.
+    cube in XY; depth remains visual.; G7 post depth 1.06..1.76 -> -0.35..0.35 (XY
+    unchanged)
   IncludeInExport: 1
   HiddenVisual: 0
 --- !u!1 &1778954779
@@ -5321,6 +7072,62 @@ MonoBehaviour:
     cube in XY; depth remains visual.
   IncludeInExport: 1
   HiddenVisual: 0
+--- !u!1 &1781116647
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1781116648}
+  - component: {fileID: 1781116649}
+  m_Layer: 0
+  m_Name: G7 earth 6 -25
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1781116648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781116647}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1781116649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1781116647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 7
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 6, y: -25}
+  Maximum: {x: 12, y: -19}
+  Outline: []
+  Anchors:
+  - A: {x: 6, y: -25}
+    B: {x: 12, y: -25}
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &1783399252
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5509,6 +7316,60 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
+--- !u!1 &1832665586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1832665587}
+  - component: {fileID: 1832665588}
+  m_Layer: 0
+  m_Name: G7 grass -12 5
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1832665587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832665586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1832665588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832665586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 34
+  MaterialKey: grass
+  Shape: 0
+  Minimum: {x: -12, y: 5}
+  Maximum: {x: -6, y: 6}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!4 &1839740144 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5925433674301824424, guid: f593bc20677ebf14abd27a4853408c68, type: 3}
@@ -5622,7 +7483,7 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: Rock silhouette is deliberately simplified to this visible rectangle
---- !u!1 &1859489742
+--- !u!1 &1854853955
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5630,22 +7491,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1859489743}
-  - component: {fileID: 1859489744}
+  - component: {fileID: 1854853956}
+  - component: {fileID: 1854853957}
   m_Layer: 0
-  m_Name: Native earth proxy
+  m_Name: G7 grass -6 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1859489743
+--- !u!4 &1854853956
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1859489742}
+  m_GameObject: {fileID: 1854853955}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -5654,30 +7515,82 @@ Transform:
   m_Children: []
   m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1859489744
+--- !u!114 &1854853957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1859489742}
+  m_GameObject: {fileID: 1854853955}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
+  PartIdDecimal: 35
+  MaterialKey: grass
+  Shape: 0
+  Minimum: {x: -6, y: 5}
+  Maximum: {x: 0, y: 6}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1865498830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1865498831}
+  - component: {fileID: 1865498832}
+  m_Layer: 0
+  m_Name: G7 earth 0 -13
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1865498831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865498830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1865498832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865498830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 18
   MaterialKey: earth
   Shape: 0
-  Minimum: {x: -18, y: -25}
-  Maximum: {x: 18, y: 5}
+  Minimum: {x: 0, y: -13}
+  Maximum: {x: 6, y: -7}
   Outline: []
-  Anchors:
-  - A: {x: -18, y: -25}
-    B: {x: 18, y: -25}
+  Anchors: []
   WorldRestCoordinates: 1
-  ApproximationNote: Rectangular ground proxy chosen explicitly from the inspected
-    mesh bounds
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &1872337428
 GameObject:
   m_ObjectHideFlags: 0
@@ -5728,10 +7641,12 @@ MonoBehaviour:
   Minimum: {x: 3.5, y: 6}
   Maximum: {x: 4.5, y: 8.5}
   Outline: []
-  Anchors: []
+  Anchors:
+  - A: {x: 3.5, y: 6}
+    B: {x: 4.5, y: 6}
   WorldRestCoordinates: 1
   ApproximationNote: 
---- !u!1 &1893607200
+--- !u!1 &1881532297
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5739,51 +7654,52 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1893607201}
-  - component: {fileID: 1893607202}
+  - component: {fileID: 1881532298}
+  - component: {fileID: 1881532299}
   m_Layer: 0
-  m_Name: Native fixed boundary
+  m_Name: G7 earth -18 -13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1893607201
+--- !u!4 &1881532298
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893607200}
+  m_GameObject: {fileID: 1881532297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1025926924}
+  m_Father: {fileID: 543450652661687198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1893607202
+--- !u!114 &1881532299
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893607200}
+  m_GameObject: {fileID: 1881532297}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
-  PartIdDecimal: 1
-  MaterialKey: stone
+  PartIdDecimal: 15
+  MaterialKey: earth
   Shape: 0
-  Minimum: {x: -18.6, y: -26.56}
-  Maximum: {x: 18.6, y: -25.960001}
+  Minimum: {x: -18, y: -13}
+  Maximum: {x: -12, y: -7}
   Outline: []
   Anchors: []
   WorldRestCoordinates: 1
-  ApproximationNote: 
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &1952607661
 GameObject:
   m_ObjectHideFlags: 0
@@ -5837,6 +7753,114 @@ MonoBehaviour:
   Anchors: []
   WorldRestCoordinates: 1
   ApproximationNote: Rock silhouette is deliberately simplified to this visible rectangle
+--- !u!1 &1962297830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1962297831}
+  - component: {fileID: 1962297832}
+  m_Layer: 0
+  m_Name: G7 earth -18 -1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1962297831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962297830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1962297832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962297830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 27
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -18, y: -1}
+  Maximum: {x: -12, y: 5}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &1974357129
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1974357130}
+  - component: {fileID: 1974357131}
+  m_Layer: 0
+  m_Name: G7 earth 12 -7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1974357130
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974357129}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1974357131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974357129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 26
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 12, y: -7}
+  Maximum: {x: 18, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1001 &2013209292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5921,6 +7945,60 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5381386135662447605, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
   m_PrefabInstance: {fileID: 1140808658}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2060871311
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2060871312}
+  - component: {fileID: 2060871313}
+  m_Layer: 0
+  m_Name: G7 earth -12 -7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2060871312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060871311}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2060871313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060871311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 22
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -12, y: -7}
+  Maximum: {x: -6, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &2078267630
 GameObject:
   m_ObjectHideFlags: 0
@@ -6048,6 +8126,114 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21a364ddeffc797439f2a5721660b0e6, type: 3}
+--- !u!1 &2107357105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107357106}
+  - component: {fileID: 2107357107}
+  m_Layer: 0
+  m_Name: G7 earth -6 -7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2107357106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107357105}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2107357107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107357105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 23
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: -6, y: -7}
+  Maximum: {x: 0, y: -1}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
+--- !u!1 &2136156887
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2136156888}
+  - component: {fileID: 2136156889}
+  m_Layer: 0
+  m_Name: G7 earth 0 -19
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2136156888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136156887}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 543450652661687198}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2136156889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136156887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd01f874d7b9f5449be7d6ad3624693a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomPhysicsPart
+  PartIdDecimal: 12
+  MaterialKey: earth
+  Shape: 0
+  Minimum: {x: 0, y: -19}
+  Maximum: {x: 6, y: -13}
+  Outline: []
+  Anchors: []
+  WorldRestCoordinates: 1
+  ApproximationNote: G7 exact partition of existing terrain; unchanged union and
+    art, 6x6 maximum; bottom anchors only
 --- !u!1 &184823760890074529
 GameObject:
   m_ObjectHideFlags: 0
@@ -6130,8 +8316,42 @@ Transform:
   - {fileID: 1948156043524208918}
   - {fileID: 2376911359866844367}
   - {fileID: 8776096138196943819}
-  - {fileID: 1859489743}
-  - {fileID: 734677336}
+  - {fileID: 1647661098}
+  - {fileID: 1171030242}
+  - {fileID: 1617064940}
+  - {fileID: 1064281532}
+  - {fileID: 1781116648}
+  - {fileID: 1713927267}
+  - {fileID: 4973359}
+  - {fileID: 171697437}
+  - {fileID: 546669340}
+  - {fileID: 2136156888}
+  - {fileID: 999697817}
+  - {fileID: 368574068}
+  - {fileID: 1881532298}
+  - {fileID: 50913597}
+  - {fileID: 1618593484}
+  - {fileID: 1865498831}
+  - {fileID: 639281309}
+  - {fileID: 102539730}
+  - {fileID: 509752496}
+  - {fileID: 2060871312}
+  - {fileID: 2107357106}
+  - {fileID: 1004826707}
+  - {fileID: 972797304}
+  - {fileID: 1974357130}
+  - {fileID: 1962297831}
+  - {fileID: 497285062}
+  - {fileID: 170448438}
+  - {fileID: 1200146980}
+  - {fileID: 1219768599}
+  - {fileID: 1345905818}
+  - {fileID: 1629853967}
+  - {fileID: 1832665587}
+  - {fileID: 1854853956}
+  - {fileID: 675491311}
+  - {fileID: 617941004}
+  - {fileID: 499371616}
   m_Father: {fileID: 447945285}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &543450653083606372
@@ -6282,12 +8502,84 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomAssetInstance
   identityDecimal: 9007199254741004
-  NextPartIdDecimal: 3
+  NextPartIdDecimal: 39
   PartIdentityRegistry:
   - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1859489744-0
     IdentityDecimal: 1
   - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-734677335-0
     IdentityDecimal: 2
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1647661099-0
+    IdentityDecimal: 3
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1171030243-0
+    IdentityDecimal: 4
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1617064941-0
+    IdentityDecimal: 5
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1064281533-0
+    IdentityDecimal: 6
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1781116649-0
+    IdentityDecimal: 7
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1713927268-0
+    IdentityDecimal: 8
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-4973360-0
+    IdentityDecimal: 9
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-171697438-0
+    IdentityDecimal: 10
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-546669341-0
+    IdentityDecimal: 11
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-2136156889-0
+    IdentityDecimal: 12
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-999697818-0
+    IdentityDecimal: 13
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-368574069-0
+    IdentityDecimal: 14
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1881532299-0
+    IdentityDecimal: 15
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-50913598-0
+    IdentityDecimal: 16
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1618593485-0
+    IdentityDecimal: 17
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1865498832-0
+    IdentityDecimal: 18
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-639281310-0
+    IdentityDecimal: 19
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-102539731-0
+    IdentityDecimal: 20
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-509752497-0
+    IdentityDecimal: 21
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-2060871313-0
+    IdentityDecimal: 22
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-2107357107-0
+    IdentityDecimal: 23
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1004826708-0
+    IdentityDecimal: 24
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-972797305-0
+    IdentityDecimal: 25
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1974357131-0
+    IdentityDecimal: 26
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1962297832-0
+    IdentityDecimal: 27
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-497285063-0
+    IdentityDecimal: 28
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-170448439-0
+    IdentityDecimal: 29
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1200146981-0
+    IdentityDecimal: 30
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1219768600-0
+    IdentityDecimal: 31
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1345905819-0
+    IdentityDecimal: 32
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1629853968-0
+    IdentityDecimal: 33
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1832665588-0
+    IdentityDecimal: 34
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-1854853957-0
+    IdentityDecimal: 35
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-675491312-0
+    IdentityDecimal: 36
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-617941005-0
+    IdentityDecimal: 37
+  - ObjectGlobalId: GlobalObjectId_V1-2-21955e4276bdc8046b756157dbcb4387-499371615-0
+    IdentityDecimal: 38
   AssetKey: yard/3ee20adc9a55aa60bb929cdbb34c3319
   VisualGroup: {fileID: 0}
   Motion: 2

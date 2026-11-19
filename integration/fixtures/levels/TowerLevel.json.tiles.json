@@ -14,15 +14,15 @@
     "brought_onto_plane": 29,
     "covered_tiles": 0,
     "parts": 116,
-    "glue_links": 202,
+    "glue_links": 230,
     "anchored_parts": 14,
     "anchor_segments": 14,
     "piles": 0,
     "dropped_slivers": 0,
-    "native_glue_links": 202,
+    "native_glue_links": 230,
     "native_glue_zero_sample_links": 0,
-    "native_parts": 119,
-    "native_cells": 1143,
+    "native_parts": 120,
+    "native_cells": 4293,
     "allowed_overlaps": 0,
     "dropped_area": 0.0,
     "max_dropped_area": 0.0,
@@ -34,12 +34,10 @@
     "parts_by_material": [
         "stone=116"
     ],
-    "custom_materials": [],
-    "fixed_sources": [
-        "Bottom Boundary",
-        "Left Wall",
-        "Right Wall"
+    "custom_materials": [
+        "bedrock (base stone, toughness 1.4, blast resistance 4)"
     ],
+    "fixed_sources": [],
     "nudges": [
         "part 98 Tower/Cube (27): top y 15.254 -> 15.29 (meets the part above; x -18..-17.5)",
         "part 99 Tower/Cube (26): top y 15.254 -> 15.29 (meets the part above; x -11.5..-10.5)",
@@ -56,48 +54,33 @@
     ],
     "boundaries": [
         {
-            "name": "Bottom Boundary",
-            "motion": "fixed",
+            "name": "Left bedrock",
+            "motion": "anchored",
             "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
+            "note": "OD-1: bottom edge only; original inner face",
             "visible": true,
             "lo": {
-                "x": -18.600000381469728,
-                "y": -26.559999465942384
-            },
-            "hi": {
-                "x": 18.600000381469728,
-                "y": -25.96000099182129
-            }
-        },
-        {
-            "name": "Left Wall",
-            "motion": "fixed",
-            "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
-            "visible": false,
-            "lo": {
-                "x": -18.599998474121095,
-                "y": -25.360000610351564
+                "x": -26.0,
+                "y": -28.0
             },
             "hi": {
                 "x": -18.0,
-                "y": 34.63999938964844
+                "y": 35.80738830566406
             }
         },
         {
-            "name": "Right Wall",
-            "motion": "fixed",
+            "name": "Right bedrock",
+            "motion": "anchored",
             "damage": "destructible",
-            "note": "kept until G8 (OD-1)",
-            "visible": false,
+            "note": "OD-1: bottom edge only; original inner face",
+            "visible": true,
             "lo": {
                 "x": 18.0,
-                "y": -25.360000610351564
+                "y": -28.0
             },
             "hi": {
-                "x": 18.599998474121095,
-                "y": 34.63999938964844
+                "x": 26.0,
+                "y": 35.80738830566406
             }
         }
     ],
