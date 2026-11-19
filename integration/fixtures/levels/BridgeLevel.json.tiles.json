@@ -22,7 +22,7 @@
     "native_glue_links": 97,
     "native_glue_zero_sample_links": 0,
     "native_parts": 55,
-    "native_cells": 1264,
+    "native_cells": 1280,
     "allowed_overlaps": 0,
     "dropped_area": 0.08500000089406967,
     "max_dropped_area": 0.008500000461935997,
@@ -42,6 +42,38 @@
         "Bottom Boundary",
         "Left Wall",
         "Right Wall"
+    ],
+    "nudges": [
+        "part 0 Bridge/Bridge Deck Tile 01 (4): bottom y 12.93 -> 12.905 (rests on the part below; x -14.5..-11.34)",
+        "part 1 Bridge/Bridge Deck Tile 02 (3): bottom y 12.93 -> 12.905 (rests on the part below; x -11.27..-8.11)",
+        "part 2 Bridge/Bridge Deck Tile 08 (3): bottom y 12.93 -> 12.905 (rests on the part below; x 8.11..11.27)",
+        "part 3 Bridge/Bridge Deck Tile 09 (4): bottom y 12.93 -> 12.905 (rests on the part below; x 11.34..14.5)",
+        "part 5 Bridge/Bridge Deck Tile 01: bottom y 8.5 -> 8.475 (rests on the part below; x -14.5..-11.34)",
+        "part 6 Bridge/Bridge Deck Tile 02: bottom y 8.5 -> 8.475 (rests on the part below; x -11.27..-8.11)",
+        "part 7 Bridge/Bridge Deck Tile 03: bottom y 8.5 -> 8.475 (rests on the part below; x -8.04..-4.88)",
+        "part 8 Bridge/Bridge Deck Tile 04: bottom y 8.5 -> 8.475 (rests on the part below; x -4.81..-1.65)",
+        "part 9 Bridge/Bridge Deck Tile 05: bottom y 8.5 -> 8.475 (rests on the part below; x -1.58..1.58)",
+        "part 10 Bridge/Bridge Deck Tile 06: bottom y 8.5 -> 8.475 (rests on the part below; x 1.65..4.81)",
+        "part 11 Bridge/Bridge Deck Tile 07: bottom y 8.5 -> 8.475 (rests on the part below; x 4.88..8.04)",
+        "part 12 Bridge/Bridge Deck Tile 08: bottom y 8.5 -> 8.475 (rests on the part below; x 8.11..11.27)",
+        "part 13 Bridge/Bridge Deck Tile 09: bottom y 8.5 -> 8.475 (rests on the part below; x 11.34..14.5)",
+        "part 15 Bridge/Bridge Deck Tile 01 (2): bottom y 4.25 -> 4.225 (rests on the part below; x -14.5..-11.34)",
+        "part 16 Bridge/Bridge Deck Tile 02 (2): bottom y 4.25 -> 4.225 (rests on the part below; x -11.27..-8.11)",
+        "part 17 Bridge/Bridge Deck Tile 03 (2): bottom y 4.25 -> 4.225 (rests on the part below; x -8.04..-4.88)",
+        "part 18 Bridge/Bridge Deck Tile 04 (2): bottom y 4.25 -> 4.225 (rests on the part below; x -4.81..-1.65)",
+        "part 19 Bridge/Bridge Deck Tile 05 (2): bottom y 4.25 -> 4.225 (rests on the part below; x -1.58..1.58)",
+        "part 20 Bridge/Bridge Deck Tile 06 (2): bottom y 4.25 -> 4.225 (rests on the part below; x 1.65..4.81)",
+        "part 21 Bridge/Bridge Deck Tile 07 (2): bottom y 4.25 -> 4.225 (rests on the part below; x 4.88..8.04)",
+        "part 22 Bridge/Bridge Deck Tile 08 (2): bottom y 4.25 -> 4.225 (rests on the part below; x 8.11..11.27)",
+        "part 23 Bridge/Bridge Deck Tile 09 (2): bottom y 4.25 -> 4.225 (rests on the part below; x 11.34..14.5)",
+        "part 40 Bridge/Bridge Truss Brace - Front West (3): brace end (-6.6706, 12.555) -> (-6.67, 12.555) on the post face, seat corner (-6.67, 12.305) added",
+        "part 41 Bridge/Bridge Truss Brace - Front East (3): brace end (6.6706, 12.555) -> (6.67, 12.555) on the post face, seat corner (6.67, 12.305) added",
+        "part 42 Bridge/Bridge Truss Brace - Front West: brace end (-6.6706, 8.125) -> (-6.67, 8.125) on the post face, seat corner (-6.67, 7.875) added",
+        "part 43 Bridge/Bridge Truss Brace - Front East: brace end (6.6706, 8.125) -> (6.67, 8.125) on the post face, seat corner (6.67, 7.875) added",
+        "part 44 Bridge/Bridge Truss Brace - Front West (2): brace end (-6.6706, 3.875) -> (-6.67, 3.875) on the post face, seat corner (-6.67, 3.625) added",
+        "part 45 Bridge/Bridge Truss Brace - Front West Center (2): brace end (-6.3294, 3.875) -> (-6.33, 3.875) on the post face, seat corner (-6.33, 3.625) added",
+        "part 46 Bridge/Bridge Truss Brace - Front East Center (2): brace end (6.3294, 3.875) -> (6.33, 3.875) on the post face, seat corner (6.33, 3.625) added",
+        "part 47 Bridge/Bridge Truss Brace - Front East (2): brace end (6.6706, 3.875) -> (6.67, 3.875) on the post face, seat corner (6.67, 3.625) added"
     ],
     "boundaries": [
         {
@@ -1997,7 +2029,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 12.93 -> 12.905 (rests on the part below; x -14.5..-11.34). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 01 (4)"
             ],
@@ -2009,11 +2041,11 @@
             "outline": [
                 {
                     "x": -14.5,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": -11.34000015258789,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": -11.34000015258789,
@@ -2031,7 +2063,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 12.93 -> 12.905 (rests on the part below; x -11.27..-8.11). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 02 (3)"
             ],
@@ -2043,11 +2075,11 @@
             "outline": [
                 {
                     "x": -11.270000457763672,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": -8.109999656677246,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": -8.109999656677246,
@@ -2065,7 +2097,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 12.93 -> 12.905 (rests on the part below; x 8.11..11.27). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 08 (3)"
             ],
@@ -2077,11 +2109,11 @@
             "outline": [
                 {
                     "x": 8.109999656677246,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": 11.270000457763672,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": 11.270000457763672,
@@ -2099,7 +2131,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 12.93 -> 12.905 (rests on the part below; x 11.34..14.5). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 09 (4)"
             ],
@@ -2111,11 +2143,11 @@
             "outline": [
                 {
                     "x": 11.34000015258789,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": 14.5,
-                    "y": 12.930000305175782
+                    "y": 12.904999732971192
                 },
                 {
                     "x": 14.5,
@@ -2168,7 +2200,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x -14.5..-11.34). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 01"
             ],
@@ -2180,11 +2212,11 @@
             "outline": [
                 {
                     "x": -14.5,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -11.34000015258789,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -11.34000015258789,
@@ -2202,7 +2234,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x -11.27..-8.11). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 02"
             ],
@@ -2214,11 +2246,11 @@
             "outline": [
                 {
                     "x": -11.270000457763672,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -8.109999656677246,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -8.109999656677246,
@@ -2236,7 +2268,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x -8.04..-4.88). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 03"
             ],
@@ -2248,11 +2280,11 @@
             "outline": [
                 {
                     "x": -8.039999961853028,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -4.880000114440918,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -4.880000114440918,
@@ -2270,7 +2302,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x -4.81..-1.65). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 04"
             ],
@@ -2282,11 +2314,11 @@
             "outline": [
                 {
                     "x": -4.809999942779541,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -1.649999976158142,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": -1.649999976158142,
@@ -2304,7 +2336,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x -1.58..1.58). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 05"
             ],
@@ -2316,11 +2348,11 @@
             "outline": [
                 {
                     "x": -1.5800000429153443,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 1.5800000429153443,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 1.5800000429153443,
@@ -2338,7 +2370,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x 1.65..4.81). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 06"
             ],
@@ -2350,11 +2382,11 @@
             "outline": [
                 {
                     "x": 1.649999976158142,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 4.809999942779541,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 4.809999942779541,
@@ -2372,7 +2404,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x 4.88..8.04). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 07"
             ],
@@ -2384,11 +2416,11 @@
             "outline": [
                 {
                     "x": 4.880000114440918,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 8.039999961853028,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 8.039999961853028,
@@ -2406,7 +2438,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x 8.11..11.27). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 08"
             ],
@@ -2418,11 +2450,11 @@
             "outline": [
                 {
                     "x": 8.109999656677246,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 11.270000457763672,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 11.270000457763672,
@@ -2440,7 +2472,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 8.5 -> 8.475 (rests on the part below; x 11.34..14.5). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 09"
             ],
@@ -2452,11 +2484,11 @@
             "outline": [
                 {
                     "x": 11.34000015258789,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 14.5,
-                    "y": 8.5
+                    "y": 8.475000381469727
                 },
                 {
                     "x": 14.5,
@@ -2509,7 +2541,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x -14.5..-11.34). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 01 (2)"
             ],
@@ -2521,11 +2553,11 @@
             "outline": [
                 {
                     "x": -14.5,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -11.34000015258789,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -11.34000015258789,
@@ -2543,7 +2575,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x -11.27..-8.11). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 02 (2)"
             ],
@@ -2555,11 +2587,11 @@
             "outline": [
                 {
                     "x": -11.270000457763672,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -8.109999656677246,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -8.109999656677246,
@@ -2577,7 +2609,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x -8.04..-4.88). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 03 (2)"
             ],
@@ -2589,11 +2621,11 @@
             "outline": [
                 {
                     "x": -8.039999961853028,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -4.880000114440918,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -4.880000114440918,
@@ -2611,7 +2643,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x -4.81..-1.65). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 04 (2)"
             ],
@@ -2623,11 +2655,11 @@
             "outline": [
                 {
                     "x": -4.809999942779541,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -1.649999976158142,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": -1.649999976158142,
@@ -2645,7 +2677,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x -1.58..1.58). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 05 (2)"
             ],
@@ -2657,11 +2689,11 @@
             "outline": [
                 {
                     "x": -1.5800000429153443,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 1.5800000429153443,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 1.5800000429153443,
@@ -2679,7 +2711,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x 1.65..4.81). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 06 (2)"
             ],
@@ -2691,11 +2723,11 @@
             "outline": [
                 {
                     "x": 1.649999976158142,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 4.809999942779541,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 4.809999942779541,
@@ -2713,7 +2745,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x 4.88..8.04). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 07 (2)"
             ],
@@ -2725,11 +2757,11 @@
             "outline": [
                 {
                     "x": 4.880000114440918,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 8.039999961853028,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 8.039999961853028,
@@ -2747,7 +2779,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x 8.11..11.27). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 08 (2)"
             ],
@@ -2759,11 +2791,11 @@
             "outline": [
                 {
                     "x": 8.109999656677246,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 11.270000457763672,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 11.270000457763672,
@@ -2781,7 +2813,7 @@
             "role": "Horizontal",
             "material": "wood",
             "motion": "dynamic",
-            "note": "",
+            "note": "OD-7 nudge: bottom y 4.25 -> 4.225 (rests on the part below; x 11.34..14.5). ",
             "tiles": [
                 "Bridge/Bridge Deck Tile 09 (2)"
             ],
@@ -2793,11 +2825,11 @@
             "outline": [
                 {
                     "x": 11.34000015258789,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 14.5,
-                    "y": 4.25
+                    "y": 4.224999904632568
                 },
                 {
                     "x": 14.5,
@@ -3550,7 +3582,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (3), Bridge/Bridge Truss Post - Front West End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (3), Bridge/Bridge Truss Post - Front West End (glued). OD-7 nudge: brace end (-6.6706, 12.555) -> (-6.67, 12.555) on the post face, seat corner (-6.67, 12.305) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front West (3)",
                 "Bridge/Bridge Truss Brace - Rear West (4)"
@@ -3566,7 +3598,11 @@
                     "y": 10.47255802154541
                 },
                 {
-                    "x": -6.670619964599609,
+                    "x": -6.670000076293945,
+                    "y": 12.305000305175782
+                },
+                {
+                    "x": -6.670000076293945,
                     "y": 12.555000305175782
                 },
                 {
@@ -3585,7 +3621,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (3), Bridge/Bridge Truss Post - Front East End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (3), Bridge/Bridge Truss Post - Front East End (glued). OD-7 nudge: brace end (6.6706, 12.555) -> (6.67, 12.555) on the post face, seat corner (6.67, 12.305) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front East (3)",
                 "Bridge/Bridge Truss Brace - Rear East (4)"
@@ -3597,8 +3633,12 @@
             "piles": 0,
             "outline": [
                 {
-                    "x": 6.670619964599609,
+                    "x": 6.670000076293945,
                     "y": 12.555000305175782
+                },
+                {
+                    "x": 6.670000076293945,
+                    "y": 12.305000305175782
                 },
                 {
                     "x": 12.829999923706055,
@@ -3620,7 +3660,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front, Bridge/Bridge Truss Post - Front West End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front, Bridge/Bridge Truss Post - Front West End (glued). OD-7 nudge: brace end (-6.6706, 8.125) -> (-6.67, 8.125) on the post face, seat corner (-6.67, 7.875) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front West",
                 "Bridge/Bridge Truss Brace - Rear West"
@@ -3636,7 +3676,11 @@
                     "y": 6.042558193206787
                 },
                 {
-                    "x": -6.670619964599609,
+                    "x": -6.670000076293945,
+                    "y": 7.875
+                },
+                {
+                    "x": -6.670000076293945,
                     "y": 8.125
                 },
                 {
@@ -3655,7 +3699,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front, Bridge/Bridge Truss Post - Front East End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front, Bridge/Bridge Truss Post - Front East End (glued). OD-7 nudge: brace end (6.6706, 8.125) -> (6.67, 8.125) on the post face, seat corner (6.67, 7.875) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front East",
                 "Bridge/Bridge Truss Brace - Rear East"
@@ -3667,8 +3711,12 @@
             "piles": 0,
             "outline": [
                 {
-                    "x": 6.670619964599609,
+                    "x": 6.670000076293945,
                     "y": 8.125
+                },
+                {
+                    "x": 6.670000076293945,
+                    "y": 7.875
                 },
                 {
                     "x": 12.829999923706055,
@@ -3690,7 +3738,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front West End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front West End (glued). OD-7 nudge: brace end (-6.6706, 3.875) -> (-6.67, 3.875) on the post face, seat corner (-6.67, 3.625) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front West (2)",
                 "Bridge/Bridge Truss Brace - Rear West (2)"
@@ -3706,7 +3754,11 @@
                     "y": 1.7925583124160767
                 },
                 {
-                    "x": -6.670619964599609,
+                    "x": -6.670000076293945,
+                    "y": 3.625
+                },
+                {
+                    "x": -6.670000076293945,
                     "y": 3.875
                 },
                 {
@@ -3725,7 +3777,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front Center (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front Center (glued). OD-7 nudge: brace end (-6.3294, 3.875) -> (-6.33, 3.875) on the post face, seat corner (-6.33, 3.625) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front West Center (2)",
                 "Bridge/Bridge Truss Brace - Rear West Center (2)"
@@ -3737,8 +3789,12 @@
             "piles": 0,
             "outline": [
                 {
-                    "x": -6.329380035400391,
+                    "x": -6.329999923706055,
                     "y": 3.875
+                },
+                {
+                    "x": -6.329999923706055,
+                    "y": 3.625
                 },
                 {
                     "x": -0.17000000178813935,
@@ -3760,7 +3816,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front Center (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front Center (glued). OD-7 nudge: brace end (6.3294, 3.875) -> (6.33, 3.875) on the post face, seat corner (6.33, 3.625) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front East Center (2)",
                 "Bridge/Bridge Truss Brace - Rear East Center (2)"
@@ -3776,7 +3832,11 @@
                     "y": 1.7925583124160767
                 },
                 {
-                    "x": 6.329380035400391,
+                    "x": 6.329999923706055,
+                    "y": 3.625
+                },
+                {
+                    "x": 6.329999923706055,
                     "y": 3.875
                 },
                 {
@@ -3795,7 +3855,7 @@
             "role": "Brace",
             "material": "steel",
             "motion": "dynamic",
-            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front East End (glued). ",
+            "note": "Cut at the faces of Bridge/Bridge Girder - Front (2), Bridge/Bridge Truss Post - Front East End (glued). OD-7 nudge: brace end (6.6706, 3.875) -> (6.67, 3.875) on the post face, seat corner (6.67, 3.625) added. ",
             "tiles": [
                 "Bridge/Bridge Truss Brace - Front East (2)",
                 "Bridge/Bridge Truss Brace - Rear East (2)"
@@ -3807,8 +3867,12 @@
             "piles": 0,
             "outline": [
                 {
-                    "x": 6.670619964599609,
+                    "x": 6.670000076293945,
                     "y": 3.875
+                },
+                {
+                    "x": 6.670000076293945,
+                    "y": 3.625
                 },
                 {
                     "x": 12.829999923706055,
