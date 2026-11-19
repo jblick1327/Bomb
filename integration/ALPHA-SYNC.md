@@ -464,7 +464,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - G-N6 (prediction flap fix, not in the doc table; added 2026-11-17 for the owner's "the prediction isn't smooth") merged in `3be3283`.
   - G-N1 and G-N6 were brought in by E1-GN6.
   - The doc table's E1-G row still says it brings G-N1; that is stale, because E1-GN6 did it.
-- [!] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). claimed: Claude Opus 5.5 2026-11-18 The design doc section 8 G5 row and section 3 define it:
+- [x] **G5 Tile exporter v2** (T1, Opus, L; Lane U; needs OD-1, OD-2, OD-3, all decided 2026-11-17). claimed: Claude Opus 5.5 2026-11-18 The design doc section 8 G5 row and section 3 define it:
   `Editor/BomTileLevelBuilder.cs` applies the section 3 mapping to any tile scene (merge duplicates, partition + glue, material table incl. steel,
   anchors at real supports only, Bridge piles per OD-3, invariants I1–I5 as export failures); reads mesh silhouettes; replaces the Python generator.
   - Scope (orchestrator, 2026-11-18): Darryn's three tile scenes (YardLevel, BridgeLevel, TowerLevel) only. Classic Yard is built by `BomYardBuilder`, not from tiles: that is G7.
@@ -510,7 +510,12 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     Corner seams 0.047 → 0.25–0.30, max r 3.2–17.5 (all 8 broke) → 0.19–1.93 (none breaks). Content 1555 verified.
     Not done: the fixture is not re-exported, because Rule 3 failed (3.6 GB free RAM). Until it is, G-N9b can measure `evidence/G5/nudge/layouts/BridgeLevel.nudged.layout.json`.
     Owner: confirm the look (brace ends widen from 0.22 to ~0.46 at the post; a 0.125 seat also passes).
+  - Done (2026-11-19, Claude Opus 5.5, after E1-GN9; `evidence/G5/final/README.md`): every Done-when line and gate passes on native 466eb74 with the committed (nudged) fixtures.
+    Build Mono, Content 1555, Rounds yard+draw, front door Yard/Bridge/Tower 17/17 (0 Exception lines), manifests ×3, negative tests, screenshots ×3.
+    OD-6 settle, two runs each: Yard 0.000/0.000, Bridge 0.006/0.006, Tower 0.042/0.043, no cell lost (headless G-N4: 0.000 / 0.0023 / 0.041, byte-identical).
+    Reported, not fixed: glue still breaks after the window without moving anything (headless Bridge 9 breaks, ticks 128–1593, incl. 558 and 820 around E1-GN9's t≈10–12 s; Tower 28, to tick 1859).
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
+  - [ ] Owner check: the OD-7 brace seats keep the look (Bridge brace ends widen from 0.22 to ~0.46 where they meet the post; `evidence/G5/nudge/README.md`).
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
   - Facts so far (`Desktop\Bomb-integration\integration\evidence\G5\settle-pre-gn1\README.md`, `settle-od6\README.md`, `settle-bridge-experiments\README.md`): the G5 Bridge
