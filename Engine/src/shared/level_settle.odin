@@ -12,6 +12,19 @@ Level_Settle_Seam :: struct {
  max_r,force_at_max_r,torque_at_max_r,max_force_part,max_torque_part,damage:f32,
  force_magnitude_at_max_r,torque_magnitude_at_max_r:f32,
  tick1_r,tick1_force_part,tick1_torque_part,tick1_damage:f32,
+ trace_r:[dynamic]f32, // G-N8: r per tick for ticks 0..trace_ticks; -1 where the seam was not evaluated.
+}
+// G-N8 diagnostic options. Gravity scale at step t: 0 while t<=hold, then (t-hold)/ramp until it reaches 1.
+// The defaults (all zero) leave the run exactly as before.
+Level_Settle_Options :: struct {gravity_hold_ticks,gravity_ramp_ticks,trace_ticks:int}
+// Per-tick summary for ticks 0..trace_ticks. Contact figures come from Box2D's manifolds after the step.
+Level_Settle_Tick :: struct {
+ tick:int,gravity_scale:f32,
+ max_r,max_r_length:f32,max_r_source_a,max_r_source_b:u64,
+ seams,seams_over_one,breaks:int,
+ contact_points,penetrating_points:int,
+ max_penetration,max_contact_force:f32,
+ max_contact_source_a,max_contact_source_b:u64,
 }
 Level_Settle_Source :: struct {
  identity:u64,name:string,
@@ -24,6 +37,8 @@ Level_Settle_Report :: struct {
  max_piece_displacement:f32,
  max_piece_id:u64,
  max_piece_tick:int,
+ options:Level_Settle_Options,
+ trace:[dynamic]Level_Settle_Tick,
  sources:[dynamic]Level_Settle_Source,
  seams:[dynamic]Level_Settle_Seam,
 }
@@ -61,14 +76,67 @@ level_settle_force :: proc(s:^Scene,seam:Mortar_Seam,r:f32,broken:bool,damage:f3
  entry.max_force_part=max(entry.max_force_part,force);entry.max_torque_part=max(entry.max_torque_part,torque)
  entry.damage=max(entry.damage,damage)
  if broken && entry.break_tick==0 {entry.break_tick=observer.tick}
+ if observer.tick<=observer.report.options.trace_ticks {
+  for len(entry.trace_r)<observer.tick {append(&entry.trace_r,-1)}
+  if len(entry.trace_r)==observer.tick {append(&entry.trace_r,r)}
+  if n:=len(observer.report.trace);n>0 && observer.report.trace[n-1].tick==observer.tick {
+   row:=&observer.report.trace[n-1];row.seams+=1
+   if r>=1 {row.seams_over_one+=1}
+   if broken {row.breaks+=1}
+   if r>row.max_r {row.max_r=r;row.max_r_length=seam.length;row.max_r_source_a=entry.source_a;row.max_r_source_b=entry.source_b}
+  }
+ }
+}
+level_settle_gravity_scale :: proc(options:Level_Settle_Options,tick:int) -> f32 {
+ if tick<=options.gravity_hold_ticks {return options.gravity_hold_ticks>0 ? 0 : 1}
+ if options.gravity_ramp_ticks>0 && tick-options.gravity_hold_ticks<options.gravity_ramp_ticks {return f32(tick-options.gravity_hold_ticks)/f32(options.gravity_ramp_ticks)}
+ return 1
+}
+level_settle_bodies :: proc(s:^Scene) -> [dynamic]b2.BodyId {
+ bodies:[dynamic]b2.BodyId;seen:=make(map[b2.BodyId]bool);defer delete(seen)
+ for sub in s.subdivisions {
+  if !sub.live || sub.body==b2.nullBodyId || !b2.Body_IsValid(sub.body) || seen[sub.body] {continue}
+  seen[sub.body]=true;append(&bodies,sub.body)
+ }
+ return bodies
+}
+level_settle_shape_source :: proc(s:^Scene,shape:b2.ShapeId) -> u64 {
+ id:=u64(uintptr(b2.Shape_GetUserData(shape)))
+ if row,ok:=s.sub_rows[id];ok {return s.subdivisions[row].provenance.source_identity}
+ return 0
+}
+// Each manifold is counted once: from its A body, or from the dynamic side when the other body is not dynamic.
+level_settle_contacts :: proc(s:^Scene,row:^Level_Settle_Tick,dt:f32) {
+ bodies:=level_settle_bodies(s);defer delete(bodies)
+ buffer:[dynamic]b2.ContactData;defer delete(buffer)
+ for body in bodies {
+  if b2.Body_GetType(body)!=.dynamicBody {continue}
+  resize(&buffer,int(b2.Body_GetContactCapacity(body)))
+  for contact in b2.Body_GetContactData(body,buffer[:]) {
+   a,b:=b2.Shape_GetBody(contact.shapeIdA),b2.Shape_GetBody(contact.shapeIdB)
+   other:=a==body ? b : a
+   if a!=body && b2.Body_GetType(other)==.dynamicBody {continue}
+   m:=contact.manifold
+   for i in 0..<int(m.pointCount) {
+    point:=m.points[i]
+    if point.totalNormalImpulse<=0 && point.separation>=0 {continue}
+    row.contact_points+=1
+    if point.separation<0 {row.penetrating_points+=1;row.max_penetration=max(row.max_penetration,-point.separation)}
+    force:=point.totalNormalImpulse/dt
+    if force>row.max_contact_force {row.max_contact_force=force;row.max_contact_source_a=level_settle_shape_source(s,contact.shapeIdA);row.max_contact_source_b=level_settle_shape_source(s,contact.shapeIdB)}
+   }
+  }
+ }
 }
 level_settle_destroy :: proc(report:^Level_Settle_Report) {
  for seam in report.seams {delete(seam.members)}
- delete(report.seams);delete(report.sources);report^={}
+ for seam in report.seams {delete(seam.trace_r)}
+ delete(report.seams);delete(report.sources);delete(report.trace);report^={}
 }
-level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int) -> Level_Settle_Report {
- assert(ticks>window && window>=0)
- report:=Level_Settle_Report{status="passed",ticks=ticks,window_ticks=window}
+level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int,options:=Level_Settle_Options{}) -> Level_Settle_Report {
+ assert(ticks>window && window>=0 && options.gravity_hold_ticks>=0 && options.gravity_ramp_ticks>=0 && options.trace_ticks>=0)
+ report:=Level_Settle_Report{status="passed",ticks=ticks,window_ticks=window,options=options}
+ gravity:=scene_gameplay_config(&w.scene).gravity;gravity_scale:=f32(1)
  for i in 0..<len(w.players) {_=world_remove_player(w,i)}
  // DEFAULT_SANDBOX_SETTINGS uses manual blasts; assert the diagnostic cannot spawn rain.
  assert(w.settings.blast_mode!=.Falling_Bombs && len(w.bombs)==0)
@@ -86,7 +154,16 @@ level_settle_run :: proc(w:^World,level:^Level_Layout,ticks,window:int) -> Level
  previous:=level_settle_observer;level_settle_observer=&observer;defer {level_settle_observer=previous}
  for tick in 0..=ticks {
   observer.tick=tick
-  if tick>0 {events:=world_tick(w,{},f32(1.0/60.0));assert(len(events.explosions)==0 && events.bombs_spawned==0);delete(events.explosions)}
+  if tick<=options.trace_ticks {append(&report.trace,Level_Settle_Tick{tick=tick,gravity_scale=tick>0 ? level_settle_gravity_scale(options,tick) : 0})}
+  if tick>0 {
+   // Diagnostic start-up gravity (G-N8). Bodies are woken on every change so none sleeps through it.
+   if scale:=level_settle_gravity_scale(options,tick);scale!=gravity_scale {
+    gravity_scale=scale;b2.World_SetGravity(w.scene.physics.world,to_b2(vmul(gravity,scale)))
+    bodies:=level_settle_bodies(&w.scene);for body in bodies {if b2.Body_GetType(body)==.dynamicBody {b2.Body_SetAwake(body,true)}};delete(bodies)
+   }
+   events:=world_tick(w,{},f32(1.0/60.0));assert(len(events.explosions)==0 && events.bombs_spawned==0);delete(events.explosions)
+   if tick<=options.trace_ticks {level_settle_contacts(&w.scene,&report.trace[len(report.trace)-1],f32(1.0/60.0))}
+  }
   if tick==0 {
    seams:=mortar_seams(&w.scene);for seam in seams {level_settle_force(&w.scene,seam,0,false,seam.damage)};mortar_free_seams(seams)
   }

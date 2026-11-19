@@ -52,3 +52,31 @@ settle_observation_is_deterministic_and_does_not_change_world_bytes :: proc(test
  report:=level_settle_run(&w,layout.level,40,10);defer level_settle_destroy(&report)
  t.expect(test,report.status=="passed" && report.sources[0].cells_lost==0 && report.max_piece_displacement==0)
 }
+
+@(test)
+settle_startup_gravity_options_schedule_trace_and_zero_gravity :: proc(test:^t.T) {
+ // Defaults keep full gravity from the first step.
+ t.expect(test,level_settle_gravity_scale({},1)==1 && level_settle_gravity_scale({},500)==1)
+ hold:=Level_Settle_Options{gravity_hold_ticks=3}
+ t.expect(test,level_settle_gravity_scale(hold,1)==0 && level_settle_gravity_scale(hold,3)==0 && level_settle_gravity_scale(hold,4)==1)
+ ramp:=Level_Settle_Options{gravity_ramp_ticks=4}
+ t.expect(test,level_settle_gravity_scale(ramp,1)==.25 && level_settle_gravity_scale(ramp,3)==.75 && level_settle_gravity_scale(ramp,4)==1)
+ both:=Level_Settle_Options{gravity_hold_ticks=2,gravity_ramp_ticks=2}
+ t.expect(test,level_settle_gravity_scale(both,2)==0 && level_settle_gravity_scale(both,3)==.5 && level_settle_gravity_scale(both,4)==1)
+ // An unsupported dynamic source stays exactly still with gravity held at zero, and the trace has one row per tick.
+ layout,seed,ok,reason:=decode_layout(transmute([]u8)string(LEVEL_V4_TEST));t.expect(test,ok,reason);if !ok {return};defer destroy_layout(&layout)
+ delete(layout.level.sources[0].motion);layout.level.sources[0].motion=strings.clone("dynamic")
+ clear(&layout.level.sources[0].parts[0].anchors)
+ reports:[2]Level_Settle_Report;defer {for &report in reports {level_settle_destroy(&report)}}
+ for run in 0..<2 {
+  w:=World{settings=DEFAULT_SANDBOX_SETTINGS};w.settings.seed=seed;world_rebuild_layout(&w,&layout,false)
+  reports[run]=level_settle_run(&w,layout.level,40,10,{gravity_hold_ticks=40,trace_ticks=5})
+  scene_destroy(&w.scene);delete(w.bombs)
+ }
+ report:=reports[0]
+ t.expect(test,report.status=="passed" && report.max_piece_displacement==0 && report.sources[0].max_displacement==0)
+ t.expect_value(test,len(report.trace),6)
+ t.expect(test,report.trace[0].tick==0 && report.trace[5].tick==5 && report.trace[5].gravity_scale==0)
+ a,a_ok:=exact_json_encode(reports[0],true);b,b_ok:=exact_json_encode(reports[1],true);defer delete(a);defer delete(b)
+ t.expect(test,a_ok && b_ok && string(a)==string(b),"traced settle report must repeat byte for byte")
+}

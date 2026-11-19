@@ -158,9 +158,10 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
 
 net_real_cli_server :: proc(args: []string) -> bool {
  if len(args)>0&&args[0]=="--validate-layout" {
-  if len(args)<4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json [--settle-ticks N] [--settle-window-ticks N]");return false}
+  if len(args)<4||args[2]!="--report" {fmt.eprintln("Use --validate-layout input.json --report report.json [--settle-ticks N] [--settle-window-ticks N] [--settle-gravity-hold-ticks N] [--settle-gravity-ramp-ticks N] [--settle-trace-ticks N]");return false}
   ticks,window:=0,120
   seen_ticks,seen_window:=false,false
+  options:Level_Settle_Options;seen_options:=false
   i:=4
   for i<len(args) {
    if i+1>=len(args) {return false}
@@ -168,12 +169,15 @@ net_real_cli_server :: proc(args: []string) -> bool {
    switch args[i] {
    case "--settle-ticks": if seen_ticks || n==0 {return false};ticks=n;seen_ticks=true
    case "--settle-window-ticks": if seen_window {return false};window=n;seen_window=true
+   case "--settle-gravity-hold-ticks": options.gravity_hold_ticks=n;seen_options=true
+   case "--settle-gravity-ramp-ticks": options.gravity_ramp_ticks=n;seen_options=true
+   case "--settle-trace-ticks": options.trace_ticks=n;seen_options=true
    case: return false
    }
    i+=2
   }
-  if seen_window && !seen_ticks {return false}
-  return level_validate_cli(args[1],args[3],ticks,window)
+  if (seen_window || seen_options) && !seen_ticks {return false}
+  return level_validate_cli(args[1],args[3],ticks,window,options)
  }
  port:=NET_REAL_PORT
  layout:=""
