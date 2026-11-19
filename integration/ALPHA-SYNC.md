@@ -92,6 +92,9 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   Geometry: OD-7 nudge so the Tower pillars meet the slabs they hold (99–104 are 0.036 short, 105–110 0.006).
   Accepted costs (G-N10 §5): 1 late break per Bridge and a few on the Tower remain; seams held back today let go when the first blast wakes the structure (no visible movement measured); start-up corner-pin cracks stay.
   Order: G5b Tower nudge → G-N10b ships v3 → E1-GN10. Byte goldens that change under v3 are re-recorded (owner, 2026-11-19, "Yes, re-record"; same terms as OD-9: old captures kept renamed `*.pre-od10.*`, assertions stay byte-exact).
+- [x] **OD-11 Bedrock wall thickness and cull bounds** (owner, 2026-11-19, "stick with your initial recommendation", after G7+G8 found camera-filling bedrock on Yard/Tower costs ~1.0M construction units against the native 500000 limit, `evidence/G7G8/README.md`).
+  Yard and Tower: bedrock from the inner faces x ±18 out to ±26 (8 units), with Darryn's scenery beyond as today; at the widest zoom the rock's outer edge can show. Classic Yard: bedrock to ±22.6 (fills its view, fits the budget). Bridge: no walls.
+  Fragment-cull bounds widen to cover the camera footprint plus fragment extent, so nothing is deleted while visible. The camera is unchanged; the owner notes a closer, player-centred zoom (Darryn's original intent) may come later, which hides the wall edges further. Not a task now.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
