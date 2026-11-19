@@ -652,7 +652,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
   - Classic's blast native cost (up to 19 ms, about 4150 cells) scales with cell count. Re-measure it after the re-author before any native profiling (see the 2026-11-17 orchestrator finding).
 - [ ] **G8 Boundary per OD-1** (T2, Sonnet, S; Lane U). B (no walls) for the Bridge; C (destructible bedrock) for the Yard and Tower, and for Classic Yard (OD-5, 2026-11-18). Check the kill and fragment-cull bounds, and decide Darryn's 26 outside-arena Yard tiles (G3 finding).
-- [ ] **G8b Frame cap in normal play** (F2 fix 3; T2, Sonnet, S; Lane U; any time before G9).
+- [~] **G8b Frame cap in normal play** (F2 fix 3; T2, Sonnet, S; Lane U; any time before G9). claimed: Codex gpt-6.1-sol 2026-11-19 (dispatched by the Claude Opus 5.5 showrunner; first Unity task under the `bom` Codex profile).
   - Every `vSyncCount`/`targetFrameRate` call today is in a scripted path (`BomClientBehaviour.cs:268` behind `--bom-level-smoke`, `BomRoundScenario`, `BomFrontDoorScenario`,
     `BomPerformanceProbe`, `BomPresentationProfile`), so owner play runs uncapped (one player thread at ~92 % of a core, C2d finding).
   - Set a cap at startup for normal play in a new or existing `Runtime/` file (F2 suggested `BomFrontDoor.cs`): vSync on, or `targetFrameRate` = the display's refresh rate.
@@ -874,3 +874,5 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   The 2w first-blast frame spike (Bridge 48/37 ms, native ≤ 0.6 ms) has the same unexplained pattern as E1-GN6's Yard spike.
 - 2026-11-19 Claude Opus (E1-GN10, `evidence/E1-GN10/README.md`): Prediction's 144 fps cadence check failed on the machine with both the new and the E1-GN9 DLL until Windows restarted (update, 18:50 UTC). After the restart, both adverse runs reached 141.7–143.6 fps. When cadence alone fails, run the previous DLL on the same profile back to back before suspecting the code.
   The OD-10 rule did not remove the pre-blast breaks in Unity: they vary between runs of the same level (one Bridge 2w run had 15, its re-run 1), so they are likely player-driven. G-N10's headless settle has no players. Not proven.
+- 2026-11-19 Claude Opus (showrunner): **open item, player-driven pre-blast seam breaks** (owner agreed 2026-11-19 not to investigate now). E1-GN10 left pre-blast breaks in Unity with players on the level: Bridge 1w 0, one Bridge 2w run 15 (native ≤ 17.1 ms; its re-run 1), Tower 2–7 per run at 4–5 ms native; headless settle (no players) has about 1 per level. Likely player load (bending and shear, which OD-10 still charges); not proven.
+  Plan: the owner watches for it in the E1-GN10 owner check; if it matters, handle it inside G6 (material and glue tuning with the owner). Data: `evidence/E1-GN10/README.md`.
