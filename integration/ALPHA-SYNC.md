@@ -382,7 +382,7 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Host Conservative entries per 100 s (G2b → now): Bridge 1w 148→4, Yard 2w 72→5, Tower 2w 46→19, Tower 1w 33→19, Yard 1w 10→5, Classic 8/9→5/5, Bridge 2w 6→4.
   Blast-window p95 and native max unchanged; one 2w first-blast frame higher on Yard (26→37/34 ms, native ≤1.7 ms, cause not found) (`evidence/E1-GN6/README.md`).
   [ ] Owner check: after a blast your own player no longer snaps (Bridge and Yard); Tower may still flip a little.
-- [ ] **E1-GN9** (native G-N9b: contact bearing + 60-tick structure ramp, OD-8) (T1, Opus, M; Lane U; after G-N9b). Usual E1: checkpoint with `Build-OwnerNative.py`, update `bomcore.build.json`, `BomExpectedNativeIdentity.cs` and AGENTS.md versions line;
+- [~] **E1-GN9** (native G-N9b: contact bearing + 60-tick structure ramp, OD-8) (T1, Opus, M; Lane U; after G-N9b). claimed: Claude Opus 5.5 2026-11-19 Usual E1: checkpoint with `Build-OwnerNative.py`, update `bomcore.build.json`, `BomExpectedNativeIdentity.cs` and AGENTS.md versions line;
   NativeInterop, NativeProof, Build, Content, Rounds Yard+Draw, front door Yard/Bridge/Tower, **Prediction 6/6 (required: the DLL changes)**, and the E1-GN6 perf/flip comparison on the Bridge (contact pairs and never-sleeping Bridge may raise CPU and corrections).
   [ ] Owner check: levels stand at round start without visible cracking; blasts still look right; the Bridge does not visibly shimmer.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
