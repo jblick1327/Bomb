@@ -80,6 +80,10 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   The exporter or a level fixture may move, extend or trim pieces slightly (for example brace ends, deck bearing on piles) so structures carry load by geometry.
   Limits: Darryn's original Unity assets stay protected (Content gate); nudges are small, are listed per level with before and after values in the task's evidence, and keep the look.
   Not covered: new drawn pieces (gussets, caps), material or physics changes, which still need the owner.
+- [x] **OD-8 Contact bearing + 60-tick start-up ramp, then nudge** (owner, 2026-11-18, after watching the G-N9 side-by-side viewer `Documents\BOM\evidence\G-N9\viz`).
+  Glued pieces also collide with each other (mortar welds `collideConnected = true`), and structure gravity eases in over the first 60 ticks of each level start. Players are unchanged.
+  Accepted costs (G-N9 report §4–5): slightly less Yard debris scatter, more contact pairs and CPU on the Bridges, and start-up cracking that is reduced but not gone.
+  Then OD-7 nudges (G5) address the overloaded 0.047 brace corners. Order: G-N9b → E1-GN9 → G5 nudge + re-run.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
@@ -375,6 +379,9 @@ Native gates: `.\scripts\bom.ps1 Test` (220+), `.\scripts\bom.ps1 NetTest`, and
   Host Conservative entries per 100 s (G2b → now): Bridge 1w 148→4, Yard 2w 72→5, Tower 2w 46→19, Tower 1w 33→19, Yard 1w 10→5, Classic 8/9→5/5, Bridge 2w 6→4.
   Blast-window p95 and native max unchanged; one 2w first-blast frame higher on Yard (26→37/34 ms, native ≤1.7 ms, cause not found) (`evidence/E1-GN6/README.md`).
   [ ] Owner check: after a blast your own player no longer snaps (Bridge and Yard); Tower may still flip a little.
+- [ ] **E1-GN9** (native G-N9b: contact bearing + 60-tick structure ramp, OD-8) (T1, Opus, M; Lane U; after G-N9b). Usual E1: checkpoint with `Build-OwnerNative.py`, update `bomcore.build.json`, `BomExpectedNativeIdentity.cs` and AGENTS.md versions line;
+  NativeInterop, NativeProof, Build, Content, Rounds Yard+Draw, front door Yard/Bridge/Tower, **Prediction 6/6 (required: the DLL changes)**, and the E1-GN6 perf/flip comparison on the Bridge (contact pairs and never-sleeping Bridge may raise CPU and corrections).
+  [ ] Owner check: levels stand at round start without visible cracking; blasts still look right; the Bridge does not visibly shimmer.
   1. Lane N must be idle. `C:\Users\jblic\Documents\BOM` must have `alpha-sync` checked out with a clean
      `git status`. The build reads that working tree (`OwnerOdinSourceRoot` in `local.config.json`).
   2. Run A1 steps 1–3. Re-export every level (yard + C6 levels) so the gameplay config hash matches.
@@ -483,6 +490,8 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     Exporter and layouts are unchanged, so OD-6 and the gates were not re-run.
     Next (owner, 2026-11-18): G-N8 (start-up shock) runs first; G5 re-runs `Run-G5Settle.py` after its fix lands (G-N8b, E1-GN8).
     G-N8 found no start-up fix (standing load); the owner approved G-N9 (contact bearing) next. G5 re-runs after G-N9b and E1-GN9 if the owner picks a variant.
+    OD-8 (2026-11-18): contact + ramp ships (G-N9b, E1-GN9). After E1-GN9, G5 resumes: OD-7 nudges for the 0.047 brace corners (and anything else the G-N4 report names), each nudge listed with before/after
+    and its seam r, then the OD-6 settle on all three tiles and the G5 gates; tick if the Bridge passes.
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
@@ -554,6 +563,20 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     i (mortar welds collide), OD-6, both runs byte-identical: G5 pass 0.020, rounded pass 0.020, Yard pass, Tower pass 0.002, **G1 FAIL 38.8** (shipped G1 also falls by tick 7212 in a 10-min run). Breaks 48/46/104/42 → 23/24/43/30; deck–pile seams still break on ticks 1–4, though their static load drops 9.4–18.7 → 0.73–1.26; corner pins stay 2–7×.
     Diagnostic only: i + ramp 30/60/120 passes all five (5–43 breaks move after tick 120). Costs: Yard blast debris scatters less (moved 57 → 49, farthest 5.58 → 3.40, seams broken 5 → 2); Bridges and Tower blasts unchanged; Bridge weld/contact chatter (r 0.01–5.5, never sleeps, no breaks in 10 min) and server step +57–65 % on Bridges, +27 % Tower.
     62 settle/blast pairs byte-identical. Gates with the tool: shared 134 + FFI 22, Test 229, NetTest 27 PASS. Prototype `g-n9-experiments` `882b3b2` (never merge). Not verified: replication/prediction near a chattering Bridge, snapshot-rebuild jolts, Unity.
+- [ ] **G-N9b Ship contact bearing + 60-tick structure ramp (OD-8)** (Lane N, Opus, M; after G-N9; then E1-GN9). Work in `C:\Users\jblic\Documents\BOM` on `alpha-sync` (clean `git status` first).
+  No Unity process may run meanwhile; Lane U stays idle.
+  - Do:
+    1. Mortar welds get `collideConnected = true` (`src/shared/sim_physics.odin`, `c.mortar` branch). Flexibility welds stay as they are (no fixture uses them; G-N9 §1).
+    2. Structure gravity ramp: structure bodies (pieces and any fragments made during the ramp) get gravity scale `min(1, ticks_since_level_start / 60)`; players keep their own scale.
+       It must be a pure function of the level/round start tick, so replays, snapshot rebuilds and every round restart give the same result. Wake bodies when the scale changes.
+       Hard-coded constant, no gameplay-config field (so no config/manifest/protocol/ABI version change; if that turns out impossible, stop and say why).
+    3. Client prediction: `prediction_static.odin` extrapolates proxies with config gravity. Make it use the same scale during the ramp if it knows the tick, or show with a test that the mismatch is limited to the first 60 ticks.
+    4. The validator's default settle run uses the shipped rule (no flags). The G-N8 diagnostic flags stay and still work (a diagnostic ramp on top of the shipped one is the user's choice).
+    5. Tests next to the code: mortar pair collides, ramp schedule (tick 0, 30, 60, 61, round restart), players unaffected, determinism (two runs byte-identical), and a rebuild mid-ramp matches an uninterrupted run.
+       Existing tests whose expected values change: update only with the reason in the commit message; never weaken an assertion.
+  - Done when: native gates pass (`.\scripts\bom.ps1 Test`, `NetTest`, `test-client-core.ps1`, bash redirection for logs). The G-N9 settle table re-run with the shipped build (OD-6 rule, both runs) is in `evidence\G-N9b\README.md`:
+    G5 Bridge, rounded control, Yard, Tower and G1 Bridge, next to G-N9's `i + ramp 60` row (explain any difference: per-body scale vs world gravity), plus step time and one blast per level as in G-N9 §4.
+    If any of the five fails, stop with the data; do not tune.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
