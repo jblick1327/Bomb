@@ -83,6 +83,7 @@ static class Program
                 ["dropped_slivers"] = r.DroppedSlivers,
                 ["dropped_area"] = Math.Round(r.DroppedArea, 4),
                 ["max_dropped_area"] = Math.Round(r.MaxDroppedArea, 4),
+                ["nudges"] = r.Nudges,
             };
             Console.WriteLine(JsonSerializer.Serialize(summary));
             if (report != null)

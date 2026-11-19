@@ -288,7 +288,8 @@ public static class BomTileLevelBuilder
         public string[] parts_by_role,
             parts_by_material,
             custom_materials,
-            fixed_sources;
+            fixed_sources,
+            nudges;
         public BoundaryRow[] boundaries;
         public Vector2[] spawns;
         public TileRowOut[] rows;
@@ -636,6 +637,7 @@ public static class BomTileLevelBuilder
             parts_by_role = mapped.Parts.GroupBy(p => p.Role.ToString()).Select(g => g.Key + "=" + g.Count()).ToArray(),
             parts_by_material = mapped.Parts.GroupBy(p => p.Material).Select(g => g.Key + "=" + g.Count()).ToArray(),
             custom_materials = level.Materials.Select(m => m.Name + " (base " + m.Base + ", toughness " + m.Toughness.ToString(CultureInfo.InvariantCulture) + ", blast resistance " + m.BlastResistance.ToString(CultureInfo.InvariantCulture) + ")").ToArray(),
+            nudges = mapped.Nudges.ToArray(),
             fixed_sources = input.Boundaries.Select(x => x.Name).ToArray(),
             boundaries = boundaryRows.ToArray(),
             spawns = spawns,

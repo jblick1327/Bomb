@@ -153,6 +153,7 @@ public static class BomTileMapping
             MaxDroppedArea,
             TerrainFloor = double.NaN;
         public List<string> Notes = new List<string>();
+        public List<string> Nudges = new List<string>(); // OD-7: every geometry nudge with its before and after values
     }
 
     public sealed class InvariantException : Exception
@@ -188,6 +189,14 @@ public static class BomTileMapping
         MinGlueWeight = 1e-6, // at least one native sample from each side (native keeps a link with any sample; G1's 1-sample brace/deck corner links hold the truss)
         SupportGap = GlueFillet,
         Eps = 1e-9;
+
+    // OD-7 nudges (owner, 2026-11-18: "feel free to nudge bits around if they help the structure"). Measured in evidence/G5/nudge.
+    // BearingGap: a horizontal part floating at most this far above a horizontal part's top grows down onto it (contact bearing, OD-8).
+    // SeatHeight / SeatSnap: a brace end meeting a girder underside within SeatSnap of a post face is snapped to the face and given a
+    // SeatHeight-tall seat on it, so the brace bears on the post face instead of a ~0.05 corner point.
+    public const double BearingGap = .05,
+        SeatHeight = .25,
+        SeatSnap = .01;
 
     public static readonly string[] BoundaryNames = { "Bottom Boundary", "Left Wall", "Right Wall" };
 
@@ -716,6 +725,9 @@ public static class BomTileMapping
         }
         result.Parts = parts;
 
+        // 5b. OD-7 nudges: small geometry changes so the structure bears by contact. Glue (step 6) is found on the nudged outlines.
+        Nudge(parts, result);
+
         // 6. Glue every contact the native sampler sees from both sides.
         for (int i = 0; i < parts.Count; i++)
         for (int j = i + 1; j < parts.Count; j++)
@@ -782,6 +794,104 @@ public static class BomTileMapping
         Check(result, rules, floor);
         return result;
     }
+
+    static string Pt(P p) => "(" + p.X.ToString("0.####", CultureInfo.InvariantCulture) + ", " + p.Y.ToString("0.####", CultureInfo.InvariantCulture) + ")";
+
+    static bool Convex(P[] p)
+    {
+        for (int i = 0; i < p.Length; i++)
+        {
+            P a = p[i],
+                b = p[(i + 1) % p.Length],
+                c = p[(i + 2) % p.Length];
+            if ((b.X - a.X) * (c.Y - b.Y) - (b.Y - a.Y) * (c.X - b.X) < -Eps)
+                return false;
+        }
+        return true;
+    }
+
+    static bool Free(List<Part> parts, Part self, P[] region)
+    {
+        foreach (var other in parts)
+            if (other != self && OverlapArea(region, other.Outline) > 1e-7)
+                return false;
+        return true;
+    }
+
+    // OD-7 nudges, applied to the partitioned parts (CCW outlines). Each one is listed in result.Nudges and the part's note.
+    static void Nudge(List<Part> parts, Result result)
+    {
+        // a. Bearing: a horizontal part fully over another horizontal part, floating up to BearingGap above its top, grows down onto it.
+        foreach (var part in parts.Where(p => p.Role == Role.Horizontal && IsAxisRect(p.Outline)))
+        {
+            var (lo, hi) = Box(part.Outline);
+            double top = double.NaN;
+            foreach (var other in parts)
+            {
+                if (other == part || other.Role != Role.Horizontal || !IsAxisRect(other.Outline))
+                    continue;
+                var (olo, ohi) = Box(other.Outline);
+                double gap = lo.Y - ohi.Y;
+                if (gap > 1e-6 && gap <= BearingGap && olo.X <= lo.X + 1e-6 && ohi.X >= hi.X - 1e-6)
+                    top = double.IsNaN(top) ? ohi.Y : Math.Max(top, ohi.Y);
+            }
+            if (double.IsNaN(top) || !Free(parts, part, Rect(new P(lo.X, top), new P(hi.X, lo.Y))))
+                continue;
+            part.Outline = Rect(new P(lo.X, top), hi);
+            string what = "bottom y " + F4(lo.Y) + " -> " + F4(top) + " (rests on the part below; x " + F4(lo.X) + ".." + F4(hi.X) + ")";
+            result.Nudges.Add("part " + part.Index + " " + part.Tiles.FirstOrDefault() + ": " + what);
+            part.Note += "OD-7 nudge: " + what + ". ";
+        }
+
+        // b. Brace seat: a brace corner on a girder underside within SeatSnap of a post face moves onto the face and gains a SeatHeight seat there.
+        foreach (var part in parts.Where(p => p.Role == Role.Brace && p.Outline.Length == 4))
+        {
+            var o = part.Outline;
+            for (int i = 0; i < o.Length; i++)
+            {
+                P v = o[i];
+                bool onGirder = parts.Any(h => h.Role == Role.Horizontal && Math.Abs(Box(h.Outline).lo.Y - v.Y) < 1e-6 && Box(h.Outline).lo.X < v.X && Box(h.Outline).hi.X > v.X);
+                if (!onGirder)
+                    continue;
+                double face = double.NaN;
+                foreach (var post in parts.Where(p => p.Role == Role.Post && IsAxisRect(p.Outline)))
+                {
+                    var (plo, phi) = Box(post.Outline);
+                    if (v.Y < plo.Y + SeatHeight - 1e-6 || v.Y > phi.Y + 1e-6)
+                        continue;
+                    foreach (double f in new[] { plo.X, phi.X })
+                        if (Math.Abs(v.X - f) <= SeatSnap && (v.X < plo.X - 1e-9 || v.X > phi.X + 1e-9 || Math.Abs(v.X - f) < 1e-9))
+                            face = f;
+                }
+                if (double.IsNaN(face))
+                    continue;
+                int prev = (i + o.Length - 1) % o.Length,
+                    next = (i + 1) % o.Length;
+                // the seat goes between the corner and its neighbour below the girder (the brace's lower edge)
+                bool belowPrev = o[prev].Y < v.Y - 1e-3;
+                if (belowPrev == o[next].Y < v.Y - 1e-3)
+                    continue;
+                P corner = new P(face, v.Y),
+                    seat = new P(face, v.Y - SeatHeight);
+                var list = o.ToList();
+                list[i] = corner;
+                list.Insert(belowPrev ? i : i + 1, seat);
+                var nudged = list.ToArray();
+                if (!Convex(nudged) || !Free(parts, part, nudged))
+                {
+                    result.Notes.Add("OD-7 seat skipped on part " + part.Index + " at " + Pt(v) + ": not convex or overlaps another part.");
+                    continue;
+                }
+                string what = "brace end " + Pt(v) + " -> " + Pt(corner) + " on the post face, seat corner " + Pt(seat) + " added";
+                result.Nudges.Add("part " + part.Index + " " + part.Tiles.FirstOrDefault() + ": " + what);
+                part.Note += "OD-7 nudge: " + what + ". ";
+                part.Outline = nudged;
+                break; // one seat per brace end; the other end meets a post face or a girder already
+            }
+        }
+    }
+
+    static string F4(double v) => v.ToString("0.####", CultureInfo.InvariantCulture);
 
     // Is there another part directly under the bottom edge a-b (within the glue fillet)? Then that edge rests on it, not on bedrock.
     static bool Below(List<Part> parts, Part self, P a, P b)
