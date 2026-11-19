@@ -84,6 +84,9 @@ Recommendations are Claude's. Tick = approved as written. To change a decision, 
   Glued pieces also collide with each other (mortar welds `collideConnected = true`), and structure gravity eases in over the first 60 ticks of each level start. Players are unchanged.
   Accepted costs (G-N9 report §4–5): slightly less Yard debris scatter, more contact pairs and CPU on the Bridges, and start-up cracking that is reduced but not gone.
   Then OD-7 nudges (G5) address the overloaded 0.047 brace corners. Order: G-N9b → E1-GN9 → G5 nudge + re-run.
+- [x] **OD-9 Re-record the historical byte goldens for OD-8** (owner, 2026-11-19, "Yes, re-record"). `seam_followup_legacy_world_bytes` and `material_legacy_fixture_bytes` change under any OD-8 rule
+  (G-N9b README). Keep the old captures as files (renamed, for example `*.pre-od8.*`), record new ones with the shipped OD-8 rule, and point the tests at the new ones. The tests' assertions stay byte-exact.
+  This amends the 2026-11-11 "preserve historical snapshot bytes" decision only for these two goldens and only for the OD-8 change.
 
 ## Models and lanes
 | Tier | Use for | Claude | ChatGPT (Codex) |
