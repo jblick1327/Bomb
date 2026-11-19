@@ -191,7 +191,8 @@ public static class BomTileMapping
         Eps = 1e-9;
 
     // OD-7 nudges (owner, 2026-11-18: "feel free to nudge bits around if they help the structure"). Measured in evidence/G5/nudge.
-    // BearingGap: a horizontal part floating at most this far above a horizontal part's top grows down onto it (contact bearing, OD-8).
+    // BearingGap: a horizontal part floating at most this far above a horizontal part's top grows down onto it (contact bearing, OD-8);
+    // a post stopping at most this far below a horizontal part's bottom grows up to it (OD-10, the Tower pillars).
     // SeatHeight / SeatSnap: a brace end meeting a girder underside within SeatSnap of a post face is snapped to the face and given a
     // SeatHeight-tall seat on it, so the brace bears on the post face instead of a ~0.05 corner point.
     public const double BearingGap = .05,
@@ -839,6 +840,29 @@ public static class BomTileMapping
                 continue;
             part.Outline = Rect(new P(lo.X, top), hi);
             string what = "bottom y " + F4(lo.Y) + " -> " + F4(top) + " (rests on the part below; x " + F4(lo.X) + ".." + F4(hi.X) + ")";
+            result.Nudges.Add("part " + part.Index + " " + part.Tiles.FirstOrDefault() + ": " + what);
+            part.Note += "OD-7 nudge: " + what + ". ";
+        }
+
+        // a2. Post bearing (OD-10): a post whose top stops up to BearingGap below the bottom of a horizontal part directly above it grows up to meet it.
+        foreach (var part in parts.Where(p => p.Role == Role.Post && IsAxisRect(p.Outline)))
+        {
+            var (lo, hi) = Box(part.Outline);
+            double bottom = double.NaN;
+            foreach (var other in parts)
+            {
+                if (other == part || other.Role != Role.Horizontal || !IsAxisRect(other.Outline))
+                    continue;
+                var (olo, ohi) = Box(other.Outline);
+                double gap = olo.Y - hi.Y;
+                if (gap > 1e-6 && gap <= BearingGap && Math.Min(hi.X, ohi.X) - Math.Max(lo.X, olo.X) > 1e-6)
+                    bottom = double.IsNaN(bottom) ? olo.Y : Math.Min(bottom, olo.Y);
+            }
+            if (double.IsNaN(bottom) || !Free(parts, part, Rect(new P(lo.X, hi.Y), new P(hi.X, bottom))))
+                continue;
+            // move the top vertices in place (keeps the outline's vertex order; G5b attempt 1 rebuilt the rectangle and the native creep timing changed with it)
+            part.Outline = part.Outline.Select(v => Math.Abs(v.Y - hi.Y) < 1e-9 ? new P(v.X, bottom) : v).ToArray();
+            string what = "top y " + F4(hi.Y) + " -> " + F4(bottom) + " (meets the part above; x " + F4(lo.X) + ".." + F4(hi.X) + ")";
             result.Nudges.Add("part " + part.Index + " " + part.Tiles.FirstOrDefault() + ": " + what);
             part.Note += "OD-7 nudge: " + what + ". ";
         }
