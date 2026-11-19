@@ -477,6 +477,7 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     - braces over posts: rejected by native (the centre braces overlap inside post 32), and it could add at most ~0.36 per edge.
     Outlines moved by at most 0.00005 swing the result from 22.3 to 0.389, the same knife edge G-N7 saw.
     Exporter and layouts are unchanged, so OD-6 and the gates were not re-run.
+    Next (owner, 2026-11-18): G-N8 (start-up shock) runs first; G5 re-runs `Run-G5Settle.py` after its fix lands (G-N8b, E1-GN8).
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
@@ -502,6 +503,24 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     (a "pre-G-N1 capacity" toggle on 3be3283 reproduces f3a4e48 byte for byte). Measured options (G5 Bridge unless named; OD-6 rule): torque floor 1 passes (0.056) but fails G1 (1.677) and Tower (0.116);
     floors 0.25/0.5/2 fail (21.6/0.46/0.23, non-monotonic); steel 1.4 fails (18.5); fixed stone abutments fail (70). Experiments: branch `g-n7-experiments` `5dc2a87`, never merge.
     Sandbox: Codex's sandbox keeps every `.git` read-only and blocked writing `evidence/M0`, so Content was not run by Codex (no Unity file changed, so it is not needed).
+- [ ] **G-N8 Start-up shock: does easing structures in let the Bridge settle?** (Lane N, Opus, M; owner approved the investigation 2026-11-18; unblocks G5). Work in `C:\Users\jblic\Documents\BOM`.
+  No Unity process may run meanwhile; Lane U stays idle (G5 is parked `[!]`).
+  - Why: G5's brace-joinery check (`Desktop\Bomb-integration\integration\evidence\G5\brace-joinery\README.md`, table `reports/shipped.brace-seams.txt`) shows the brace seams, including full-face
+    post (0.27–0.33) and girder (1.20–1.29) seams, mostly break in ticks 0–14 at r up to 46, and outline changes of 0.00005 flip the result (22.3 vs 0.389). That points to a start-up transient,
+    not the standing load. The G-N7 "corner contacts only" cause is superseded by that finding.
+  - Do:
+    1. **Diagnose the transient first** with the G-N4 report (`--validate-layout ... --settle-ticks 2220`) on the G5 Bridge (`Desktop\Bomb-integration\integration\fixtures\levels\BridgeLevel.json`).
+       Separate two candidate causes: (a) gravity applied at full strength on tick 0; (b) contact/overlap resolution between pieces that start touching or slightly overlapping
+       (the 0.00005 sensitivity suggests this). For example, run with gravity 0 for the first ticks: if seams still see large r, it is (b), not gravity. Report per-tick peak r for the first ~30 ticks.
+    2. **Prototype the fix that matches the cause**, on a throwaway branch `g-n8-experiments` from `alpha-sync` (never merged, worktree under `.claude\worktrees\`). For (a), try ramping gravity
+       on structure bodies only (pieces, not players; player movement and prediction must not change) over, for example, 30 / 60 / 120 ticks, all inside the OD-6 start-up window (ticks 0–120).
+       For (b), try the matching start-up fix (for example removing initial overlaps, or a short start-up damping/sleep), and say what it touches.
+    3. Measure each variant with the OD-6 rule on the G5 Bridge, Yard and Tower, and on G1's `fixtures/levels-g1/BridgeLevel.json` and the G1 Tower (G-N7's floor-1 option failed those).
+       Run each twice for determinism. Also check the Bridge with the outline-rounding control from `brace-joinery/` to show whether the knife edge is gone.
+    4. Say what each variant costs: what changes for blasts and debris after start-up (it must not), gameplay config / protocol / ABI version bumps, and replay or prediction effects.
+  - Done when: `Documents\BOM\evidence\G-N8\REPORT.md` has the transient diagnosis (per-tick r, cause a or b, with the evidence), and the variant table (OD-6 result per level, both runs), with costs, ranked by
+    how well it keeps "what's there is what you get". `alpha-sync` is unchanged except for tools or tests if any were needed (native gates pass if so).
+    **Stop there.** The owner picks; the chosen fix becomes G-N8b on `alpha-sync`, then E1-GN8 (Prediction gate required: the DLL changes), then G5 re-runs `Run-G5Settle.py`.
 - [ ] **G6 Re-export Yard, Bridge and Tower with G5** (T2, Sonnet, M; Lane U; after G5). Settle check on each level (35 s, revision constant). Tune materials and glue with the owner, and capture each level next to G1.
 - [ ] **G7 Classic Yard** (T2, Sonnet, S; Lane U; after G5).
   - Bring its 8 off-plane pillars (depth 1.06..1.76) onto the play plane, glue its tables, and apply OD-5 (C, destructible bedrock; decided 2026-11-18).
@@ -718,3 +737,5 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   Design doc 3.2 rule 3 says braces are clipped to the post and girder faces, which should give a full-face seam about brace-width / sin(angle) long (roughly 0.25-0.8), i.e. 25-300x the torque capacity.
   Recommended next step (exporter side, no physics change): G5 checks and fixes the brace-end joinery, measures it with the G-N4 report (`--validate-layout --settle-ticks 2220`), then re-runs OD-6.
 - 2026-11-18 Claude Opus (G5 brace joinery, `evidence/G5/brace-joinery/README.md`): the G-N7 premise that the braces hang on 0.047 corners only does not hold. Each brace also has full-face seams (post 0.27–0.33, girder 1.20–1.29 native length), the most Darryn's geometry allows, and those break as well (r up to 45.8). No partition/glue change within design doc 3.2 fixes the Bridge. Measured variants fail or are rejected. The next step is the owner's: drawn gussets or knee braces, or a G-N7 option.
+- 2026-11-18 Claude Opus (orchestrator): I checked G5's seam table (`brace-joinery/reports/shipped.brace-seams.txt`), and it supports the finding. My G-N7 review recommendation (exporter joinery) was wrong because it rested on the corner-only cause.
+  Most brace seams break in ticks 0–14, so the owner approved G-N8: diagnose and measure a start-up fix (gravity ramp or overlap/contact shock). No production physics change until the owner picks one.
