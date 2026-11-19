@@ -492,6 +492,11 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
     G-N8 found no start-up fix (standing load); the owner approved G-N9 (contact bearing) next. G5 re-runs after G-N9b and E1-GN9 if the owner picks a variant.
     OD-8 (2026-11-18): contact + ramp ships (G-N9b, E1-GN9). After E1-GN9, G5 resumes: OD-7 nudges for the 0.047 brace corners (and anything else the G-N4 report names), each nudge listed with before/after
     and its seam r, then the OD-6 settle on all three tiles and the G5 gates; tick if the Bridge passes.
+    **Order changed (owner, 2026-11-18, "Nudge first"):** G-N9b stopped because the rounded control fails at 0.119 (knife edge). G5 now nudges *before* G-N9b ships, measuring with the candidate build
+    `Documents\BOM\build\g-n9b-candidate-55a9306.exe` (branch `g-n9b-candidate`; headless `--validate-layout ... --settle-ticks 2220`, no Unity needed for the measurement).
+    Nudge done when: the nudged G5 Bridge **and** its rounded control (re-made with `brace-joinery/tools/mklayout.py` from the nudged map report) pass OD-6 under the candidate build with margin
+    (max move ≤ 0.05, both runs byte-identical), Yard and Tower unchanged and passing, and the corner seams' r reported before/after. Then G-N9b re-runs its table on the nudged fixtures and ships; then E1-GN9; then G5's full gates and tick.
+    Still open for the owner before G-N9b ships: re-baselining the two historical byte goldens (`seam_followup_legacy_world_bytes`, `material_legacy_fixture_bytes`).
   - [ ] Owner check: on the Bridge and Tower, the truss and pillars break when blasted, you can stand on debris, and nothing you see can be walked through.
 - [x] **G-N7 Why the Bridge does not stand, and fix options** (Lane N, Codex high or Opus, M; owner asked 2026-11-18; unblocks G5). claimed: Codex gpt-6.1-sol 2026-11-18 (claim committed by the orchestrator; the Codex sandbox cannot write this repo's git index). Work in `C:\Users\jblic\Documents\BOM`,
   branch `alpha-sync` (clean `git status` first). No Unity process may run meanwhile, and Lane U stays idle (G5 is parked).
