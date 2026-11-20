@@ -9,7 +9,7 @@ using UnityEngine;
 // so they can be tuned by editing one file and re-exporting. Values are checked against the native custom_problem ranges.
 public static class BomMaterialConfig
 {
-    public const string Path = "C:/Users/jblic/Desktop/Bomb-integration/integration/fixtures/materials.json";
+    public static string Path => BomRepoPaths.Integration + "/fixtures/materials.json";
     static readonly string[] Bases = { "stone", "wood", "glass", "rubber" };
 
     [Serializable]

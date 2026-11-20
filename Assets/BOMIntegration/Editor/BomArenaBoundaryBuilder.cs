@@ -201,12 +201,11 @@ public static class BomArenaBoundaryBuilder
     }
 
     // Runner entry: exact editor export path, without building a player.
-    [Serializable] sealed class Config { public string OdinRoot; }
+    // Paths come from BomRepoPaths: the repo's integration/ folder and Server/BOM-server.exe (or BOM_NATIVE_SERVER_EXE).
     public static void ExportAll()
     {
-        const string integration = "C:/Users/jblic/Desktop/Bomb-integration/integration";
-        var config = JsonUtility.FromJson<Config>(System.IO.File.ReadAllText(integration + "/local.config.owner-validation.json"));
-        Environment.SetEnvironmentVariable("BOM_NATIVE_SERVER_EXE", config.OdinRoot + "/build/BOM-server.exe");
+        string integration = BomRepoPaths.Integration;
+        Environment.SetEnvironmentVariable("BOM_NATIVE_SERVER_EXE", BomRepoPaths.Server);
         Environment.SetEnvironmentVariable("BOM_YARD_LAYOUT_OUT", integration + "/fixtures/network-yard/yard.json");
         Environment.SetEnvironmentVariable("BOM_TILE_LEVEL_DIR", integration + "/fixtures/levels");
         BomYardBuilder.CreateAndExport();

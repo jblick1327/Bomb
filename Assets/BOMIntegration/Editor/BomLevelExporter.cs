@@ -17,12 +17,6 @@ public static class BomLevelExporter
     }
 
     [Serializable]
-    sealed class LocalConfig
-    {
-        public string OdinRoot;
-    }
-
-    [Serializable]
     sealed class NativeSourceReport
     {
         public string identity_text;
@@ -323,14 +317,8 @@ public static class BomLevelExporter
 
     static string NativeServer()
     {
-        string path = Environment.GetEnvironmentVariable("BOM_NATIVE_SERVER_EXE");
-        if (!string.IsNullOrEmpty(path))
-            return Path.GetFullPath(path);
-        string root = Path.GetDirectoryName(Application.dataPath);
-        var config = JsonUtility.FromJson<LocalConfig>(
-            File.ReadAllText(Path.Combine(root, "integration/local.config.json"))
-        );
-        return Path.Combine(config.OdinRoot, "build/BOM-server.exe");
+        // BOM_NATIVE_SERVER_EXE if set, otherwise the repo's Server/BOM-server.exe (BomRepoPaths).
+        return Path.GetFullPath(BomRepoPaths.Server);
     }
 
     public static BomVisualRegistry Export(BomLevelAuthoring level, string outputPath)

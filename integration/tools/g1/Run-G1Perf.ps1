@@ -8,14 +8,15 @@ param(
  [ValidateSet(1,2)][int]$Clients=1,
  [int]$Seconds=100,
  [Parameter(Mandatory)][string]$Out,
- [string]$Exe='C:\Users\jblic\Desktop\Bomb-integration\integration\build\validation\Game-Mono\Bomb.exe',
+ [string]$Exe=(Join-Path $PSScriptRoot '..\..\build\validation\Game-Mono\Bomb.exe'),
+ [string]$UiHelper=(Join-Path $env:USERPROFILE 'Documents\BOM-Release\diag\ui.ps1'), # window helpers (owner machine; not in the repo)
  [string]$Extra='',
  [string]$Clicks='30:900,380|42:400,570|54:640,300|66:1000,560'
 )
 $ErrorActionPreference='Stop'
 trap { if($Out){$_.InvocationInfo.PositionMessage+"`n"+$_|Add-Content (Join-Path $Out 'harness-error.txt')}; break }
 $Out=[IO.Path]::GetFullPath($Out) # the player resolves -logFile against its own folder, so never pass it a relative path
-. 'C:\Users\jblic\Documents\BOM-Release\diag\ui.ps1'
+. $UiHelper
 $pkg=Split-Path -Parent $Exe
 $free=(Get-PSDrive C).Free/1GB;$ram=(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB
 # Rule 3 counts Unity Editors. Unity Hub's helpers (Hub\resources\unity.exe, AppData\Local\Unity\bin\unity.exe, ~30 MB) are not editors (C3 finding).
