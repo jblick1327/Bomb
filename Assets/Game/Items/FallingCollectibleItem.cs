@@ -18,6 +18,12 @@ public sealed class FallingCollectibleItem : MonoBehaviour
     private float fallAcceleration;
     private bool collected;
     private bool landed;
+    // Online: a pickup was asked for and the host hasn't answered yet.
+    private bool pickupRequested;
+
+    // Online: the number the host gave this item.
+    public int NetworkId { get; set; }
+    public CollectibleItemType Type => GetComponent<CollectibleItemTypeHolder>().Type;
 
     public void Initialize(BombDropper dropper, float acceleration, float lifetime)
     {
@@ -47,13 +53,15 @@ public sealed class FallingCollectibleItem : MonoBehaviour
             return;
 
         ArenaPlayerController player = collision.collider.GetComponentInParent<ArenaPlayerController>();
+        if (player != null && player.IsRemote) return;
         if (player != null && player.gameObject.activeInHierarchy)
         {
             TryCollect(player);
             return;
         }
 
-        if (collision.contactCount > 0 && collision.GetContact(0).normal.y > 0.3f)
+        // Already resting: a kinematic body can't have its velocity set.
+        if (!landed && !body.isKinematic && collision.contactCount > 0 && collision.GetContact(0).normal.y > 0.3f)
         {
             landed = true;
             body.linearVelocity = Vector3.zero;
@@ -75,14 +83,37 @@ public sealed class FallingCollectibleItem : MonoBehaviour
     public bool TryCollect(ArenaPlayerController player)
     {
         if (collected || owner == null || !owner.CanRun
-            || player == null || !player.gameObject.activeInHierarchy)
+            || player == null || !player.gameObject.activeInHierarchy || player.IsRemote)
             return false;
 
-        collected = true;
-        player.ApplyCollectible(GetComponent<CollectibleItemTypeHolder>().Type);
-        GameAudio.PlayCoinPickup(transform.position);
-        Destroy(gameObject);
+        // Online, the host decides who got there first.
+        if (OnlineMatch.IsRunning)
+        {
+            if (pickupRequested) return false;
+            pickupRequested = true;
+            OnlineMatch.RequestPickup(NetworkId, player.PlayerNumber - 1);
+            return true;
+        }
+
+        CollectBy(player, Type);
         return true;
+    }
+
+    // Online, host only: marks the item as taken. False if it already was.
+    public bool TryClaim()
+    {
+        if (collected) return false;
+        collected = true;
+        return true;
+    }
+
+    public void CollectBy(ArenaPlayerController player, CollectibleItemType type)
+    {
+        collected = true;
+        if (player != null) player.ApplyCollectible(type);
+        GameAudio.PlayCoinPickup(transform.position);
+        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
 

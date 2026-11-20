@@ -41,6 +41,17 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
         rockRenderers = GetComponentsInChildren<Renderer>(true);
         if (rockFilter == null) rockFilter = GetComponentInChildren<MeshFilter>(true);
         if (originalMesh == null && rockFilter != null) originalMesh = rockFilter.sharedMesh;
+        // Unity's built-in Cube can't be read at runtime, so it can't be cut.
+        // Swap it for a readable box of the same size.
+        if (originalMesh != null && !originalMesh.isReadable)
+        {
+            Mesh box = CreateBoxMesh(originalMesh.bounds);
+            foreach (Collider candidate in GetComponentsInChildren<Collider>(true))
+                if (candidate is MeshCollider meshCollider && meshCollider.sharedMesh == originalMesh)
+                    meshCollider.sharedMesh = box;
+            originalMesh = box;
+            rockFilter.sharedMesh = box;
+        }
 
         Collider[] colliders = GetComponentsInChildren<Collider>(true);
         foreach (Collider candidate in colliders)
@@ -83,6 +94,46 @@ public sealed class DestructibleObject : MonoBehaviour, IBlastReceiver
                 break;
             }
         }
+    }
+
+    // A readable box mesh filling the given local bounds, with one UV square per face.
+    private static Mesh CreateBoxMesh(Bounds bounds)
+    {
+        Vector3 min = bounds.min, max = bounds.max;
+        Vector3[] normals = { Vector3.forward, Vector3.back, Vector3.up, Vector3.down, Vector3.right, Vector3.left };
+        var vertices = new List<Vector3>(24);
+        var faceNormals = new List<Vector3>(24);
+        var uvs = new List<Vector2>(24);
+        var triangles = new List<int>(36);
+        foreach (Vector3 normal in normals)
+        {
+            // Two axes across the face, chosen so the face winds outward.
+            Vector3 u = normal.y != 0f ? Vector3.right : Vector3.Cross(Vector3.up, normal);
+            Vector3 v = Vector3.Cross(normal, u);
+            int start = vertices.Count;
+            for (int corner = 0; corner < 4; corner++)
+            {
+                float su = corner == 1 || corner == 2 ? 1f : -1f;
+                float sv = corner >= 2 ? 1f : -1f;
+                Vector3 direction = normal + u * su + v * sv;
+                vertices.Add(new Vector3(
+                    direction.x > 0f ? max.x : min.x,
+                    direction.y > 0f ? max.y : min.y,
+                    direction.z > 0f ? max.z : min.z));
+                faceNormals.Add(normal);
+                uvs.Add(new Vector2(su * 0.5f + 0.5f, sv * 0.5f + 0.5f));
+            }
+            // Clockwise seen from outside, which Unity draws as the front.
+            triangles.Add(start); triangles.Add(start + 1); triangles.Add(start + 2);
+            triangles.Add(start); triangles.Add(start + 2); triangles.Add(start + 3);
+        }
+        var mesh = new Mesh { name = "Readable Box" };
+        mesh.SetVertices(vertices);
+        mesh.SetNormals(faceNormals);
+        mesh.SetUVs(0, uvs);
+        mesh.SetTriangles(triangles, 0);
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     public void ReceiveBlast(BlastPayload blast)

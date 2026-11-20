@@ -171,7 +171,7 @@ public sealed class MenuCursor : MonoBehaviour
     {
         if (MatchMenuUI.IsSetupScreenOpen) return false;
         if (SceneManager.GetActiveScene().name == MainMenuScene) return true;
-        return session != null && (session.IsPaused || !session.IsPlaying);
+        return session != null && session.IsMenuShowing;
     }
 
     // Returns true if a controller moved the cursor this frame.

@@ -94,6 +94,15 @@ public sealed class BombDropper : MonoBehaviour
     private Transform transientRoot;
     public bool CanRun => session == null || session.IsPlaying;
 
+    // Online, the host numbers each bomb and item so every computer can
+    // refer to the same one.
+    private int nextNetworkId = 1;
+    private readonly Dictionary<int, FallingBomb> networkBombs = new Dictionary<int, FallingBomb>();
+    private readonly Dictionary<int, FallingCollectibleItem> networkItems = new Dictionary<int, FallingCollectibleItem>();
+
+    // Models used for the result screen icons.
+    public UnityEngine.Object BombPrefab => bombVisualPrefab;
+
     private void Awake()
     {
         if (session == null) session = FindFirstObjectByType<ArenaSession>();
@@ -107,6 +116,9 @@ public sealed class BombDropper : MonoBehaviour
         if (!CanRun) return;
 
         roundElapsedTime += Time.deltaTime;
+        // Online, only the host drops bombs and items. Other computers create
+        // them when the host says so.
+        if (OnlineMatch.IsRunning && !OnlineMatch.IsHost) return;
 
         // B is an optional development shortcut. Automatic drops always continue.
         if (enableSpawning && Keyboard.current != null && Keyboard.current.bKey.wasPressedThisFrame)
@@ -167,6 +179,20 @@ public sealed class BombDropper : MonoBehaviour
         float maxX = rightEdge - itemRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
         CollectibleItemType type = PickCollectibleType();
+        int id = nextNetworkId++;
+        FallingCollectibleItem item = SpawnItem(type, x, id);
+        if (item != null && OnlineMatch.IsRunning) OnlineMatch.SendItemSpawn(id, x, type);
+        return item;
+    }
+
+    // Online: the host dropped an item.
+    public void SpawnNetworkItem(int id, float x, CollectibleItemType type)
+    {
+        if (CanRun && layout != null) SpawnItem(type, x, id);
+    }
+
+    private FallingCollectibleItem SpawnItem(CollectibleItemType type, float x, int id)
+    {
         GameObject body = SpawnPrefab(GetItemVisualPrefab(type), GetTransientRoot(),
             layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
             itemVisualScale, type + " Collectible");
@@ -185,14 +211,52 @@ public sealed class BombDropper : MonoBehaviour
         rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
         if (upperBoundary != null) Physics.IgnoreCollision(collider, upperBoundary);
 
+        // Remote players are only pictures of where someone else is, so
+        // items pass through them.
+        IgnorePlayers(collider, true);
+
         body.AddComponent<CollectibleItemTypeHolder>().Type = type;
         FallingCollectibleItem item = body.AddComponent<FallingCollectibleItem>();
         item.Initialize(this, fallAcceleration, itemLifetime);
+        item.NetworkId = id;
+        networkItems[id] = item;
         DroppedItemCount++;
         return item;
     }
 
-    private UnityEngine.Object GetItemVisualPrefab(CollectibleItemType type)
+    // Online, host only: true if the item is still there to be taken.
+    public bool TryClaimItem(int id, out CollectibleItemType type)
+    {
+        type = default;
+        if (!networkItems.TryGetValue(id, out FallingCollectibleItem item) || item == null || !item.TryClaim()) return false;
+        type = item.Type;
+        return true;
+    }
+
+    // Online: the host gave an item to a player. Every computer removes the
+    // item and applies its effect to that player.
+    public void ApplyNetworkPickup(int id, CollectibleItemType type, int slot)
+    {
+        ArenaPlayerController player = session != null ? session.GetPlayer(slot) : null;
+        if (networkItems.TryGetValue(id, out FallingCollectibleItem item) && item != null)
+            item.CollectBy(player, type);
+        else if (player != null)
+            player.ApplyCollectible(type);
+        networkItems.Remove(id);
+    }
+
+    private void IgnorePlayers(Collider collider, bool remoteOnly)
+    {
+        if (session == null || collider == null) return;
+        foreach (ArenaPlayerController target in session.Players)
+        {
+            if (target == null || remoteOnly && !target.IsRemote) continue;
+            CharacterController body = target.GetComponent<CharacterController>();
+            if (body != null) Physics.IgnoreCollision(collider, body);
+        }
+    }
+
+    public UnityEngine.Object GetItemVisualPrefab(CollectibleItemType type)
     {
         switch (type)
         {
@@ -297,6 +361,20 @@ public sealed class BombDropper : MonoBehaviour
         float minX = leftEdge + bombRadius + spawnEdgePadding;
         float maxX = rightEdge - bombRadius - spawnEdgePadding;
         float x = Random.Range(Mathf.Min(minX, maxX), Mathf.Max(minX, maxX));
+        int id = nextNetworkId++;
+        FallingBomb dropped = SpawnBomb(x, id);
+        if (dropped != null && OnlineMatch.IsRunning) OnlineMatch.SendBombSpawn(id, x);
+        return dropped;
+    }
+
+    // Online: the host dropped a bomb.
+    public void SpawnNetworkBomb(int id, float x)
+    {
+        if (CanRun && layout != null) SpawnBomb(x, id);
+    }
+
+    private FallingBomb SpawnBomb(float x, int id)
+    {
         GameObject body = SpawnPrefab(bombVisualPrefab, GetTransientRoot(),
             layout.Origin + new Vector3(x, layout.Height + dropHeightAboveArena, 0f),
             itemVisualScale, "Falling Bomb");
@@ -331,10 +409,31 @@ public sealed class BombDropper : MonoBehaviour
         Destroy(fuse.GetComponent<Collider>());
         fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
 
+        // Online, only the host's bombs decide where they go off. Elsewhere a
+        // bomb falls through players and waits for the host's explosion.
+        if (OnlineMatch.IsRunning && !OnlineMatch.IsHost) IgnorePlayers(collider, false);
+
         var bomb = body.AddComponent<FallingBomb>();
         bomb.Initialize(this, fallAcceleration, bombLifetime);
+        bomb.NetworkId = id;
+        networkBombs[id] = bomb;
         DroppedBombCount++;
         return bomb;
+    }
+
+    // Online: the host's bomb went off. Remove this computer's copy and
+    // explode at the host's spot.
+    public void ExplodeNetworkBomb(int id, Vector2 center)
+    {
+        if (networkBombs.TryGetValue(id, out FallingBomb bomb) && bomb != null)
+        {
+            bomb.gameObject.SetActive(false);
+            Destroy(bomb.gameObject);
+        }
+        networkBombs.Remove(id);
+        if (!CanRun) return;
+        GameAudio.PlayBombExplosion(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
+        Explode(center);
     }
 
     public void Explode(Vector2 center)
@@ -350,10 +449,11 @@ public sealed class BombDropper : MonoBehaviour
         if (enableRubble && cutMaterial != null) SpawnRubble(center, cutMaterial);
         if (session != null)
         {
+            // Online, each computer only checks its own player and reports the result.
             List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
             foreach (ArenaPlayerController target in session.Players)
-                if (HitPlayer(target, center)) hitPlayers.Add(target);
-            session.KillPlayers(hitPlayers);
+                if (target != null && !target.IsRemote && HitPlayer(target, center)) hitPlayers.Add(target);
+            session.KillPlayers(hitPlayers, center);
         }
         else if (HitPlayer(player, center))
             player.gameObject.SetActive(false);
@@ -371,6 +471,7 @@ public sealed class BombDropper : MonoBehaviour
         if (distance > lethalRadius) return false;
         bool killed = distance <= oneShotRadius || target.TakeGraze(center);
         if (killed) target.Burst(center);
+        else if (OnlineMatch.IsRunning) OnlineMatch.ReportGraze(target.PlayerNumber - 1, center);
         return killed;
     }
 
@@ -486,6 +587,8 @@ public sealed class BombDropper : MonoBehaviour
 
     public void ClearTransientObjects()
     {
+        networkBombs.Clear();
+        networkItems.Clear();
         if (transientRoot == null) return;
         transientRoot.gameObject.SetActive(false);
         Destroy(transientRoot.gameObject);
