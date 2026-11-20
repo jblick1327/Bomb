@@ -52,6 +52,20 @@ game yourself is not one click yet: Unity's normal Build doesn't include the onl
   re-export, and check that the level still stands at round start.
 - **New bombs and characters:** they go into Odin first (J and the bomb artist), then Unity draws them.
 
+## Known issues
+If you hit one of these, note the level, whose player, and same PC or LAN; a clip or screenshot helps most.
+- **Movement prediction is still choppy at times**: your own player can stutter or snap back, most on the Tower.
+  It's better than it was. It looks worse in Unity's Play mode than in a built game, so judge it in a build.
+- **Glue resists bending too much**: a piece can stay stuck out at a right angle from a piece that has just broken
+  off, like a shelf. Planned fix: give glue a bending (shear/moment) limit in the engine, so overhanging pieces snap
+  under their own weight while load-bearing joints stay strong. It has to keep the Bridge and Tower standing at round start.
+- **Seams sometimes crack before any bomb lands**, with players standing on a level (mostly the Bridge). Rare and varies
+  run to run; we think players' weight sets it off.
+- **The first blast can hitch** for a frame when two game windows run on the same PC.
+- **Not yet tried between two real PCs on a LAN.** Everything so far ran on one machine.
+- **After opening the project, git shows 4 deleted `PT_Nature_Free_URP_*.unitypackage.meta` files** (and sometimes a
+  changed `Bedrock.mat`). Unity removes metas whose `.unitypackage` isn't in the repo. Discard those changes; don't commit them.
+
 ## Not done yet
 Offline Play on Odin (one rule set everywhere), a solo/survival mode with bots, playing over the internet without
 port forwarding, sending chosen characters online, the shadow colour fix, and the new bombs. The game feel has only
