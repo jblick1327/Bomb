@@ -10,4 +10,8 @@ on 2026-11-19, the same rule as `integration/evidence`.
 - `INDEX-files.tsv` lists every archived file (path relative to `Engine/evidence/`, bytes, sha256). Paths in
   `Engine/AGENTS.md` and the engine READMEs that start with `evidence/` refer to these files.
 
+Exception: 53 files the engine tests read as inputs stay in the repository (`world-v3/before-v2-ticked.json`,
+`world-v3/continuity-manual-S.json`, `material-library/custom-layout.json`, `material-library/rebaseline/`,
+`seam-toughness/legacy/`, `textures-ui-followup/decode-before/`), byte-identical to 49d1a6e.
+
 New runs still write here; `Engine/.gitignore` keeps them out of the repository.
