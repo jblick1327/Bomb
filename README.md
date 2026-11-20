@@ -1,5 +1,8 @@
 # Bomb
 
+> **Odin merge (2026-11): read [TEAM.md](TEAM.md) first.** Online play, physics and destruction now run in the
+> Odin engine (`Engine/`); the steps below describe the original arena prototype.
+
 A side-view arena prototype: falling bombs cut through 3D ground, and touching a
 blast kills the player. All movement and damage use XY; terrain is extruded along Z.
 Boundaries are invisible and indestructible. The fixed camera tilts downward slightly.

@@ -9,12 +9,16 @@ outcomes and never reads or writes wire bytes. This file is read with the Odin r
   Default branch (`main`) and the owner's own feature branches are not to be touched.
 - `integration/`: `tools/` (scripts), `contracts/` (round-rules.md is the gameplay contract), `fixtures/`, `baselines/`
   (protected-content manifests), `evidence/` (raw run records, kept even for failures), `soak-host/`.
-- Native source: `C:\Users\jblic\Documents\BOM`; matching checkpoint is built with `integration/tools/Build-OwnerNative.py`.
+- Native source: `Engine/` (moved in 2026-11-19 from `C:\Users\jblic\Documents\BOM`, now a read-only backup; its own
+  rules are `Engine/AGENTS.md`). The matching checkpoint is built with `integration/tools/Build-OwnerNative.py`; ship
+  its DLL to `Assets/BOMIntegration/Plugins/x86_64/` and its server to `Server/` together (`Server/README.md`).
+- Team-facing overview: `TEAM.md`. Editor tools find the repo through `Editor/BomRepoPaths.cs` (no absolute paths);
+  tools that run Unity on a separate validation copy set `BOM_INTEGRATION_ROOT`.
 - Release package: `C:\Users\jblic\Documents\BOM-Release`.
 
 ## Rules
 1. Original Unity assets, GUIDs, scenes and packages stay protected. After any Unity change run
-   `integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite Content` (605 protected files must verify).
+   `integration/tools/Invoke-BomIntegration.ps1 -Task Test -Suite Content` (every file in `integration/baselines/unity-content.json` must verify; 1,559 today).
 2. New scripts need `.meta` files with stable GUIDs; never regenerate existing ones.
 3. Do not change physics, destruction, material or blast behaviour; those live in Odin. Ask first.
 4. Never weaken an assertion; keep failed attempts' evidence next to the passes.
@@ -38,7 +42,7 @@ actions (system settings, closing their apps).
 
 ## Current work queue
 `integration/ALPHA-SYNC.md`: catch-up with Darryn's AlphaV0.1 (merged 2026-11-10). One task per session; claim and
-tick boxes there. Its rules add to the rules above. The protected baseline now covers Darryn's AlphaV0.1 originals (1562 files).
+tick boxes there. Its rules add to the rules above. The protected baseline now covers Darryn's AlphaV0.1 originals, updated for Online v0.2 (1,559 files).
 
 ## Open items
 Human checks (game feel, two-machine LAN, an artist adding an object). Everything else is tracked in `integration/ALPHA-SYNC.md`.

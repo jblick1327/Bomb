@@ -10,9 +10,11 @@ Odin is the only gameplay authority. Unity presents copied native state and send
 outcomes and never reads or writes wire bytes.
 
 ## Locations
-- This repo: `C:\Users\jblic\Documents\BOM` (Odin, native game, server, C ABI, netcode).
-- Unity repo: `C:\Users\jblic\Desktop\Bomb`. Integration work is on branch `integration/odin-unity-20261105`;
-  its `integration/` folder holds tools, contracts, fixtures and raw evidence.
+- This folder: `Engine/` in the Bomb (Unity) repo (Odin, native game, server, C ABI, netcode). It moved in on
+  2026-11-19 from its own repo (`C:\Users\jblic\Documents\BOM`, branch `alpha-sync`, 49d1a6e), which is kept as a
+  read-only backup; engine work now happens here. The repo root's `AGENTS.md` and `TEAM.md` cover the whole game.
+- The Unity project is the repo root; its `integration/` folder holds tools, contracts, fixtures and raw evidence.
+  `Server/BOM-server.exe` and `Assets/BOMIntegration/Plugins/x86_64/bomcore.dll` are built from this folder.
 - Release package: `C:\Users\jblic\Documents\BOM-Release` (see its REPORT.md).
 - Pre-integration backup: `C:\Users\jblic\Documents\BOM-before-unity-baseline-20261110T214214370244Z.zip` (keep).
 
@@ -30,7 +32,7 @@ Network protocol 9, round snapshot format 4, gameplay config 5, C ABI 1.6, level
 Odin `dev-2026-05-nightly:ea5175d`, .NET 10, MSVC 14.51 / Windows SDK 10.0.26100.0, Unity 6000.2.14f1 (Mono + IL2CPP).
 Change a version only when the wire or file layout it names actually changes.
 
-## Commands (PowerShell, from this repo's root)
+## Commands (PowerShell, from `Engine/`)
 - Game: `.\scripts\bom.ps1` (Run) / `Build` / `Test` (220 tests) / `NetTest` / `Smoke*` / `Soak` / `ReplicationSoak`.
 - Client core: `.\scripts\build-client.ps1 -ConfigPath <local.config.json>`, `.\scripts\test-client-core.ps1 -ConfigPath ...`
   (shared, transport, FFI suites; also regenerates `bindings/`).
@@ -40,7 +42,7 @@ Change a version only when the wire or file layout it names actually changes.
   `Package-BomWindows.ps1`, `Start-BomNetwork.ps1`.
 
 ## Always ask before
-Any push or pull request; merging into the Unity default branch; changes to `Documents\BOM` beyond what the task
+Any push or pull request; merging into the Unity default branch; changes to `Engine/` beyond what the task
 states; changes to existing physics or destruction behaviour; actions only the owner can do (system settings).
 
 ## State and open items
