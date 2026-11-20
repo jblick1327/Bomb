@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore the fifteen Odin files behind BOM: a living map of input, destruction, physics, and pixels.">
+  <title>BOM — Anatomy of a sandbox</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="data.js" defer></script><script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="#"><span class="brand-mark">B<span>✳</span>M</span><span class="brand-sub">CODE ATLAS / 01</span></a><span class="top-note"><i></i> ODIN · BOX2D · RAYLIB</span></header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">A SMALL WORLD, TAKEN APART</p><h1>Anatomy of<br>a <em>destruction sandbox.</em></h1><p class="lede">Fifteen files turn a rectangle into a world you can break.<br class="desktop"> Follow the moving parts, from the first click to the last fragment.</p></div>
+      <div class="stats"><div><strong>15</strong><span>source files</span></div><div><strong>2,913</strong><span>lines, excluding tests</span></div><p>One shared Odin package.<br>These are roles, not import boundaries.</p></div>
+    </section>
+    <section class="atlas" aria-label="Interactive source code atlas">
+      <div class="atlas-toolbar"><div class="mode-label">PICK A PATH <span>↘</span></div><div class="modes" aria-label="Guided paths"><button class="mode active" data-mode="explore" aria-pressed="true">Explore the files</button><button class="mode" data-mode="build" aria-pressed="false">Build a world</button><button class="mode" data-mode="blast" aria-pressed="false">Follow a blast <span>↗</span></button><button class="mode" data-mode="frame" aria-pressed="false">Draw a frame</button></div></div>
+      <div id="journey" class="journey" hidden><div><span id="journey-count" class="eyebrow"></span><h2 id="journey-title"></h2><p id="journey-copy"></p></div><div class="journey-controls"><button id="prev" aria-label="Previous step">←</button><button id="play">Play path</button><button id="next" aria-label="Next step">→</button></div><div id="progress" class="progress" aria-label="Path steps"></div></div>
+      <div class="workspace">
+        <div class="map-area"><div class="map-heading"><span>THE WORKING PARTS</span><span id="map-hint">Select a file to follow its connections</span></div><div id="map" class="map"><svg id="wires" aria-hidden="true"></svg><div id="lanes"></div></div><div class="map-key"><span><i class="key-dot selected-dot"></i>Selected file</span><span><i class="key-dot related-dot"></i>Connected role</span><span class="line-key">— conceptual connection</span></div></div>
+        <aside id="inspector" class="inspector" aria-label="Selected file details" aria-live="polite"></aside>
+      </div>
+    </section>
+    <section class="mental-model"><div><p class="eyebrow">THE IDEA THAT MAKES IT CLICK</p><h2>One object.<br> Three representations.</h2><p>The thing you draw, the thing that breaks, and the thing you see have different jobs.</p></div><div class="representations"><article><div class="shape authored"><span></span></div><span class="eyebrow">01 / AUTHORING</span><h3>A rectangle</h3><p><code>editor.odin</code> keeps the undamaged design: bounds, material, and identity. Reset rebuilds from this list.</p></article><article><div class="shape logical"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="eyebrow">02 / SIMULATION</span><h3>A connected graph</h3><p><code>model.odin</code> stores regions and bonds. Destruction changes that graph; Box2D moves the resulting pieces.</p></article><article><div class="shape rendered"><span></span><span></span><span></span><span></span><span></span><span></span></div><span class="eyebrow">03 / PRESENTATION</span><h3>A continuous surface</h3><p><code>render_cache.odin</code> prepares triangles and seams. Rendering can smooth the surface without changing physics.</p></article></div></section>
+    <footer><span>BOM / SOURCE FIELD GUIDE</span><span>Based on the local source · 03 NOV 2026 · tests & verification helpers excluded</span><a href="#">Back to the map ↑</a></footer>
+  </main>
+</body>
+</html>
