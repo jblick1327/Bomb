@@ -279,6 +279,19 @@ namespace Bom.Unity
             InSession = true;
             SessionPort = port;
             Debug.Log("BOM FRONTDOOR LOAD scene=" + scene + " role=" + (host ? "host" : "guest") + " port=" + port);
+#if UNITY_EDITOR
+            // In the Editor the network scenes are not in the project's Build Settings (Darryn's, protected), so Play mode
+            // loads them by path. Built games list them through BomFrontDoorBuilder and take the normal path below.
+            string editorPath = "Assets/BOMIntegration/" + scene + ".unity";
+            if (SceneUtility.GetBuildIndexByScenePath(editorPath) < 0 && File.Exists(editorPath))
+            {
+                UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(
+                    editorPath,
+                    new LoadSceneParameters(LoadSceneMode.Single)
+                );
+                return;
+            }
+#endif
             SceneManager.LoadScene(scene);
         }
 

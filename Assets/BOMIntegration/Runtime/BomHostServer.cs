@@ -75,6 +75,16 @@ namespace Bom.Unity
             )
                 if (path != null && File.Exists(path))
                     return path;
+#if UNITY_EDITOR
+            // In the Editor, GameFolder is the project (repo) root: BOM-server.exe is in Server/ there, and the level files
+            // are the repo's own fixtures (Server/README.md).
+            foreach (string folder in new[] { "levels", "network-yard" })
+            {
+                string path = Path.Combine(GameFolder, "integration", "fixtures", folder, file);
+                if (File.Exists(path))
+                    return path;
+            }
+#endif
             return null;
         }
 
