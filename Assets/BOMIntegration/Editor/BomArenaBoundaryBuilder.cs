@@ -7,7 +7,7 @@ using UnityEngine;
 // G7/G8, OD-1/OD-5: drawn, destructible bedrock. Legacy boundary colliders are mapping metadata only.
 public static class BomArenaBoundaryBuilder
 {
-    public static BomCustomMaterial Bedrock() => new BomCustomMaterial { Name = "bedrock", Base = "stone", Toughness = 1.4f, BlastResistance = 4, Color = new Color32(58, 63, 70, 255) };
+    public static BomCustomMaterial Bedrock() => BomMaterialConfig.Get("bedrock"); // values: integration/fixtures/materials.json (G6b)
 
     static Material RockMaterial()
     {

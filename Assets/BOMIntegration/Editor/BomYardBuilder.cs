@@ -219,22 +219,9 @@ public static class BomYardBuilder
                 new Vector2(-2, 13.565f),
                 new Vector2(2, 13.565f),
             };
-            level.Materials.Add(
-                new BomCustomMaterial
-                {
-                    Name = "earth",
-                    Base = "stone",
-                    Color = new Color32(132, 95, 64, 255),
-                }
-            );
-            level.Materials.Add(
-                new BomCustomMaterial
-                {
-                    Name = "grass",
-                    Base = "stone",
-                    Color = new Color32(103, 153, 70, 255),
-                }
-            );
+            // Values: integration/fixtures/materials.json (G6b).
+            level.Materials.Add(BomMaterialConfig.Get("earth"));
+            level.Materials.Add(BomMaterialConfig.Get("grass"));
             var terrain = Find(scene, "YardLevel");
             var grass = Find(scene, "YardLevel/Grass_Mesh");
             var earth = Find(scene, "YardLevel/Ground_Mesh");

@@ -63,11 +63,8 @@ public static class BomTileLevelBuilder
         },
     };
 
-    // Custom palette entries (native allows 4 per level). Steel per OD-2; earth as C6.
-    static BomCustomMaterial Custom(string name) =>
-        name == "steel" ? new BomCustomMaterial { Name = "steel", Base = "stone", Toughness = 1.25f, BlastResistance = 4, StripThickness = .2f, ShockLoss = 4, Flexibility = .5f, Color = new Color32(52, 66, 86, 255) }
-        : name == "earth" ? new BomCustomMaterial { Name = "earth", Base = "stone", Color = new Color32(132, 95, 64, 255) }
-        : null;
+    // Custom palette entries (native allows 4 per level). Steel per OD-2; earth as C6. Values: integration/fixtures/materials.json (G6b).
+    static BomCustomMaterial Custom(string name) => BomMaterialConfig.Has(name) ? BomMaterialConfig.Get(name) : null;
 
     static readonly string[] BuiltInMaterials = { "stone", "wood", "glass", "rubber" };
 
@@ -418,10 +415,21 @@ public static class BomTileLevelBuilder
                 level.GameplayConfigId = candidate.GameplayConfigId;
                 level.Seed = candidate.Seed;
             }
+        // G6b: a built-in listed in materials.json builtin_overrides is replaced by that level-owned custom material.
+        var overrides = BomMaterialConfig.BuiltinOverrides();
+        foreach (var part in mapped.Parts)
+            if (overrides.TryGetValue(part.Material, out var replacement))
+                part.Material = replacement.Name;
         foreach (string name in mapped.Parts.Select(p => p.Material).Distinct().OrderBy(n => n, StringComparer.Ordinal))
         {
             if (Array.IndexOf(BuiltInMaterials, name) >= 0)
                 continue;
+            var overridden = overrides.Values.FirstOrDefault(m => m.Name == name);
+            if (overridden != null)
+            {
+                level.Materials.Add(overridden);
+                continue;
+            }
             var custom = Custom(name);
             if (custom == null)
                 throw new M.InvariantException("I4", spec.Name, "material '" + name + "' is neither built in nor a known custom");
