@@ -1,0 +1,13 @@
+{
+  "note": "Destruction materials for every exported level. Change a number, re-export (BomArenaBoundaryBuilder.ExportAll), then run the OD-6 settle check before shipping. Ranges: toughness 0.25..4, blast_resistance 0..6, strip_thickness 0.1..0.6, shock_loss 1..12, flexibility 0.2..1. base is stone, wood, glass or rubber. To tune a built-in (stone, wood) on the tile levels, add an entry to builtin_overrides with a new name; parts that use that built-in then use it instead.",
+  "materials": [
+    { "name": "steel",   "base": "stone", "toughness": 1.25, "blast_resistance": 4, "strip_thickness": 0.2, "shock_loss": 4, "flexibility": 0.5, "color": [52, 66, 86] },
+    { "name": "earth",   "base": "stone", "toughness": 1,    "blast_resistance": 3, "strip_thickness": 0.2, "shock_loss": 4, "flexibility": 0.5, "color": [132, 95, 64] },
+    { "name": "grass",   "base": "stone", "toughness": 1,    "blast_resistance": 3, "strip_thickness": 0.2, "shock_loss": 4, "flexibility": 0.5, "color": [103, 153, 70] },
+    { "name": "bedrock", "base": "stone", "toughness": 1.4,  "blast_resistance": 4, "strip_thickness": 0.2, "shock_loss": 4, "flexibility": 0.5, "color": [58, 63, 70] }
+  ],
+  "builtin_overrides_example": [
+    { "builtin": "stone", "name": "tower stone", "base": "stone", "toughness": 0.8, "blast_resistance": 3, "strip_thickness": 0.2, "shock_loss": 4, "flexibility": 0.5, "color": [131, 145, 152] }
+  ],
+  "builtin_overrides": []
+}

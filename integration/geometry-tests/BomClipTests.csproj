@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup>
+<OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><PlatformTarget>x64</PlatformTarget><ImplicitUsings>enable</ImplicitUsings>
+<BomSdkRoot Condition="'$(BomSdkRoot)'==''">$(MSBuildThisFileDirectory)../../Assets/BOMIntegration</BomSdkRoot>
+<UnityCoreModulePath Condition="'$(UnityCoreModulePath)'==''">C:/Program Files/Unity/Hub/Editor/6000.2.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.CoreModule.dll</UnityCoreModulePath>
+</PropertyGroup>
+<ItemGroup>
+<Compile Include="$(BomSdkRoot)/Runtime/BomPrismClipper.cs" Link="BomPrismClipper.cs" />
+<Compile Include="$(BomSdkRoot)/Runtime/BomCapVisibility.cs" Link="BomCapVisibility.cs" />
+<Compile Include="$(BomSdkRoot)/Runtime/BomGeometryJobs.cs" Link="BomGeometryJobs.cs" />
+<Compile Include="$(BomSdkRoot)/Runtime/BomSourceEdgeIndex.cs" Link="BomSourceEdgeIndex.cs" />
+<Compile Include="$(BomSdkRoot)/Runtime/BomExtrusion.cs" Link="BomExtrusion.cs" />
+<Compile Include="$(BomSdkRoot)/Editor/BomCapturedYardCuts.cs" Link="BomCapturedYardCuts.cs" />
+<Reference Include="UnityEngine.CoreModule"><HintPath>$(UnityCoreModulePath)</HintPath></Reference>
+</ItemGroup>
+</Project>

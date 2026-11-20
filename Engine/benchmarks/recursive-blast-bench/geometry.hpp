@@ -1,0 +1,46 @@
+#pragma once
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+#include <span>
+#include <string>
+#include <stdexcept>
+#include <vector>
+
+namespace rb {
+struct V { double x=0,y=0; bool operator==(const V&)const=default; };
+inline V operator+(V a,V b){return {a.x+b.x,a.y+b.y};}
+inline V operator-(V a,V b){return {a.x-b.x,a.y-b.y};}
+inline V operator*(V a,double s){return {a.x*s,a.y*s};}
+inline double dot(V a,V b){return double(a.x)*b.x+double(a.y)*b.y;}
+inline double cross(V a,V b){return double(a.x)*b.y-double(a.y)*b.x;}
+inline double length(V a){return std::sqrt(dot(a,a));}
+using Poly=std::vector<V>;
+using Outline=std::span<const V>;
+inline uint64_t hash64(uint64_t x){x^=x>>30;x*=0xbf58476d1ce4e5b9ULL;x^=x>>27;x*=0x94d049bb133111ebULL;x^=x>>31;return x;}
+inline uint64_t child_id(uint64_t parent,uint32_t ordinal){return hash64(parent^((uint64_t(ordinal)+1)*0x9e3779b97f4a7c15ULL))|1ULL;}
+inline uint8_t seed_for(uint8_t seed,uint64_t id){return seed?uint8_t(1+hash64(id^(uint64_t(seed)*0x9e3779b97f4a7c15ULL))%255):0;}
+inline double signed_area(Outline p){double a=0;for(size_t i=0;i<p.size();++i)a+=cross(p[i],p[(i+1)%p.size()]);return a*.5;}
+inline double area(Outline p){return std::abs(signed_area(p));}
+inline V centroid(Outline p){double a=0,x=0,y=0;for(size_t i=0;i<p.size();++i){V u=p[i],v=p[(i+1)%p.size()];double k=cross(u,v);a+=k;x+=(double(u.x)+v.x)*k;y+=(double(u.y)+v.y)*k;}if(std::abs(a)<1e-20){V c{};for(V v:p)c=c+v;return c*(1.f/p.size());}return {x/(3*a),y/(3*a)};}
+inline bool convex(Outline p){double sign=0;for(size_t i=0;i<p.size();++i){double c=cross(p[(i+1)%p.size()]-p[i],p[(i+2)%p.size()]-p[(i+1)%p.size()]);if(std::abs(c)<1e-10)continue;if(sign==0)sign=c;else if(sign*c<0)return false;}return p.size()>=3;}
+inline std::vector<V> hull(Outline p){std::vector<V>s(p.begin(),p.end()),h;std::sort(s.begin(),s.end(),[](V a,V b){return a.x<b.x||(a.x==b.x&&a.y<b.y);});s.erase(std::unique(s.begin(),s.end()),s.end());if(s.size()<3)return s;h.reserve(s.size()*2);for(V v:s){while(h.size()>1&&cross(h.back()-h[h.size()-2],v-h.back())<=0)h.pop_back();h.push_back(v);}size_t k=h.size()+1;for(size_t i=s.size()-1;i-->0;){V v=s[i];while(h.size()>=k&&cross(h.back()-h[h.size()-2],v-h.back())<=0)h.pop_back();h.push_back(v);}h.pop_back();return h;}
+inline float width(Outline p){auto h=hull(p);if(h.size()<3)return 0;double result=1e100;for(size_t i=0;i<h.size();++i){V d=h[(i+1)%h.size()]-h[i];double n=length(d);if(n<1e-15)continue;double lo=1e100,hi=-1e100;for(V v:h){double t=(-double(d.y)*v.x+double(d.x)*v.y)/n;lo=std::min(lo,t);hi=std::max(hi,t);}result=std::min(result,hi-lo);}return float(result);}
+struct Seg{V a,b;};
+inline bool overlap(Seg a,Seg b,Seg& out){V d=a.b-a.a;double len=length(d);if(len<1e-8)return false;if(std::abs(cross(d,b.a-a.a))/len>2e-9||std::abs(cross(d,b.b-a.a))/len>2e-9)return false;V u=d*(1/len);double t0=dot(b.a-a.a,u),t1=dot(b.b-a.a,u);double lo=std::max(0.,std::min(t0,t1)),hi=std::min(len,std::max(t0,t1));if(hi-lo<=2e-9)return false;out={a.a+u*lo,a.a+u*hi};return true;}
+struct Shared{float length=0;V point{};};
+inline Shared shared(Outline a,Outline b){double total=0,x=0,y=0;for(size_t i=0;i<a.size();++i)for(size_t j=0;j<b.size();++j){Seg s;if(overlap({a[i],a[(i+1)%a.size()]},{b[j],b[(j+1)%b.size()]},s)){double len=length(s.b-s.a);total+=len;x+=(double(s.a.x)+s.b.x)*.5*len;y+=(double(s.a.y)+s.b.y)*.5*len;}}if(total==0)return {};return {float(total),{x/total,y/total}};}
+inline bool inherits(Outline a,Outline b,Outline olda,Outline oldb){for(size_t i=0;i<a.size();++i)for(size_t j=0;j<b.size();++j){Seg cur;if(!overlap({a[i],a[(i+1)%a.size()]},{b[j],b[(j+1)%b.size()]},cur))continue;for(size_t k=0;k<olda.size();++k)for(size_t l=0;l<oldb.size();++l){Seg old,out;if(overlap({olda[k],olda[(k+1)%olda.size()]},{oldb[l],oldb[(l+1)%oldb.size()]},old)&&overlap(cur,old,out))return true;}}return false;}
+inline bool inside_triangle(V p,V a,V b,V c,double orientation){return cross(b-a,p-a)*orientation>=-1e-10&&cross(c-b,p-b)*orientation>=-1e-10&&cross(a-c,p-c)*orientation>=-1e-10;}
+inline std::vector<Poly> triangles(Outline input){Poly p(input.begin(),input.end());bool changed=true;while(changed&&p.size()>3){changed=false;for(size_t i=0;i<p.size();++i){V a=p[(i+p.size()-1)%p.size()],b=p[i],c=p[(i+1)%p.size()];if(length(b-a)<1e-7||(std::abs(cross(b-a,c-b))<1e-10&&dot(b-a,b-c)<=0)){p.erase(p.begin()+i);changed=true;break;}}}std::vector<Poly> out;if(p.size()<3)return out;std::vector<size_t>idx(p.size());for(size_t i=0;i<idx.size();++i)idx[i]=i;double sign=signed_area(p)>=0?1:-1;while(idx.size()>3){bool found=false;for(size_t k=0;k<idx.size();++k){size_t i=idx[(k+idx.size()-1)%idx.size()],j=idx[k],l=idx[(k+1)%idx.size()];V a=p[i],b=p[j],c=p[l];if(cross(b-a,c-b)*sign<=1e-10)continue;bool contains=false;for(size_t n:idx)if(n!=i&&n!=j&&n!=l&&inside_triangle(p[n],a,b,c,sign)){contains=true;break;}if(contains)continue;out.push_back({a,b,c});idx.erase(idx.begin()+k);found=true;break;}if(!found)throw std::runtime_error("triangulation did not complete");}out.push_back({p[idx[0]],p[idx[1]],p[idx[2]]});return out;}
+inline Poly clip(Outline p,int axis,float cut,bool low){Poly out;for(size_t i=0;i<p.size();++i){V a=p[i],b=p[(i+1)%p.size()];double av=(axis?a.y:a.x)-cut,bv=(axis?b.y:b.x)-cut;if(!low){av=-av;bv=-bv;}bool ia=av<=0,ib=bv<=0;if(ia)out.push_back(a);if(ia!=ib){double t=av/(av-bv);out.push_back(a+(b-a)*t);}}if(out.size()>1&&length(out.front()-out.back())<1e-10)out.pop_back();return out;}
+inline void insert_endpoint(Poly& p,V point){for(V v:p)if(length(v-point)<1e-10)return;for(size_t i=0;i<p.size();++i){V a=p[i],d=p[(i+1)%p.size()]-a;double len=length(d);if(len<1e-10)continue;double t=dot(point-a,d)/(len*len);if(t>0&&t<1&&std::abs(cross(d,point-a))/len<1e-9){p.insert(p.begin()+i+1,point);return;}}}
+inline void insert_mid(Poly& p,Seg s,V mid){insert_endpoint(p,s.a);insert_endpoint(p,s.b);for(size_t i=0;i<p.size();++i){V a=p[i],b=p[(i+1)%p.size()];if((length(a-s.a)<1e-9&&length(b-s.b)<1e-9)||(length(a-s.b)<1e-9&&length(b-s.a)<1e-9)){p.insert(p.begin()+i+1,mid);return;}}std::string details;for(V v:p)details+=" ("+std::to_string(v.x)+","+std::to_string(v.y)+")";throw std::runtime_error("shared boundary installation failed:"+details+" segment "+std::to_string(s.a.x)+","+std::to_string(s.a.y)+" -> "+std::to_string(s.b.x)+","+std::to_string(s.b.y)+" with "+std::to_string(p.size())+" vertices");}
+inline void displace(std::vector<Poly>& p,uint8_t seed){struct B{size_t a,b;Seg s;};std::vector<B>bounds;for(size_t i=0;i<p.size();++i)for(size_t j=i+1;j<p.size();++j)for(size_t k=0;k<p[i].size();++k)for(size_t l=0;l<p[j].size();++l){Seg s;if(overlap({p[i][k],p[i][(k+1)%p[i].size()]},{p[j][l],p[j][(l+1)%p[j].size()]},s))bounds.push_back({i,j,s});}for(size_t i=0;i<bounds.size();++i){auto b=bounds[i];V d=b.s.b-b.s.a;float len=length(d);double amp=std::min(double(len)*.04,std::min(area(p[b.a]),area(p[b.b]))/len*.08);V base=(b.s.a+b.s.b)*.5;for(size_t index:{b.a,b.b}){auto&q=p[index];for(size_t j=0;j<q.size();++j){V a=q[j],e=q[(j+1)%q.size()]-a;double e2=dot(e,e);if(e2<1e-24)continue;Seg common;if(overlap({a,q[(j+1)%q.size()]},b.s,common))continue;double t=std::clamp(dot(base-a,e)/e2,0.,1.);amp=std::min(amp,length(base-(a+e*t))*.2);}}if(seed_for(seed,i+1)%2==0)amp=-amp;V mid=(b.s.a+b.s.b)*.5f+V{-d.y/len,d.x/len}*amp;insert_mid(p[b.a],b.s,mid);insert_mid(p[b.b],b.s,mid);}}
+struct Recipe{float connection_strength,subdivision_strength,flexibility;uint32_t count;float aspect;bool triangulate;};
+inline std::vector<Poly> generate(Outline parent,const Recipe&r,uint8_t seed){std::vector<Poly>out;if(!seed)return out;if(!convex(parent)||r.triangulate)out=triangles(parent);else out.emplace_back(parent.begin(),parent.end());size_t target=std::max(size_t(r.count),out.size());while(out.size()<target){size_t chosen=0;double largest=0;for(size_t i=0;i<out.size();++i)if(double a=area(out[i]);a>largest){largest=a;chosen=i;}if(largest<1e-12)break;V lo{1e30f,1e30f},hi{-1e30f,-1e30f};for(V v:out[chosen]){lo.x=std::min(lo.x,v.x);lo.y=std::min(lo.y,v.y);hi.x=std::max(hi.x,v.x);hi.y=std::max(hi.y,v.y);}int axis=(hi.x-lo.x)<(hi.y-lo.y)*std::max(r.aspect,.1f);float fraction=.4f+.2f*float(seed_for(seed,out.size()))/255;float cut=axis?lo.y+(hi.y-lo.y)*fraction:lo.x+(hi.x-lo.x)*fraction;Poly a=clip(out[chosen],axis,cut,true),b=clip(out[chosen],axis,cut,false);if(a.size()<3||b.size()<3||area(a)<1e-12||area(b)<1e-12)break;out[chosen]=std::move(a);out.push_back(std::move(b));}displace(out,seed);if(r.triangulate){std::vector<Poly>tris;for(auto&p:out){auto t=triangles(p);for(auto&q:t)tris.push_back(std::move(q));}out=std::move(tris);}if(out.size()<2)return {};double sum=0;for(auto&p:out)sum+=area(p);if(std::abs(sum-area(parent))>std::max(2e-6,area(parent)*2e-4))throw std::runtime_error("generation area mismatch");return out;}
+inline bool proper_intersect(V a,V b,V c,V d){double x=cross(b-a,c-a),y=cross(b-a,d-a),u=cross(d-c,a-c),v=cross(d-c,b-c);return x*y<-1e-14&&u*v<-1e-14;}
+inline bool simple(Outline p){if(p.size()<3||area(p)<=0)return false;for(size_t i=0;i<p.size();++i)for(size_t j=i+1;j<p.size();++j){if(j==i+1||(i==0&&j+1==p.size()))continue;if(proper_intersect(p[i],p[(i+1)%p.size()],p[j],p[(j+1)%p.size()]))return false;}return true;}
+}
