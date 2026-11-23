@@ -1,5 +1,6 @@
 package ffi
 
+import "core:math"
 import "core:os"
 import "core:strings"
 import "core:sync"
@@ -45,14 +46,14 @@ test_pump_clock_matches_managed_timebase :: proc(t:^testing.T) {
 test_pump_start_rules_and_old_stats_size :: proc(t:^testing.T) {
  info:=BomCreateInfo{struct_size=u32(size_of(BomCreateInfo)),version=1};handle:u64
  testing.expect(t,bom_client_create(&info,&handle)==OK)
- testing.expect(t,bom_client_start_pump(handle)==NOT_CONNECTED)
+ testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==NOT_CONNECTED)
  old:=BomStats{struct_size=u32(offset_of(BomStats,pump_running)),version=1}
  testing.expect(t,bom_client_get_stats(handle,&old)==OK && old.struct_size==u32(offset_of(BomStats,pump_running)),"1.6-sized stats still accepted")
  short:=BomStats{struct_size=u32(offset_of(BomStats,pump_running))-8,version=1}
  testing.expect(t,bom_client_get_stats(handle,&short)==BAD_ARGUMENT)
  testing.expect(t,bom_client_destroy(handle)==OK)
  h2,s:=pump_fake_slot(t,7001)
- testing.expect(t,bom_client_start_pump(h2)==OK && bom_client_start_pump(h2)==OK,"start is idempotent")
+ testing.expect(t,bom_client_start_pump(h2,bom_clock_now())==OK && bom_client_start_pump(h2,bom_clock_now())==OK,"start is idempotent")
  testing.expect(t,pump_wait_ticks(s,2))
  stats:=pump_stats(t,h2)
  testing.expect(t,stats.pump_running==1||stats.pump_running==2)
@@ -63,7 +64,7 @@ test_pump_start_rules_and_old_stats_size :: proc(t:^testing.T) {
 @(test)
 test_pump_acquire_hold_blocks_pump_then_resumes :: proc(t:^testing.T) {
  handle,s:=pump_fake_slot(t,7100)
- testing.expect(t,bom_client_start_pump(handle)==OK)
+ testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==OK)
  testing.expect(t,pump_wait_ticks(s,3))
  sample:=BomSample{struct_size=u32(size_of(BomSample)),version=1}
  // Acquire just before the pump's next wake so it waits for (almost) the whole hold.
@@ -95,7 +96,7 @@ test_pump_destroy_and_disconnect_mid_pump_1000 :: proc(t:^testing.T) {
  // destroy itself asserts Odin live bytes 0 and Box2D back at its baseline (IO_ERROR otherwise).
  for i in 0..<1000 {
   handle,s:=pump_fake_slot(t,u32(10000+i))
-  testing.expect(t,bom_client_start_pump(handle)==OK)
+  testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==OK)
   switch i%5 {
   case 0: // teardown while the thread is starting or waiting for its first lock
   case 1: time.sleep(50*time.Microsecond)
@@ -125,7 +126,7 @@ test_pump_keeps_sending_through_main_thread_gaps :: proc(t:^testing.T) {
  defer testing.expect(t,bom_client_destroy(handle)==OK)
  connection:=BomConnectInfo{struct_size=u32(size_of(BomConnectInfo)),version=1,ipv4=0x7f000001,port=47391}
  testing.expect(t,bom_client_connect(handle,&connection)==OK)
- testing.expect(t,bom_client_start_pump(handle)==OK)
+ testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==OK)
  s,_:=get_slot(handle)
  // Unity-like frames: update, then acquire/copy/release/ack.
  frame :: proc(t:^testing.T,handle:u64) -> bool {
@@ -175,4 +176,31 @@ test_pump_keeps_sending_through_main_thread_gaps :: proc(t:^testing.T) {
  final:=pump_stats(t,handle)
  testing.expectf(t,final.stall_count==0,"no stalls with the pump running (%d)",final.stall_count)
  testing.expect(t,bom_client_disconnect(handle)==OK)
+}
+
+@(test)
+test_pump_runs_on_the_callers_timebase :: proc(t:^testing.T) {
+ // Unity's Mono Stopwatch counts the same QPC ticks from another origin (seen in a Rounds
+ // player: 199,415 s apart). Input timestamps are in that timebase, so the pump must be too.
+ MONO_ORIGIN :: f64(-199415.483)
+ unity_now :: proc() -> f64 { return bom_clock_now()+MONO_ORIGIN }
+ handle,s:=pump_fake_slot(t,7200)
+ testing.expect(t,bom_client_start_pump(handle,unity_now())==OK)
+ testing.expect(t,pump_wait_ticks(s,2))
+ testing.expect(t,bom_client_update(handle,unity_now())==OK)
+ testing.expect(t,bom_client_set_held_input(handle,unity_now(),1)==OK)
+ testing.expect(t,bom_client_enqueue_action(handle,unity_now()+0.02,1,1)==OK)
+ testing.expect(t,pump_wait_ticks(s,pump_read(s,&s.pump_ticks)+4))
+ sync.mutex_lock(&s.lock)
+ gap:=s.next_tick-unity_now()
+ testing.expectf(t,gap>-0.02 && gap<0.05,"pump ticks in Unity's timebase (next_tick - now = %.4f s)",gap)
+ testing.expectf(t,s.client.stats.blasts_dropped==0 && len(s.actions)==0,"an action at Unity's now is applied, not expired (dropped %d, queued %d)",s.client.stats.blasts_dropped,len(s.actions))
+ testing.expect(t,s.held_move==1 && s.heartbeat_neutral_ticks==0,"held input applies at its own tick")
+ testing.expect(t,s.stall_count==0)
+ sync.mutex_unlock(&s.lock)
+ testing.expect(t,bom_client_start_pump(handle,math.nan_f64())==OK,"already running: start is a no-op")
+ testing.expect(t,bom_client_destroy(handle)==OK)
+ h2,_:=pump_fake_slot(t,7201)
+ testing.expect(t,bom_client_start_pump(h2,math.inf_f64(1))==BAD_ARGUMENT)
+ testing.expect(t,bom_client_destroy(h2)==OK)
 }

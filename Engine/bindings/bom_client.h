@@ -434,6 +434,6 @@ __declspec(dllimport) unsigned int __cdecl bom_client_expect_gameplay_manifest(u
 __declspec(dllimport) unsigned int __cdecl bom_client_acquire_catalog(unsigned long long handle, unsigned long long sample_sequence, BomCatalogInfo* catalog);
 __declspec(dllimport) unsigned int __cdecl bom_client_get_round(unsigned long long handle, unsigned long long sample_sequence, BomRoundInfo* info);
 __declspec(dllimport) unsigned int __cdecl bom_client_set_join_options(unsigned long long handle, unsigned int flags);
-__declspec(dllimport) unsigned int __cdecl bom_client_start_pump(unsigned long long handle);
+__declspec(dllimport) unsigned int __cdecl bom_client_start_pump(unsigned long long handle, double now);
 __declspec(dllimport) double __cdecl bom_clock_now(void);
 #endif

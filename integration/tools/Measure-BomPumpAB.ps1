@@ -31,6 +31,7 @@ foreach($file in (Get-ChildItem -LiteralPath $Session -Filter 'player-*-net.json
   pump_ticks=$last.pump_ticks;pump_late_count=$last.pump_late_count;pump_max_gap_ms=$last.pump_max_gap_ms
   pump_lock_wait_max_ms=$last.pump_lock_wait_max_ms;pump_lock_wait_p99_ms=$last.pump_lock_wait_p99_ms
   main_lock_wait_max_ms=$last.main_lock_wait_max_ms;main_lock_wait_p99_ms=$last.main_lock_wait_p99_ms
+  clock_drift_ms_max=(($rows|ForEach-Object {[Math]::Abs([double]$_.clock_drift_ms)}|Measure-Object -Maximum).Maximum)
   heartbeat_neutral_ticks=$last.heartbeat_neutral_ticks;max_frame_ms=(($rows|Measure-Object max_frame_ms -Maximum).Maximum)
  }
 }

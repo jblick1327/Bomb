@@ -438,7 +438,7 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_acquire_catalog(ulong handle, ulong sample_sequence, ref BomCatalogInfo catalog);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_round(ulong handle, ulong sample_sequence, ref BomRoundInfo info);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_join_options(ulong handle, uint flags);
- [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_start_pump(ulong handle);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_start_pump(ulong handle, double now);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern double bom_clock_now();
 }
 }

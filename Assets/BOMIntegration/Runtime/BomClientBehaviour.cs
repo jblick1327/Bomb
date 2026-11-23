@@ -343,15 +343,13 @@ namespace Bom.Unity
                 BomSession.Check(BomNative.bom_build_info(ref build));
                 identity =
                     "Native " + build.source_build_tag + " / protocol " + build.game_protocol;
-                double clockGap = Math.Abs(BomNative.bom_clock_now() - BomSession.Now);
-                if (clockGap >= 0.001)
-                    throw new InvalidOperationException(
-                        "Native pump clock differs from BomSession.Now by " + clockGap * 1000 + " ms"
-                    );
+                // Mono's Stopwatch counts QPC ticks from its own origin; the native pump learns the
+                // offset from BomSession.Now (bom_client_start_pump), so only the rate must agree.
+                double clockOrigin = BomSession.Now - BomNative.bom_clock_now();
                 Debug.Log(
-                    "BOM UNITY ABI PASS: 23 layouts, offsets, alignment; clock agreement "
-                        + (clockGap * 1000).ToString("F3", System.Globalization.CultureInfo.InvariantCulture)
-                        + " ms; pump thread "
+                    "BOM UNITY ABI PASS: 23 layouts, offsets, alignment; timebase origin "
+                        + clockOrigin.ToString("F3", System.Globalization.CultureInfo.InvariantCulture)
+                        + " s from QPC; pump thread "
                         + (BomSession.PumpThread ? "on" : "off")
                         + "; "
                         + identity

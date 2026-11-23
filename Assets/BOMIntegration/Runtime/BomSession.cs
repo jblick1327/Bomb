@@ -168,7 +168,7 @@ namespace Bom.Unity
                 };
                 Check(BomNative.bom_client_connect(Handle, ref info));
                 if (PumpThread)
-                    Check(BomNative.bom_client_start_pump(Handle));
+                    Check(BomNative.bom_client_start_pump(Handle, Now)); // the pump adopts this timebase
             }
             finally
             {

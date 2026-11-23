@@ -76,7 +76,9 @@ Client_Slot :: struct {
  pump_ticks,pump_late_count,heartbeat_neutral_ticks: u64,
  pump_max_gap,pump_lock_wait_max,main_lock_wait_max: f64,
  pump_wait_hist,main_wait_hist: [WAIT_BUCKETS]u32,
- last_input_qpc,main_now: f64,
+ // Unity's timebase is QPC on CoreCLR but has its own origin on Mono, so the pump runs on
+ // qpc_now()+clock_offset (see slot_now). last_input is in that timebase.
+ last_input,main_now,clock_offset: f64,
  text_copy: [1024]u8,
 }
 slots: [16]Client_Slot
@@ -205,7 +207,7 @@ bom_client_disconnect :: proc "c" (handle:u64) -> u32 {
 @(export)
 bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32 {
  s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
- s.last_input_qpc=qpc_now()
+ s.last_input=slot_now(s)
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(move) { return BAD_ARGUMENT }
  if s.has_held_timestamp && timestamp<s.last_held_timestamp { return BAD_ARGUMENT }
@@ -218,7 +220,7 @@ bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32
 @(export)
 bom_client_enqueue_jump :: proc "c" (handle:u64,timestamp:f64) -> u32 {
  s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
- s.last_input_qpc=qpc_now()
+ s.last_input=slot_now(s)
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) { return BAD_ARGUMENT }
  if len(s.jumps)>=64 { return OVERFLOW }
@@ -228,7 +230,7 @@ bom_client_enqueue_jump :: proc "c" (handle:u64,timestamp:f64) -> u32 {
 @(export)
 bom_client_enqueue_action :: proc "c" (handle:u64,timestamp:f64,x,y:f32) -> u32 {
  s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
- s.last_input_qpc=qpc_now()
+ s.last_input=slot_now(s)
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(x) || !core.finite(y) { return BAD_ARGUMENT }
  if len(s.actions)>=64 { return OVERFLOW }
@@ -270,7 +272,7 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
  c.human_move=s.held_move
  // Pump running and Unity silent (Editor pause, frozen main thread): keep sending, but neutral.
- if s.pump!=nil && s.last_now-s.last_input_qpc>PUMP_INPUT_HEARTBEAT { c.human_move=0;s.heartbeat_neutral_ticks+=1 }
+ if s.pump!=nil && s.last_now-s.last_input>PUMP_INPUT_HEARTBEAT { c.human_move=0;s.heartbeat_neutral_ticks+=1 }
  if len(s.jumps)>0 && s.jumps[0]<=s.next_tick+1e-9 { c.human_jump_pending=true;ordered_remove(&s.jumps,0) }
  for len(s.actions)>0 && s.actions[0].timestamp<=s.next_tick+1e-9 {
   if len(c.blasts)>=core.NET_MAX_BLASTS { s.input_error=OVERFLOW;return }
@@ -289,7 +291,9 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
  if s.pump!=nil {
   // The pump thread owns the socket and the fixed steps; this call only reports its
   // failures, feeds the input heartbeat and records Unity's frame time for sampling.
-  s.main_now=now;s.last_input_qpc=qpc_now()
+  // A stale `now` only makes now-qpc smaller, so keep the largest sample (in capped steps).
+  sample:=now-qpc_now();if sample>s.clock_offset { s.clock_offset=min(sample,s.clock_offset+0.001) }
+  s.main_now=now;s.last_input=slot_now(s)
   if s.pump_status!=OK { code:=s.pump_status;reason:=strings.clone(s.pump_reason);defer delete(reason);return fail_client(s,code,reason) }
   return OK
  }

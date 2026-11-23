@@ -14,7 +14,7 @@ namespace Bom.Unity
         static readonly string Path;
         public static readonly bool On;
         static StreamWriter writer;
-        static double nextRow, lastFrame, maxFrame;
+        static double nextRow, lastFrame, maxFrame, origin = double.NaN;
         static uint lastStatus = uint.MaxValue;
         static ulong modeSwitches;
         static readonly StringBuilder line = new StringBuilder(512);
@@ -49,6 +49,10 @@ namespace Bom.Unity
             if (BomNative.bom_client_get_stats(session.Handle, ref stats) != 0)
                 return;
             var p = session.Prediction;
+            // Rate check between Unity's timebase and the native QPC clock: drift from the first row.
+            double gap = BomSession.Now - BomNative.bom_clock_now();
+            if (double.IsNaN(origin))
+                origin = gap;
             line.Clear();
             line.Append('{');
             Field("t", now);
@@ -73,6 +77,7 @@ namespace Bom.Unity
             Field("main_lock_wait_p99_ms", stats.main_lock_wait_p99_ms);
             Field("heartbeat_neutral_ticks", stats.heartbeat_neutral_ticks);
             Field("debug_hitches", BomDebugHitch.Count);
+            Field("clock_drift_ms", (gap - origin) * 1000);
             Field("max_frame_ms", maxFrame, last: true);
             line.Append('}');
             maxFrame = 0;

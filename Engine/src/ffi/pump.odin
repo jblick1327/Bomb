@@ -25,7 +25,8 @@ PUMP_INPUT_HEARTBEAT :: 0.25 // seconds without an input call before held move g
 PUMP_LATE :: 0.004           // a timer wake this late counts in pump_late_count
 WAIT_BUCKETS :: 64           // 0.25 ms lock-wait histogram buckets; the last one is overflow
 
-// Same timebase as BomSession.Now: (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency.
+// Raw QPC seconds. On CoreCLR this equals BomSession.Now; Unity's Mono Stopwatch counts the same
+// ticks from another origin, so each slot adds clock_offset (slot_now) learned from Unity's `now`.
 qpc_now :: proc "contextless" () -> f64 {
 	if qpc_frequency == 0 {
 		f: w.LARGE_INTEGER
@@ -39,6 +40,9 @@ qpc_now :: proc "contextless" () -> f64 {
 
 @(export)
 bom_clock_now :: proc "c" () -> f64 { return qpc_now() }
+
+// The slot's clock in the caller's timebase (the `now` Unity passes to update and input calls).
+slot_now :: proc "contextless" (s: ^Client_Slot) -> f64 { return qpc_now() + s.clock_offset }
 
 record_wait :: proc "contextless" (hist: ^[WAIT_BUCKETS]u32, max_ms: ^f64, seconds: f64) {
 	ms := max(seconds, 0) * 1000
@@ -121,7 +125,7 @@ stop_pump :: proc(s: ^Client_Slot) {
 }
 
 @(export)
-bom_client_start_pump :: proc "c" (handle: u64) -> u32 {
+bom_client_start_pump :: proc "c" (handle: u64, now: f64) -> u32 {
 	s, status, held := enter(handle)
 	if status != OK { return status }
 	defer leave(s, held)
@@ -129,11 +133,13 @@ bom_client_start_pump :: proc "c" (handle: u64) -> u32 {
 	if s.acquired { return BUSY }
 	if !s.live { return NOT_CONNECTED }
 	if s.pump != nil { return OK }
+	if math.is_nan(now) || math.is_inf(now) { return BAD_ARGUMENT }
+	s.clock_offset = now - qpc_now()
 	s.pump_status = OK
 	s.pump_ticks = 0; s.pump_late_count = 0; s.pump_max_gap = 0; s.pump_high_res = false
 	s.pump_lock_wait_max = 0; s.main_lock_wait_max = 0; s.pump_wait_hist = {}; s.main_wait_hist = {}
 	s.heartbeat_neutral_ticks = 0
-	s.last_input_qpc = qpc_now(); s.main_now = s.last_input_qpc
+	s.last_input = slot_now(s); s.main_now = now
 	sync.atomic_store(&s.pump_stop, false)
 	s.pump_stop_event = w.CreateEventW(nil, true, false, nil)
 	if s.pump_stop_event == nil { return IO_ERROR }
@@ -193,7 +199,8 @@ pump_main :: proc(t: ^thread.Thread) {
 		}
 		record_wait(&s.pump_wait_hist, &s.pump_lock_wait_max, waited)
 		s.pump_high_res = high
-		now := qpc_now()
+		offset := s.clock_offset // read under the lock; the owner thread refines it
+		now := qpc_now() + offset
 		// A socket wake before the tick only receives; the timer wake steps and sends.
 		full := due == 0 || now >= due - 0.0002
 		if full {
@@ -213,7 +220,7 @@ pump_main :: proc(t: ^thread.Thread) {
 		free_all(context.temp_allocator)
 		if status != OK { break }
 		if full { due = next }
-		remaining := max(due - qpc_now(), 0.0002)
+		remaining := max(due - (qpc_now() + offset), 0.0002)
 		wait_ms := u32(100) // safety net only; the timer or an event normally wakes first
 		if timer != nil {
 			relative := w.LARGE_INTEGER(-i64(remaining * 1e7))
