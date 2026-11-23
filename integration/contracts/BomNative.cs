@@ -129,6 +129,16 @@ namespace Bom.Native {
  public ulong owned_bytes;
  public ulong peak_owned_bytes;
  public ulong live_allocations;
+ public uint pump_running;
+ public uint pump_late_count;
+ public ulong pump_ticks;
+ public double pump_max_gap_ms;
+ public double pump_lock_wait_max_ms;
+ public double main_lock_wait_max_ms;
+ public double pump_lock_wait_p99_ms;
+ public double main_lock_wait_p99_ms;
+ public uint interp_delay_ticks;
+ public uint heartbeat_neutral_ticks;
 }
 [StructLayout(LayoutKind.Sequential)] public struct BomError {
  public uint struct_size;
@@ -396,7 +406,7 @@ namespace Bom.Native {
 }
 public static class BomNative {
  public const uint AbiVersion = 1;
- public const uint AbiMinorVersion = 6;
+ public const uint AbiMinorVersion = 7;
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_abi_version();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern ulong bom_build_tag();
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_create(ref BomCreateInfo info, ref ulong handle);
@@ -428,5 +438,7 @@ public static class BomNative {
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_acquire_catalog(ulong handle, ulong sample_sequence, ref BomCatalogInfo catalog);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_get_round(ulong handle, ulong sample_sequence, ref BomRoundInfo info);
  [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_set_join_options(ulong handle, uint flags);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern uint bom_client_start_pump(ulong handle, double now);
+ [DllImport("bomcore", CallingConvention=CallingConvention.Cdecl)] public static extern double bom_clock_now();
 }
 }

@@ -170,7 +170,7 @@ historical reset-under-load soak and current follow-up status are linked in
 ## N4 items and D12 graze next to cover (native, 2026-11-11)
 
 Owner decisions D6 (items) and D12 (graze next to cover), approved 2026-11-11.
-Native protocol 9, round snapshot format 4, gameplay config 5 (unchanged), C ABI 1.6,
+Native protocol 9, round snapshot format 4, gameplay config 5 (unchanged), C ABI 1.7 (pump thread; no rule change),
 level format 4, canonical topology 3. Unity picks this up in E1-N4.
 
 **D12.** If a capsule reaches inside the lethal radius but cover hides every part of it
