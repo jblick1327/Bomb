@@ -52,6 +52,12 @@ namespace Bom.Unity
             public long cache_cpu,
                 cache_gpu,
                 buffers;
+            public uint pump_running,
+                pump_late;
+            public ulong pump_ticks;
+            public double pump_max_gap_ms,
+                pump_lock_wait_max_ms,
+                main_lock_wait_max_ms;
         }
 
         [Serializable]
@@ -346,6 +352,12 @@ namespace Bom.Unity
                     && sample.event_count == 0,
                 pooled_actors = client.PooledActorCount,
                 idle_actors = client.IdleActorCount,
+                pump_running = stats.pump_running,
+                pump_late = stats.pump_late_count,
+                pump_ticks = stats.pump_ticks,
+                pump_max_gap_ms = stats.pump_max_gap_ms,
+                pump_lock_wait_max_ms = stats.pump_lock_wait_max_ms,
+                main_lock_wait_max_ms = stats.main_lock_wait_max_ms,
             };
             row.source_intact = client.IntactSources;
             row.source_fragments = client.FragmentSources;

@@ -5,6 +5,8 @@ import "core:math"
 import "core:mem"
 import "core:strings"
 import "core:fmt"
+import "core:sync"
+import "core:thread"
 import w "core:sys/windows"
 import b2 "vendor:box2d"
 import nc "../netcode"
@@ -63,6 +65,19 @@ Client_Slot :: struct {
  topology_sequence,topology_accepted,topology_from,accepted_revision: u64,
  accepted_epoch: u32,
  last_connection_state: u32,
+ // Pump thread (ABI 1.7). lock guards everything above; see pump.odin for the lock order.
+ lock: sync.Mutex,
+ pump: ^thread.Thread,
+ pump_stop: bool,
+ pump_stop_event,pump_socket_event: w.HANDLE,
+ pump_generation,pump_status: u32,
+ pump_reason: string,
+ pump_high_res: bool,
+ pump_ticks,pump_late_count,heartbeat_neutral_ticks: u64,
+ pump_max_gap,pump_lock_wait_max,main_lock_wait_max: f64,
+ pump_wait_hist,main_wait_hist: [WAIT_BUCKETS]u32,
+ last_input_qpc,main_now: f64,
+ text_copy: [1024]u8,
 }
 slots: [16]Client_Slot
 owner_thread: u32
@@ -77,6 +92,7 @@ get_slot :: proc "contextless" (handle: u64) -> (^Client_Slot,u32) {
  return s,OK
 }
 close_client :: proc(s:^Client_Slot) {
+ stop_pump(s)
  if s.live {
   s.round_credentials=s.client.round_credentials
   s.last_connection_state=u32(s.client.nc_client.state)
@@ -141,15 +157,16 @@ bom_client_create :: proc "c" (info:^BomCreateInfo,handle:^u64) -> u32 {
 }
 @(export)
 bom_client_destroy :: proc "c" (handle:u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };context=s.ctx
  if s.acquired { return BUSY }
  close_client(s)
+ delete(s.pump_reason)
  delete(s.held);delete(s.jumps);delete(s.actions);delete(s.cells);delete(s.vertices);delete(s.poses);delete(s.events)
  delete(s.bindings);delete(s.sources)
  delete(s.last_error)
  remaining:=s.allocations.current_memory_allocated
  mem.tracking_allocator_destroy(&s.allocations)
- generation:=s.generation;s^=Client_Slot{generation=generation}
+ generation:=s.generation;leave(s,held);s^=Client_Slot{generation=generation}
  any_active:=false;for slot in slots {if slot.active {any_active=true;break}}
  if !any_active {
   physics_bytes:=b2.GetByteCount();context=runtime.default_context()
@@ -161,7 +178,7 @@ bom_client_destroy :: proc "c" (handle:u64) -> u32 {
 }
 @(export)
 bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY }
  if info==nil || info.struct_size<u32(size_of(BomConnectInfo)) || info.version!=1 || info.port==0 || info.port>65535 || info.token_length>128 || (info.token_length>0 && info.token==nil) || info.reserved!=0 { return BAD_ARGUMENT }
  close_client(s)
@@ -182,12 +199,13 @@ bom_client_connect :: proc "c" (handle:u64,info:^BomConnectInfo) -> u32 {
 }
 @(export)
 bom_client_disconnect :: proc "c" (handle:u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };close_client(s);s.last_connection_state=u32(nc.Client_State.Disconnected);return OK
 }
 @(export)
 bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ s.last_input_qpc=qpc_now()
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(move) { return BAD_ARGUMENT }
  if s.has_held_timestamp && timestamp<s.last_held_timestamp { return BAD_ARGUMENT }
@@ -199,7 +217,8 @@ bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32
 }
 @(export)
 bom_client_enqueue_jump :: proc "c" (handle:u64,timestamp:f64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ s.last_input_qpc=qpc_now()
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) { return BAD_ARGUMENT }
  if len(s.jumps)>=64 { return OVERFLOW }
@@ -208,7 +227,8 @@ bom_client_enqueue_jump :: proc "c" (handle:u64,timestamp:f64) -> u32 {
 }
 @(export)
 bom_client_enqueue_action :: proc "c" (handle:u64,timestamp:f64,x,y:f32) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ s.last_input_qpc=qpc_now()
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(x) || !core.finite(y) { return BAD_ARGUMENT }
  if len(s.actions)>=64 { return OVERFLOW }
@@ -249,6 +269,8 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  }
  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
  c.human_move=s.held_move
+ // Pump running and Unity silent (Editor pause, frozen main thread): keep sending, but neutral.
+ if s.pump!=nil && s.last_now-s.last_input_qpc>PUMP_INPUT_HEARTBEAT { c.human_move=0;s.heartbeat_neutral_ticks+=1 }
  if len(s.jumps)>0 && s.jumps[0]<=s.next_tick+1e-9 { c.human_jump_pending=true;ordered_remove(&s.jumps,0) }
  for len(s.actions)>0 && s.actions[0].timestamp<=s.next_tick+1e-9 {
   if len(c.blasts)>=core.NET_MAX_BLASTS { s.input_error=OVERFLOW;return }
@@ -261,9 +283,22 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
 }
 @(export)
 bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(now) || math.is_inf(now) { return BAD_ARGUMENT }
+ if s.pump!=nil {
+  // The pump thread owns the socket and the fixed steps; this call only reports its
+  // failures, feeds the input heartbeat and records Unity's frame time for sampling.
+  s.main_now=now;s.last_input_qpc=qpc_now()
+  if s.pump_status!=OK { code:=s.pump_status;reason:=strings.clone(s.pump_reason);defer delete(reason);return fail_client(s,code,reason) }
+  return OK
+ }
+ return pump_locked(s,now)
+}
+
+// Both locks held. full=false (pump thread, socket wake before the tick) only advances
+// the clock and receives; on_thread=true records failures instead of closing.
+pump_locked :: proc(s:^Client_Slot,now:f64,full:=true,on_thread:=false) -> u32 {
  if !s.has_time { s.has_time=true;s.last_now=now;s.next_tick=now+core.NET_STEP_DT }
  dt:=now-s.last_now;s.last_now=now;s.transport_now+=max(f64(0),dt)
  if dt<0 || dt>0.25 || s.accumulator+dt>core.NET_STEP_DT*4+1e-8 {
@@ -279,6 +314,7 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
   packet,from,has:=nc.socket_receive(&s.socket,buffer[:]);if !has { break }
   if from==s.endpoint { nc.client_receive(&s.client.nc_client,packet,s.transport_now) }
  }
+ if !full { return OK }
  for _ in 0..<4 {
   if s.accumulator+1e-9<core.NET_STEP_DT { break }
   s.fixed_transport_now+=core.NET_STEP_DT
@@ -288,24 +324,27 @@ bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
    copy(history[:256],history[len(history)-256:])
    resize(&s.client.stats.delay_history,256)
   }
-  if s.input_error!=OK { error:=s.input_error;s.input_error=OK;return fail_client(s,error,"native input queue overflow; reconnect required") }
-  collected:=collect_presented(s);if collected!=OK { return fail_client(s,collected,"invalid or overflowing native presentation; reconnect required") }
+  if s.input_error!=OK { error:=s.input_error;s.input_error=OK;return pump_fail(s,error,"native input queue overflow; reconnect required",on_thread) }
+  collected:=collect_presented(s);if collected!=OK { return pump_fail(s,collected,"invalid or overflowing native presentation; reconnect required",on_thread) }
   s.accumulator-=core.NET_STEP_DT;s.next_tick+=core.NET_STEP_DT
  }
  nc.client_update(&s.client.nc_client,s.transport_now);flush(s)
  s.last_connection_state=u32(s.client.nc_client.state)
- if s.client.real_reason!="" || s.client.nc_client.state==.Failed || s.client.nc_client.state==.Timed_Out || s.client.nc_client.state==.Disconnected { reason:=fmt.aprintf("connection %v: %s; reconnect required",s.client.nc_client.state,s.client.nc_client.reject_reason);defer delete(reason);return fail_client(s,IO_ERROR,reason) }
+ if s.client.real_reason!="" || s.client.nc_client.state==.Failed || s.client.nc_client.state==.Timed_Out || s.client.nc_client.state==.Disconnected { reason:=fmt.aprintf("connection %v: %s; reconnect required",s.client.nc_client.state,s.client.nc_client.reject_reason);defer delete(reason);return pump_fail(s,IO_ERROR,reason,on_thread) }
  return OK
 }
 @(export)
 bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY }
  if sample==nil || sample.struct_size<u32(size_of(BomSample)) || sample.version!=1 { return BAD_ARGUMENT }
  // The fixed clock schedules commands; fractional presentation never advances it.
  if s.client.has_clock {
   fixed_clock:=s.client.clock
-  target:=min(f64(s.client.newest_complete),fixed_clock+max(f64(0),s.accumulator)/core.NET_STEP_DT)
+  fraction:=max(f64(0),s.accumulator)
+  // With the pump, the accumulator is as of the pump's last wake; move it to Unity's frame time.
+  if s.pump!=nil { fraction=clamp(s.accumulator+(s.main_now-s.last_now),0,core.NET_STEP_DT) }
+  target:=min(f64(s.client.newest_complete),fixed_clock+fraction/core.NET_STEP_DT)
   s.client.clock=max(s.presented_tick,target)
   core.net_client_apply_queue(&s.client);core.net_client_compute_drawn(&s.client)
   presented:=s.client.clock
@@ -363,11 +402,11 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
 bom_client_release_sample :: proc "c" (handle,sequence:u64) -> u32 {
  s,status:=get_slot(handle);if status!=OK { return status }
  if !s.acquired || sequence!=s.sample_sequence { return BAD_ARGUMENT }
- s.acquired=false;return OK
+ s.acquired=false;sync.mutex_unlock(&s.lock);return OK
 }
 @(export)
 bom_client_ack_sample :: proc "c" (handle,sequence:u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };if sequence!=s.sample_sequence { return BAD_ARGUMENT }
  for len(s.events)>0 && s.events[0].id<=s.ack_event_id { ordered_remove(&s.events,0) }
  s.topology_accepted=s.topology_sequence;s.accepted_revision=s.cached_revision;s.accepted_epoch=s.cached_epoch
@@ -384,7 +423,7 @@ bom_client_host_command :: proc "c" (handle:u64,op,mode:u32,radius:f32) -> u32 {
 // op 1 reset, 2 blast mode, 3 radius, 4 layout, 5 game mode.
 @(export)
 bom_client_request_host_command :: proc "c" (handle:u64,command:^BomHostCommand,command_id:^u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired || s.command_pending { return BUSY }
  if !s.live || !s.client.real_hello_ok { return NOT_CONNECTED }
  if command==nil || command_id==nil || command.struct_size<u32(size_of(BomHostCommand)) || command.version!=1 || command.reserved!=0 || command.reserved1!=0 { return BAD_ARGUMENT }
@@ -405,10 +444,11 @@ bom_client_request_host_command :: proc "c" (handle:u64,command:^BomHostCommand,
 }
 @(export)
 bom_client_get_command_result :: proc "c" (handle:u64,result:^BomCommandResult) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if result==nil || result.struct_size<u32(size_of(BomCommandResult)) || result.version!=1 { return BAD_ARGUMENT }
  state:=u32(0);reason:=""
  if s.command_id!=0 { state=1;if !s.command_pending { state=s.command_ok?2:3;reason=s.client.control_reason } }
+ if s.pump!=nil { reason=copy_text(s,reason) }
  result^=BomCommandResult{struct_size=u32(size_of(BomCommandResult)),version=1,command_id=s.command_id,status=state,reason_length=u32(len(reason)),reason=raw_data(reason)}
  return OK
 }
@@ -416,17 +456,31 @@ bom_client_get_command_result :: proc "c" (handle:u64,result:^BomCommandResult) 
 // Read-only diagnostics never reallocate or invalidate an acquired sample.
 @(export)
 bom_client_get_stats :: proc "c" (handle:u64,stats:^BomStats) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
- if stats==nil || stats.struct_size<u32(size_of(BomStats)) || stats.version!=1 { return BAD_ARGUMENT }
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ // 1.7 appended the pump fields; a 1.6-sized struct still gets its prefix.
+ if stats==nil || stats.struct_size<u32(offset_of(BomStats,pump_running)) || stats.version!=1 { return BAD_ARGUMENT }
+ size:=min(stats.struct_size,u32(size_of(BomStats)))
  flags:=u32(0);if s.live { flags|=1 };if s.acquired { flags|=2 };if s.client.real_is_host { flags|=4 };if s.client.stats.blast_rejections_seen>0 { flags|=8 }
- stats^=BomStats{struct_size=u32(size_of(BomStats)),version=1,connection_generation=s.connection_generation,input_count=u64(s.client.stats.input_count),stall_count=s.stall_count,presentation_tick=s.presented_tick,fixed_tick=s.client.clock,held_queued=u32(len(s.held)),jumps_queued=u32(len(s.jumps)),actions_queued=u32(len(s.actions)),events_queued=u32(len(s.events)),reliable_queued=u32(len(s.client.queue)),structure_errors=u32(s.client.stats.structure_errors),frames_complete=u32(s.client.stats.frames_complete),flags=flags,owned_bytes=u64(s.allocations.current_memory_allocated),peak_owned_bytes=u64(s.allocations.peak_memory_allocated),live_allocations=u64(len(s.allocations.allocation_map))}
+ full:=BomStats{struct_size=size,version=1,connection_generation=s.connection_generation,input_count=u64(s.client.stats.input_count),stall_count=s.stall_count,presentation_tick=s.presented_tick,fixed_tick=s.client.clock,held_queued=u32(len(s.held)),jumps_queued=u32(len(s.jumps)),actions_queued=u32(len(s.actions)),events_queued=u32(len(s.events)),reliable_queued=u32(len(s.client.queue)),structure_errors=u32(s.client.stats.structure_errors),frames_complete=u32(s.client.stats.frames_complete),flags=flags,owned_bytes=u64(s.allocations.current_memory_allocated),peak_owned_bytes=u64(s.allocations.peak_memory_allocated),live_allocations=u64(len(s.allocations.allocation_map))}
+ if s.pump!=nil { full.pump_running=s.pump_status!=OK?3:(s.pump_high_res?1:2) }
+ full.pump_ticks=s.pump_ticks;full.pump_late_count=u32(min(s.pump_late_count,u64(max(u32))));full.pump_max_gap_ms=s.pump_max_gap
+ full.pump_lock_wait_max_ms=s.pump_lock_wait_max;full.main_lock_wait_max_ms=s.main_lock_wait_max
+ full.pump_lock_wait_p99_ms=wait_p99(&s.pump_wait_hist,s.pump_lock_wait_max);full.main_lock_wait_p99_ms=wait_p99(&s.main_wait_hist,s.main_lock_wait_max)
+ full.interp_delay_ticks=u32(max(s.client.delay,0));full.heartbeat_neutral_ticks=u32(min(s.heartbeat_neutral_ticks,u64(max(u32))))
+ mem.copy(stats,&full,int(size))
  return OK
 }
 @(export)
 bom_client_last_error :: proc "c" (handle:u64,error:^BomError) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
  if error==nil || error.struct_size<u32(size_of(BomError)) || error.version!=1 { return BAD_ARGUMENT }
  reason:=s.last_error;if s.live && s.client.real_reason!="" { reason=s.client.real_reason }
+ if s.pump!=nil { reason=copy_text(s,reason) } // the pump may replace the original after we return
  error^=BomError{struct_size=u32(size_of(BomError)),version=1,message=raw_data(reason),message_length=u32(len(reason))}
  return OK
+}
+
+// Owner-thread copy of text the pump thread may replace; valid until the next call.
+copy_text :: proc(s:^Client_Slot,text:string) -> string {
+ n:=copy(s.text_copy[:],text);return string(s.text_copy[:n])
 }

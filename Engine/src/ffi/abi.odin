@@ -2,7 +2,7 @@
 package ffi
 
 BOM_ABI_MAJOR :: u32(1)
-BOM_ABI_MINOR :: u32(6)
+BOM_ABI_MINOR :: u32(7)
 
 BomCreateInfo :: struct {
  struct_size: u32,
@@ -139,6 +139,16 @@ BomStats :: struct {
  owned_bytes: u64,
  peak_owned_bytes: u64,
  live_allocations: u64,
+ pump_running: u32,
+ pump_late_count: u32,
+ pump_ticks: u64,
+ pump_max_gap_ms: f64,
+ pump_lock_wait_max_ms: f64,
+ main_lock_wait_max_ms: f64,
+ pump_lock_wait_p99_ms: f64,
+ main_lock_wait_p99_ms: f64,
+ interp_delay_ticks: u32,
+ heartbeat_neutral_ticks: u32,
 }
 
 BomError :: struct {
@@ -576,6 +586,16 @@ bom_debug_layout :: proc "c" (type_id,field_id: u32) -> u32 {
   case 17: return u32(offset_of(BomStats,owned_bytes))
   case 18: return u32(offset_of(BomStats,peak_owned_bytes))
   case 19: return u32(offset_of(BomStats,live_allocations))
+  case 20: return u32(offset_of(BomStats,pump_running))
+  case 21: return u32(offset_of(BomStats,pump_late_count))
+  case 22: return u32(offset_of(BomStats,pump_ticks))
+  case 23: return u32(offset_of(BomStats,pump_max_gap_ms))
+  case 24: return u32(offset_of(BomStats,pump_lock_wait_max_ms))
+  case 25: return u32(offset_of(BomStats,main_lock_wait_max_ms))
+  case 26: return u32(offset_of(BomStats,pump_lock_wait_p99_ms))
+  case 27: return u32(offset_of(BomStats,main_lock_wait_p99_ms))
+  case 28: return u32(offset_of(BomStats,interp_delay_ticks))
+  case 29: return u32(offset_of(BomStats,heartbeat_neutral_ticks))
   }
  case 9:
   switch field_id {

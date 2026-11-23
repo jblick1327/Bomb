@@ -343,7 +343,19 @@ namespace Bom.Unity
                 BomSession.Check(BomNative.bom_build_info(ref build));
                 identity =
                     "Native " + build.source_build_tag + " / protocol " + build.game_protocol;
-                Debug.Log("BOM UNITY ABI PASS: 23 layouts, offsets, alignment; " + identity);
+                double clockGap = Math.Abs(BomNative.bom_clock_now() - BomSession.Now);
+                if (clockGap >= 0.001)
+                    throw new InvalidOperationException(
+                        "Native pump clock differs from BomSession.Now by " + clockGap * 1000 + " ms"
+                    );
+                Debug.Log(
+                    "BOM UNITY ABI PASS: 23 layouts, offsets, alignment; clock agreement "
+                        + (clockGap * 1000).ToString("F3", System.Globalization.CultureInfo.InvariantCulture)
+                        + " ms; pump thread "
+                        + (BomSession.PumpThread ? "on" : "off")
+                        + "; "
+                        + identity
+                );
                 move = new InputAction("Move", InputActionType.Value);
                 move.AddCompositeBinding("1DAxis")
                     .With("Negative", "<Keyboard>/a")
@@ -478,6 +490,7 @@ namespace Bom.Unity
 
         void Update()
         {
+            BomDebugHitch.Tick(BomSession.Now);
             long traced = BomHitchTrace.On ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
             UpdateCore();
             BomHitchTrace.Section("client_update", traced);

@@ -8,7 +8,7 @@ clear_queued_actions :: proc(s:^Client_Slot) {
 
 @(export)
 bom_client_next_request_result :: proc "c" (handle,after_request_id:u64,result:^BomRequestResult) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status }
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held)
  if result==nil || result.struct_size<u32(size_of(BomRequestResult)) || result.version!=1 { return BAD_ARGUMENT }
  result^={struct_size=u32(size_of(BomRequestResult)),version=1}
  if !s.live || after_request_id>=s.client.highest_completed_request { return OK }
@@ -30,7 +30,7 @@ bom_client_next_request_result :: proc "c" (handle,after_request_id:u64,result:^
 
 @(export)
 bom_client_reset_prediction_metrics :: proc "c" (handle:u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY }
  p:=s.client.prediction
  if p!=nil {
@@ -41,7 +41,7 @@ bom_client_reset_prediction_metrics :: proc "c" (handle:u64) -> u32 {
 
 @(export)
 bom_client_clear_intent :: proc "c" (handle:u64) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  clear(&s.held);clear(&s.jumps);clear_queued_actions(s);s.held_move=0;s.input_generation=0
  core.net_client_clear_intent(&s.client)
@@ -50,7 +50,7 @@ bom_client_clear_intent :: proc "c" (handle:u64) -> u32 {
 }
 @(export)
 bom_client_set_prediction :: proc "c" (handle:u64,enabled:u32) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status };context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };if enabled>1 { return BAD_ARGUMENT }
  s.prediction_disabled=enabled==0
  if s.live {
@@ -61,7 +61,7 @@ bom_client_set_prediction :: proc "c" (handle:u64,enabled:u32) -> u32 {
 }
 @(export)
 bom_client_get_owner_state :: proc "c" (handle:u64,state:^BomOwnerState) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status }
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held)
  context=s.ctx
  if state==nil || state.struct_size<u32(size_of(BomOwnerState)) || state.version!=1 { return BAD_ARGUMENT }
  state^={struct_size=u32(size_of(BomOwnerState)),version=1}
@@ -79,7 +79,7 @@ bom_client_get_owner_state :: proc "c" (handle:u64,state:^BomOwnerState) -> u32 
 }
 @(export)
 bom_client_get_prediction_stats :: proc "c" (handle:u64,stats:^BomPredictionStats) -> u32 {
- s,status:=get_slot(handle);if status!=OK { return status }
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held)
  context=s.ctx
  if stats==nil || stats.struct_size<u32(size_of(BomPredictionStats)) || stats.version!=1 { return BAD_ARGUMENT }
  stats^={struct_size=u32(size_of(BomPredictionStats)),version=1}

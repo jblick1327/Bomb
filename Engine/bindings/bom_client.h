@@ -128,6 +128,16 @@ typedef struct BomStats {
  unsigned long long owned_bytes;
  unsigned long long peak_owned_bytes;
  unsigned long long live_allocations;
+ unsigned int pump_running;
+ unsigned int pump_late_count;
+ unsigned long long pump_ticks;
+ double pump_max_gap_ms;
+ double pump_lock_wait_max_ms;
+ double main_lock_wait_max_ms;
+ double pump_lock_wait_p99_ms;
+ double main_lock_wait_p99_ms;
+ unsigned int interp_delay_ticks;
+ unsigned int heartbeat_neutral_ticks;
 } BomStats;
 typedef struct BomError {
  unsigned int struct_size;
@@ -424,4 +434,6 @@ __declspec(dllimport) unsigned int __cdecl bom_client_expect_gameplay_manifest(u
 __declspec(dllimport) unsigned int __cdecl bom_client_acquire_catalog(unsigned long long handle, unsigned long long sample_sequence, BomCatalogInfo* catalog);
 __declspec(dllimport) unsigned int __cdecl bom_client_get_round(unsigned long long handle, unsigned long long sample_sequence, BomRoundInfo* info);
 __declspec(dllimport) unsigned int __cdecl bom_client_set_join_options(unsigned long long handle, unsigned int flags);
+__declspec(dllimport) unsigned int __cdecl bom_client_start_pump(unsigned long long handle);
+__declspec(dllimport) double __cdecl bom_clock_now(void);
 #endif

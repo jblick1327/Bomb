@@ -457,6 +457,46 @@
       [
         "live_allocations",
         "u64"
+      ],
+      [
+        "pump_running",
+        "u32"
+      ],
+      [
+        "pump_late_count",
+        "u32"
+      ],
+      [
+        "pump_ticks",
+        "u64"
+      ],
+      [
+        "pump_max_gap_ms",
+        "f64"
+      ],
+      [
+        "pump_lock_wait_max_ms",
+        "f64"
+      ],
+      [
+        "main_lock_wait_max_ms",
+        "f64"
+      ],
+      [
+        "pump_lock_wait_p99_ms",
+        "f64"
+      ],
+      [
+        "main_lock_wait_p99_ms",
+        "f64"
+      ],
+      [
+        "interp_delay_ticks",
+        "u32"
+      ],
+      [
+        "heartbeat_neutral_ticks",
+        "u32"
       ]
     ],
     "BomError": [
@@ -1833,7 +1873,20 @@
           "u32"
         ]
       ]
+    ],
+    "bom_client_start_pump": [
+      "u32",
+      [
+        [
+          "handle",
+          "u64"
+        ]
+      ]
+    ],
+    "bom_clock_now": [
+      "f64",
+      []
     ]
   },
-  "abi_minor": 6
+  "abi_minor": 7
 }

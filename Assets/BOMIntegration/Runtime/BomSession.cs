@@ -46,6 +46,30 @@ namespace Bom.Unity
         public long CopyAllocatedBytes;
         public static double Now => (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency;
 
+        // ABI 1.7: a native thread pumps the network at 60 Hz whatever Unity's frame rate.
+        // --bom-no-pump-thread keeps the old single-threaded path for A/B runs.
+        public static readonly bool PumpThread =
+            Array.IndexOf(Environment.GetCommandLineArgs(), "--bom-no-pump-thread") < 0;
+
+        // Safety net: the native pump thread must never outlive the managed domain (Editor
+        // domain reload, play-mode exit). Normal owners dispose earlier; this catches leaks.
+        static readonly HashSet<BomSession> live = new HashSet<BomSession>();
+
+        static BomSession()
+        {
+            AppDomain.CurrentDomain.DomainUnload += (_, __) =>
+            {
+                foreach (var session in new List<BomSession>(live))
+                {
+                    try
+                    {
+                        session.Dispose();
+                    }
+                    catch (Exception) { }
+                }
+            };
+        }
+
         public static void Check(uint result)
         {
             if (result != 0)
@@ -118,6 +142,7 @@ namespace Bom.Unity
             ulong value = 0;
             Check(BomNative.bom_client_create(ref info, ref value));
             Handle = value;
+            live.Add(this);
         }
 
         public void Connect(uint ipv4, uint port, string token = "")
@@ -142,6 +167,8 @@ namespace Bom.Unity
                     token_length = (uint)bytes.Length,
                 };
                 Check(BomNative.bom_client_connect(Handle, ref info));
+                if (PumpThread)
+                    Check(BomNative.bom_client_start_pump(Handle));
             }
             finally
             {
@@ -291,10 +318,11 @@ namespace Bom.Unity
                 version = 1,
             };
             Check(BomNative.bom_client_acquire_sample(Handle, ref sample));
-            long copyStart = Stopwatch.GetTimestamp(),
-                copyBytes = BomAllocationCounter.Read();
+            long copyStart = 0, copyBytes = 0;
             try
             {
+                copyStart = Stopwatch.GetTimestamp();
+                copyBytes = BomAllocationCounter.Read();
                 // Cell geometry is immutable for a native topology transaction. Copy it
                 // once; poses and events continue to be copied on every sample.
                 if (
@@ -345,10 +373,16 @@ namespace Bom.Unity
             }
             finally
             {
-                CopyMilliseconds =
-                    (Stopwatch.GetTimestamp() - copyStart) * 1000.0 / Stopwatch.Frequency;
-                CopyAllocatedBytes = BomAllocationCounter.Since(copyBytes);
-                Check(BomNative.bom_client_release_sample(Handle, sample.sample_sequence));
+                try
+                {
+                    CopyMilliseconds =
+                        (Stopwatch.GetTimestamp() - copyStart) * 1000.0 / Stopwatch.Frequency;
+                    CopyAllocatedBytes = BomAllocationCounter.Since(copyBytes);
+                }
+                finally
+                {
+                    Check(BomNative.bom_client_release_sample(Handle, sample.sample_sequence));
+                }
             }
             Owner = new BomOwnerState
             {
@@ -383,6 +417,7 @@ namespace Bom.Unity
             }
             accept(this);
             Check(BomNative.bom_client_ack_sample(Handle, sample.sample_sequence));
+            BomNetRecorder.Record(this, now);
         }
 
         public void Dispose()
@@ -391,6 +426,7 @@ namespace Bom.Unity
                 return;
             Check(BomNative.bom_client_destroy(Handle));
             Handle = 0;
+            live.Remove(this);
         }
     }
 }

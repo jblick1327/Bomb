@@ -5,7 +5,7 @@ import core "../shared"
 // The managed frontend must copy them before release; no protocol bytes escape.
 @(export)
 bom_client_get_round :: proc "c" (handle,sample_sequence:u64,info:^BomRoundInfo)->u32 {
- s,status:=get_slot(handle);if status!=OK {return status};context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if !s.acquired || sample_sequence!=s.sample_sequence {return BAD_ARGUMENT}
  if info==nil || info.struct_size<u32(size_of(BomRoundInfo)) || info.version!=1 {return BAD_ARGUMENT}
  if !s.client.has_round {info^=BomRoundInfo{struct_size=u32(size_of(BomRoundInfo)),version=1};return OK}
@@ -31,7 +31,7 @@ bom_client_get_round :: proc "c" (handle,sample_sequence:u64,info:^BomRoundInfo)
 
 @(export)
 bom_client_set_join_options :: proc "c" (handle:u64,flags:u32)->u32 {
- s,status:=get_slot(handle);if status!=OK {return status};context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if s.acquired || s.live {return BUSY}
  if flags>1 {return BAD_ARGUMENT}
  s.join_spectator=flags==1

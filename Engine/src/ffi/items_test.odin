@@ -34,7 +34,7 @@ items_abi_exposes_graze_zone_item_state_and_item_actors_from_copied_native_state
  t.expect(test,found_item&&found_bomb,"items are kind 4 actors; flags bit 0 landed, bits 8..15 item kind")
  shape:=BomActorShapeInfo{struct_size=u32(size_of(BomActorShapeInfo)),version=1}
  t.expect(test,bom_actor_shape_info(&shape)==OK&&shape.item_radius==core.ITEM_RADIUS&&shape.bomb_radius==core.BOMB_RADIUS)
- t.expect(test,BOM_ABI_MINOR==6&&size_of(BomRoundPlayer)==88&&offset_of(BomRoundPlayer,graze_count)==28&&offset_of(BomRoundPlayer,coins)==64)
+ t.expect(test,BOM_ABI_MINOR==7&&size_of(BomRoundPlayer)==88&&offset_of(BomRoundPlayer,graze_count)==28&&offset_of(BomRoundPlayer,coins)==64)
  t.expect(test,offset_of(BomRoundInfo,connections)+8==offset_of(BomRoundInfo,graze_radius),"graze_radius is appended; existing offsets are unchanged")
  t.expect(test,bom_client_release_sample(handle,sample.sample_sequence)==OK)
 }

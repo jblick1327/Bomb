@@ -19,7 +19,7 @@ graze_abi_exposes_decoded_counts_in_copied_sample_roster_and_preserves_stride ::
  for i in 0..<4 {t.expect(test,info.players[i].graze_count==u32(i)&&info.players[i].alive==(i<3?u32(1):0))}
  slot.client.round_snapshot.players[1].graze_count=99
  t.expect(test,info.players[1].graze_count==1,"borrowed ABI roster is copied native snapshot state")
- t.expect(test,BOM_ABI_MINOR==6&&size_of(BomRoundPlayer)==88&&offset_of(BomRoundPlayer,graze_count)==28)
+ t.expect(test,BOM_ABI_MINOR==7&&size_of(BomRoundPlayer)==88&&offset_of(BomRoundPlayer,graze_count)==28)
  t.expect(test,bom_client_release_sample(handle,sample.sample_sequence)==OK)
  t.expect(test,bom_client_get_round(handle,sample.sample_sequence,&info)==BAD_ARGUMENT)
 }

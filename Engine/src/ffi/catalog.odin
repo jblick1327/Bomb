@@ -2,7 +2,7 @@ package ffi
 import core "../shared"
 @(export)
 bom_client_expect_gameplay_manifest :: proc "c" (handle:u64,hash:[^]u8,length:u32) -> u32 {
- s,status:=get_slot(handle);if status!=OK {return status}
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held)
  if s.acquired||s.live {return BUSY}
  if length!=0&&(length!=32||hash==nil) {return BAD_ARGUMENT}
  s.has_expected_manifest=length==32;s.expected_manifest={}
@@ -12,7 +12,7 @@ bom_client_expect_gameplay_manifest :: proc "c" (handle:u64,hash:[^]u8,length:u3
 // Generated catalog mapping below. All pointers share the acquired sample lifetime.
 @(export)
 bom_client_acquire_catalog :: proc "c" (handle,sample_sequence:u64,catalog:^BomCatalogInfo) -> u32 {
- s,status:=get_slot(handle);if status!=OK {return status};context=s.ctx
+ s,status,held:=enter(handle);if status!=OK {return status};defer leave(s,held);context=s.ctx
  if catalog==nil||catalog.struct_size<u32(size_of(BomCatalogInfo))||catalog.version!=1||!s.acquired||sample_sequence!=s.sample_sequence {return BAD_ARGUMENT}
  catalog^={struct_size=u32(size_of(BomCatalogInfo)),version=1};scene:=&s.client.rep.scene
  catalog.epoch=scene.epoch;catalog.revision=u64(scene.epoch);if scene.catalog!=nil {catalog.flags=1}

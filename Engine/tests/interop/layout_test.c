@@ -133,6 +133,16 @@ int main(void) {
  CHECK(bom_debug_layout(8,17)==OFFSET(BomStats,owned_bytes));
  CHECK(bom_debug_layout(8,18)==OFFSET(BomStats,peak_owned_bytes));
  CHECK(bom_debug_layout(8,19)==OFFSET(BomStats,live_allocations));
+ CHECK(bom_debug_layout(8,20)==OFFSET(BomStats,pump_running));
+ CHECK(bom_debug_layout(8,21)==OFFSET(BomStats,pump_late_count));
+ CHECK(bom_debug_layout(8,22)==OFFSET(BomStats,pump_ticks));
+ CHECK(bom_debug_layout(8,23)==OFFSET(BomStats,pump_max_gap_ms));
+ CHECK(bom_debug_layout(8,24)==OFFSET(BomStats,pump_lock_wait_max_ms));
+ CHECK(bom_debug_layout(8,25)==OFFSET(BomStats,main_lock_wait_max_ms));
+ CHECK(bom_debug_layout(8,26)==OFFSET(BomStats,pump_lock_wait_p99_ms));
+ CHECK(bom_debug_layout(8,27)==OFFSET(BomStats,main_lock_wait_p99_ms));
+ CHECK(bom_debug_layout(8,28)==OFFSET(BomStats,interp_delay_ticks));
+ CHECK(bom_debug_layout(8,29)==OFFSET(BomStats,heartbeat_neutral_ticks));
  CHECK(bom_debug_layout(9,0)==sizeof(BomError));
  CHECK(bom_debug_layout(9,1)==__alignof(BomError));
  CHECK(bom_debug_layout(9,2)==OFFSET(BomError,struct_size));
