@@ -2,6 +2,7 @@ package ffi
 
 import "base:runtime"
 import "core:math"
+import "core:os"
 import "core:strings"
 import "core:sync"
 import "core:thread"
@@ -24,6 +25,7 @@ qpc_frequency: f64
 PUMP_INPUT_HEARTBEAT :: 0.25 // seconds without an input call before held move goes neutral
 PUMP_LATE :: 0.004           // a timer wake this late counts in pump_late_count
 WAIT_BUCKETS :: 64           // 0.25 ms lock-wait histogram buckets; the last one is overflow
+PUMP_MAIN_PATIENCE :: 0.002  // update/acquire give up (BUSY) after waiting this long on a pumping slot
 
 // Raw QPC seconds. On CoreCLR this equals BomSession.Now; Unity's Mono Stopwatch counts the same
 // ticks from another origin, so each slot adds clock_offset (slot_now) learned from Unity's `now`.
@@ -76,6 +78,32 @@ enter :: proc "contextless" (handle: u64) -> (s: ^Client_Slot, status: u32, held
 	record_wait(&s.main_wait_hist, &s.main_lock_wait_max, qpc_now() - start)
 	held = true
 	return
+}
+
+// update and acquire_sample while the pump runs: wait at most PUMP_MAIN_PATIENCE for the locks,
+// then return held=false with status BUSY so Unity keeps last frame's sample instead of blocking
+// for the pump's heavy work (a level or snapshot apply can hold the lock for 150 ms).
+// Other calls (input, commands) still wait; they are rare and must not be dropped.
+enter_or_skip :: proc "contextless" (handle: u64) -> (s: ^Client_Slot, status: u32, held: bool) {
+	s, status = get_slot(handle)
+	if status != OK || s.acquired { return }
+	if s.pump == nil { return enter(handle) }
+	start := qpc_now()
+	for {
+		if sync.mutex_try_lock(&s.lock) {
+			if sync.mutex_try_lock(&core_lock) {
+				record_wait(&s.main_wait_hist, &s.main_lock_wait_max, qpc_now() - start)
+				held = true
+				return
+			}
+			sync.mutex_unlock(&s.lock)
+		}
+		if qpc_now() - start > PUMP_MAIN_PATIENCE {
+			sync.atomic_add(&s.main_skips, 1)
+			return s, BUSY, false
+		}
+		w.SwitchToThread()
+	}
 }
 
 // A successful acquire_sample keeps the slot lock until release_sample.
@@ -139,6 +167,7 @@ bom_client_start_pump :: proc "c" (handle: u64, now: f64) -> u32 {
 	s.pump_ticks = 0; s.pump_late_count = 0; s.pump_max_gap = 0; s.pump_high_res = false
 	s.pump_lock_wait_max = 0; s.main_lock_wait_max = 0; s.pump_wait_hist = {}; s.main_wait_hist = {}
 	s.heartbeat_neutral_ticks = 0
+	sync.atomic_store(&s.main_skips, 0)
 	s.last_input = slot_now(s); s.main_now = now
 	sync.atomic_store(&s.pump_stop, false)
 	s.pump_stop_event = w.CreateEventW(nil, true, false, nil)
@@ -172,7 +201,12 @@ pump_main :: proc(t: ^thread.Thread) {
 	generation := s.pump_generation
 	stop_event := s.pump_stop_event
 	socket_event := s.pump_socket_event
-	w.SetThreadPriority(w.GetCurrentThread(), w.THREAD_PRIORITY_ABOVE_NORMAL)
+	// Normal priority by default: above normal let two pumps doing level applies crowd out a
+	// server on the same machine (NPT A/B). BOM_PUMP_PRIORITY=above restores it for comparison.
+	buf: [16]u8
+	if os.get_env_buf(buf[:], "BOM_PUMP_PRIORITY") == "above" {
+		w.SetThreadPriority(w.GetCurrentThread(), w.THREAD_PRIORITY_ABOVE_NORMAL)
+	}
 	high := true
 	timer := w.CreateWaitableTimerExW(nil, nil, w.CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, w.TIMER_ALL_ACCESS)
 	if timer == nil {

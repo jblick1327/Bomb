@@ -77,6 +77,7 @@ namespace Bom.Unity
             Field("main_lock_wait_p99_ms", stats.main_lock_wait_p99_ms);
             Field("heartbeat_neutral_ticks", stats.heartbeat_neutral_ticks);
             Field("debug_hitches", BomDebugHitch.Count);
+            Field("skipped_frames", session.SkippedFrames);
             Field("clock_drift_ms", (gap - origin) * 1000);
             Field("max_frame_ms", maxFrame, last: true);
             line.Append('}');

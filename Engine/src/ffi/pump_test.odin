@@ -92,6 +92,27 @@ test_pump_acquire_hold_blocks_pump_then_resumes :: proc(t:^testing.T) {
 }
 
 @(test)
+test_pump_main_thread_skips_instead_of_waiting :: proc(t:^testing.T) {
+ handle,s:=pump_fake_slot(t,7200)
+ testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==OK)
+ testing.expect(t,pump_wait_ticks(s,2))
+ // Stand in for a long pump hold (a level apply): hold the slot lock from this thread.
+ sync.mutex_lock(&s.lock)
+ start:=qpc_now()
+ sample:=BomSample{struct_size=u32(size_of(BomSample)),version=1}
+ testing.expect(t,bom_client_update(handle,qpc_now())==BUSY,"update skips while the pump holds the lock")
+ testing.expect(t,bom_client_acquire_sample(handle,&sample)==BUSY,"acquire skips too")
+ waited:=qpc_now()-start
+ sync.mutex_unlock(&s.lock)
+ testing.expectf(t,waited<0.020,"two skipped calls took %.2f ms (patience %.0f ms each)",waited*1000,PUMP_MAIN_PATIENCE*1000)
+ testing.expect(t,sync.atomic_load(&s.main_skips)==2)
+ testing.expect(t,bom_client_update(handle,qpc_now())==OK,"update works once the lock is free")
+ testing.expect(t,bom_client_acquire_sample(handle,&sample)==OK)
+ testing.expect(t,bom_client_release_sample(handle,sample.sample_sequence)==OK)
+ testing.expect(t,bom_client_destroy(handle)==OK)
+}
+
+@(test)
 test_pump_destroy_and_disconnect_mid_pump_1000 :: proc(t:^testing.T) {
  // destroy itself asserts Odin live bytes 0 and Box2D back at its baseline (IO_ERROR otherwise).
  for i in 0..<1000 {
@@ -129,10 +150,13 @@ test_pump_keeps_sending_through_main_thread_gaps :: proc(t:^testing.T) {
  testing.expect(t,bom_client_start_pump(handle,bom_clock_now())==OK)
  s,_:=get_slot(handle)
  // Unity-like frames: update, then acquire/copy/release/ack.
+ // BUSY: the pump held the lock past PUMP_MAIN_PATIENCE; Unity keeps last frame's sample.
  frame :: proc(t:^testing.T,handle:u64) -> bool {
-  if bom_client_update(handle,bom_clock_now())!=OK { return false }
+  status:=bom_client_update(handle,bom_clock_now())
+  if status==BUSY { return true };if status!=OK { return false }
   sample:=BomSample{struct_size=u32(size_of(BomSample)),version=1}
-  if bom_client_acquire_sample(handle,&sample)!=OK { return false }
+  status=bom_client_acquire_sample(handle,&sample)
+  if status==BUSY { return true };if status!=OK { return false }
   testing.expect(t,bom_client_release_sample(handle,sample.sample_sequence)==OK)
   testing.expect(t,bom_client_ack_sample(handle,sample.sample_sequence)==OK)
   return true

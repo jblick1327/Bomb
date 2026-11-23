@@ -521,6 +521,9 @@ namespace Bom.Unity
                         );
                 }
                 smokeElapsed = elapsed;
+                // With the pump thread, a frame it is busy with (level apply) skips all native calls.
+                if (!session.BeginFrame(now))
+                    goto Present;
                 if (smoke && smokeActive)
                 {
                     float requested = (elapsed % 4 < 2 ? 1 : -1) * (levelSmoke ? .2f : 1);
@@ -542,6 +545,14 @@ namespace Bom.Unity
                         blasted = true;
                     }
                 }
+                else if (!smoke && !AutomatedProfile && !DrivenByRoundScenario && BomDebugHitch.Moves)
+                {
+                    BomSession.Check(
+                        BomNative.bom_client_set_held_input(session.Handle, now, BomDebugHitch.Move(now))
+                    );
+                    if (BomDebugHitch.Jump(now))
+                        BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle, now));
+                }
                 else if (!smoke && !AutomatedProfile && !DrivenByRoundScenario)
                 {
                     BomSession.Check(
@@ -553,6 +564,7 @@ namespace Bom.Unity
                     );
                 }
                 session.Poll(now, acceptSample);
+                Present:
                 GeometryWorkThisFrame =
                     sourcePresentation != null
                     && (

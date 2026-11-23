@@ -44,6 +44,12 @@ namespace Bom.Unity
         public double NativeUpdateMilliseconds,
             CopyMilliseconds;
         public long CopyAllocatedBytes;
+        // Pump thread running for this session, and frames skipped because it held the native
+        // lock (update/acquire returned BUSY after 2 ms): those frames keep last frame's sample.
+        public bool PumpRunning { get; private set; }
+        public ulong SkippedFrames { get; private set; }
+        bool updated;
+        const uint Busy = 3;
         public static double Now => (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency;
 
         // ABI 1.7: a native thread pumps the network at 60 Hz whatever Unity's frame rate.
@@ -168,7 +174,10 @@ namespace Bom.Unity
                 };
                 Check(BomNative.bom_client_connect(Handle, ref info));
                 if (PumpThread)
+                {
                     Check(BomNative.bom_client_start_pump(Handle, Now)); // the pump adopts this timebase
+                    PumpRunning = true;
+                }
             }
             finally
             {
@@ -282,12 +291,50 @@ namespace Bom.Unity
         static void Copy<T>(IntPtr source, uint count, ref T[] target)
             where T : unmanaged => BomNativeBuffer.Copy(source, count, ref target);
 
+        // Pump mode: runs bom_client_update first so a frame the pump is busy with can skip
+        // every native call (input included). Returns false for a skipped frame. Without the
+        // pump it does nothing and Poll updates as before.
+        public bool BeginFrame(double now)
+        {
+            if (!PumpRunning)
+                return true;
+            updated = Update(now);
+            if (!updated)
+                SkippedFrames++;
+            return updated;
+        }
+
         public void Poll(double now, Action<BomSession> accept)
+        {
+            if (!updated && !Update(now))
+            {
+                SkippedFrames++;
+                return;
+            }
+            updated = false;
+            var sample = new BomSample
+            {
+                struct_size = (uint)Marshal.SizeOf<BomSample>(),
+                version = 1,
+            };
+            uint acquired = BomNative.bom_client_acquire_sample(Handle, ref sample);
+            if (PumpRunning && acquired == Busy)
+            {
+                SkippedFrames++;
+                return;
+            }
+            Check(acquired);
+            Apply(now, sample, accept);
+        }
+
+        bool Update(double now)
         {
             long nativeStart = Stopwatch.GetTimestamp();
             uint status = BomNative.bom_client_update(Handle, now);
             NativeUpdateMilliseconds =
                 (Stopwatch.GetTimestamp() - nativeStart) * 1000.0 / Stopwatch.Frequency;
+            if (PumpRunning && status == Busy)
+                return false;
             if (status != 0)
             {
                 var error = new BomError
@@ -312,12 +359,11 @@ namespace Bom.Unity
                     : "Connection interrupted. Reconnect to try again."
                 );
             }
-            var sample = new BomSample
-            {
-                struct_size = (uint)Marshal.SizeOf<BomSample>(),
-                version = 1,
-            };
-            Check(BomNative.bom_client_acquire_sample(Handle, ref sample));
+            return true;
+        }
+
+        void Apply(double now, BomSample sample, Action<BomSession> accept)
+        {
             long copyStart = 0, copyBytes = 0;
             try
             {
@@ -370,6 +416,40 @@ namespace Bom.Unity
                     sample.error_text =
                         IntPtr.Zero;
                 Sample = sample;
+                // Read while the sample is held: the pump cannot change them in between, and these
+                // calls never wait on the lock (the owner thread already holds it).
+                Owner = new BomOwnerState
+                {
+                    struct_size = (uint)Marshal.SizeOf<BomOwnerState>(),
+                    version = 1,
+                };
+                Check(BomNative.bom_client_get_owner_state(Handle, ref Owner));
+                Prediction = new BomPredictionStats
+                {
+                    struct_size = (uint)Marshal.SizeOf<BomPredictionStats>(),
+                    version = 1,
+                };
+                Check(BomNative.bom_client_get_prediction_stats(Handle, ref Prediction));
+                if (requestGeneration != sample.connection_generation)
+                {
+                    requestGeneration = sample.connection_generation;
+                    requestCursor = 0;
+                }
+                RequestResults.Clear();
+                for (int i = 0; i < 1024; i++)
+                {
+                    var result = new BomRequestResult
+                    {
+                        struct_size = (uint)Marshal.SizeOf<BomRequestResult>(),
+                        version = 1,
+                    };
+                    Check(BomNative.bom_client_next_request_result(Handle, requestCursor, ref result));
+                    if ((result.flags & 1) == 0)
+                        break;
+                    RequestResults.Add(result);
+                    requestCursor = result.request_id;
+                }
+                BomNetRecorder.Record(this, now);
             }
             finally
             {
@@ -384,40 +464,8 @@ namespace Bom.Unity
                     Check(BomNative.bom_client_release_sample(Handle, sample.sample_sequence));
                 }
             }
-            Owner = new BomOwnerState
-            {
-                struct_size = (uint)Marshal.SizeOf<BomOwnerState>(),
-                version = 1,
-            };
-            Check(BomNative.bom_client_get_owner_state(Handle, ref Owner));
-            Prediction = new BomPredictionStats
-            {
-                struct_size = (uint)Marshal.SizeOf<BomPredictionStats>(),
-                version = 1,
-            };
-            Check(BomNative.bom_client_get_prediction_stats(Handle, ref Prediction));
-            if (requestGeneration != Sample.connection_generation)
-            {
-                requestGeneration = Sample.connection_generation;
-                requestCursor = 0;
-            }
-            RequestResults.Clear();
-            for (int i = 0; i < 1024; i++)
-            {
-                var result = new BomRequestResult
-                {
-                    struct_size = (uint)Marshal.SizeOf<BomRequestResult>(),
-                    version = 1,
-                };
-                Check(BomNative.bom_client_next_request_result(Handle, requestCursor, ref result));
-                if ((result.flags & 1) == 0)
-                    break;
-                RequestResults.Add(result);
-                requestCursor = result.request_id;
-            }
             accept(this);
             Check(BomNative.bom_client_ack_sample(Handle, sample.sample_sequence));
-            BomNetRecorder.Record(this, now);
         }
 
         public void Dispose()

@@ -73,6 +73,7 @@ Client_Slot :: struct {
  pump_generation,pump_status: u32,
  pump_reason: string,
  pump_high_res: bool,
+ main_skips: u32, // update/acquire calls that returned BUSY because the pump held the lock (atomic)
  pump_ticks,pump_late_count,heartbeat_neutral_ticks: u64,
  pump_max_gap,pump_lock_wait_max,main_lock_wait_max: f64,
  pump_wait_hist,main_wait_hist: [WAIT_BUCKETS]u32,
@@ -285,7 +286,7 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
 }
 @(export)
 bom_client_update :: proc "c" (handle:u64,now:f64) -> u32 {
- s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ s,status,held:=enter_or_skip(handle);if !held && status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(now) || math.is_inf(now) { return BAD_ARGUMENT }
  if s.pump!=nil {
@@ -339,7 +340,7 @@ pump_locked :: proc(s:^Client_Slot,now:f64,full:=true,on_thread:=false) -> u32 {
 }
 @(export)
 bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
- s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ s,status,held:=enter_or_skip(handle);if !held && status!=OK { return status };defer leave(s,held);context=s.ctx
  if s.acquired { return BUSY }
  if sample==nil || sample.struct_size<u32(size_of(BomSample)) || sample.version!=1 { return BAD_ARGUMENT }
  // The fixed clock schedules commands; fractional presentation never advances it.
