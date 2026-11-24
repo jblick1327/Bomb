@@ -133,3 +133,47 @@ dynamic_history_gap_dwells_before_recovery_and_blends_both_ways :: proc(test:^t.
  t.expect(test,vlen(vsub(test_flap_present(&c,interpolated),blended))<1e-5)
  t.expect(test,c.prediction.visual_offset==vsub(blended,c.prediction.world.player.pose.position))
 }
+
+@(test)
+slow_uncertain_platform_keeps_the_prediction_on_screen_for_a_bounded_time :: proc(test:^t.T) {
+ source:=test_prediction_static_scene();defer scene_destroy(&source)
+ source.anchor_y=-1e30;source.pieces[0].ref_rest={.5,-1.5}
+ c:Net_Client;net_client_init(&c,1251,0);defer net_client_destroy(&c)
+ c.real_gate=true;c.nc_client.client_index=0;c.epoch=1;c.has_epoch=true
+ _=collision_history_record_topology(&c.collision_history,&source,0)
+ id:=Input_Identity{1,1,1};command_history_begin(&c.input_link.history,{id,1,1})
+ // 20 ticks of lead past the newest frame: a slow platform there is beyond the
+ // 0.2 m certainty tolerance but within the 0.75 m estimate tolerance.
+ for _ in 0..<20 { _,_=command_history_push(&c.input_link.history,0,0) }
+ c.input_link.active=true;c.input_link.has_owner=true
+ c.input_link.owner=Owner_State{identity=id,state_tick=5,finalized_through=5,topology_revision=1,position=PLAYER_SPAWN,teleport_serial=1}
+ test_flap_frames(&c,0,5,.5)
+ now:=0.0;net_prediction_update(&c,now)
+ t.expect(test,c.prediction.mode==.Predicting && !c.prediction.estimated)
+ interpolated:=Vec2{-4.5,.3}
+ rise :: proc(c:^Net_Client,tick:u64) {
+  poses:=make(Pose_Table);defer delete(poses)
+  poses[ent_key(.Piece,100)]=pose_state_make(.5,-1.5+f32(tick-5)/256,0)
+  _=collision_history_record_frame(&c.collision_history,1,tick,&poses)
+ }
+ // The platform starts rising one position step per tick (0.23 m/s).
+ estimated_seen,fallback_tick:=0,u64(0)
+ for i in 0..<60 {
+  tick:=c.input_link.owner.state_tick+1;rise(&c,tick);test_flap_advance(&c,&now)
+  if c.prediction.estimated {
+   estimated_seen+=1
+   t.expect(test,c.prediction.mode==.Conservative && c.prediction.reason==.Dynamic_History_Required,"an estimate still reports Conservative")
+   drawn:=test_flap_present(&c,interpolated)
+   world:=vadd(c.prediction.world.player.pose.position,c.prediction.visual_offset)
+   t.expectf(test,vlen(vsub(drawn,world))<1e-5,"estimated: drawn %v stays on the predicted world %v",drawn,world)
+  } else if estimated_seen>0 { fallback_tick=tick;break }
+ }
+ t.expectf(test,estimated_seen>=25,"estimated for most of PREDICTION_ESTIMATE_SECONDS: %d updates",estimated_seen)
+ t.expectf(test,fallback_tick!=0 && now-c.prediction.certain_at>PREDICTION_ESTIMATE_SECONDS,"falls back to the authority after the cap (%.3f s)",now-c.prediction.certain_at)
+ t.expect(test,c.prediction.mode==.Conservative && !c.prediction.estimated)
+ // Past the cap the drawn player blends toward the interpolated authority, as before.
+ before:=test_flap_present(&c,interpolated)
+ tick:=c.input_link.owner.state_tick+1;rise(&c,tick);test_flap_advance(&c,&now)
+ after:=test_flap_present(&c,interpolated)
+ t.expect(test,vlen(vsub(after,interpolated))<vlen(vsub(before,interpolated)))
+}

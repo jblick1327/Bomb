@@ -178,7 +178,7 @@ prediction_proxy_pose :: proc(h:^Collision_History,b:Collision_Bracket,tick,key:
  t:=ahead/60;speed:=vlen(Vec2{newest.x-old.x,newest.y-old.y})/delta*60;spin:=math.abs(radians_delta(newest.angle,old.angle))/delta*60
  return current,.5*gravity*t*t+speed*t,spin*t,true
 }
-prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64) -> bool {
+prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
  if len(p.proxies)==0 { return true }
  if history==nil { p.reason=.Dynamic_History_Required;return false }
  // The bracketing frames are shared by every proxy at a tick: find them once.
@@ -205,7 +205,7 @@ prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_Histo
    point:=Vec2{a.x,a.y};far:=Vec2{max(math.abs(lo.x-point.x),math.abs(hi.x-point.x)),max(math.abs(lo.y-point.y),math.abs(hi.y-point.y))}
    radius:=vlen(far)
    error:=max(error_a+radius*min(turn_a,f32(math.PI)),error_b+radius*min(turn_b,f32(math.PI)))
-   if error<=PREDICTION_PROXY_TOLERANCE { continue }
+   if error<=tolerance { continue }
    pad:=error+vlen(Vec2{b.x-a.x,b.y-a.y})+radius*min(math.abs(radians_delta(b.angle,a.angle)),f32(math.PI))
    if player.x+PLAYER_RADIUS+reach>lo.x-pad && player.x-PLAYER_RADIUS-reach<hi.x+pad && player.y+PLAYER_HALF_HEIGHT+reach>lo.y-pad && player.y-PLAYER_HALF_HEIGHT-reach<hi.y+pad {
     p.reason=.Dynamic_History_Required;return false
@@ -214,14 +214,14 @@ prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_Histo
  }
  return true
 }
-prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,collision:^Collision_History=nil,seed_support:bool=false) -> bool {
+prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,collision:^Collision_History=nil,seed_support:bool=false,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
  tick:=command.target_tick
  if tick!=p.state_tick+1 { p.reason=.Missing_Command;return false }
  if collision!=nil {
   topology:=collision_history_topology(collision,tick)
   if topology==nil || topology.scene.structure_revision!=p.revision { p.reason=.Wrong_Revision;return false }
  }
- if !prediction_proxy_positions(p,collision,tick-1) { return false }
+ if !prediction_proxy_positions(p,collision,tick-1,tolerance) { return false }
  if p.has_region {
   position:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body));config:=scene_gameplay_config(&p.scene)
   margin:=PLAYER_HALF_HEIGHT+.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed*max(f32(1),player_speed_scale(&p.player)),config.player.jump_speed)/60+max(math.abs(config.gravity.x),math.abs(config.gravity.y))*config.player.gravity_scale/3600
@@ -236,7 +236,7 @@ prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,col
  if outside || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
  p.state_tick=tick;p.reason=.None;return true
 }
-prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil) -> bool {
+prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
  if !p.active { p.reason=.Uninitialized;return false }
  if owner.identity.epoch!=p.epoch { p.reason=.Wrong_Epoch;return false }
  if owner.topology_revision!=p.revision { p.reason=.Wrong_Revision;return false }
@@ -249,7 +249,7 @@ prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:
  for tick:=owner.state_tick+1;tick<history.next_tick;tick+=1 {
   slot:=history.slots[tick%INPUT_HISTORY]
   if !slot.occupied || slot.command.target_tick!=tick { p.reason=.Missing_Command;return false }
-  if !prediction_world_step(p,slot.command,collision,first) { return false };first=false
+  if !prediction_world_step(p,slot.command,collision,first,tolerance) { return false };first=false
  }
  p.reason=.None;return true
 }

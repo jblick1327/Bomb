@@ -10,6 +10,15 @@ PREDICTION_RECOVER_UPDATES :: u64(12)
 // Mode changes and corrections blend through visual_offset's 100 ms decay. Only a
 // jump larger than this (respawn-sized) is presented as a snap.
 PREDICTION_BLEND_LIMIT :: f32(3)
+// A moving loose piece or rubber cell near the player makes a replay uncertain
+// (Dynamic_History_Required). Switching the drawn player to the interpolated authority
+// then moves it back by lead+delay ticks of motion (about 1.5 m at full speed) and
+// forward again on recovery. While an unbroken prediction is younger than
+// PREDICTION_ESTIMATE_SECONDS past its last certain update, the replay instead uses
+// proxy estimates within PREDICTION_ESTIMATE_TOLERANCE and stays on screen; the status
+// still reports Conservative, and any error is blended like other corrections.
+PREDICTION_ESTIMATE_SECONDS :: f64(.5)
+PREDICTION_ESTIMATE_TOLERANCE :: f32(.75)
 Prediction_Record :: struct { valid:bool, identity:Input_Identity, tick:u64, position:Vec2 }
 Prediction_Controller :: struct {
  world:Static_Prediction,
@@ -34,6 +43,11 @@ Prediction_Controller :: struct {
  has_step:bool,
  // The last update ended with a valid predicted world at the target tick.
  world_ok:bool,
+ // The presented world was replayed with estimated proxies (see PREDICTION_ESTIMATE_SECONDS),
+ // or is certain again but still in the recovery dwell of an estimated episode.
+ estimated:bool,
+ certain_at:f64,
+ estimated_updates:u64,
  recover_streak:u64,
  records:[256]Prediction_Record,
  correction_histogram:[2001]u64,
@@ -46,7 +60,7 @@ prediction_controller_destroy :: proc(p:^Prediction_Controller) { if p!=nil { pr
 prediction_controller_reset :: proc(c:^Net_Client) {
  p:=c.prediction;if p==nil { return }
  prediction_static_destroy(&p.world);p.visual_offset={};p.has_owner=false;p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
- p.has_presented=false;p.world_ok=false;p.recover_streak=0;p.has_step=false
+ p.has_presented=false;p.world_ok=false;p.recover_streak=0;p.has_step=false;p.estimated=false
 }
 prediction_set_mode :: proc(p:^Prediction_Controller,mode:Prediction_Mode,reason:Prediction_Reason) {
  if mode!=.Predicting { p.world_ok=false;p.recover_streak=0 }
@@ -92,6 +106,11 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  elapsed:=clamp(now-p.last_update,0,.25);p.last_update=now
  if p.mode==.Conservative { p.conservative_seconds+=elapsed }
  p.visual_offset=vmul(p.visual_offset,f32(math.exp(-elapsed/.1)))
+ // Every path that does not set it again falls back to the interpolated authority.
+ was_estimated:=p.estimated;p.estimated=false
+ presenting:=p.mode==.Predicting || was_estimated
+ allow_estimate:=presenting && now-p.certain_at<=PREDICTION_ESTIMATE_SECONDS
+ uncertain:=false
  if !c.prediction_enabled { prediction_set_mode(p,.Disabled,.None);return }
  if c.has_round && c.round_snapshot.mode==.Elimination {
   index:=c.nc_client.client_index
@@ -131,13 +150,22 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
    if slot.occupied && slot.command.target_tick==target {
     from=p.world.player.pose.position
     has_from=prediction_world_step(&p.world,slot.command,&c.collision_history)
+    if !has_from && allow_estimate && p.world.reason==.Dynamic_History_Required {
+     has_from=prediction_world_step(&p.world,slot.command,&c.collision_history,tolerance=PREDICTION_ESTIMATE_TOLERANCE);uncertain=has_from
+    }
    }
   } else if p.world.state_tick==target && p.has_step && p.step_tick==target { from=p.step_from;has_from=true }
   if p.world.state_tick==target && p.world.reason==.None { old_position=p.world.player.pose.position;has_old=true }
  }
  if p.last_owner_tick!=owner.state_tick || !has_old {
-  if !has_old || p.mode!=.Predicting { has_from=false }
-  if !prediction_static_replay(&p.world,owner,history,&c.collision_history) { prediction_set_mode(p,.Conservative,p.world.reason);return }
+  if !has_old || !presenting { has_from=false }
+  // The replay starts again from the owner: only its own result decides certainty.
+  uncertain=false
+  replayed:=prediction_static_replay(&p.world,owner,history,&c.collision_history)
+  if !replayed && allow_estimate && p.world.reason==.Dynamic_History_Required {
+   replayed=prediction_static_replay(&p.world,owner,history,&c.collision_history,PREDICTION_ESTIMATE_TOLERANCE);uncertain=replayed
+  }
+  if !replayed { prediction_set_mode(p,.Conservative,p.world.reason);return }
   if p.last_owner_tick!=owner.state_tick {
    record:=p.records[owner.state_tick%256]
    if record.valid && record.identity==owner.identity && record.tick==owner.state_tick {
@@ -145,7 +173,7 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
     p.corrections+=1;p.correction_histogram[int(math.ceil(f64(min(correction,2))*1000))]+=1
    }
   }
-  if has_old && p.mode==.Predicting {
+  if has_old && presenting {
    offset:=vsub(old_position,p.world.player.pose.position)
    p.visual_offset=vadd(p.visual_offset,offset)
    // The corrected trajectory starts where the old one was drawn: shift step_from with the offset.
@@ -158,9 +186,15 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  p.records[target%256]={true,owner.identity,target,p.world.player.pose.position}
  p.step_tick=target;p.step_from=has_from ? from : p.world.player.pose.position;p.has_step=true
  p.world_ok=true
+ if uncertain {
+  prediction_set_mode(p,.Conservative,.Dynamic_History_Required)
+  p.world_ok=true;p.estimated=true;p.estimated_updates+=1;return
+ }
+ p.certain_at=now
  if p.mode==.Conservative && p.reason==.Dynamic_History_Required {
   p.recover_streak+=1
-  if p.recover_streak<PREDICTION_RECOVER_UPDATES { return }
+  // An estimated episode keeps presenting the (now certain) world through the dwell.
+  if p.recover_streak<PREDICTION_RECOVER_UPDATES { p.estimated=was_estimated;return }
  }
  p.recover_streak=0
  prediction_set_mode(p,.Predicting,.None)
@@ -174,7 +208,7 @@ net_prediction_apply :: proc(c:^Net_Client) {
  if p==nil { return }
  if !c.prediction_enabled { p.has_presented=false;return }
  key:=ent_key(.Player,u64(c.nc_client.client_index))
- predicted:=p.mode==.Predicting && p.world.epoch==c.epoch
+ predicted:=(p.mode==.Predicting || p.estimated) && p.world.epoch==c.epoch
  drawn,exists:=c.drawn[key]
  base:Vec2
  if predicted {
