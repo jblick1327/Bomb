@@ -15,7 +15,7 @@ $bytes=New-Object byte[] 24;$rng=[Security.Cryptography.RandomNumberGenerator]::
 $key=[Convert]::ToBase64String($bytes)
 $server=$null;$players=@()
 try{
- $server=Start-Process -FilePath $serverPath -ArgumentList @('--bind',$Bind,'--port',"$Port",'--layout',('"'+$layoutPath+'"'),'--host-token',$key) -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'server.log') -RedirectStandardError (Join-Path $session 'server-errors.log') -PassThru
+ $server=Start-Process -FilePath $serverPath -ArgumentList @('--bind',$Bind,'--port',"$Port",'--layout',('"'+$layoutPath+'"'),'--host-token',$key,'--metrics',('"'+(Join-Path $session 'server-metrics.json')+'"')) -WindowStyle Hidden -RedirectStandardOutput (Join-Path $session 'server.log') -RedirectStandardError (Join-Path $session 'server-errors.log') -PassThru
  $deadline=[DateTime]::UtcNow.AddSeconds(60)
  while(!((Get-Content (Join-Path $session 'server.log') -Raw -ErrorAction SilentlyContinue) -match 'BOM staging server listening')){
   if($server.HasExited){throw "Server could not start. Check $session"}

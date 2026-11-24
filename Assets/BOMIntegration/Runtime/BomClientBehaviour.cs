@@ -536,6 +536,11 @@ namespace Bom.Unity
                     session.SetHeldInput(now, BomDebugHitch.Move(now));
                     if (BomDebugHitch.Jump(now))
                         BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle, now));
+                    if ((session.Stats.flags & 4) != 0 && BomDebugHitch.Blast(now, out float bx, out float by))
+                    {
+                        Debug.Log("BOM UNITY DEBUG BLAST x=" + bx.ToString("F2") + " y=" + by.ToString("F2"));
+                        BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle, now, bx, by));
+                    }
                 }
                 else if (!smoke && !AutomatedProfile && !DrivenByRoundScenario)
                 {
