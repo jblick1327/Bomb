@@ -216,8 +216,10 @@ namespace Bom.Unity
             Mark("hosted", "port=" + BomFrontDoor.SessionPort + "\npid=" + pid);
             yield return Until(() => Seen("guest-connected"), 120, "the guest to join");
             var client = Client();
-            BomSession.Check(BomNative.bom_client_host_command(client.Session.Handle, 5, 1, 0));
-            Log("applied Elimination");
+            // Hosting from the menu already asks for Elimination; apply it here only if that did not happen.
+            if (client.Session.Round.mode != 1)
+                BomSession.Check(BomNative.bom_client_host_command(client.Session.Handle, 5, 1, 0));
+            Log("applied Elimination mode=" + client.Session.Round.mode);
             ulong lastKey = ulong.MaxValue;
             yield return Until(
                 () =>

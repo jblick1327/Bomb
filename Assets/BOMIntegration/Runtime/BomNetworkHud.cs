@@ -176,7 +176,7 @@ namespace Bom.Unity
                     .ForEach(label =>
                     {
                         if (label.text == "Press R to restart")
-                            label.text = "Open the menu (Esc) for the next round.";
+                            label.text = "The host starts the next round (REPLAY).";
                     });
             menu = new VisualElement();
             menu.name = "network-menu";

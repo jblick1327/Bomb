@@ -58,6 +58,7 @@ namespace Bom.Unity
         // kept for one release behind --bom-clipped-source-art and for the source-capture/job-gate test tools).
         BomCellPresenter cellPresenter;
         bool cellsShown;
+        bool eliminationRequested;
         public bool ClippedSourceArt;
         BomCameraRig cameraRig;
         public BomSourcePresentation SourcePresentation => sourcePresentation;
@@ -512,6 +513,18 @@ namespace Bom.Unity
                 // With the pump thread, a frame it is busy with (level apply) skips all native calls.
                 if (!session.BeginFrame(now))
                     goto Present;
+                // Online -> Host is the real game: once the server confirms this window is the host, switch it to
+                // Elimination (the server starts in Sandbox, the host-click debug mode). Once per window; the Esc
+                // menu can still switch modes.
+                if (!eliminationRequested && BomFrontDoor.InSession && BomFrontDoor.IsHost && (session.Stats.flags & 4) != 0)
+                {
+                    eliminationRequested = true;
+                    if (session.Round.mode != 1)
+                    {
+                        BomSession.Check(BomNative.bom_client_host_command(session.Handle, 5, 1, 0));
+                        Debug.Log("BOM FRONTDOOR HOST MODE elimination");
+                    }
+                }
                 if (smoke && smokeActive)
                 {
                     float requested = (elapsed % 4 < 2 ? 1 : -1) * (levelSmoke ? .2f : 1);
