@@ -61,7 +61,9 @@ net_rebuild_begin :: proc(ns:^Net_Server) -> string {
  job.world.scene.level_policy=ns.game.world.scene.level_policy
  job.world.scene.config_hash=ns.game.world.scene.config_hash
  job.started=time.tick_now();job.test_gate=ns.rebuild_test_gate
- job.worker=thread.create(net_rebuild_worker,.Low)
+ // Normal priority (P1, 2026-11-24): at .Low a busy host (server plus game windows) starved a 0.4 s build to 6-22 s,
+ // and players wait for it between rounds. The build is a few hundred ms and runs beside the server thread.
+ job.worker=thread.create(net_rebuild_worker,.Normal)
  if job.worker==nil {free(job);return "cannot start world rebuild"}
  ns.rebuild=job;job.worker.data=job;thread.start(job.worker)
  if ns.real_logging {fmt.printf("REBUILD START epoch=%d tick=%d\n",ns.game.world.scene.epoch+1,ns.tick)}

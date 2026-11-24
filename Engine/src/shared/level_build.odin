@@ -90,11 +90,21 @@ level_part_cell_index_destroy :: proc(index:^Level_Part_Cell_Index) { for _,rows
 // Applies (add) or only counts (!add) the glue samples of one authored link.
 // A link joins every cell of part A to every touching cell of part B; the
 // returned total is the number of samples that actually took effect.
+// P1 (2026-11-24): a pair whose bounding boxes are further apart than GLUE_FILLET can produce no sample
+// (glue_side only hits within GLUE_FILLET of a sample point on the boundary), so it is skipped before
+// glue_samples. Same samples, same order, same connection ids; round restarts no longer test every cell pair.
+LEVEL_GLUE_REACH :: GLUE_FILLET+0.05
 level_glue_link :: proc(s:^Scene,index:^Level_Part_Cell_Index,link:Level_Glue,add:bool) -> int {
  total:=0
+ rows_b:=index[link.b]
+ bounds_b:=make([][2]Vec2,len(rows_b));defer delete(bounds_b)
+ for row_b,i in rows_b { lo,hi:=mortar_bounds(s.subdivisions[row_b].outline);bounds_b[i]={lo,hi} }
  for row_a in index[link.a] {
   a:=s.subdivisions[row_a]
-  for row_b in index[link.b] {
+  alo,ahi:=mortar_bounds(a.outline)
+  for row_b,i in rows_b {
+   blo,bhi:=bounds_b[i][0],bounds_b[i][1]
+   if blo.x>ahi.x+LEVEL_GLUE_REACH || alo.x>bhi.x+LEVEL_GLUE_REACH || blo.y>ahi.y+LEVEL_GLUE_REACH || alo.y>bhi.y+LEVEL_GLUE_REACH { continue }
    b:=s.subdivisions[row_b]
    samples:=glue_samples(a.outline,b.outline);total+=len(samples)
    if add { _=glue_add(s,a.id,b.id,samples[:]) }
