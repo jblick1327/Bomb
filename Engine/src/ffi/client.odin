@@ -207,7 +207,8 @@ bom_client_disconnect :: proc "c" (handle:u64) -> u32 {
 }
 @(export)
 bom_client_set_held_input :: proc "c" (handle:u64,timestamp:f64,move:f32) -> u32 {
- s,status,held:=enter(handle);if status!=OK { return status };defer leave(s,held);context=s.ctx
+ // Held move is state Unity resends every frame, so with the pump it may skip (BUSY) too.
+ s,status,held:=enter_or_skip(handle);if !held && status!=OK { return status };defer leave(s,held);context=s.ctx
  s.last_input=slot_now(s)
  if s.acquired { return BUSY };if !s.live { return NOT_CONNECTED }
  if math.is_nan(timestamp) || math.is_inf(timestamp) || !core.finite(move) { return BAD_ARGUMENT }

@@ -158,9 +158,7 @@ namespace Bom.Unity
                         waiting = true;
                     }
                 }
-                BomSession.Check(
-                    BomNative.bom_client_set_held_input(session.Handle, now, requested)
-                );
+                session.SetHeldInput(now, requested);
                 int jump = (int)(elapsed / 4);
                 if (started != 0 && elapsed % 4 > .5 && elapsed % 4 < 1 && jump != lastJump)
                 {

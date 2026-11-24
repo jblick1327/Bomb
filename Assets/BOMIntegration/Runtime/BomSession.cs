@@ -294,6 +294,18 @@ namespace Bom.Unity
         // Pump mode: runs bom_client_update first so a frame the pump is busy with can skip
         // every native call (input included). Returns false for a skipped frame. Without the
         // pump it does nothing and Poll updates as before.
+        // Held move is resent every frame; with the pump a busy slot skips it (BUSY) instead of waiting.
+        public void SetHeldInput(double now, float move)
+        {
+            uint status = BomNative.bom_client_set_held_input(Handle, now, move);
+            if (PumpRunning && status == Busy)
+            {
+                SkippedFrames++;
+                return;
+            }
+            Check(status);
+        }
+
         public bool BeginFrame(double now)
         {
             if (!PumpRunning)

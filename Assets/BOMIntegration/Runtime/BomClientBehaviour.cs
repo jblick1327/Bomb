@@ -465,13 +465,7 @@ namespace Bom.Unity
 
         void OnMove(InputAction.CallbackContext context) =>
             SendInput(() =>
-                BomSession.Check(
-                    BomNative.bom_client_set_held_input(
-                        session.Handle,
-                        context.time + inputOffset,
-                        context.ReadValue<float>()
-                    )
-                )
+                session.SetHeldInput(context.time + inputOffset, context.ReadValue<float>())
             );
 
         void Connect()
@@ -527,9 +521,7 @@ namespace Bom.Unity
                 if (smoke && smokeActive)
                 {
                     float requested = (elapsed % 4 < 2 ? 1 : -1) * (levelSmoke ? .2f : 1);
-                    BomSession.Check(
-                        BomNative.bom_client_set_held_input(session.Handle, now, requested)
-                    );
+                    session.SetHeldInput(now, requested);
                     smokeMove = requested;
                     if (elapsed > 3 && !blasted)
                     {
@@ -547,20 +539,15 @@ namespace Bom.Unity
                 }
                 else if (!smoke && !AutomatedProfile && !DrivenByRoundScenario && BomDebugHitch.Moves)
                 {
-                    BomSession.Check(
-                        BomNative.bom_client_set_held_input(session.Handle, now, BomDebugHitch.Move(now))
-                    );
+                    session.SetHeldInput(now, BomDebugHitch.Move(now));
                     if (BomDebugHitch.Jump(now))
                         BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle, now));
                 }
                 else if (!smoke && !AutomatedProfile && !DrivenByRoundScenario)
                 {
-                    BomSession.Check(
-                        BomNative.bom_client_set_held_input(
-                            session.Handle,
-                            now,
-                            Application.isFocused && !InputBlocked ? move.ReadValue<float>() : 0
-                        )
+                    session.SetHeldInput(
+                        now,
+                        Application.isFocused && !InputBlocked ? move.ReadValue<float>() : 0
                     );
                 }
                 session.Poll(now, acceptSample);

@@ -80,7 +80,7 @@ enter :: proc "contextless" (handle: u64) -> (s: ^Client_Slot, status: u32, held
 	return
 }
 
-// update and acquire_sample while the pump runs: wait at most PUMP_MAIN_PATIENCE for the locks,
+// update, acquire_sample and set_held_input while the pump runs: wait at most PUMP_MAIN_PATIENCE for the locks,
 // then return held=false with status BUSY so Unity keeps last frame's sample instead of blocking
 // for the pump's heavy work (a level or snapshot apply can hold the lock for 150 ms).
 // Other calls (input, commands) still wait; they are rare and must not be dropped.

@@ -102,10 +102,11 @@ test_pump_main_thread_skips_instead_of_waiting :: proc(t:^testing.T) {
  sample:=BomSample{struct_size=u32(size_of(BomSample)),version=1}
  testing.expect(t,bom_client_update(handle,qpc_now())==BUSY,"update skips while the pump holds the lock")
  testing.expect(t,bom_client_acquire_sample(handle,&sample)==BUSY,"acquire skips too")
+ testing.expect(t,bom_client_set_held_input(handle,qpc_now(),1)==BUSY,"held input skips too")
  waited:=qpc_now()-start
  sync.mutex_unlock(&s.lock)
- testing.expectf(t,waited<0.020,"two skipped calls took %.2f ms (patience %.0f ms each)",waited*1000,PUMP_MAIN_PATIENCE*1000)
- testing.expect(t,sync.atomic_load(&s.main_skips)==2)
+ testing.expectf(t,waited<0.020,"three skipped calls took %.2f ms (patience %.0f ms each)",waited*1000,PUMP_MAIN_PATIENCE*1000)
+ testing.expect(t,sync.atomic_load(&s.main_skips)==3)
  testing.expect(t,bom_client_update(handle,qpc_now())==OK,"update works once the lock is free")
  testing.expect(t,bom_client_acquire_sample(handle,&sample)==OK)
  testing.expect(t,bom_client_release_sample(handle,sample.sample_sequence)==OK)

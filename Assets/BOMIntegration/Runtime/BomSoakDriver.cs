@@ -59,13 +59,7 @@ namespace Bom.Unity
             }
             if (!client.ConnectionRequested)
                 return;
-            BomSession.Check(
-                BomNative.bom_client_set_held_input(
-                    client.Session.Handle,
-                    now,
-                    Math.Floor((now - started) / 3) % 2 == 0 ? .2f : -.2f
-                )
-            );
+            client.Session.SetHeldInput(now, Math.Floor((now - started) / 3) % 2 == 0 ? .2f : -.2f);
             if (now >= nextJump)
             {
                 BomSession.Check(BomNative.bom_client_enqueue_jump(client.Session.Handle, now));

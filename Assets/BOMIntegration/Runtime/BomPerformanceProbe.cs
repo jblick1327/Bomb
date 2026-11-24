@@ -235,13 +235,7 @@ namespace Bom.Unity
                 return;
             client.DrivenByRoundScenario = true;
             double now = BomSession.Now;
-            BomSession.Check(
-                BomNative.bom_client_set_held_input(
-                    client.Session.Handle,
-                    now,
-                    Math.Floor((now - started) / 3) % 2 == 0 ? .2f : -.2f
-                )
-            );
+            client.Session.SetHeldInput(now, Math.Floor((now - started) / 3) % 2 == 0 ? .2f : -.2f);
         }
 
         void LateUpdate()

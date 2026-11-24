@@ -232,13 +232,7 @@ namespace Bom.Unity
                 if (!drawScenario)
                 {
                     bool playing = r.state == 2;
-                    BomSession.Check(
-                        BomNative.bom_client_set_held_input(
-                            session.Handle,
-                            now,
-                            playing ? (role == "primary" ? .35f : -.35f) : 0
-                        )
-                    );
+                    session.SetHeldInput(now, playing ? (role == "primary" ? .35f : -.35f) : 0);
                     if (
                         playing
                         && r.tick >= r.start_tick + JumpStartTicks
