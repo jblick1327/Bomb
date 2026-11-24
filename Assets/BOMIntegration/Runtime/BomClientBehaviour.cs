@@ -390,15 +390,9 @@ namespace Bom.Unity
         void Blast(double time, bool warm)
         {
             BomHitchTrace.Begin("blast");
-            var permissions = new BomStats
-            {
-                struct_size = (uint)
-                    System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),
-                version = 1,
-            };
-            BomSession.Check(
-                BomNative.bom_client_get_stats(session.Handle, ref permissions)
-            );
+            // Host permission from the stats BomSession copies with each sample: a native get_stats here
+            // waited on the pump thread (51 ms during a level load in the NPT hitch trace).
+            var permissions = session.Stats;
             BomHitchTrace.Lap("stats");
             if (!warm && ((permissions.flags & 4) == 0 || session.Round.mode == 1))
             {
