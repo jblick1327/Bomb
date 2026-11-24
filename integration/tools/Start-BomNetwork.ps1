@@ -23,7 +23,7 @@ try{
   Start-Sleep -Milliseconds 100
  }
  for($i=0;$i -lt $Clients;$i++){
-  $arguments=@('--bom-auto-connect','--bom-port',"$Port",'-screen-fullscreen','0','-screen-width','1280','-screen-height','720','-logFile',('"'+(Join-Path $session "player-$i.log")+'"'))+$PlayerArguments
+  $arguments=@('--bom-auto-connect','--bom-frame-cap','--bom-port',"$Port",'-screen-fullscreen','0','-screen-width','1280','-screen-height','720','-logFile',('"'+(Join-Path $session "player-$i.log")+'"'))+$PlayerArguments
   if($Seconds -gt 0){$arguments+=@('--bom-net-out',('"'+(Join-Path $session "player-$i-net.jsonl")+'"'))}
   $old=$env:BOM_TEST_HOST_TOKEN
   try{
