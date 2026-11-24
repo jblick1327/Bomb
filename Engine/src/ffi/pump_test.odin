@@ -178,7 +178,10 @@ test_pump_keeps_sending_through_main_thread_gaps :: proc(t:^testing.T) {
   testing.expectf(t,false,"handshake and clock with the pump running: state=%v hello=%v clock=%v live=%v pump_status=%d reason=%q last_error=%q ticks=%d",s.client.nc_client.state,s.client.real_hello_ok,s.client.has_clock,s.live,s.pump_status,s.pump_reason,s.last_error,s.pump_ticks)
   sync.mutex_unlock(&s.lock);return
  }
- testing.expect(t,bom_client_set_held_input(handle,bom_clock_now(),1)==OK)
+ // A busy slot answers BUSY (the pump holds the lock); Unity sets held input again next frame, so does this.
+ held:=bom_client_set_held_input(handle,bom_clock_now(),1)
+ for tries:=0;held==BUSY && tries<60;tries+=1 { time.sleep(16*time.Millisecond);held=bom_client_set_held_input(handle,bom_clock_now(),1) }
+ testing.expect(t,held==OK)
  testing.expect(t,frames(t,handle,0.5))
  for gap in ([3]f64{0.1,0.3,1.0}) {
   // get_stats does not feed the heartbeat; the last input call was the end of frames().

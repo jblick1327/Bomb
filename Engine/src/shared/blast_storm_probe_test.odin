@@ -11,6 +11,9 @@ import b2 "vendor:box2d"
 // Off unless built with -define:BOM_BLAST_PROBE=true; prints one line per second and every tick over 20 ms.
 BOM_BLAST_PROBE :: #config(BOM_BLAST_PROBE,false)
 BOM_BLAST_PROBE_RADIUS :: #config(BOM_BLAST_PROBE_RADIUS,5)
+// -define:BOM_BLAST_PROBE_DEEP=true aims into the ground (below its top cell) instead of at the click points.
+BOM_BLAST_PROBE_DEEP :: #config(BOM_BLAST_PROBE_DEEP,false)
+BOM_BLAST_PROBE_TRACE :: #config(BOM_BLAST_PROBE_TRACE,false)
 
 @(test)
 blast_storm_probe :: proc(t:^testing.T) {
@@ -24,6 +27,13 @@ blast_storm_probe :: proc(t:^testing.T) {
  repl:Repl_Server;defer repl_server_destroy(&repl)
  first:=repl_server_update(&repl,&w.scene,0);repl_output_destroy(&first)
  points:=[?]Vec2{{-3.6,11.0},{-1.4,7.5},{1.6,11.3},{4.3,10.8},{-5.5,8.2},{1.1,10.2},{-2.0,11.6},{7.7,9.1}}
+ when BOM_BLAST_PROBE_DEEP {
+  top:=f32(-1e9);ground:=layout.level.sources[0].identity
+  for sub in w.scene.subdivisions {if sub.live && sub.provenance.source_identity==ground {top=max(top,sub.pose.position.y)}}
+  xs:=[?]f32{-9,-6,-3,0,3,6,9,-4.5}
+  for i in 0..<len(points) {points[i]={xs[i],top-0.5-f32(i%3)}}
+  fmt.printf("PROBE deep ground_top=%.2f points=%v\n",top,points)
+ }
  ms :: proc(start:time.Tick)->f64 {return time.duration_milliseconds(time.tick_since(start))}
  sec_world,sec_repl,sec_hash,sec_blast,sec_max:f64
  revisions:=0
@@ -58,18 +68,17 @@ blast_storm_probe :: proc(t:^testing.T) {
     counts[sub.provenance.source_identity]=row
    }
    for source,row in counts {if row[0]>200 || row[1]>50 {fmt.printf("PROBE cells tick=%d source=%d cells=%d dynamic=%d\n",tick,source,row[0],row[1])}}
-   if tick==260 {
-    for source in layout.level.sources {if counts[source.identity][0]>1000 {fmt.printf("PROBE source=%d asset=%s parts=%d\n",source.identity,source.asset_key,len(source.parts))}}
-    return
-   }
   }
   if tick%60==0 && tick<=1800 {
    events:Tick_Events;s:=time.tick_now()
    world_explode(&w,points[(tick/60-1)%len(points)],f32(BOM_BLAST_PROBE_RADIUS),&events)
    blast_ms=ms(s);delete(events.explosions)
   }
+  when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d world\n",tick)}
   s:=time.tick_now();post:=world_tick(&w,Tick_Commands{},1.0/60.0);world_ms=ms(s);delete(post.explosions)
+  when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d repl\n",tick)}
   s=time.tick_now();out:=repl_server_update(&repl,&w.scene,u64(tick));repl_ms=ms(s)
+  when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d hash\n",tick)}
   if out.kind!=.None {
    revisions+=1
    s=time.tick_now();bytes:=canonical_encode(&w.scene);_=repl_hash(bytes);delete(bytes);hash_ms=ms(s)

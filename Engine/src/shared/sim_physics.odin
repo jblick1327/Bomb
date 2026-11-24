@@ -282,8 +282,11 @@ physics_sync_structure :: proc(s: ^Scene) {
    def.localAnchorA=to_b2(mortar_local_anchor(s,a,c.rest_point))
    def.localAnchorB=to_b2(mortar_local_anchor(s,b,c.rest_point))
    def.referenceAngle=0; def.linearHertz=0; def.angularHertz=0
-   // OD-8: glued pieces also rest on each other (contact bearing), so the weld does not carry the standing load alone.
-   def.collideConnected=true
+   // NPT (owner-approved 2026-11-24): glued pieces no longer collide with each other. OD-8's contact bearing fought
+   // the rigid welds along every seam and, after a blast, threw ground pieces out at the speed limit; the impact
+   // breaks that followed shattered the whole yard ground (blast replay: 200+ ms physics ticks). The welds carry
+   // the standing load; OD-10 already leaves compression uncharged in the seam rule.
+   def.collideConnected=false
    s.connections[s.conn_rows[id]].joint=b2.CreateWeldJoint(s.physics.world,def)
    continue
   }
