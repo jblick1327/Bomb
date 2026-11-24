@@ -3,9 +3,11 @@
 The raw run records for this branch (captures, logs, gate results, soak and perf runs) are not in the repository.
 They were removed from the history of this PR branch to keep it small (5.1 GB on disk).
 
-- Archive: `C:\Users\jblic\Documents\BOM-Release\evidence-archive-20261119` on the owner's machine (18,265 files;
+- Archive: `C:\Users\jblic\Documents\BOM-Release\evidence-archive-20261119` on the owner's machine (18,530 files;
   its `engine-evidence` folders belong to `Engine/evidence/INDEX.md`).
 - Full history with the evidence still committed: local branch `integration/odin-unity-20261105` at 90ae1e61.
+- `NPT` (native pump thread, prediction fixes, seam fix, settled-debris freeze; 2026-11-21 to 11-24) was added later from
+  local branch `native-pump-thread` at 401f9ec2, where it is still committed.
 - Every file is listed in `INDEX-files.tsv` (path, bytes, sha256, and whether it was committed `git` or only on disk `local`).
   Paths are relative to `integration/evidence/`, which is where `integration/ALPHA-SYNC.md` and the READMEs point.
 - Kept in the repository as test inputs: `M6/yard-export/yard.json`, `M7/yard-export/yard.json` and
@@ -41,6 +43,7 @@ New runs still write here; `.gitignore` keeps them out of the repository.
 | `M7` | 504 | 12.6 MB |
 | `M8` | 12200 | 3090.4 MB |
 | `M9` | 858 | 470.4 MB |
+| `NPT` | 265 | 66.5 MB |
 | `OD13` | 14 | 0.0 MB |
 | `OD15` | 29 | 0.4 MB |
 | `original-scenes` | 4 | 0.0 MB |
