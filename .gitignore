@@ -39,3 +39,21 @@ sysinfo.txt
 *.apk
 *.aab
 *.unitypackage
+/integration/tools/NativeFingerprint/bin/
+/integration/tools/NativeFingerprint/obj/
+/integration/identity-tests/bin/
+/integration/identity-tests/obj/
+/integration/local.config.owner-validation.json
+
+# Web builds are build outputs, not source (Odin uses UDP; WebGL is not a target)
+/WebGLBuild*/
+/WebGLBuild*.zip
+/integration/tools/g5/TileMappingTests/bin/
+/integration/tools/g5/TileMappingTests/obj/
+/integration/tools/g5/settle/bin/
+/integration/tools/g5/settle/obj/
+
+# Run records stay out of the repository; see integration/evidence/INDEX.md.
+integration/evidence/*
+!integration/evidence/INDEX.md
+!integration/evidence/INDEX-files.tsv

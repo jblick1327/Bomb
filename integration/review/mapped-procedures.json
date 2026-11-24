@@ -1,0 +1,2431 @@
+[
+  {
+    "name": "add_connection",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 84,
+    "same_tokens": true
+  },
+  {
+    "name": "add_material",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 48,
+    "same_tokens": true
+  },
+  {
+    "name": "add_piece",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 50,
+    "same_tokens": true
+  },
+  {
+    "name": "add_subdivision",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 58,
+    "same_tokens": false
+  },
+  {
+    "name": "angle_apply",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 86,
+    "same_tokens": true
+  },
+  {
+    "name": "angle_delta",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 81,
+    "same_tokens": true
+  },
+  {
+    "name": "apply_blast_motion",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 262,
+    "same_tokens": true
+  },
+  {
+    "name": "apply_failures",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 177,
+    "same_tokens": true
+  },
+  {
+    "name": "assign_glue",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 94,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_cached_simple",
+    "before": "src/blast_shape_cache.odin",
+    "after": "src/shared/sim_blast_shape_cache.odin",
+    "line": 41,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_cached_width",
+    "before": "src/blast_shape_cache.odin",
+    "after": "src/shared/sim_blast_shape_cache.odin",
+    "line": 34,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_connections",
+    "before": "src/blast_query.odin",
+    "after": "src/shared/sim_blast_query.odin",
+    "line": 33,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_erases_descendants",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 383,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_load",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 340,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_pass",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 445,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_query_shape",
+    "before": "src/blast_query.odin",
+    "after": "src/shared/sim_blast_query.odin",
+    "line": 9,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_regions",
+    "before": "src/blast_query.odin",
+    "after": "src/shared/sim_blast_query.odin",
+    "line": 17,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_shape_entry",
+    "before": "src/blast_shape_cache.odin",
+    "after": "src/shared/sim_blast_shape_cache.odin",
+    "line": 20,
+    "same_tokens": true
+  },
+  {
+    "name": "blast_shape_key",
+    "before": "src/blast_shape_cache.odin",
+    "after": "src/shared/sim_blast_shape_cache.odin",
+    "line": 14,
+    "same_tokens": true
+  },
+  {
+    "name": "bomb_drop_delay",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 20,
+    "same_tokens": true
+  },
+  {
+    "name": "bomb_has_landed",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 54,
+    "same_tokens": true
+  },
+  {
+    "name": "bomb_rain_after_step",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 83,
+    "same_tokens": false
+  },
+  {
+    "name": "bomb_rain_before_step",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 70,
+    "same_tokens": false
+  },
+  {
+    "name": "bomb_rain_clear",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 32,
+    "same_tokens": true
+  },
+  {
+    "name": "bomb_rain_reset",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 25,
+    "same_tokens": false
+  },
+  {
+    "name": "boundary_nearest",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 15,
+    "same_tokens": true
+  },
+  {
+    "name": "build_glue",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 106,
+    "same_tokens": true
+  },
+  {
+    "name": "build_mortar",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 48,
+    "same_tokens": true
+  },
+  {
+    "name": "build_shaped_object",
+    "before": "src/shape_build.odin",
+    "after": "src/shared/sim_shape_build.odin",
+    "line": 12,
+    "same_tokens": true
+  },
+  {
+    "name": "built_object",
+    "before": "src/shape_build.odin",
+    "after": "src/shared/sim_shape_build.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "built_on_ground",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 30,
+    "same_tokens": true
+  },
+  {
+    "name": "built_polygon",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 26,
+    "same_tokens": true
+  },
+  {
+    "name": "builtin_recipe",
+    "before": "src/editor.odin",
+    "after": "src/shared/sim_editor.odin",
+    "line": 12,
+    "same_tokens": true
+  },
+  {
+    "name": "calculate_physics_loads",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 286,
+    "same_tokens": true
+  },
+  {
+    "name": "canonical_encode",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 141,
+    "same_tokens": true
+  },
+  {
+    "name": "canonical_encode_into",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 132,
+    "same_tokens": false
+  },
+  {
+    "name": "centroid",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 26,
+    "same_tokens": true
+  },
+  {
+    "name": "clip_halfplane",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 31,
+    "same_tokens": true
+  },
+  {
+    "name": "clip_polygon",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 15,
+    "same_tokens": true
+  },
+  {
+    "name": "commit_structure",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 245,
+    "same_tokens": true
+  },
+  {
+    "name": "connection_blast_sample",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 141,
+    "same_tokens": true
+  },
+  {
+    "name": "connection_sample",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 105,
+    "same_tokens": true
+  },
+  {
+    "name": "contact_damage_load",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 278,
+    "same_tokens": true
+  },
+  {
+    "name": "convex_contains",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 29,
+    "same_tokens": true
+  },
+  {
+    "name": "convex_decomposition",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 142,
+    "same_tokens": true
+  },
+  {
+    "name": "convex_hull",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 10,
+    "same_tokens": true
+  },
+  {
+    "name": "convex_hull_into",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 32,
+    "same_tokens": true
+  },
+  {
+    "name": "convex_intersection",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 33,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_begin",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 141,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_bounds_cross",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 41,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_bucket",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 81,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_candidates",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 53,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_destroy",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 193,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_distance",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 195,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_external",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 252,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_failure_distance",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 262,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_foreign_any",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 256,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_key",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 39,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_polygons_overlap",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 95,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_sample_distance",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 240,
+    "same_tokens": true
+  },
+  {
+    "name": "cover_shadow",
+    "before": "src/cover.odin",
+    "after": "src/shared/sim_cover.odin",
+    "line": 119,
+    "same_tokens": true
+  },
+  {
+    "name": "custom_defaults",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 38,
+    "same_tokens": true
+  },
+  {
+    "name": "custom_from_wire",
+    "before": "src/material_wire.odin",
+    "after": "src/shared/sim_material_wire.odin",
+    "line": 20,
+    "same_tokens": true
+  },
+  {
+    "name": "custom_problem",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 62,
+    "same_tokens": true
+  },
+  {
+    "name": "decode_layout",
+    "before": "src/layout_state.odin",
+    "after": "src/shared/sim_layout_state.odin",
+    "line": 19,
+    "same_tokens": false
+  },
+  {
+    "name": "derive_seed",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 124,
+    "same_tokens": true
+  },
+  {
+    "name": "destroy_layout",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 44,
+    "same_tokens": false
+  },
+  {
+    "name": "displace_grained_seam",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 104,
+    "same_tokens": true
+  },
+  {
+    "name": "displace_shared_boundaries",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 93,
+    "same_tokens": true
+  },
+  {
+    "name": "editor_material",
+    "before": "src/editor.odin",
+    "after": "src/shared/sim_editor.odin",
+    "line": 34,
+    "same_tokens": true
+  },
+  {
+    "name": "editor_overlaps",
+    "before": "src/editor.odin",
+    "after": "src/shared/sim_editor.odin",
+    "line": 36,
+    "same_tokens": true
+  },
+  {
+    "name": "editor_rectangle_problem",
+    "before": "src/editor.odin",
+    "after": "src/shared/sim_editor.odin",
+    "line": 41,
+    "same_tokens": true
+  },
+  {
+    "name": "ent_key",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 44,
+    "same_tokens": true
+  },
+  {
+    "name": "evaluate_blast",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 351,
+    "same_tokens": true
+  },
+  {
+    "name": "event_decode",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 327,
+    "same_tokens": false
+  },
+  {
+    "name": "event_encode_explosion",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 315,
+    "same_tokens": false
+  },
+  {
+    "name": "event_encode_rejected",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 321,
+    "same_tokens": false
+  },
+  {
+    "name": "exact_json_array",
+    "before": "src/exact_json.odin",
+    "after": "src/shared/exact_json.odin",
+    "line": 17,
+    "same_tokens": true
+  },
+  {
+    "name": "exact_json_encode",
+    "before": "src/exact_json.odin",
+    "after": "src/shared/exact_json.odin",
+    "line": 87,
+    "same_tokens": true
+  },
+  {
+    "name": "exact_json_indent",
+    "before": "src/exact_json.odin",
+    "after": "src/shared/exact_json.odin",
+    "line": 12,
+    "same_tokens": true
+  },
+  {
+    "name": "exact_json_value",
+    "before": "src/exact_json.odin",
+    "after": "src/shared/exact_json.odin",
+    "line": 27,
+    "same_tokens": false
+  },
+  {
+    "name": "fails",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 349,
+    "same_tokens": true
+  },
+  {
+    "name": "finite",
+    "before": "src/state.odin",
+    "after": "src/shared/state.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_decode_part",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 255,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_encode",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 177,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_entry_estimate",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 165,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_entry_size",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 158,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_longest",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 60,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_part_destroy",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 118,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_polygon",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 56,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_read_body",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 217,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_read_header",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 126,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_to_reference",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 68,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_unrotate",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 75,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_write_entry",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 138,
+    "same_tokens": true
+  },
+  {
+    "name": "frame_write_header",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 120,
+    "same_tokens": true
+  },
+  {
+    "name": "free_failures",
+    "before": "src/failures.odin",
+    "after": "src/shared/sim_failures.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "from_b2",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 14,
+    "same_tokens": true
+  },
+  {
+    "name": "generate_children",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 86,
+    "same_tokens": true
+  },
+  {
+    "name": "generate_children_impl",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 103,
+    "same_tokens": true
+  },
+  {
+    "name": "generate_framed",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 64,
+    "same_tokens": true
+  },
+  {
+    "name": "generate_grained_children",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 48,
+    "same_tokens": true
+  },
+  {
+    "name": "glue_add",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 72,
+    "same_tokens": true
+  },
+  {
+    "name": "glue_samples",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 58,
+    "same_tokens": true
+  },
+  {
+    "name": "glue_side",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 35,
+    "same_tokens": true
+  },
+  {
+    "name": "glue_valid_contact",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 67,
+    "same_tokens": true
+  },
+  {
+    "name": "grain_bounds",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 14,
+    "same_tokens": true
+  },
+  {
+    "name": "grain_cut_kind",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 21,
+    "same_tokens": true
+  },
+  {
+    "name": "in_range",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 60,
+    "same_tokens": true
+  },
+  {
+    "name": "inherit_glue",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 104,
+    "same_tokens": true
+  },
+  {
+    "name": "inheritance_bounds_overlap",
+    "before": "src/inheritance_bounds.odin",
+    "after": "src/shared/sim_inheritance_bounds.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "inherits_old_boundary",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 49,
+    "same_tokens": true
+  },
+  {
+    "name": "input_decode",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 293,
+    "same_tokens": true
+  },
+  {
+    "name": "input_encode",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 282,
+    "same_tokens": true
+  },
+  {
+    "name": "insert_boundary_endpoint",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 69,
+    "same_tokens": true
+  },
+  {
+    "name": "insert_polygon_vertex",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 62,
+    "same_tokens": true
+  },
+  {
+    "name": "insert_shared_midpoint",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 81,
+    "same_tokens": true
+  },
+  {
+    "name": "insert_shared_path",
+    "before": "src/wood_generation.odin",
+    "after": "src/shared/sim_wood_generation.odin",
+    "line": 92,
+    "same_tokens": true
+  },
+  {
+    "name": "interaction_mass",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 271,
+    "same_tokens": true
+  },
+  {
+    "name": "is_convex",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 33,
+    "same_tokens": true
+  },
+  {
+    "name": "is_live_subdivision",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 176,
+    "same_tokens": true
+  },
+  {
+    "name": "key_id",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 48,
+    "same_tokens": true
+  },
+  {
+    "name": "key_kind",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 46,
+    "same_tokens": true
+  },
+  {
+    "name": "layout_base",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 34,
+    "same_tokens": true
+  },
+  {
+    "name": "layout_glue_problem",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "layout_material",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 18,
+    "same_tokens": true
+  },
+  {
+    "name": "layout_object",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 12,
+    "same_tokens": true
+  },
+  {
+    "name": "longest_dimension",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 497,
+    "same_tokens": true
+  },
+  {
+    "name": "make_polygon",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 114,
+    "same_tokens": true
+  },
+  {
+    "name": "material_base_name",
+    "before": "src/material_wire.odin",
+    "after": "src/shared/sim_material_wire.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "material_name_problem",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 49,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_apply_seam",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 121,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_bounds",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 34,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_cells",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 39,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_force_failures",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 114,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_free_seams",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 110,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_length",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 13,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_local_anchor",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 17,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_seams",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 71,
+    "same_tokens": true
+  },
+  {
+    "name": "mortar_touch",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 28,
+    "same_tokens": true
+  },
+  {
+    "name": "move_dequantize",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 280,
+    "same_tokens": true
+  },
+  {
+    "name": "move_quantize",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 278,
+    "same_tokens": true
+  },
+  {
+    "name": "nearest_sample_cell",
+    "before": "src/glue.odin",
+    "after": "src/shared/sim_glue.odin",
+    "line": 87,
+    "same_tokens": true
+  },
+  {
+    "name": "net_app_client_control",
+    "before": "src/net_session.odin",
+    "after": "src/shared/net_session.odin",
+    "line": 42,
+    "same_tokens": false
+  },
+  {
+    "name": "net_app_client_send_hello",
+    "before": "src/net_session.odin",
+    "after": "src/shared/net_session.odin",
+    "line": 34,
+    "same_tokens": false
+  },
+  {
+    "name": "net_app_hello_error",
+    "before": "src/net_session.odin",
+    "after": "src/shared/sim_net_session.odin",
+    "line": 41,
+    "same_tokens": true
+  },
+  {
+    "name": "net_app_read_hello",
+    "before": "src/net_session.odin",
+    "after": "src/shared/sim_net_session.odin",
+    "line": 23,
+    "same_tokens": false
+  },
+  {
+    "name": "net_app_send_reject",
+    "before": "src/net_session.odin",
+    "after": "src/shared/sim_net_session.odin",
+    "line": 48,
+    "same_tokens": true
+  },
+  {
+    "name": "net_app_server_disconnect",
+    "before": "src/net_session.odin",
+    "after": "src/shared/sim_net_session.odin",
+    "line": 91,
+    "same_tokens": true
+  },
+  {
+    "name": "net_app_server_hello",
+    "before": "src/net_session.odin",
+    "after": "src/shared/sim_net_session.odin",
+    "line": 57,
+    "same_tokens": false
+  },
+  {
+    "name": "net_app_write_hello",
+    "before": "src/net_session.odin",
+    "after": "src/shared/net_session.odin",
+    "line": 22,
+    "same_tokens": false
+  },
+  {
+    "name": "net_build_frame",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 259,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_apply_queue",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 347,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_clear_state",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 151,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_complete_frame",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 243,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_compute_drawn",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 391,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_destroy",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 164,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_ensure_anchored",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 430,
+    "same_tokens": true
+  },
+  {
+    "name": "net_client_init",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 128,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_make_input",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 438,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_note_late",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 190,
+    "same_tokens": true
+  },
+  {
+    "name": "net_client_on_frame",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 267,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_on_reliable",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 228,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_on_structure",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 205,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_record_applied",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 180,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_reset",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 197,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_state_clear",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 103,
+    "same_tokens": true
+  },
+  {
+    "name": "net_client_step",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 465,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_update_clock",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 333,
+    "same_tokens": false
+  },
+  {
+    "name": "net_client_update_delay",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 305,
+    "same_tokens": true
+  },
+  {
+    "name": "net_collect",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 224,
+    "same_tokens": true
+  },
+  {
+    "name": "net_drawn_from",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 372,
+    "same_tokens": true
+  },
+  {
+    "name": "net_drawn_single",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 378,
+    "same_tokens": true
+  },
+  {
+    "name": "net_frame_asm_free",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 143,
+    "same_tokens": true
+  },
+  {
+    "name": "net_hash_key",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 86,
+    "same_tokens": true
+  },
+  {
+    "name": "net_host_apply_command",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 42,
+    "same_tokens": false
+  },
+  {
+    "name": "net_host_apply_layout",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 26,
+    "same_tokens": false
+  },
+  {
+    "name": "net_host_client_send_command",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 130,
+    "same_tokens": false
+  },
+  {
+    "name": "net_host_client_send_layout",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 122,
+    "same_tokens": false
+  },
+  {
+    "name": "net_host_dispatch",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 107,
+    "same_tokens": true
+  },
+  {
+    "name": "net_host_send_result",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 98,
+    "same_tokens": true
+  },
+  {
+    "name": "net_host_send_settings",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 90,
+    "same_tokens": true
+  },
+  {
+    "name": "net_host_trim_players",
+    "before": "src/net_host.odin",
+    "after": "src/shared/sim_net_host.odin",
+    "line": 20,
+    "same_tokens": true
+  },
+  {
+    "name": "net_in_structure",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 382,
+    "same_tokens": true
+  },
+  {
+    "name": "net_lerp",
+    "before": "src/net_client.odin",
+    "after": "src/shared/net_client.odin",
+    "line": 370,
+    "same_tokens": true
+  },
+  {
+    "name": "net_real_cli_port",
+    "before": "src/net_real.odin",
+    "after": "src/shared/sim_net_real.odin",
+    "line": 50,
+    "same_tokens": true
+  },
+  {
+    "name": "net_real_cli_server",
+    "before": "src/net_real.odin",
+    "after": "src/shared/sim_net_real.odin",
+    "line": 159,
+    "same_tokens": false
+  },
+  {
+    "name": "net_real_create_server",
+    "before": "src/net_real.odin",
+    "after": "src/shared/sim_net_real.odin",
+    "line": 56,
+    "same_tokens": false
+  },
+  {
+    "name": "net_real_parse_target",
+    "before": "src/net_real.odin",
+    "after": "src/shared/sim_net_real.odin",
+    "line": 15,
+    "same_tokens": true
+  },
+  {
+    "name": "net_real_run_server",
+    "before": "src/net_real.odin",
+    "after": "src/shared/sim_net_real.odin",
+    "line": 79,
+    "same_tokens": false
+  },
+  {
+    "name": "net_record_hash",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 134,
+    "same_tokens": true
+  },
+  {
+    "name": "net_send_reliable_parts",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 125,
+    "same_tokens": false
+  },
+  {
+    "name": "net_server_ack",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 171,
+    "same_tokens": true
+  },
+  {
+    "name": "net_server_blast",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 197,
+    "same_tokens": false
+  },
+  {
+    "name": "net_server_destroy",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 109,
+    "same_tokens": false
+  },
+  {
+    "name": "net_server_input",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 178,
+    "same_tokens": true
+  },
+  {
+    "name": "net_server_join",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 141,
+    "same_tokens": false
+  },
+  {
+    "name": "net_server_leave",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 162,
+    "same_tokens": false
+  },
+  {
+    "name": "net_server_reset_frames",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 341,
+    "same_tokens": true
+  },
+  {
+    "name": "net_server_tick",
+    "before": "src/net_server.odin",
+    "after": "src/shared/sim_net_server.odin",
+    "line": 346,
+    "same_tokens": false
+  },
+  {
+    "name": "new_id",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 46,
+    "same_tokens": true
+  },
+  {
+    "name": "new_scene",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 148,
+    "same_tokens": true
+  },
+  {
+    "name": "object_cells",
+    "before": "src/mortar.odin",
+    "after": "src/shared/sim_mortar.odin",
+    "line": 22,
+    "same_tokens": true
+  },
+  {
+    "name": "outline_width",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 141,
+    "same_tokens": true
+  },
+  {
+    "name": "outline_width_uncached",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 146,
+    "same_tokens": true
+  },
+  {
+    "name": "pair_key",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 77,
+    "same_tokens": true
+  },
+  {
+    "name": "palette_count",
+    "before": "src/material_library.odin",
+    "after": "src/shared/sim_material_library.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_create_fixture",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 47,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_create_region_shapes",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 64,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_destroy",
+    "before": "src/physics.odin",
+    "after": "src/shared/physics.odin",
+    "line": 31,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_finish_mass",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 134,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_finish_piece_mass",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 140,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_init",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_new_body",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 164,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_read_motion",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 27,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_remove_dead",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 91,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_remove_region_shapes",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 86,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_shape_def",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 40,
+    "same_tokens": true
+  },
+  {
+    "name": "physics_sync_structure",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 179,
+    "same_tokens": false
+  },
+  {
+    "name": "physics_tick",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 325,
+    "same_tokens": true
+  },
+  {
+    "name": "piece_anchored",
+    "before": "src/physics.odin",
+    "after": "src/shared/physics.odin",
+    "line": 15,
+    "same_tokens": false
+  },
+  {
+    "name": "piece_finish_reference",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 152,
+    "same_tokens": true
+  },
+  {
+    "name": "piece_width",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 133,
+    "same_tokens": true
+  },
+  {
+    "name": "player_after_step",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 119,
+    "same_tokens": false
+  },
+  {
+    "name": "player_before_step",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 87,
+    "same_tokens": false
+  },
+  {
+    "name": "player_create",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 28,
+    "same_tokens": false
+  },
+  {
+    "name": "player_read_support",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 58,
+    "same_tokens": false
+  },
+  {
+    "name": "player_refresh_pose",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 23,
+    "same_tokens": true
+  },
+  {
+    "name": "player_respawn",
+    "before": "src/player.odin",
+    "after": "src/shared/sim_player.odin",
+    "line": 46,
+    "same_tokens": false
+  },
+  {
+    "name": "point_in_subdivision",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 64,
+    "same_tokens": true
+  },
+  {
+    "name": "polygon_area",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 9,
+    "same_tokens": true
+  },
+  {
+    "name": "polygon_centred_inertia",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 124,
+    "same_tokens": true
+  },
+  {
+    "name": "polygon_contact",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 22,
+    "same_tokens": true
+  },
+  {
+    "name": "polygon_turn",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 169,
+    "same_tokens": true
+  },
+  {
+    "name": "polygon_union_touching",
+    "before": "src/shape_build.odin",
+    "after": "src/shared/sim_shape_build.odin",
+    "line": 57,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_dq_angle",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 70,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_dq_fuse",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 77,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_dq_pos",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 62,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_q_angle",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 64,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_q_fuse",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 72,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_q_pos",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 54,
+    "same_tokens": true
+  },
+  {
+    "name": "pose_state_make",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 79,
+    "same_tokens": true
+  },
+  {
+    "name": "posed_point",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 42,
+    "same_tokens": true
+  },
+  {
+    "name": "presplit_piece",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 503,
+    "same_tokens": true
+  },
+  {
+    "name": "radians_delta",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 91,
+    "same_tokens": true
+  },
+  {
+    "name": "radius_dequantize",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 276,
+    "same_tokens": true
+  },
+  {
+    "name": "radius_quantize",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 271,
+    "same_tokens": true
+  },
+  {
+    "name": "read_body_state",
+    "before": "src/world_state.odin",
+    "after": "src/shared/sim_world_state.odin",
+    "line": 9,
+    "same_tokens": true
+  },
+  {
+    "name": "rebuild_affected_pieces",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 326,
+    "same_tokens": true
+  },
+  {
+    "name": "rebuild_piece",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 163,
+    "same_tokens": false
+  },
+  {
+    "name": "recipe_slot",
+    "before": "src/editor.odin",
+    "after": "src/shared/sim_editor.odin",
+    "line": 10,
+    "same_tokens": true
+  },
+  {
+    "name": "refine_blast_reach",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 396,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_collect_ids",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 109,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_connection_hash",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 171,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_encode_baseline",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 225,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_hash",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 99,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_index_destroy",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 159,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_index_rebuild",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 178,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_material_hash",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 165,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_output_destroy",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 209,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_peek",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 622,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_piece_cells",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 94,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_read_cell",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 49,
+    "same_tokens": false
+  },
+  {
+    "name": "repl_read_connection",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 71,
+    "same_tokens": false
+  },
+  {
+    "name": "repl_read_id_list",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 86,
+    "same_tokens": false
+  },
+  {
+    "name": "repl_read_material",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 26,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_scratch_destroy",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 107,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_server_baseline",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 230,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_server_destroy",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 200,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_server_update",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 239,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_split",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 213,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_write_body",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 117,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_write_cell",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 38,
+    "same_tokens": false
+  },
+  {
+    "name": "repl_write_connection",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 63,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_write_id_list",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 81,
+    "same_tokens": true
+  },
+  {
+    "name": "repl_write_material",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_add_cell",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 353,
+    "same_tokens": false
+  },
+  {
+    "name": "replica_add_connection",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 370,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_add_material",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 346,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_add_piece",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 361,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_apply_baseline",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 453,
+    "same_tokens": false
+  },
+  {
+    "name": "replica_apply_delta",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 505,
+    "same_tokens": false
+  },
+  {
+    "name": "replica_apply_message",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 574,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_collect",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 604,
+    "same_tokens": false
+  },
+  {
+    "name": "replica_destroy",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 344,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_finish_pieces",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 426,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_init",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 342,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_receive",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 585,
+    "same_tokens": false
+  },
+  {
+    "name": "replica_remove_cell",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 406,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_remove_connection",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 389,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_remove_piece",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 416,
+    "same_tokens": true
+  },
+  {
+    "name": "replica_touch_owner",
+    "before": "src/replication.odin",
+    "after": "src/shared/replication.odin",
+    "line": 448,
+    "same_tokens": true
+  },
+  {
+    "name": "retain_subdivision",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 72,
+    "same_tokens": true
+  },
+  {
+    "name": "sandbox_add_ground",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 54,
+    "same_tokens": true
+  },
+  {
+    "name": "sandbox_valid_aim",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 76,
+    "same_tokens": true
+  },
+  {
+    "name": "scene_destroy",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 180,
+    "same_tokens": false
+  },
+  {
+    "name": "scene_finish_references",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 174,
+    "same_tokens": true
+  },
+  {
+    "name": "seam_geometry",
+    "before": "src/glue.odin",
+    "after": "src/shared/glue.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "segment_overlap",
+    "before": "src/geometry.odin",
+    "after": "src/shared/geometry.odin",
+    "line": 8,
+    "same_tokens": true
+  },
+  {
+    "name": "segments_touch",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 173,
+    "same_tokens": true
+  },
+  {
+    "name": "seq16_newer",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 313,
+    "same_tokens": true
+  },
+  {
+    "name": "shape_overlap",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 44,
+    "same_tokens": true
+  },
+  {
+    "name": "shape_polygon",
+    "before": "src/shape_geometry.odin",
+    "after": "src/shared/sim_shape_geometry.odin",
+    "line": 6,
+    "same_tokens": true
+  },
+  {
+    "name": "shared_boundary",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 120,
+    "same_tokens": true
+  },
+  {
+    "name": "shared_segments",
+    "before": "src/geometry.odin",
+    "after": "src/shared/geometry.odin",
+    "line": 20,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_apply",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 162,
+    "same_tokens": false
+  },
+  {
+    "name": "shock_before",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 103,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_begin_blast",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 44,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_begin_impact",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 73,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_destroy",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 16,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_group",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 18,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_inherit",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 94,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_mark_direct",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 89,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_nearest_segment",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 28,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_queue_pop",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 110,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_queue_push",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 105,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_rest_distance",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 34,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_rest_point",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 26,
+    "same_tokens": true
+  },
+  {
+    "name": "shock_travel",
+    "before": "src/glass_shock.odin",
+    "after": "src/shared/sim_glass_shock.odin",
+    "line": 121,
+    "same_tokens": true
+  },
+  {
+    "name": "simple_polygon",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 187,
+    "same_tokens": true
+  },
+  {
+    "name": "simple_polygon_uncached",
+    "before": "src/geometry.odin",
+    "after": "src/shared/sim_geometry.odin",
+    "line": 192,
+    "same_tokens": true
+  },
+  {
+    "name": "sort_ids",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 112,
+    "same_tokens": true
+  },
+  {
+    "name": "sorted_ids",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 114,
+    "same_tokens": true
+  },
+  {
+    "name": "sorted_keys",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 341,
+    "same_tokens": true
+  },
+  {
+    "name": "stage_failures",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 189,
+    "same_tokens": false
+  },
+  {
+    "name": "subdivision_sample",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 110,
+    "same_tokens": true
+  },
+  {
+    "name": "table_clone",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 97,
+    "same_tokens": true
+  },
+  {
+    "name": "tables_equal",
+    "before": "src/net_frame.odin",
+    "after": "src/shared/net_frame.odin",
+    "line": 104,
+    "same_tokens": true
+  },
+  {
+    "name": "to_b2",
+    "before": "src/physics.odin",
+    "after": "src/shared/sim_physics.odin",
+    "line": 12,
+    "same_tokens": true
+  },
+  {
+    "name": "triangulate_polygon",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 44,
+    "same_tokens": true
+  },
+  {
+    "name": "vadd",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 102,
+    "same_tokens": true
+  },
+  {
+    "name": "valid_partition_half",
+    "before": "src/destruction.odin",
+    "after": "src/shared/sim_destruction.odin",
+    "line": 173,
+    "same_tokens": true
+  },
+  {
+    "name": "valid_vec",
+    "before": "src/state.odin",
+    "after": "src/shared/state.odin",
+    "line": 8,
+    "same_tokens": true
+  },
+  {
+    "name": "vcross",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 110,
+    "same_tokens": true
+  },
+  {
+    "name": "vdot",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 108,
+    "same_tokens": true
+  },
+  {
+    "name": "vlen",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 112,
+    "same_tokens": true
+  },
+  {
+    "name": "vmul",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 106,
+    "same_tokens": true
+  },
+  {
+    "name": "vrotate",
+    "before": "src/model.odin",
+    "after": "src/shared/sim_model.odin",
+    "line": 21,
+    "same_tokens": true
+  },
+  {
+    "name": "vsub",
+    "before": "src/model.odin",
+    "after": "src/shared/model.odin",
+    "line": 104,
+    "same_tokens": true
+  },
+  {
+    "name": "world_add_player",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 195,
+    "same_tokens": false
+  },
+  {
+    "name": "world_bomb_spawn",
+    "before": "src/bombs.odin",
+    "after": "src/shared/sim_bombs.odin",
+    "line": 37,
+    "same_tokens": false
+  },
+  {
+    "name": "world_explode",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 81,
+    "same_tokens": false
+  },
+  {
+    "name": "world_refresh_poses",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 151,
+    "same_tokens": true
+  },
+  {
+    "name": "world_remove_out_of_bounds",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 156,
+    "same_tokens": false
+  },
+  {
+    "name": "world_remove_player",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 203,
+    "same_tokens": true
+  },
+  {
+    "name": "world_start_physics",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 170,
+    "same_tokens": false
+  },
+  {
+    "name": "world_tick",
+    "before": "src/yard.odin",
+    "after": "src/shared/sim_yard.odin",
+    "line": 94,
+    "same_tokens": false
+  }
+]

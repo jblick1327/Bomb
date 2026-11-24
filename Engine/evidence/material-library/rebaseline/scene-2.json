@@ -1,0 +1,180 @@
+{
+	"version": 2,
+	"next_id": 6,
+	"revision": 0,
+	"minimum_width": 0.00000000,
+	"materials": [
+		{
+			"name": "brick",
+			"subdivision_strength": 0.00000000,
+			"connection_strength": 0.00000000,
+			"subdivision_infinite": true,
+			"connection_infinite": true,
+			"flexibility": 0.00000000,
+			"impact_scale": 1.00000000,
+			"generation_count": 2,
+			"aspect_ratio": 1.50000000,
+			"triangulate": false
+		}
+	],
+	"subdivisions": [
+		{
+			"id": 2,
+			"owner": 1,
+			"material": 0,
+			"seed": 42,
+			"outline": {
+				"points": [
+					{
+						"x": 0.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 1.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 1.00000000,
+						"y": 1.00000000
+					},
+					{
+						"x": 0.00000000,
+						"y": 1.00000000
+					}
+				]
+			},
+			"rest_center": {
+				"x": 0.50000000,
+				"y": 0.50000000
+			},
+			"pose": {
+				"position": {
+					"x": 0.50000000,
+					"y": 0.50000000
+				},
+				"angle": 0.00000000,
+				"velocity": {
+					"x": 0.00000000,
+					"y": 0.00000000
+				},
+				"angular_velocity": 0.00000000
+			},
+			"live": true
+		},
+		{
+			"id": 3,
+			"owner": 1,
+			"material": 0,
+			"seed": 42,
+			"outline": {
+				"points": [
+					{
+						"x": 1.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 2.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 2.00000000,
+						"y": 1.00000000
+					},
+					{
+						"x": 1.00000000,
+						"y": 1.00000000
+					}
+				]
+			},
+			"rest_center": {
+				"x": 1.50000000,
+				"y": 0.50000000
+			},
+			"pose": {
+				"position": {
+					"x": 1.50000000,
+					"y": 0.50000000
+				},
+				"angle": 0.00000000,
+				"velocity": {
+					"x": 0.00000000,
+					"y": 0.00000000
+				},
+				"angular_velocity": 0.00000000
+			},
+			"live": true
+		},
+		{
+			"id": 4,
+			"owner": 1,
+			"material": 0,
+			"seed": 42,
+			"outline": {
+				"points": [
+					{
+						"x": 2.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 3.00000000,
+						"y": 0.00000000
+					},
+					{
+						"x": 3.00000000,
+						"y": 1.00000000
+					},
+					{
+						"x": 2.00000000,
+						"y": 1.00000000
+					}
+				]
+			},
+			"rest_center": {
+				"x": 2.50000000,
+				"y": 0.50000000
+			},
+			"pose": {
+				"position": {
+					"x": 2.50000000,
+					"y": 0.50000000
+				},
+				"angle": 0.00000000,
+				"velocity": {
+					"x": 0.00000000,
+					"y": 0.00000000
+				},
+				"angular_velocity": 0.00000000
+			},
+			"live": true
+		}
+	],
+	"connections": [
+		{
+			"id": 5,
+			"a": 2,
+			"b": 3
+		},
+		{
+			"id": 6,
+			"a": 3,
+			"b": 4
+		}
+	],
+	"pieces": [
+		{
+			"id": 1,
+			"material": 0,
+			"seed": 42,
+			"subdivisions": [
+				2,
+				3,
+				4
+			],
+			"connections": [
+				5,
+				6
+			],
+			"live": true
+		}
+	]
+}

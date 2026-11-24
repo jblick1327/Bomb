@@ -1,0 +1,149 @@
+--- a/src/yard.odin
++++ b/src/yard.odin
+@@ -5,12 +5,6 @@
+ import "core:time"
+ import "core:strings"
+ 
+-Sandbox_Settings :: struct {
+-	blast_radius: f32,
+-	blast_mode: Blast_Mode,
+-	seed: u8,
+-}
+-DEFAULT_SANDBOX_SETTINGS :: Sandbox_Settings{blast_radius=5.0,seed=42}
+ YARD_FLOOR_BOTTOM :: f32(-3)
+ YARD_BASE_DEPTH :: f32(0.25)
+ YARD_LEFT :: f32(-8)
+--- a/src/bombs.odin
++++ b/src/bombs.odin
+@@ -3,7 +3,6 @@
+ import b2 "vendor:box2d"
+ import "core:math/rand"
+ 
+-Blast_Mode :: enum { Manual, Falling_Bombs }
+ BOMB_RADIUS :: f32(0.18)
+ BOMB_FUSE :: f32(1)
+ BOMB_DROP_MIN :: f32(1)
+--- a/src/net_client.odin
++++ b/src/net_client.odin
+@@ -1,7 +1,6 @@
+ package main
+ 
+ import nc "netcode"
+-import rl "vendor:raylib"
+ import "core:math"
+ import "core:slice"
+ 
+@@ -344,46 +343,6 @@
+  for p in s.pieces { if p.live && piece_anchored(s,p.id,s.anchor_y) { c.anchored[p.id]=true } }
+  c.anchored_valid=true
+ }
+-// Piece frames map to rigid cell poses; rubber cells and anchored pieces keep their own rule.
+-// Dynamic pieces and cells without a drawn row are moved far off screen.
+-net_client_draw_inputs :: proc(c: ^Net_Client) -> (poses: map[u64]Pose,frames: map[u64]Pose) {
+- net_client_ensure_anchored(c)
+- s:=&c.rep.scene
+- poses=make(map[u64]Pose); frames=make(map[u64]Pose)
+- for p in s.pieces {
+-  if !p.live || s.materials[p.material].flexibility>0 || len(p.subdivisions)==0 { continue }
+-  frame:Pose
+-  if d,ok:=c.drawn[ent_key(.Piece,p.id)]; ok { frame=reference_to_frame(Pose{position={d.x,d.y},angle=d.angle},p.ref_rest) }
+-  else if !c.anchored[p.id] { frame=Pose{position={NET_HIDDEN,NET_HIDDEN}} }
+-  frames[p.id]=frame
+-  for id in p.subdivisions {
+-   row,ok:=s.sub_rows[id]; if !ok || !s.subdivisions[row].live { continue }
+-   sub:=s.subdivisions[row]
+-   poses[id]=Pose{position=rigid_render_point(frame,sub.rest_center),angle=frame.angle}
+-  }
+- }
+- for sub in s.subdivisions {
+-  if !sub.live || s.materials[sub.material].flexibility<=0 { continue }
+-  if d,ok:=c.drawn[ent_key(.Rubber,sub.id)]; ok { poses[sub.id]=Pose{position={d.x,d.y},angle=d.angle} }
+-  else if c.anchored[sub.owner] { poses[sub.id]=Pose{position=sub.rest_center} }
+-  else { poses[sub.id]=Pose{position={NET_HIDDEN,NET_HIDDEN}} }
+- }
+- return
+-}
+-// Draws the replica through the existing draw path.
+-net_client_draw :: proc(c: ^Net_Client,view: View,outline_width:f32=2) {
+- poses,frames:=net_client_draw_inputs(c); defer { delete(poses); delete(frames) }
+- yard_draw_backdrop(view)
+- draw_scene(&c.rep.scene,&c.caches,view,poses,0,true,false,false,true,outline_width,frames)
+- yard_draw_spawn(view)
+- for burst in c.bursts { draw_burst(view,burst) }
+- keys:[dynamic]u64; defer delete(keys)
+- for key in c.drawn { if kind:=key_kind(key); kind==.Bomb || kind==.Player { append(&keys,key) } }
+- slice.sort(keys[:])
+- for key in keys { if key_kind(key)==.Bomb { d:=c.drawn[key]; draw_bomb_at(view,{d.x,d.y},d.landed,d.fuse) } }
+- for key in keys { if key_kind(key)==.Player { d:=c.drawn[key]; draw_player_at(view,{d.x,d.y},int(key_id(key))) } }
+-}
+-
+ // ---------------------------------------------------------------- one client step
+ net_client_make_input :: proc(c: ^Net_Client) {
+  move:f32
+@@ -451,4 +410,3 @@
+  }
+  nc.client_update(&c.nc_client,now)
+ }
+-_ :: rl
+--- /dev/null
++++ b/src/settings.odin
+@@ -0,0 +1,11 @@
++package main
++
++// Shared gameplay settings; no frontend dependencies.
++Blast_Mode :: enum { Manual, Falling_Bombs }
++
++Sandbox_Settings :: struct {
++	blast_radius: f32,
++	blast_mode: Blast_Mode,
++	seed: u8,
++}
++DEFAULT_SANDBOX_SETTINGS :: Sandbox_Settings{blast_radius=5.0,seed=42}
+--- /dev/null
++++ b/src/net_client_view.odin
+@@ -0,0 +1,45 @@
++package main
++
++import "core:slice"
++
++// Raylib frontend methods. Ownership separation is still pending.
++// Piece frames map to rigid cell poses; rubber cells and anchored pieces keep their own rule.
++// Dynamic pieces and cells without a drawn row are moved far off screen.
++net_client_draw_inputs :: proc(c: ^Net_Client) -> (poses: map[u64]Pose,frames: map[u64]Pose) {
++ net_client_ensure_anchored(c)
++ s:=&c.rep.scene
++ poses=make(map[u64]Pose); frames=make(map[u64]Pose)
++ for p in s.pieces {
++  if !p.live || s.materials[p.material].flexibility>0 || len(p.subdivisions)==0 { continue }
++  frame:Pose
++  if d,ok:=c.drawn[ent_key(.Piece,p.id)]; ok { frame=reference_to_frame(Pose{position={d.x,d.y},angle=d.angle},p.ref_rest) }
++  else if !c.anchored[p.id] { frame=Pose{position={NET_HIDDEN,NET_HIDDEN}} }
++  frames[p.id]=frame
++  for id in p.subdivisions {
++   row,ok:=s.sub_rows[id]; if !ok || !s.subdivisions[row].live { continue }
++   sub:=s.subdivisions[row]
++   poses[id]=Pose{position=rigid_render_point(frame,sub.rest_center),angle=frame.angle}
++  }
++ }
++ for sub in s.subdivisions {
++  if !sub.live || s.materials[sub.material].flexibility<=0 { continue }
++  if d,ok:=c.drawn[ent_key(.Rubber,sub.id)]; ok { poses[sub.id]=Pose{position={d.x,d.y},angle=d.angle} }
++  else if c.anchored[sub.owner] { poses[sub.id]=Pose{position=sub.rest_center} }
++  else { poses[sub.id]=Pose{position={NET_HIDDEN,NET_HIDDEN}} }
++ }
++ return
++}
++// Draws the replica through the existing draw path.
++net_client_draw :: proc(c: ^Net_Client,view: View,outline_width:f32=2) {
++ poses,frames:=net_client_draw_inputs(c); defer { delete(poses); delete(frames) }
++ yard_draw_backdrop(view)
++ draw_scene(&c.rep.scene,&c.caches,view,poses,0,true,false,false,true,outline_width,frames)
++ yard_draw_spawn(view)
++ for burst in c.bursts { draw_burst(view,burst) }
++ keys:[dynamic]u64; defer delete(keys)
++ for key in c.drawn { if kind:=key_kind(key); kind==.Bomb || kind==.Player { append(&keys,key) } }
++ slice.sort(keys[:])
++ for key in keys { if key_kind(key)==.Bomb { d:=c.drawn[key]; draw_bomb_at(view,{d.x,d.y},d.landed,d.fuse) } }
++ for key in keys { if key_kind(key)==.Player { d:=c.drawn[key]; draw_player_at(view,{d.x,d.y},int(key_id(key))) } }
++}
++

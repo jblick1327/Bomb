@@ -1,0 +1,255 @@
+package shared
+import b2 "vendor:box2d"
+import math "core:math"
+import slice "core:slice"
+import mem "core:mem"
+
+// First prediction fixture: only validated static terrain. Dynamic topology
+// history/proxies are a separate required M5 step; this is not the final gate.
+Prediction_Reason :: enum { None, Uninitialized, Dynamic_History_Required, Capacity, Wrong_Epoch, Wrong_Revision, Invalid_Owner, Missing_Command, Unsafe_Position, Bomb_Contact_Uncertain, Outside_Collision_Window, Round_Inactive }
+Prediction_Proxy :: struct { key:u64, body:b2.BodyId, reference:Vec2, rigid:bool }
+Static_Prediction :: struct {
+ active: bool,
+ scene: Scene,
+ player: Player,
+ epoch:u32,
+ revision,state_tick,last_jump_edge:u64,
+ identity:Input_Identity,
+ reason:Prediction_Reason,
+ proxies:[dynamic]Prediction_Proxy,
+ has_region:bool,region:Level_Bounds,
+}
+// Convex decomposition dominates a prediction world rebuild, and a collapse
+// rebuilds on every topology revision while most cells keep their outline.
+// The hulls are a pure function of (outline, offset), so an entry is reused only
+// when both match exactly; shapes are then created in the authoritative order.
+Prediction_Hull_Entry :: struct { outline:[]Vec2, offset:Vec2, hulls:[dynamic]b2.Hull, used:u64 }
+Prediction_Hull_Cache :: struct { entries:map[u64]Prediction_Hull_Entry, generation:u64 }
+prediction_hull_entry_destroy :: proc(e:^Prediction_Hull_Entry) { delete(e.outline);delete(e.hulls);e^={} }
+prediction_hull_cache_destroy :: proc(c:^Prediction_Hull_Cache) {
+ for _,&entry in c.entries { prediction_hull_entry_destroy(&entry) }
+ delete(c.entries);c^={}
+}
+prediction_hull_cache_prune :: proc(c:^Prediction_Hull_Cache) {
+ stale:[dynamic]u64;defer delete(stale)
+ for id,entry in c.entries { if entry.used!=c.generation { append(&stale,id) } }
+ for id in stale { entry:=c.entries[id];prediction_hull_entry_destroy(&entry);delete_key(&c.entries,id) }
+}
+prediction_create_region_shapes :: proc(s:^Scene,id:u64,body:b2.BodyId,cache:^Prediction_Hull_Cache) {
+ if cache==nil { physics_create_region_shapes(s,id,body);return }
+ sub:=s.subdivisions[s.sub_rows[id]];offset:=physics_region_offset(s,sub)
+ entry,found:=&cache.entries[id]
+ // Bitwise, not float ==: -0 and 0 must not share an entry.
+ same:=found && transmute([2]u32)entry.offset==transmute([2]u32)offset && len(entry.outline)==len(sub.outline.points) && mem.compare(slice.to_bytes(entry.outline),slice.to_bytes(sub.outline.points))==0
+ if !same {
+  if found { prediction_hull_entry_destroy(entry) } else { entry=map_insert(&cache.entries,id,Prediction_Hull_Entry{}) }
+  entry.outline=slice.clone(sub.outline.points);entry.offset=offset
+  physics_region_hulls(sub.outline,offset,&entry.hulls)
+ }
+ entry.used=cache.generation
+ for hull in entry.hulls { physics_create_hull_shape(s,body,id,hull) }
+ physics_create_fallback_shape(s,id,body)
+}
+prediction_static_destroy :: proc(p:^Static_Prediction) {
+ if p.active { scene_destroy(&p.scene) }
+ delete(p.proxies)
+ p^={}
+}
+prediction_region_contains :: proc(region:Level_Bounds,position:Vec2,margin:f32) -> bool {return position.x>=region.lo.x+margin&&position.x<=region.hi.x-margin&&position.y>=region.lo.y+margin&&position.y<=region.hi.y-margin}
+prediction_static_build :: proc(p:^Static_Prediction,source:^Scene,allow_dynamic:bool=false,region:^Level_Bounds=nil,cache:^Prediction_Hull_Cache=nil) -> bool {
+ prediction_static_destroy(p)
+ if cache!=nil { cache.generation+=1 }
+ anchored:=make(map[u64]bool);defer delete(anchored)
+ for piece in source.pieces {if piece.live {anchored[piece.id]=piece_anchored(source,piece.id,source.anchor_y)}}
+ selected:=make(map[u64]bool);defer delete(selected)
+ live:=0
+ for sub in source.subdivisions {if sub.live {
+  pinned:=anchored[sub.owner];if source.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy {pinned=sub.provenance.pinned}
+  if region!=nil&&pinned {
+   lo,hi:=Vec2{1e30,1e30},Vec2{-1e30,-1e30};for point in sub.outline.points {lo={min(lo.x,point.x),min(lo.y,point.y)};hi={max(hi.x,point.x),max(hi.y,point.y)}}
+   if hi.x<region.lo.x||lo.x>region.hi.x||hi.y<region.lo.y||lo.y>region.hi.y {continue}
+  };selected[sub.id]=true;live+=1
+ }}
+ if live>4096 { p.reason=.Capacity;return false }
+ for piece in source.pieces {
+  if piece.live && !piece_anchored(source,piece.id,source.anchor_y) && !allow_dynamic { p.reason=.Dynamic_History_Required;return false }
+ }
+ if !allow_dynamic {for sub in source.subdivisions {if sub.live&&source.materials[sub.material].flexibility>0&&sub.provenance.motion!=.Legacy&&!sub.provenance.pinned {p.reason=.Dynamic_History_Required;return false}}}
+ p.scene=new_scene(0);p.epoch=source.epoch;p.revision=source.structure_revision
+ if region!=nil {p.has_region=true;p.region=region^}
+ p.scene.level_policy=source.level_policy
+ def:=b2.DefaultWorldDef();def.gravity=to_b2(scene_gameplay_config(source).gravity)
+ p.scene.physics={active=true,world=b2.CreateWorld(def)};p.active=true
+ append(&p.scene.materials,..source.materials[:])
+ for &material in p.scene.materials { material.name="" }
+ bodies:=make(map[u64]b2.BodyId);defer delete(bodies)
+ for original in source.subdivisions {
+  if !original.live||!selected[original.id] { continue }
+  sub:=Subdivision{id=original.id,owner=original.owner,material=original.material,rest_center=original.rest_center,live=true,outline=make_polygon(original.outline.points),provenance=original.provenance}
+  p.scene.sub_rows[sub.id]=len(p.scene.subdivisions);append(&p.scene.subdivisions,sub)
+  rubber:=source.materials[sub.material].flexibility>0
+  pinned:=anchored[sub.owner];if rubber&&sub.provenance.motion!=.Legacy { pinned=sub.provenance.pinned }
+  body,exists:=bodies[sub.owner]
+  if rubber || !exists {
+   bd:=b2.DefaultBodyDef();if rubber { bd.position=to_b2(sub.rest_center) }
+   if !pinned { bd.type=.kinematicBody }
+   body=b2.CreateBody(p.scene.physics.world,bd)
+   if !rubber { bodies[sub.owner]=body }
+   if !pinned {
+    key:=ent_key(.Rubber,sub.id);reference:=sub.rest_center
+    if !rubber { key=ent_key(.Piece,sub.owner);reference=source.pieces[source.piece_rows[sub.owner]].ref_rest }
+    append(&p.proxies,Prediction_Proxy{key,body,reference,!rubber})
+   }
+  }
+  p.scene.subdivisions[p.scene.sub_rows[sub.id]].body=body
+  // Exactly the authoritative decomposition, hull welding, fallback and filter.
+  prediction_create_region_shapes(&p.scene,sub.id,body,cache)
+ }
+ if !source.level_policy.active {
+ floor_def:=b2.DefaultBodyDef();floor_def.position={0.5,YARD_FLOOR_BOTTOM-YARD_BASE_DEPTH*0.5}
+ floor:=b2.CreateBody(p.scene.physics.world,floor_def)
+ shape:=b2.DefaultShapeDef();shape.material.friction=.65
+ _=b2.CreatePolygonShape(floor,shape,b2.MakeBox(10,YARD_BASE_DEPTH*.5))
+ }
+ p.player=player_create(p.scene.physics.world,0,scene_gameplay_config(source).player)
+ if cache!=nil { prediction_hull_cache_prune(cache) }
+ return true
+}
+// The client predicts lead+latency ticks past its newest received frame, which
+// is usually just beyond the 6-tick extrapolation window. A proxy there is:
+// - held, when received frames show it at rest: the authority reports that pose
+//   until something disturbs it (bomb contacts are checked separately);
+// - estimated, when moving, by the same linear motion, with an error bound for
+//   gravity, for stopping (its speed) and for turning (its angular speed). The
+//   estimate is used when that bound is within PREDICTION_PROXY_TOLERANCE, or when
+//   its swept, padded bounds cannot reach the player during this step;
+// - otherwise unknown, and the step still requires history.
+PREDICTION_HOLD_TICKS :: u64(60)
+// Below the 0.25 m gross-correction threshold, so an accepted estimate's error
+// is presented as a blended correction. In-window extrapolation (6 ticks) already
+// accepts up to 0.05 m of gravity error unchecked.
+PREDICTION_PROXY_TOLERANCE :: f32(.2)
+// Rest: every received sample over at least this span stays within
+// PREDICTION_REST_QUANTA position steps (1/256 m) and angle steps of the newest.
+// A supported piece under a standing player jitters by a step or so; a body
+// released from rest falls 0.012 m (3 steps) in 3 ticks, so it reads as
+// resting for at most 2 received ticks.
+PREDICTION_REST_TICKS :: u64(4)
+PREDICTION_REST_QUANTA :: i32(2)
+prediction_proxy_at_rest :: proc(h:^Collision_History,lower:^Collision_Frame,key:u64,pose:Pose_State) -> bool {
+ spanned:=false
+ for k in u64(1)..=2*PREDICTION_REST_TICKS {
+  if k>lower.tick { break }
+  frame:=&h.frames[(lower.tick-k)%PREDICTION_HISTORY_TICKS]
+  if !frame.valid || frame.epoch!=h.epoch || frame.tick!=lower.tick-k { continue }
+  old,exists:=frame.poses[key];if !exists { return false }
+  turn:=(i32(old.a)-i32(pose.a)+POSE_ANGLE_STEPS)%POSE_ANGLE_STEPS;turn=min(turn,POSE_ANGLE_STEPS-turn)
+  if abs(old.x-pose.x)>PREDICTION_REST_QUANTA || abs(old.y-pose.y)>PREDICTION_REST_QUANTA || turn>PREDICTION_REST_QUANTA { return false }
+  if k>=PREDICTION_REST_TICKS { spanned=true;break }
+ }
+ return spanned
+}
+// error bounds the distance between the returned position and the authority's;
+// turn bounds the angle error in radians. Both are 0 for received, interpolated,
+// in-window extrapolated and resting poses, exactly as before.
+prediction_proxy_pose :: proc(h:^Collision_History,b:Collision_Bracket,tick,key:u64,gravity:f32) -> (pose:Net_Drawn,error,turn:f32,ok:bool) {
+ if received,_,valid:=collision_history_bracket_pose(b,tick,key);valid { return received,0,0,true }
+ lower:=b.lower;if lower==nil || tick-lower.tick>PREDICTION_HOLD_TICKS { return }
+ a,found:=lower.poses[key];if !found { return }
+ if prediction_proxy_at_rest(h,lower,key,a) { return net_drawn_single(a),0,0,true }
+ newest:=net_drawn_single(a)
+ if b.upper!=nil {
+  // Lost frames between two received ones: interpolate. A parabola stays within
+  // g*t1*t2/2 of its chord; a stop or turn costs at most speed*min(t1,t2).
+  s,exists:=b.upper.poses[key];if !exists { return }
+  gap:=b.upper.tick-lower.tick;if gap>PREDICTION_HOLD_TICKS { return }
+  later:=net_drawn_single(s)
+  t1,t2:=f32(tick-lower.tick)/60,f32(b.upper.tick-tick)/60;near:=min(t1,t2);span:=f32(gap)/60
+  speed:=vlen(Vec2{later.x-newest.x,later.y-newest.y})/span;spin:=math.abs(radians_delta(later.angle,newest.angle))/span
+  return net_drawn_from(a,s,t1/span),.5*gravity*t1*t2+speed*near,spin*near,true
+ }
+ previous:=b.previous;if previous==nil || lower.tick-previous.tick>PREDICTION_EXTRAPOLATE_TICKS { return }
+ s,exists:=previous.poses[key];if !exists { return }
+ old:=net_drawn_single(s);current:=newest
+ delta:=f32(lower.tick-previous.tick);ahead:=f32(tick-lower.tick)
+ current.x+=(newest.x-old.x)/delta*ahead;current.y+=(newest.y-old.y)/delta*ahead
+ current.angle+=radians_delta(newest.angle,old.angle)/delta*ahead
+ if !finite(current.x) || !finite(current.y) || math.abs(current.x)>1e6 || math.abs(current.y)>1e6 { return }
+ t:=ahead/60;speed:=vlen(Vec2{newest.x-old.x,newest.y-old.y})/delta*60;spin:=math.abs(radians_delta(newest.angle,old.angle))/delta*60
+ return current,.5*gravity*t*t+speed*t,spin*t,true
+}
+prediction_proxy_positions :: proc(p:^Static_Prediction,history:^Collision_History,tick:u64,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
+ if len(p.proxies)==0 { return true }
+ if history==nil { p.reason=.Dynamic_History_Required;return false }
+ // The bracketing frames are shared by every proxy at a tick: find them once.
+ from_frames,to_frames:=collision_history_bracket(history,tick),collision_history_bracket(history,tick+1)
+ // Full config gravity bounds proxy error. OD-8's structure ramp only lowers structure gravity during the first
+ // 60 steps of a level start, so the bound stays conservative then and exact afterwards (structure_gravity_ramp_test).
+ config:=scene_gameplay_config(&p.scene);gravity:=vlen(config.gravity)
+ // The player's reach during this step, as in the collision-window margin.
+ player:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body))
+ reach:=.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed*max(f32(1),player_speed_scale(&p.player)),config.player.jump_speed)/60+gravity*config.player.gravity_scale/3600
+ for proxy in p.proxies {
+  a,error_a,turn_a,valid_a:=prediction_proxy_pose(history,from_frames,tick,proxy.key,gravity)
+  b,error_b,turn_b,valid_b:=prediction_proxy_pose(history,to_frames,tick+1,proxy.key,gravity)
+  if !valid_a || !valid_b { p.reason=.Dynamic_History_Required;return false }
+  from,to:=Vec2{a.x,a.y},Vec2{b.x,b.y}
+  if proxy.rigid { from=vsub(from,vrotate(proxy.reference,a.angle));to=vsub(to,vrotate(proxy.reference,b.angle)) }
+  b2.Body_SetTransform(proxy.body,to_b2(from),b2.MakeRot(a.angle))
+  b2.Body_SetLinearVelocity(proxy.body,to_b2(vmul(vsub(to,from),60)))
+  b2.Body_SetAngularVelocity(proxy.body,radians_delta(b.angle,a.angle)*60)
+  if error_a>0 || error_b>0 || turn_a>0 || turn_b>0 {
+   // Motion is the pose point's translation plus rotation about it, so every
+   // point of the body moves at most |translation| + radius*|turn|.
+   box:=b2.Body_ComputeAABB(proxy.body);lo,hi:=from_b2(box.lowerBound),from_b2(box.upperBound)
+   point:=Vec2{a.x,a.y};far:=Vec2{max(math.abs(lo.x-point.x),math.abs(hi.x-point.x)),max(math.abs(lo.y-point.y),math.abs(hi.y-point.y))}
+   radius:=vlen(far)
+   error:=max(error_a+radius*min(turn_a,f32(math.PI)),error_b+radius*min(turn_b,f32(math.PI)))
+   if error<=tolerance { continue }
+   pad:=error+vlen(Vec2{b.x-a.x,b.y-a.y})+radius*min(math.abs(radians_delta(b.angle,a.angle)),f32(math.PI))
+   if player.x+PLAYER_RADIUS+reach>lo.x-pad && player.x-PLAYER_RADIUS-reach<hi.x+pad && player.y+PLAYER_HALF_HEIGHT+reach>lo.y-pad && player.y-PLAYER_HALF_HEIGHT-reach<hi.y+pad {
+    p.reason=.Dynamic_History_Required;return false
+   }
+  }
+ }
+ return true
+}
+prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,collision:^Collision_History=nil,seed_support:bool=false,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
+ tick:=command.target_tick
+ if tick!=p.state_tick+1 { p.reason=.Missing_Command;return false }
+ if collision!=nil {
+  topology:=collision_history_topology(collision,tick)
+  if topology==nil || topology.scene.structure_revision!=p.revision { p.reason=.Wrong_Revision;return false }
+ }
+ if !prediction_proxy_positions(p,collision,tick-1,tolerance) { return false }
+ if p.has_region {
+  position:=from_b2(b2.Body_GetPosition(p.player.body));velocity:=from_b2(b2.Body_GetLinearVelocity(p.player.body));config:=scene_gameplay_config(&p.scene)
+  margin:=PLAYER_HALF_HEIGHT+.1+max(math.abs(velocity.x),math.abs(velocity.y),config.player.speed*max(f32(1),player_speed_scale(&p.player)),config.player.jump_speed)/60+max(math.abs(config.gravity.x),math.abs(config.gravity.y))*config.player.gravity_scale/3600
+  if !prediction_region_contains(p.region,position,margin) {p.reason=.Outside_Collision_Window;return false}
+ }
+ jump:=command.jump_edge!=0 && command.jump_edge>p.last_jump_edge
+ if jump { p.last_jump_edge=command.jump_edge }
+ if seed_support { player_movement_from_support(&p.player,move_dequantize(command.move),jump,f32(NET_STEP_DT)) }
+ else { player_before_step(&p.player,move_dequantize(command.move),jump,f32(NET_STEP_DT)) }
+ b2.World_Step(p.scene.physics.world,f32(NET_STEP_DT),PHYSICS_SUBSTEPS);player_after_movement_step(&p.player)
+ outside:=player_out_of_bounds(&p.player);if p.scene.level_policy.active { outside=!level_bounds_contains(p.scene.level_policy.kill,p.player.pose.position) }
+ if outside || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
+ p.state_tick=tick;p.reason=.None;return true
+}
+prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
+ if !p.active { p.reason=.Uninitialized;return false }
+ if owner.identity.epoch!=p.epoch { p.reason=.Wrong_Epoch;return false }
+ if owner.topology_revision!=p.revision { p.reason=.Wrong_Revision;return false }
+ if owner.support_kind==1 && owner.support_cell not_in p.scene.sub_rows { p.reason=.Invalid_Owner;return false }
+ if !history.accepted || owner.identity!=history.identity || !owner_state_restore(p.scene.physics.world,&p.player,owner) { p.reason=.Invalid_Owner;return false }
+ p.identity=owner.identity;p.state_tick=owner.state_tick;p.last_jump_edge=owner.last_jump_edge
+ if history.next_tick<=owner.state_tick { p.reason=.Missing_Command;return false }
+ if history.next_tick-owner.state_tick>INPUT_HISTORY { p.reason=.Capacity;return false }
+ first:=true
+ for tick:=owner.state_tick+1;tick<history.next_tick;tick+=1 {
+  slot:=history.slots[tick%INPUT_HISTORY]
+  if !slot.occupied || slot.command.target_tick!=tick { p.reason=.Missing_Command;return false }
+  if !prediction_world_step(p,slot.command,collision,first,tolerance) { return false };first=false
+ }
+ p.reason=.None;return true
+}

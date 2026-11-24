@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "M0",
+      "status": "passed",
+      "dependencies": [],
+      "evidence": [
+        "evidence/M0/summary.json",
+        "evidence/M0/unity-baseline/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M1",
+      "status": "passed",
+      "dependencies": [
+        "M0"
+      ],
+      "evidence": [
+        "evidence/M1/native-proof-20261105T231900001Z.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M2",
+      "status": "passed",
+      "dependencies": [
+        "M1"
+      ],
+      "evidence": [
+        "evidence/M2/summary.json",
+        "evidence/M2/comparison/summary.json",
+        "evidence/M2/headless/summary.json",
+        "evidence/M2/menus/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M3",
+      "status": "passed",
+      "dependencies": [
+        "M2"
+      ],
+      "evidence": [
+        "evidence/M3/summary.json",
+        "evidence/M3/live-20261106T164857Z/summary.json",
+        "evidence/M3/live-20261106T164857Z/hash-coverage.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M4",
+      "status": "passed",
+      "dependencies": [
+        "M3"
+      ],
+      "evidence": [
+        "evidence/M4/summary.json",
+        "evidence/M4/unity-live-20261106T180618597709Z/summary.json",
+        "evidence/M4/unity-live-20261106T181447199186Z/summary.json",
+        "evidence/M4/unity-live-20261106T181054796379Z/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M5",
+      "status": "passed",
+      "dependencies": [
+        "M4"
+      ],
+      "evidence": [
+        "contracts/scheduled-input-v4.md",
+        "evidence/M5/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M6",
+      "status": "passed",
+      "dependencies": [
+        "M5"
+      ],
+      "evidence": [
+        "contracts/level-layout-v4.md",
+        "evidence/M6/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M7",
+      "status": "passed",
+      "dependencies": [
+        "M6"
+      ],
+      "evidence": [
+        "evidence/M7/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M8",
+      "status": "passed",
+      "dependencies": [
+        "M7"
+      ],
+      "evidence": [
+        "evidence/M8/summary.json"
+      ],
+      "blocking_reasons": []
+    },
+    {
+      "id": "M9",
+      "status": "passed",
+      "dependencies": [
+        "M8"
+      ],
+      "evidence": [
+        "evidence/M9/summary.json",
+        "evidence/M9/soak-20261110T034348062557Z/summary.json"
+      ],
+      "blocking_reasons": []
+    }
+  ]
+}

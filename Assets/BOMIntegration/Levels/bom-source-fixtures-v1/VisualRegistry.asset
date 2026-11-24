@@ -1,0 +1,552 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98b57eedd5fe7bd49ae1c28d9c346ee7, type: 3}
+  m_Name: VisualRegistry
+  m_EditorClassIdentifier: Bom.Unity.Runtime::Bom.Unity.BomVisualRegistry
+  LevelId: bom-source-fixtures-v1
+  GameplayManifestHash: 6c8ca13eaa6357a923257e68c101931713f1aba25666cb1a3c1db44401cb2e8f
+  CatalogHash: a51edf5aa50d3277b5b156e3a6977235e230fc82e6c5ffb7558623a106db2972
+  Entries:
+  - AssetKey: source-fixture/Closed box
+    ContentHash: b74a4cfa0360c58d0006d3d94211a3c0a65c6188841fcfc0bc93f8f2f8029755
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: eb4014fb6052b2943b4604c9496efe11, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -1, y: 1}
+    IntactPrefab: {fileID: 8687351887570029080, guid: abd97de368020b74d81917e25e93b834, type: 3}
+  - AssetKey: source-fixture/Closed concave solid
+    ContentHash: 06d1b0ecce6790cf2ff9ef9dd98b81f2a3aaf99f297176eb58ee5ae4c4883a93
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 209ce652519b8604aa69153640aa5295, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 2100517582712251525, guid: 5d9b1fdb46df23043b76fb5135ba5b8e, type: 3}
+  - AssetKey: source-fixture/Declared open surface
+    ContentHash: 6a5d04366566e1f180d31c28e418a7e42f332f9a7fe3db93901a856432b2b034
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 0937b4d78d97d324a88f9667c2eab6f2, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.25, y: 0.25}
+    IntactPrefab: {fileID: 4355534020514474787, guid: 43465f6ccd98c454e8968c06bb63bdb9, type: 3}
+  - AssetKey: source-fixture/Disconnected solid group
+    ContentHash: 15e47425076ba628ce7e579a8656447fe5a8b113339e203238ba7f1c11676970
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: dfcbee423701d064cbddb023d6880aa5, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    - Mesh: {fileID: 4300000, guid: eb44a882723b03442ada900a3a5dbd8c, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 1716021735808870962, guid: eabfa335f2110ed449254d8589afb778, type: 3}
+  - AssetKey: source-fixture/Floor
+    ContentHash: 7eb2cf779dff5275ff2173889e99395b9ec6e093fb557df02b2dbd286aa3ba15
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 5de9c2f9404bbd94a896dea6b145e180, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: c5c799da3455d344bafb5f4fe2079748, type: 2}
+      - {fileID: 2100000, guid: c5c799da3455d344bafb5f4fe2079748, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 529696749121601008, guid: 8809265a08aaee645b6c30620d4ea267, type: 3}
+  - AssetKey: source-fixture/Glued source A
+    ContentHash: 009cb38bec98c6ec1aec317e1dc2cebca762b56a5280790a27a43540eaeb3ede
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 6af6394936c04e44c84c6c870422145f, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 2355894366508170509, guid: 1548736a3f9313c498fdd3de0d8ae34a, type: 3}
+  - AssetKey: source-fixture/Glued source B
+    ContentHash: 2e88e0ca8c2caf154eb9533a9057188104d3eb78541785ad124f0915b4bd117e
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 9596371e6cdaa824ea9ec455bd8677b8, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 7428707152505531085, guid: 0abbc0ef077f8de438047860cfa46574, type: 3}
+  - AssetKey: source-fixture/Mirrored solid
+    ContentHash: 2e88e0ca8c2caf154eb9533a9057188104d3eb78541785ad124f0915b4bd117e
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 9c268d437c56ca24789053628c5cb4ef, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.4, y: 0.4}
+    IntactPrefab: {fileID: 6137447366855535977, guid: 6c29ea6cbbfed9149b893d0c7fb1a61f, type: 3}
+  - AssetKey: source-fixture/Multi material moving solid
+    ContentHash: 009cb38bec98c6ec1aec317e1dc2cebca762b56a5280790a27a43540eaeb3ede
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 6a7e84ea47435ac4e87ccd54343c95ae, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: 20af91fd5e75ce34e8baa207d78ba5ea, type: 2}
+      - {fileID: 2100000, guid: b3429636a7e5dd94ebeb2b26a01478b7, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.5, y: 0.5}
+    IntactPrefab: {fileID: 643642959080860669, guid: 21f93e02ebe7bce40a4bf096215a6f8e, type: 3}
+  - AssetKey: source-fixture/Original rock audit
+    ContentHash: bbb522617191c0825abd0ddd42236c7733d885084f819fee786e71d410294f06
+    BuilderVersion: 2
+    Groups:
+    - Mesh: {fileID: 4300000, guid: 794beb010ada71e4db1f06a7899c6052, type: 2}
+      SurfaceMaterials:
+      - {fileID: 2100000, guid: c5c799da3455d344bafb5f4fe2079748, type: 2}
+      MeshToGroup:
+        e00: 1
+        e01: 0
+        e02: 0
+        e03: 0
+        e10: 0
+        e11: 1
+        e12: 0
+        e13: 0
+        e20: 0
+        e21: 0
+        e22: 1
+        e23: 0
+        e30: 0
+        e31: 0
+        e32: 0
+        e33: 1
+    CapMaterial: {fileID: 0}
+    FallbackDepth: {x: -0.40984774, y: 0.40984768}
+    IntactPrefab: {fileID: 5433621819394538797, guid: 462f0001c26f015498ed18c27136da2c, type: 3}
+  InitialSources:
+  - SourceIdentity: 9007199254746001
+    InitialCellIds:
+    - 92
+    - 93
+    - 163
+    - 164
+    - 96
+    - 97
+    - 98
+    - 99
+    - 100
+    - 101
+    - 102
+    - 103
+    - 104
+    - 25
+    - 26
+    - 27
+    - 105
+    - 29
+    - 30
+    - 31
+    - 32
+    - 33
+    - 106
+    - 107
+    - 156
+    - 157
+    - 158
+    - 39
+    - 159
+    - 160
+    - 42
+    - 43
+    - 161
+    - 45
+    - 46
+    - 47
+    - 48
+    - 49
+    - 50
+    - 51
+    - 81
+    - 82
+    - 83
+    - 162
+    - 85
+    - 86
+    - 87
+    - 88
+    - 89
+    - 90
+    - 91
+  - SourceIdentity: 9007199254746002
+    InitialCellIds:
+    - 274
+    - 275
+    - 276
+    - 277
+    - 278
+    - 279
+    - 280
+    - 281
+    - 282
+    - 283
+    - 284
+    - 285
+    - 286
+    - 287
+    - 288
+    - 289
+    - 290
+    - 291
+    - 209
+    - 292
+    - 293
+    - 294
+    - 213
+    - 295
+    - 296
+    - 216
+    - 297
+    - 393
+    - 219
+    - 394
+    - 221
+    - 252
+    - 395
+    - 254
+    - 255
+    - 256
+    - 257
+    - 258
+    - 259
+    - 396
+    - 261
+    - 262
+    - 263
+    - 264
+    - 265
+    - 266
+    - 267
+    - 268
+    - 269
+    - 270
+    - 271
+    - 272
+    - 273
+  - SourceIdentity: 9007199254746003
+    InitialCellIds:
+    - 484
+    - 485
+    - 486
+    - 487
+    - 488
+    - 525
+    - 490
+    - 425
+    - 426
+    - 427
+    - 428
+    - 429
+    - 491
+    - 431
+    - 432
+    - 433
+    - 492
+    - 493
+    - 494
+    - 437
+    - 438
+    - 439
+    - 524
+    - 441
+    - 442
+    - 443
+    - 444
+    - 445
+    - 483
+  - SourceIdentity: 9007199254746004
+    InitialCellIds:
+    - 544
+    - 535
+    - 545
+    - 537
+    - 538
+    - 539
+    - 561
+    - 552
+    - 553
+    - 554
+    - 562
+    - 556
+  - SourceIdentity: 9007199254746005
+    InitialCellIds:
+    - 590
+    - 612
+    - 592
+    - 593
+    - 609
+    - 610
+    - 578
+    - 579
+    - 580
+    - 581
+    - 582
+    - 583
+    - 584
+    - 585
+    - 586
+    - 587
+    - 611
+    - 589
+  - SourceIdentity: 9007199254746006
+    InitialCellIds:
+    - 648
+    - 649
+    - 650
+    - 651
+    - 652
+    - 688
+    - 631
+    - 632
+    - 633
+    - 634
+    - 635
+    - 636
+    - 637
+    - 638
+    - 639
+    - 640
+    - 641
+    - 642
+    - 643
+    - 644
+    - 645
+    - 689
+    - 647
+  - SourceIdentity: 9007199254746007
+    InitialCellIds:
+    - 713
+    - 714
+    - 715
+    - 716
+    - 717
+    - 704
+    - 709
+    - 710
+    - 711
+    - 712
+  - SourceIdentity: 9007199254746008
+    InitialCellIds:
+    - 737
+    - 738
+    - 731
+    - 732
+    - 736
+  - SourceIdentity: 9007199254746009
+    InitialCellIds:
+    - 758
+    - 748
+    - 759
+    - 750
+    - 760
+    - 752
+    - 757
+  - SourceIdentity: 9007199254746010
+    InitialCellIds:
+    - 778
+    - 779
+    - 770
+    - 771
+    - 772
+    - 773

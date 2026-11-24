@@ -1,0 +1,95 @@
+{
+  "events": {
+    "chunk_boundary": {
+      "reference_us": 274.64034375,
+      "pruned_us": 29.78044140625,
+      "speedup": 9.222171693276563,
+      "generated_before": 316,
+      "generated_after": 34,
+      "final_nodes": 13,
+      "final_edges": 10
+    },
+    "splinter_boundary": {
+      "reference_us": 61.864484375,
+      "pruned_us": 44.0798984375,
+      "speedup": 1.4034624980526307,
+      "generated_before": 50,
+      "generated_after": 35,
+      "final_nodes": 25,
+      "final_edges": 21
+    },
+    "shatter_boundary": {
+      "reference_us": 2182.6655,
+      "pruned_us": 279.59709375,
+      "speedup": 7.806467051304963,
+      "generated_before": 1594,
+      "generated_after": 246,
+      "final_nodes": 26,
+      "final_edges": 13
+    },
+    "chunk_deep": {
+      "reference_us": 1979.80875,
+      "pruned_us": 53.3289375,
+      "speedup": 37.1244739312498,
+      "generated_before": 1611,
+      "generated_after": 62,
+      "final_nodes": 12,
+      "final_edges": 7
+    },
+    "whole_piece_erased": {
+      "reference_us": 1991.67375,
+      "pruned_us": 2.0856762695300004,
+      "speedup": 954.9294773578723,
+      "generated_before": 1714,
+      "generated_after": 0,
+      "final_nodes": 0,
+      "final_edges": 0
+    },
+    "terminal_seed_zero": {
+      "reference_us": 3.520518066405,
+      "pruned_us": 3.4368564453099997,
+      "speedup": 1.0243424834369113,
+      "generated_before": 0,
+      "generated_after": 0,
+      "final_nodes": 8,
+      "final_edges": 7
+    },
+    "sparse_512_shuffled": {
+      "reference_us": 302.6385625,
+      "pruned_us": 31.27318359375,
+      "speedup": 9.67725468667932,
+      "generated_before": 316,
+      "generated_after": 34,
+      "final_nodes": 13,
+      "final_edges": 10
+    },
+    "sparse_8192_shuffled": {
+      "reference_us": 292.93996875,
+      "pruned_us": 29.875421875,
+      "speedup": 9.805383501383611,
+      "generated_before": 316,
+      "generated_after": 34,
+      "final_nodes": 13,
+      "final_edges": 10
+    }
+  },
+  "rows_and_samples": {
+    "timed_rows": 590,
+    "raw_samples": 5310,
+    "per_file_rows": {
+      "events.csv": 208,
+      "queries.csv": 36,
+      "construction.csv": 12,
+      "stages.csv": 24,
+      "seeds.csv": 30,
+      "round1_events.csv": 208,
+      "round1_queries.csv": 36,
+      "round1_construction.csv": 12,
+      "round1_stages.csv": 24
+    },
+    "medians_and_quartiles_valid": true,
+    "retained_geometry_connections_membership_and_impulses_match": true,
+    "one_generation_control_is_different_behavior": true,
+    "shared_seed_policy_retains_individual_width_guard": true
+  }
+}

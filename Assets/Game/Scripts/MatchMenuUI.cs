@@ -160,9 +160,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             HookShopButton();
             HookSettingsButton();
             HookQuitButton();
-            // Back from an online match: reopen the lobby, or show why the game ended.
-            if (OnlineSession.IsActive || !string.IsNullOrEmpty(OnlineMatch.PendingMenuMessage))
-                ShowOnlineMenu();
+            // AlphaV0.1 "Online v0.2" reopened its NGO lobby here; online play is Odin's (C5/C7, OD-13), so nothing to reopen.
         }
 
         if (scene.name == "LevelSetupScene")
@@ -336,7 +334,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             return;
         onlineMenuOpen = true;
         SetMainMenuButtonsVisible(false);
-        OnlineMenuUI.Open(CloseOnlineMenu);
+        Bom.Unity.BomOnlineMenu.Open(CloseOnlineMenu); // C5 (D3/D9, Odin integration): Online hosts or joins an Odin server; was OnlineMenuUI.Open (NGO/Relay, removed in C7).
     }
 
     private void CloseOnlineMenu()

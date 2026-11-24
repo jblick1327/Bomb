@@ -1,0 +1,40 @@
+{
+  "note": "Original patch alone omitted .gitignore; these checks add exactly the two missing ignore entries in a separate temporary index. No working source or branch changed.",
+  "checks": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "--cached",
+        "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\analysis\\odin-gitignore-completion.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--cached",
+        "C:\\Users\\jblic\\Downloads\\BOM-Windows-Game\\review-inputs\\stuff\\analysis\\odin-gitignore-completion.patch"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--exit-code",
+        "dc22bcb6f925d773b2735278d0165c19c06f35db"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

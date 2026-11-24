@@ -1,0 +1,20 @@
+{
+  "method": "Hash 110 files from src/shared, src/netcode, src/ffi, bindings: en-CA sort by full path, relative forward-slash path plus NUL followed by raw bytes. No native build.",
+  "first_attempt": {
+    "runtime": "Windows PowerShell/.NET Framework",
+    "source_sha256": "84411f478b95adf08611d764ea29f400dd5a67c04542ae87a959e2ccecb32b43",
+    "build_tag": 595620792414853855,
+    "matches_locked_identity": false
+  },
+  "modern_dotnet_check": {
+    "runtime": ".NET 10.0.12",
+    "culture": "en-CA",
+    "files": 110,
+    "source_sha256": "88769f2b478f4e87ff98d0f0ffae60ffedca150cc99169a7c226374230976856",
+    "build_tag": 614576365290190056,
+    "matches_locked_identity": true,
+    "same_result_for_case_sensitive_and_insensitive_culture_comparison": true
+  },
+  "helper_initial_failure": "System.UnauthorizedAccessException: Access to the path C:\\Users\\jblic\\.dotnet\\10.0.401.toolpath.sentinel is denied.",
+  "helper_environment_adjustment": "Set DOTNET_CLI_HOME and NUGET_PACKAGES to writable review/dotnet-state inside the workspace; retain first failure."
+}

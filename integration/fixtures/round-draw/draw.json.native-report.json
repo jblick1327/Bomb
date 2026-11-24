@@ -1,0 +1,167 @@
+{
+	"status": "passed",
+	"level_id": "bom-elimination-draw-fixture-v1",
+	"gameplay_manifest_hash": "1496c0387258a284ad39501ae26c339b32674b9e835826d77dc22507bc1feb78",
+	"gameplay_config_hash": "4fd5565a1cf7e631f61d0a769943a3d7d8dd004115154f4cbf55287357a835b3",
+	"catalog_hash": "646248f5ac33500ac34d659fcb7ef179ea23a6a7336e657f50978e6075e75b62",
+	"game_protocol": 7,
+	"canonical_version": 3,
+	"source_count": 1,
+	"part_count": 1,
+	"cell_count": 21,
+	"fixture_count": 42,
+	"bounds": {
+		"active": true,
+		"simulation": {
+			"lo": {
+				"x": -7,
+				"y": -4
+			},
+			"hi": {
+				"x": 7,
+				"y": 10
+			}
+		},
+		"kill": {
+			"lo": {
+				"x": -6,
+				"y": -3
+			},
+			"hi": {
+				"x": 6,
+				"y": 8
+			}
+		},
+		"camera": {
+			"lo": {
+				"x": -6,
+				"y": -1
+			},
+			"hi": {
+				"x": 6,
+				"y": 6
+			}
+		},
+		"aim": {
+			"lo": {
+				"x": -6,
+				"y": -2
+			},
+			"hi": {
+				"x": 6,
+				"y": 8
+			}
+		},
+		"fragment_cull": {
+			"lo": {
+				"x": -10,
+				"y": -6
+			},
+			"hi": {
+				"x": 10,
+				"y": 12
+			}
+		},
+		"spawns": [
+			{
+				"x": -3,
+				"y": 0.565
+			},
+			{
+				"x": -0.8,
+				"y": 0.565
+			},
+			{
+				"x": 0.8,
+				"y": 0.565
+			},
+			{
+				"x": 3,
+				"y": 0.565
+			}
+		],
+		"bombs": {
+			"spawn_x": {
+				"x": -0.05,
+				"y": 0.05
+			},
+			"spawn_height": 4,
+			"cleanup_bounds": {
+				"lo": {
+					"x": -8,
+					"y": -4
+				},
+				"hi": {
+					"x": 8,
+					"y": 10
+				}
+			}
+		},
+		"config": {
+			"version": 3,
+			"gravity": {
+				"x": 0,
+				"y": -9.8
+			},
+			"player": {
+				"speed": 7,
+				"acceleration": 70,
+				"jump_speed": 11.1803398,
+				"coyote_time": 0.1,
+				"jump_buffer": 0.1,
+				"gravity_scale": 2.5510204
+			},
+			"bomb_fuse": 1,
+			"bomb_drop_min": 1,
+			"bomb_drop_max": 2.5,
+			"bomb_radius": 5,
+			"elimination_start_interval": {
+				"x": 1,
+				"y": 2.5
+			},
+			"elimination_end_interval": {
+				"x": 0.4,
+				"y": 1
+			},
+			"elimination_ramp_seconds": 90
+		}
+	},
+	"sources": [
+		{
+			"identity": 9007199254750001,
+			"identity_text": "9007199254750001",
+			"initial_cell_ids": [
+				"33",
+				"34",
+				"35",
+				"36",
+				"37",
+				"38",
+				"39",
+				"40",
+				"12",
+				"13",
+				"41",
+				"42",
+				"16",
+				"25",
+				"26",
+				"27",
+				"28",
+				"29",
+				"30",
+				"31",
+				"32"
+			],
+			"parts": 1,
+			"cells": 21,
+			"pinned_cells": 21,
+			"area": 10.000000178813934,
+			"matrix_probe": [
+				1,
+				1.5,
+				3
+			]
+		}
+	]
+}

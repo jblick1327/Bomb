@@ -1,0 +1,105 @@
+{
+	"kind": "bom-layout",
+	"version": 2,
+	"seed": 42,
+	"next_identity": 5,
+	"objects": [
+		{
+			"identity": 1,
+			"material": "Coral wood",
+			"lo": {
+				"x": 0,
+				"y": 0
+			},
+			"hi": {
+				"x": 1.39999998,
+				"y": 1.5
+			}
+		},
+		{
+			"identity": 2,
+			"material": "glass 1",
+			"lo": {
+				"x": 2,
+				"y": 0
+			},
+			"hi": {
+				"x": 3.4,
+				"y": 1.5
+			}
+		},
+		{
+			"identity": 3,
+			"material": "rubber 1",
+			"lo": {
+				"x": 4,
+				"y": 0
+			},
+			"hi": {
+				"x": 5.4,
+				"y": 1.5
+			}
+		},
+		{
+			"identity": 4,
+			"material": "stone 1",
+			"lo": {
+				"x": 6,
+				"y": 0
+			},
+			"hi": {
+				"x": 7.4,
+				"y": 1.5
+			}
+		}
+	],
+	"materials": [
+		{
+			"name": "Coral wood",
+			"base": "wood",
+			"toughness": 3.0105636,
+			"blast_resistance": 1.5,
+			"color": [
+				231,
+				104,
+				91
+			],
+			"strip_thickness": 0.2
+		},
+		{
+			"name": "glass 1",
+			"base": "glass",
+			"toughness": 1,
+			"blast_resistance": 0.5,
+			"color": [
+				111,
+				220,
+				190
+			],
+			"shock_loss": 4
+		},
+		{
+			"name": "rubber 1",
+			"base": "rubber",
+			"toughness": 1,
+			"blast_resistance": 3,
+			"color": [
+				102,
+				160,
+				231
+			],
+			"flexibility": 0.5
+		},
+		{
+			"name": "stone 1",
+			"base": "stone",
+			"toughness": 1,
+			"blast_resistance": 3,
+			"color": [
+				218,
+				137,
+				190
+			]
+		}
+	]
+}
