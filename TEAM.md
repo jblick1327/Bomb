@@ -8,7 +8,7 @@ still here and work as before. This page is the short version; ask J about anyth
 1. Open the repo folder in **Unity 6000.2.14f1**, open `Assets/Game/Scenes/MainMenuScene.unity` and press Play.
 2. **Play** (offline) is Darryn's local mode. It still uses Unity physics, not Odin, for now.
 3. **Online → Host** starts an Odin game on Classic Yard, Yard, Bridge or Tower. It runs `Server/BOM-server.exe`
-   for you; nothing else needs installing.
+   for you; nothing else needs installing. It starts an Elimination round, and the host starts each new round.
    - *This PC only* is for testing on one machine. *LAN / direct IP* lets others join; the Esc menu shows the
      address to give them. The first time, Windows asks about BOM-server: tick **Private networks** and press Allow.
 4. **Online → Join**: type the host's address and port and pick the same level as the host.
@@ -55,13 +55,16 @@ game yourself is not one click yet: Unity's normal Build doesn't include the onl
 ## Known issues
 If you hit one of these, note the level, whose player, and same PC or LAN; a clip or screenshot helps most.
 - **Movement prediction is still choppy at times**: your own player can stutter or snap back, most on the Tower.
-  It's better than it was. It looks worse in Unity's Play mode than in a built game, so judge it in a build.
+  It's better than it was (the 2026-11-24 fixes draw your player between server ticks and keep controls live through
+  resets). It looks worse in Unity's Play mode than in a built game, so judge it in a build.
 - **Glue resists bending too much**: a piece can stay stuck out at a right angle from a piece that has just broken
   off, like a shelf. Planned fix: give glue a bending (shear/moment) limit in the engine, so overhanging pieces snap
   under their own weight while load-bearing joints stay strong. It has to keep the Bridge and Tower standing at round start.
 - **Seams sometimes crack before any bomb lands**, with players standing on a level (mostly the Bridge). Rare and varies
   run to run; we think players' weight sets it off.
 - **The first blast can hitch** for a frame when two game windows run on the same PC.
+- **Fixed 2026-11-24, tell J if you still see them:** the ground blowing apart after many blasts, the game getting
+  slower as rubble piles up, and online play stalling during a long Unity frame.
 - **Not yet tried between two real PCs on a LAN.** Everything so far ran on one machine.
 - **After opening the project, git shows 4 deleted `PT_Nature_Free_URP_*.unitypackage.meta` files** (and sometimes a
   changed `Bedrock.mat`). Unity removes metas whose `.unitypackage` isn't in the repo. Discard those changes; don't commit them.
