@@ -93,7 +93,7 @@ item_fall :: proc(w:^World,item:^Item,dt:f32) {
  if distance<=0 {return}
  proxy:=b2.MakeProxy({to_b2(item.position)},ITEM_RADIUS)
  hitinfo:=Item_Cast{}
- _=b2.World_CastShape(w.scene.physics.world,proxy,{0,-distance},b2.DefaultQueryFilter(),item_cast_callback,&hitinfo)
+ _=b2.World_CastShape(w.scene.physics.world,proxy,{0,-distance},STRUCTURE_QUERY_FILTER,item_cast_callback,&hitinfo) // also sees frozen debris
  if hitinfo.hit {
   item.position.y-=distance*max(f32(0),hitinfo.fraction);item.landed=true;item.fall_speed=0
  }else{item.position.y-=distance}

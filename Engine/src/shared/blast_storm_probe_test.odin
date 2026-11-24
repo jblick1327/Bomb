@@ -15,6 +15,7 @@ BOM_BLAST_PROBE_RADIUS :: #config(BOM_BLAST_PROBE_RADIUS,5)
 BOM_BLAST_PROBE_DEEP :: #config(BOM_BLAST_PROBE_DEEP,false)
 BOM_BLAST_PROBE_TRACE :: #config(BOM_BLAST_PROBE_TRACE,false)
 BOM_BLAST_PROBE_PLAYERS :: #config(BOM_BLAST_PROBE_PLAYERS,false)
+BOM_BLAST_PROBE_FREEZE :: #config(BOM_BLAST_PROBE_FREEZE,false) // the server's settled-debris freeze
 
 @(test)
 blast_storm_probe :: proc(t:^testing.T) {
@@ -24,6 +25,7 @@ blast_storm_probe :: proc(t:^testing.T) {
  defer delete(data)
  layout,seed,valid,reason:=decode_layout(data);if !testing.expect(t,valid,reason) {return};defer destroy_layout(&layout)
  w:=World{settings=DEFAULT_SANDBOX_SETTINGS};w.settings.seed=seed;world_rebuild_layout(&w,&layout,false)
+ w.debris_freeze=BOM_BLAST_PROBE_FREEZE
  defer scene_destroy(&w.scene);defer delete(w.bombs)
  repl:Repl_Server;defer repl_server_destroy(&repl)
  first:=repl_server_update(&repl,&w.scene,0);repl_output_destroy(&first)
@@ -37,12 +39,27 @@ blast_storm_probe :: proc(t:^testing.T) {
  }
  ms :: proc(start:time.Tick)->f64 {return time.duration_milliseconds(time.tick_since(start))}
  sec_world,sec_repl,sec_hash,sec_blast,sec_max:f64
+ sec_step,sec_collide,sec_solve,sec_pairs:f64
  revisions:=0
  for tick in 1..=2400 {
   blast_ms,world_ms,repl_ms,hash_ms:f64
+  when BOM_BLAST_PROBE { if tick>=200 && tick%15==0 {
+   // Freeze trace: frozen pieces (largest by cells), live mortar seams, and the fastest dynamic piece.
+   frozen,frozen_cells,largest,seams:=0,0,0,0;fast:f32;fast_cells:=0
+   for p in w.scene.pieces {
+    if !p.live {continue}
+    if p.frozen {frozen+=1;frozen_cells+=len(p.subdivisions);largest=max(largest,len(p.subdivisions));continue}
+    if p.body!=b2.nullBodyId && b2.Body_IsValid(p.body) && b2.Body_GetType(p.body)==.dynamicBody {
+     v:=b2.Body_GetLinearVelocity(p.body);sp:=f32(math.sqrt(v.x*v.x+v.y*v.y));if sp>fast {fast=sp;fast_cells=len(p.subdivisions)}
+    }
+   }
+   for c in w.scene.connections {if c.live && c.mortar {seams+=1}}
+   fmt.printf("PROBE ftrace tick=%d frozen=%d frozen_cells=%d largest_frozen=%d seams=%d fastest=%.2f fastest_cells=%d contacts=%d\n",tick,frozen,frozen_cells,largest,seams,fast,fast_cells,b2.World_GetCounters(w.scene.physics.world).contactCount)
+  }}
   if tick==60 || tick==170 || tick==200 || tick==239 || tick==250 || tick==260 {
    // Do the dynamic cells move? Awake bodies cost solver time even when still; sleeping ones are nearly free.
    dyn,awake,moving,displaced:int;max_speed,max_shift:f32
+   frozen:=0;for p in w.scene.pieces {if p.live && p.frozen {frozen+=1}};fmt.printf("PROBE frozen tick=%d pieces=%d\n",tick,frozen)
    for sub in w.scene.subdivisions {
     if !sub.live || sub.body==b2.nullBodyId || !b2.Body_IsValid(sub.body) || b2.Body_GetType(sub.body)!=.dynamicBody {continue}
     dyn+=1
@@ -83,6 +100,7 @@ blast_storm_probe :: proc(t:^testing.T) {
    for i in 0..<2 {commands.players[i].move=(tick/90)%2==0 ? 1 : -1;commands.players[i].jump=tick%180==0}
   }
   s:=time.tick_now();post:=world_tick(&w,commands,1.0/60.0);world_ms=ms(s);delete(post.explosions)
+  prof:=b2.World_GetProfile(w.scene.physics.world);sec_step+=f64(prof.step);sec_collide+=f64(prof.collide);sec_solve+=f64(prof.solve);sec_pairs+=f64(prof.pairs)
   when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d repl\n",tick)}
   s=time.tick_now();out:=repl_server_update(&repl,&w.scene,u64(tick));repl_ms=ms(s)
   when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d hash\n",tick)}
@@ -97,7 +115,9 @@ blast_storm_probe :: proc(t:^testing.T) {
   if total>20 {fmt.printf("PROBE slow tick=%d total=%.1f blast=%.1f world=%.1f repl=%.1f hash=%.1f live_cells=%d\n",tick,total,blast_ms,world_ms,repl_ms,hash_ms,live)}
   if tick%60==0 {
    fmt.printf("PROBE second=%d world=%.0f repl=%.0f hash=%.0f blast=%.0f (ms per 1000 budget) max_tick=%.1f revisions=%d live_cells=%d\n",tick/60,sec_world,sec_repl,sec_hash,sec_blast,sec_max,revisions,live)
-   sec_world,sec_repl,sec_hash,sec_blast,sec_max=0,0,0,0,0;revisions=0
+   fmt.printf("PROBE box2d second=%d step=%.0f pairs=%.0f collide=%.0f solve=%.0f odin_outside_step=%.0f\n",tick/60,sec_step,sec_pairs,sec_collide,sec_solve,sec_world-sec_step)
+   fmt.printf("PROBE parts second=%d sync=%.0f step=%.0f read_motion=%.0f loads=%.0f (mortar=%.0f) failures=%.0f sync2=%.0f freeze=%.0f physics_tick=%.0f out_of_bounds=%.0f poses_bombs_items=%.0f\n",tick/60,physics_timing[0],physics_timing[1],physics_timing[2],physics_timing[3],physics_timing[6],physics_timing[4],physics_timing[5],physics_timing[7],physics_timing[8],physics_timing[9],physics_timing[10]);physics_timing={}
+   sec_world,sec_repl,sec_hash,sec_blast,sec_max=0,0,0,0,0;revisions=0;sec_step,sec_collide,sec_solve,sec_pairs=0,0,0,0
   }
   if total>5000 {fmt.println("PROBE stopping: one tick over 5 s");break}
  }

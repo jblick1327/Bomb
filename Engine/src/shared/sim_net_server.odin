@@ -413,6 +413,7 @@ net_server_tick :: proc(ns: ^Net_Server,now: f64) {
  }
  world_started:=time.tick_now()
  post:Tick_Events
+ w.debris_freeze=true // Settled debris freezes on the server (debris_freeze.odin).
  if ns.rounds.mode==.Sandbox || ns.rounds.state==.Playing {post=world_tick(w,commands,1.0/60.0)}
  round_server_finish(ns,post)
  net_server_record_timing(&ns.world_ms,ns.tick,f64(time.tick_diff(world_started,time.tick_now()))/f64(time.Millisecond))

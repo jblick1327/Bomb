@@ -16,7 +16,7 @@ piece_anchored :: proc(s: ^Scene,piece_id: u64,anchor_y: f32) -> bool {
  row,ok:=s.piece_rows[piece_id]; if !ok { return false }
  for id in s.pieces[row].subdivisions {
   srow,found:=s.sub_rows[id]; if !found { continue }
-  sub:=s.subdivisions[srow]
+  sub:=&s.subdivisions[srow]
   if !sub.live { continue }
   if sub.provenance.motion!=.Legacy { if sub.provenance.pinned { return true };continue }
   if !(anchor_y>-1e30) { continue }

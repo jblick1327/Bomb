@@ -7,6 +7,10 @@ import math "core:math"
 
 PHYSICS_SUBSTEPS :: 4
 
+// Probe-only timing of physics_tick's parts (blast_storm_probe_test.odin): sync, step, read motion, loads, failures, sync.
+PHYSICS_TIMING :: #config(BOM_BLAST_PROBE,false)
+physics_timing: [12]f64
+
 GLOBAL_DAMPING :: f32(0.7)
 
 // OD-8 (G-N9b): structure gravity eases in over the first 60 steps after each level start
@@ -230,7 +234,8 @@ physics_sync_structure :: proc(s: ^Scene) {
  for id in ids {
   p:=&s.pieces[s.piece_rows[id]]
   if s.materials[p.material].flexibility>0 { continue }
-  kind:=b2.BodyType.dynamicBody; if anchored[id] { kind=.staticBody }
+  if p.body==b2.nullBodyId { p.frozen=false;p.rest_samples=0 }
+  kind:=b2.BodyType.dynamicBody; if anchored[id] || p.frozen { kind=.staticBody }
   if p.body==b2.nullBodyId { p.body=physics_new_body(s,s.subdivisions[s.sub_rows[p.subdivisions[0]]],kind,true,p.body_frame,p.has_body_frame) }
   else if b2.Body_GetType(p.body)!=kind { b2.Body_SetType(p.body,kind); p.physics_revision=0 }
   p.has_body_frame=false; p.source_body={}
@@ -313,16 +318,21 @@ apply_blast_motion :: proc(s: ^Scene, sub: ^Subdivision, direction: Vec2, load: 
  } else { sub.pose.velocity=vadd(sub.pose.velocity,delta_v) }
 }
 
-interaction_mass :: proc(s: ^Scene,body: b2.BodyId) -> f32 {
- if b2.Body_GetType(body)!=.dynamicBody { return math.inf_f32(1) }
+interaction_mass :: proc(s: ^Scene,body: b2.BodyId,shape: b2.ShapeId = {}) -> f32 {
+ if b2.Body_GetType(body)!=.dynamicBody {
+  // Settled debris frozen static (debris_freeze.odin) still weighs what it did: an impact on it shares the load by
+  // mass as before instead of hitting an immovable wall.
+  if mass,frozen:=debris_frozen_mass(s,shape); frozen { return mass }
+  return math.inf_f32(1)
+ }
  id:=u64(uintptr(b2.Body_GetUserData(body)))
  if row,ok:=s.sub_rows[id]; ok { return s.pieces[s.piece_rows[s.subdivisions[row].owner]].mass }
  return b2.Body_GetMass(body)
 }
 
-contact_damage_load :: proc(s: ^Scene,body,other: b2.BodyId,approach_speed,impact_scale: f32) -> f32 {
+contact_damage_load :: proc(s: ^Scene,body,other: b2.BodyId,approach_speed,impact_scale: f32,other_shape: b2.ShapeId = {}) -> f32 {
  if impact_scale==0 || b2.Body_GetType(body)!=.dynamicBody { return 0 }
- own_mass,other_mass:=interaction_mass(s,body),interaction_mass(s,other)
+ own_mass,other_mass:=interaction_mass(s,body),interaction_mass(s,other,other_shape)
  dv:=max(f32(0),approach_speed)
  if finite(other_mass) { dv*=other_mass/(own_mass+other_mass) }
  return dv*impact_scale/BLAST_IMPULSE_SCALE
@@ -344,7 +354,7 @@ calculate_physics_loads :: proc(s: ^Scene, dt: f32) -> Failures {
 			row,exists:=s.sub_rows[id]
 			if !exists || !s.subdivisions[row].live { continue }
 			sub:=s.subdivisions[row]
-			load:=contact_damage_load(s,body,bodies[1-i],hit.approachSpeed,s.materials[sub.material].impact_scale)
+			load:=contact_damage_load(s,body,bodies[1-i],hit.approachSpeed,s.materials[sub.material].impact_scale,shapes[1-i])
    if s.materials[sub.material].shock_loss>0 {
     if points==nil { points=make(map[u64]Vec2) }
     point:=from_b2(hit.point); previous,has_point:=points[id]
@@ -353,7 +363,9 @@ calculate_physics_loads :: proc(s: ^Scene, dt: f32) -> Failures {
 			loads[id]=max(loads[id],load)
 		}
 	}
+ when PHYSICS_TIMING { m0:=time.tick_now() }
  if s.physics.mortar_breaking { mortar_force_failures(s,&failures,dt) }
+ when PHYSICS_TIMING { physics_timing[6]+=time.duration_milliseconds(time.tick_since(m0)) }
 
 	for sub in s.subdivisions {
 		if sub.seed==0 && sub.width>s.minimum_width { continue }
@@ -371,11 +383,21 @@ physics_tick :: proc(s: ^Scene, dt: f32,calculate_loads: Load_Calculator = calcu
  when BOM_FRAME_BENCH { frame_start:=time.tick_now(); defer { if frame_measuring { frame_physics_ms+=frame_ms(frame_start) } } }
 
 	assert(s.physics.active && dt > 0)
+	when PHYSICS_TIMING { t0:=time.tick_now() }
 	physics_sync_structure(s)
+	when PHYSICS_TIMING { t1:=time.tick_now() }
 	b2.World_Step(s.physics.world,dt,PHYSICS_SUBSTEPS)
+	when PHYSICS_TIMING { t2:=time.tick_now() }
 	physics_read_motion(s)
+	when PHYSICS_TIMING { t3:=time.tick_now() }
 	failures := calculate_loads(s,dt)
+	when PHYSICS_TIMING { t4:=time.tick_now() }
 	apply_failures(s,failures)
 	free_failures(&failures)
+	when PHYSICS_TIMING { t5:=time.tick_now() }
 	physics_sync_structure(s)
+	when PHYSICS_TIMING {
+	 t6:=time.tick_now();ticks:=[?]time.Tick{t0,t1,t2,t3,t4,t5,t6}
+	 for i in 0..<6 { physics_timing[i]+=time.duration_milliseconds(time.tick_diff(ticks[i],ticks[i+1])) }
+	}
 }

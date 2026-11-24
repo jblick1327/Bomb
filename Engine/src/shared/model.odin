@@ -73,6 +73,8 @@ Piece :: struct {
 	body_frame: b2.Transform `json:"-"`,
 	source_body: b2.BodyId `json:"-"`,
 	has_body_frame: bool `json:"-"`,
+	frozen: bool `json:"-"`, // Settled debris made static (debris_freeze.odin); server world only.
+	rest_samples: u16 `json:"-"`,
 	live: bool,
 }
 

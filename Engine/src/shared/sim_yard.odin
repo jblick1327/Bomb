@@ -15,6 +15,8 @@ YARD_RIGHT :: f32(9)
 
 World :: struct {
  elimination_playing:bool,
+ debris_freeze:bool, // Settled loose debris becomes static (debris_freeze.odin). Set by the network server.
+ debris_revision:u64, // structure_revision at the freeze step's last weld scan
  rebuild_error:string,
 	scene: Scene,
 	floor: b2.BodyId,
@@ -111,6 +113,7 @@ world_explode :: proc(w: ^World,point: Vec2,radius: f32,events: ^Tick_Events) {
   }
   cover_destroy(&cover)
  }
+ debris_thaw_near_blast(w,point,radius)
  start:=time.tick_now()
  regions:=len(w.scene.subdivisions)
  blast_pass(&w.scene,Blast{position=point,radius=radius})
@@ -154,13 +157,22 @@ world_tick :: proc(w: ^World,commands: Tick_Commands,dt: f32) -> Tick_Events {
  // OD-8: structure gravity ramp, a pure function of World.tick (reset at each level start, saved in snapshots).
  // Sync first so bodies made by this tick's blasts or failures get the scale before the step.
  if w.tick<STRUCTURE_GRAVITY_RAMP_TICKS { physics_sync_structure(&w.scene); physics_set_structure_gravity(&w.scene,structure_gravity_scale(w.tick+1)) }
+ when PHYSICS_TIMING { p0:=time.tick_now() }
  physics_tick(&w.scene,dt)
+ when PHYSICS_TIMING { physics_timing[8]+=time.duration_milliseconds(time.tick_since(p0)) }
+ when PHYSICS_TIMING { f0:=time.tick_now() }
+ debris_freeze_step(w)
+ when PHYSICS_TIMING { physics_timing[7]+=time.duration_milliseconds(time.tick_since(f0)) }
+ when PHYSICS_TIMING { r0:=time.tick_now() }
  world_refresh_poses(w)
  if w.elimination_playing { item_rain_step(w,dt,&events) }
  bomb_rain_after_step(w,dt,&events)
+ when PHYSICS_TIMING { physics_timing[10]+=time.duration_milliseconds(time.tick_since(r0)) }
  // Darryn's landed items fall again after a blast; still-supported ones re-land at once.
  if len(events.explosions)>0 { item_rain_resume(&w.items) }
+ when PHYSICS_TIMING { o0:=time.tick_now() }
  if world_remove_out_of_bounds(w) { events.structure_changed=true }
+ when PHYSICS_TIMING { physics_timing[9]+=time.duration_milliseconds(time.tick_since(o0)) }
  for &player,i in w.players {
   if player.active {
    if w.elimination_playing {
@@ -190,7 +202,14 @@ world_refresh_poses :: proc(w: ^World) {
 world_remove_out_of_bounds :: proc(game: ^World) -> bool {
  f:=Failures{administrative=true}
 	defer delete(f.discard_subdivisions)
-	for sub in game.scene.subdivisions {
+ // piece_anchored scans the whole piece; ask it once per piece, not once per region (NPT: 5.5 ms of every server
+ // tick went here, quadratic in the size of the yard's ground pieces). Same answers, nothing changes in between.
+ anchored:=make(map[u64]bool);defer delete(anchored)
+ piece_anchored_once :: proc(game: ^World,cache: ^map[u64]bool,owner: u64) -> bool {
+  if value,ok:=cache[owner];ok {return value}
+  value:=piece_anchored(&game.scene,owner,game.scene.anchor_y);cache[owner]=value;return value
+ }
+	for &sub in game.scene.subdivisions {
   if !sub.live {continue}
   if sub.provenance.motion==.Fixed {continue}
   // G-N11: Anchored is source provenance; released children are no longer held.
@@ -198,12 +217,12 @@ world_remove_out_of_bounds :: proc(game: ^World) -> bool {
    if game.scene.physics.active {
     if sub.body==b2.nullBodyId || b2.Body_GetType(sub.body)!=.dynamicBody {continue}
    }
-   if piece_anchored(&game.scene,sub.owner,game.scene.anchor_y) {continue}
+   if piece_anchored_once(game,&anchored,sub.owner) {continue}
   }
   if sub.provenance.motion==.Legacy {
    if game.scene.physics.active&&sub.body!=b2.nullBodyId {
     if b2.Body_GetType(sub.body)!=.dynamicBody {continue}
-   }else if piece_anchored(&game.scene,sub.owner,game.scene.anchor_y) {continue}
+   }else if piece_anchored_once(game,&anchored,sub.owner) {continue}
   }
 		p:=sub.pose.position
   outside:=p.y<YARD_FLOOR_BOTTOM-2;if game.scene.level_policy.active { outside=!level_bounds_contains(game.scene.level_policy.fragment_cull,p) }
