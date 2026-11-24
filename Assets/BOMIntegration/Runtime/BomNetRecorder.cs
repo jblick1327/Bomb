@@ -41,13 +41,7 @@ namespace Bom.Unity
             if (now < nextRow)
                 return;
             nextRow = now + 0.1;
-            var stats = new BomStats
-            {
-                struct_size = (uint)System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),
-                version = 1,
-            };
-            if (BomNative.bom_client_get_stats(session.Handle, ref stats) != 0)
-                return;
+            var stats = session.Stats; // read in the held window just before this call
             var p = session.Prediction;
             // Rate check between Unity's timebase and the native QPC clock: drift from the first row.
             double gap = BomSession.Now - BomNative.bom_clock_now();

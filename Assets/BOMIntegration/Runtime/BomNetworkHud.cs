@@ -434,14 +434,8 @@ namespace Bom.Unity
                 menuConnection = session.Sample.connection_generation;
                 SetMenuVisible(false);
             }
-            var stats = new BomStats
-            {
-                struct_size = (uint)System.Runtime.InteropServices.Marshal.SizeOf<BomStats>(),
-                version = 1,
-            };
-            bool host =
-                BomNative.bom_client_get_stats(session.Handle, ref stats) == 0
-                && (stats.flags & 4) != 0;
+            // Cached per sample by BomSession: a per-frame native call would wait on the pump thread.
+            bool host = (session.Stats.flags & 4) != 0;
             Text(
                 hud.Q<Label>("controls"),
                 host && r.mode == 0

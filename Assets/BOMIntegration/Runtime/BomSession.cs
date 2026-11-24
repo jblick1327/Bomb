@@ -47,6 +47,9 @@ namespace Bom.Unity
         // Pump thread running for this session, and frames skipped because it held the native
         // lock (update/acquire returned BUSY after 2 ms): those frames keep last frame's sample.
         public bool PumpRunning { get; private set; }
+        // Native stats read once per sample inside the held window (where it never waits); per-frame
+        // readers such as the HUD use this copy instead of calling bom_client_get_stats.
+        public BomStats Stats;
         public ulong SkippedFrames { get; private set; }
         bool updated;
         const uint Busy = 3;
@@ -442,6 +445,12 @@ namespace Bom.Unity
                     version = 1,
                 };
                 Check(BomNative.bom_client_get_prediction_stats(Handle, ref Prediction));
+                Stats = new BomStats
+                {
+                    struct_size = (uint)Marshal.SizeOf<BomStats>(),
+                    version = 1,
+                };
+                Check(BomNative.bom_client_get_stats(Handle, ref Stats));
                 if (requestGeneration != sample.connection_generation)
                 {
                     requestGeneration = sample.connection_generation;
