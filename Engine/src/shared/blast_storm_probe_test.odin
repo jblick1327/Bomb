@@ -14,6 +14,7 @@ BOM_BLAST_PROBE_RADIUS :: #config(BOM_BLAST_PROBE_RADIUS,5)
 // -define:BOM_BLAST_PROBE_DEEP=true aims into the ground (below its top cell) instead of at the click points.
 BOM_BLAST_PROBE_DEEP :: #config(BOM_BLAST_PROBE_DEEP,false)
 BOM_BLAST_PROBE_TRACE :: #config(BOM_BLAST_PROBE_TRACE,false)
+BOM_BLAST_PROBE_PLAYERS :: #config(BOM_BLAST_PROBE_PLAYERS,false)
 
 @(test)
 blast_storm_probe :: proc(t:^testing.T) {
@@ -75,7 +76,13 @@ blast_storm_probe :: proc(t:^testing.T) {
    blast_ms=ms(s);delete(events.explosions)
   }
   when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d world\n",tick)}
-  s:=time.tick_now();post:=world_tick(&w,Tick_Commands{},1.0/60.0);world_ms=ms(s);delete(post.explosions)
+  commands:Tick_Commands
+  when BOM_BLAST_PROBE_PLAYERS {
+   // Two players as --bom-debug-move drives them: right/left every 1.5 s, a jump every 3 s.
+   if tick==1 {_=world_add_player(&w,0);_=world_add_player(&w,1)}
+   for i in 0..<2 {commands.players[i].move=(tick/90)%2==0 ? 1 : -1;commands.players[i].jump=tick%180==0}
+  }
+  s:=time.tick_now();post:=world_tick(&w,commands,1.0/60.0);world_ms=ms(s);delete(post.explosions)
   when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d repl\n",tick)}
   s=time.tick_now();out:=repl_server_update(&repl,&w.scene,u64(tick));repl_ms=ms(s)
   when BOM_BLAST_PROBE_TRACE {fmt.eprintf("TRACE tick=%d hash\n",tick)}
