@@ -1,5 +1,6 @@
 package shared
 import "core:fmt"
+import "core:math"
 import "core:os"
 import "core:testing"
 import "core:time"
@@ -28,6 +29,19 @@ blast_storm_probe :: proc(t:^testing.T) {
  revisions:=0
  for tick in 1..=2400 {
   blast_ms,world_ms,repl_ms,hash_ms:f64
+  if tick==60 || tick==170 || tick==200 || tick==239 || tick==250 || tick==260 {
+   // Do the dynamic cells move? Awake bodies cost solver time even when still; sleeping ones are nearly free.
+   dyn,awake,moving,displaced:int;max_speed,max_shift:f32
+   for sub in w.scene.subdivisions {
+    if !sub.live || sub.body==b2.nullBodyId || !b2.Body_IsValid(sub.body) || b2.Body_GetType(sub.body)!=.dynamicBody {continue}
+    dyn+=1
+    if b2.Body_IsAwake(sub.body) {awake+=1}
+    v:=b2.Body_GetLinearVelocity(sub.body);speed:=f32(math.sqrt(v.x*v.x+v.y*v.y))
+    if speed>0.05 {moving+=1};max_speed=max(max_speed,speed)
+    shift:=vlen(vsub(sub.pose.position,sub.rest_center));if shift>0.05 {displaced+=1};max_shift=max(max_shift,shift)
+   }
+   fmt.printf("PROBE motion tick=%d dynamic=%d awake=%d moving_over_5cm_s=%d max_speed=%.3f displaced_over_5cm=%d max_shift=%.2f sleep_enabled=%v contacts=%v\n",tick,dyn,awake,moving,max_speed,displaced,max_shift,b2.World_IsSleepingEnabled(w.scene.physics.world),b2.World_GetCounters(w.scene.physics.world).contactCount)
+  }
   if tick==239 || tick==260 {
    counts:=make(map[u64][2]int);defer delete(counts)
    for sub in w.scene.subdivisions {
