@@ -72,13 +72,39 @@ namespace Bom.Unity
             return true;
         }
 
-        // --bom-debug-blast S: the host window requests a blast every S seconds, cycling through fixed yard points
-        // (where the owner clicked in the 2026-11-24 play session), to reproduce the post-blast slowdown unattended.
+        // --bom-debug-blast S: the host window requests a blast every S seconds to load destruction unattended.
+        // It cycles eight columns across the yard (the server accepts x -8..9, y -3..12, aimed at empty space) and
+        // follows each column's surface down: an accepted blast lowers that column's next aim 0.9 m (wrapping back
+        // to the top below y -2.6), one refused for aiming inside solid (rubble refilling the crater) raises it 0.6 m.
         // The server still decides everything; guests' requests are denied as usual.
         public static readonly double BlastEvery = Number(Environment.GetCommandLineArgs(), "--bom-debug-blast");
-        static readonly float[] BlastPoints = { -3.6f, 11.0f, -1.4f, 7.5f, 1.6f, 11.3f, 4.3f, 10.8f, -5.5f, 8.2f, 1.1f, 10.2f, -2.0f, 11.6f, 7.7f, 9.1f };
+        static readonly float[] BlastColumns = { -7f, 1f, 8f, -3f, 5f, -5f, 3f, -1f };
+        static readonly float[] BlastAim = { 6.4f, 6.4f, 6.4f, 6.4f, 6.4f, 6.4f, 6.4f, 6.4f };
         static double nextBlast;
-        static int blastIndex;
+        static int blastIndex, lastColumn = -1;
+        static ulong lastResult;
+        public static int BlastsAccepted { get; private set; }
+        public static int BlastsRefusedSolid { get; private set; }
+
+        // Request results arrive in order; each is the answer to the most recent debug blast (one per S seconds).
+        public static void BlastResult(ulong requestId, uint kind, uint status, uint reason)
+        {
+            if (BlastEvery <= 0 || kind != 1 || requestId <= lastResult || lastColumn < 0)
+                return;
+            lastResult = requestId;
+            if (status == 1)
+            {
+                BlastsAccepted++;
+                BlastAim[lastColumn] -= 0.9f;
+                if (BlastAim[lastColumn] < -2.6f)
+                    BlastAim[lastColumn] = 6.4f;
+            }
+            else if (status == 2 && reason == 5)
+            {
+                BlastsRefusedSolid++;
+                BlastAim[lastColumn] = Math.Min(11.5f, BlastAim[lastColumn] + 0.6f);
+            }
+        }
 
         public static bool Blast(double now, out float x, out float y)
         {
@@ -90,9 +116,9 @@ namespace Bom.Unity
             if (now < nextBlast)
                 return false;
             nextBlast = now + BlastEvery;
-            int i = blastIndex++ % (BlastPoints.Length / 2);
-            x = BlastPoints[2 * i];
-            y = BlastPoints[2 * i + 1];
+            lastColumn = blastIndex++ % BlastColumns.Length;
+            x = BlastColumns[lastColumn];
+            y = BlastAim[lastColumn];
             return true;
         }
     }

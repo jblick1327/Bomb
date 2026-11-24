@@ -538,7 +538,7 @@ namespace Bom.Unity
                         BomSession.Check(BomNative.bom_client_enqueue_jump(session.Handle, now));
                     if ((session.Stats.flags & 4) != 0 && BomDebugHitch.Blast(now, out float bx, out float by))
                     {
-                        Debug.Log("BOM UNITY DEBUG BLAST x=" + bx.ToString("F2") + " y=" + by.ToString("F2"));
+                        Debug.Log("BOM UNITY DEBUG BLAST x=" + bx.ToString("F2") + " y=" + by.ToString("F2") + " accepted=" + BomDebugHitch.BlastsAccepted + " refused_solid=" + BomDebugHitch.BlastsRefusedSolid);
                         BomSession.Check(BomNative.bom_client_enqueue_action(session.Handle, now, bx, by));
                     }
                 }
@@ -612,6 +612,8 @@ namespace Bom.Unity
                         );
                 }
                 foreach (var request in session.RequestResults)
+                {
+                    BomDebugHitch.BlastResult(request.request_id, request.kind, request.status, request.reason);
                     Debug.Log(
                         "BOM UNITY REQUEST id="
                             + request.request_id
@@ -626,6 +628,7 @@ namespace Bom.Unity
                             + " reason="
                             + request.reason
                     );
+                }
                 if (session.Prediction.status == 1)
                     predictedFrames++;
                 if (session.Prediction.status == 2)
