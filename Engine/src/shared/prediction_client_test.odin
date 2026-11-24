@@ -139,3 +139,41 @@ predicted_player_is_drawn_between_ticks_and_stays_continuous_through_a_correctio
  after:=drawn_at(&c,1,key)
  t.expectf(test,vlen(vsub(after,before))<1e-5,"continuous through the correction: %v then %v",before,after)
 }
+
+@(test)
+schedule_reset_keeps_the_prediction_moving_and_blends_into_the_new_owner :: proc(test:^t.T) {
+ source:=test_prediction_static_scene();defer scene_destroy(&source)
+ c:Net_Client;net_client_init(&c,1242,0);defer net_client_destroy(&c)
+ c.real_gate=true;c.nc_client.client_index=0;c.epoch=1;c.has_epoch=true
+ _=collision_history_record_topology(&c.collision_history,&source,0)
+ id:=Input_Identity{1,1,1};command_history_begin(&c.input_link.history,{id,1,1})
+ for _ in 0..<5 {_,_=command_history_push(&c.input_link.history,127,0)}
+ c.input_link.active=true;c.input_link.has_owner=true
+ c.input_link.owner=Owner_State{identity=id,topology_revision=1,position=PLAYER_SPAWN,teleport_serial=1}
+ key:=ent_key(.Player,0)
+ drawn_at :: proc(c:^Net_Client,lag:f64,key:u64) -> Vec2 { c.present_lag=lag;net_client_compute_drawn(c);c.present_lag=0;d:=c.drawn[key];return {d.x,d.y} }
+ net_prediction_update(&c,0);t.expect(test,c.prediction.mode==.Predicting && c.prediction.world.state_tick==5)
+ p5:=c.prediction.world.player.pose.position
+ // The server offers a new schedule: no owner state until it accepts and reports.
+ c.input_link.active=false;c.input_link.awaiting=true;c.input_link.has_owner=false
+ id2:=Input_Identity{1,1,2};command_history_begin(&c.input_link.history,{id2,6,100})
+ _,_=command_history_push(&c.input_link.history,127,0);net_prediction_update(&c,0)
+ t.expect(test,c.prediction.estimated && c.prediction.mode==.Warming && c.prediction.world.state_tick==6,"bridged with the pending command")
+ p6:=c.prediction.world.player.pose.position
+ t.expect(test,p6.x>p5.x && drawn_at(&c,0,key)==p6 && drawn_at(&c,1,key)==p5,"still predicted and interpolated between ticks")
+ _,_=command_history_push(&c.input_link.history,127,0);net_prediction_update(&c,0)
+ t.expect(test,c.prediction.estimated && c.prediction.world.state_tick==7)
+ before:=drawn_at(&c,0,key)
+ // Accepted; the first owner state of the new generation differs a little from the bridge.
+ c.input_link.active=true;c.input_link.awaiting=false;c.input_link.has_owner=true
+ c.input_link.owner=Owner_State{identity=id2,state_tick=6,finalized_through=6,topology_revision=1,position=vadd(p6,Vec2{.03,0}),teleport_serial=1}
+ _,_=command_history_push(&c.input_link.history,127,0);net_prediction_update(&c,0)
+ t.expect(test,c.prediction.mode==.Predicting && !c.prediction.estimated && c.prediction.world.identity==id2 && c.prediction.world.state_tick==8)
+ t.expect(test,c.prediction.visual_offset!=Vec2{},"the difference is blended")
+ after:=drawn_at(&c,1,key)
+ t.expectf(test,vlen(vsub(after,before))<1e-5,"continuous into the new owner: %v then %v",before,after)
+ // Past PREDICTION_BRIDGE_SECONDS without a certain update, a reset falls back as before.
+ c.input_link.active=false;c.input_link.awaiting=true;c.input_link.has_owner=false
+ net_prediction_update(&c,1)
+ t.expect(test,!c.prediction.estimated && c.prediction.mode==.Warming && c.prediction.reason==.Uninitialized)
+}

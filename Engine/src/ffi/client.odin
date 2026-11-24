@@ -269,7 +269,10 @@ ffi_input_source :: proc(c:^core.Net_Client,data:rawptr) {
  generation:=c.input_link.history.identity.generation
  if c.epoch!=s.input_epoch || (c.real_gate && generation!=s.input_generation) {
   clear(&s.held);clear(&s.jumps);clear_queued_actions(s)
-  s.held_move=0;c.human_jump_pending=false;s.input_epoch=c.epoch;s.input_generation=generation
+  // A new generation fences queued changes, jumps and actions; the key the player is
+  // holding right now still holds (Unity only reports changes). A new epoch starts neutral.
+  if c.epoch!=s.input_epoch { s.held_move=0 }
+  c.human_jump_pending=false;s.input_epoch=c.epoch;s.input_generation=generation
  }
  for len(s.held)>0 && s.held[0].timestamp<=s.next_tick+1e-9 { s.held_move=s.held[0].move;ordered_remove(&s.held,0) }
  c.human_move=s.held_move

@@ -56,8 +56,11 @@ input_link_clear_intent :: proc(c:^Input_Link) {
 
 input_link_command :: proc(c:^Input_Link,move:i8,jump:bool) -> (Scheduled_Command,bool) {
  if !c.active && !c.awaiting { return {},false }
+ // While a new schedule is pending, commands carry the player's real input for the
+ // proposed ticks: the server executes none of them unless it accepts the proposal, and a
+ // rejected proposal's history is discarded. Neutral commands here made every reset (each
+ // round start, respawn or lead correction) drop about 1.5 round trips of held input.
  held:=move;press:=jump
- if !c.active { held=0;press=false }
  edge:=u64(0)
  if press {
   if c.jump_edge_counter==max(u64) { input_link_clear_intent(c);return {},false }
@@ -69,7 +72,9 @@ input_link_command :: proc(c:^Input_Link,move:i8,jump:bool) -> (Scheduled_Comman
 }
 
 input_link_packet :: proc(c:^Input_Link,has_ack:bool,ack:u64) -> (packet:Scheduled_Input,ready:bool) {
- if !c.active { return }
+ // Pending commands are sent too: once the server accepts the proposal it keeps those that
+ // arrive in time (before acceptance they are dropped as a wrong identity).
+ if !c.active && !c.awaiting { return }
  packet.identity=c.history.identity;packet.has_ack=has_ack;packet.ack=ack
  packet.commands,packet.count=command_history_redundancy(&c.history)
  return packet,true

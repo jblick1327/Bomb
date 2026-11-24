@@ -19,6 +19,13 @@ PREDICTION_BLEND_LIMIT :: f32(3)
 // still reports Conservative, and any error is blended like other corrections.
 PREDICTION_ESTIMATE_SECONDS :: f64(.5)
 PREDICTION_ESTIMATE_TOLERANCE :: f32(.75)
+// A schedule reset (round start, respawn, lead correction) leaves no owner state for the
+// commands being issued until the server accepts the new schedule and reports on it, about
+// one and a half round trips. For up to this long past the last certain update, the
+// presented prediction keeps stepping with those commands (prediction_bridge) instead of
+// dropping to the interpolated authority; the first new owner state blends any difference.
+PREDICTION_BRIDGE_SECONDS :: f64(.75)
+PREDICTION_BRIDGE_GAP :: u64(8) // most ticks a bridge update may step
 Prediction_Record :: struct { valid:bool, identity:Input_Identity, tick:u64, position:Vec2 }
 Prediction_Controller :: struct {
  world:Static_Prediction,
@@ -112,17 +119,33 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  allow_estimate:=presenting && now-p.certain_at<=PREDICTION_ESTIMATE_SECONDS
  uncertain:=false
  if !c.prediction_enabled { prediction_set_mode(p,.Disabled,.None);return }
+ link:=&c.input_link
  if c.has_round && c.round_snapshot.mode==.Elimination {
   index:=c.nc_client.client_index
-  if c.round_snapshot.state!=.Playing || index<0 || index>=MAX_PLAYERS || c.round_snapshot.connections[index].spectator || !c.input_link.has_owner || c.input_link.owner.state_tick<c.round_snapshot.start_tick {
+  if c.round_snapshot.state!=.Playing || index<0 || index>=MAX_PLAYERS || c.round_snapshot.connections[index].spectator {
+   prediction_set_mode(p,.Conservative,.Round_Inactive);return
+  }
+  if !link.has_owner || link.owner.state_tick<c.round_snapshot.start_tick {
+   if prediction_bridge(c,p,now,presenting) { return }
    prediction_set_mode(p,.Conservative,.Round_Inactive);return
   }
  }
- link:=&c.input_link
- if !link.active || !link.has_owner { prediction_set_mode(p,.Warming,.Uninitialized);return }
+ if !link.active || !link.has_owner {
+  if prediction_bridge(c,p,now,presenting) { return }
+  prediction_set_mode(p,.Warming,.Uninitialized);return
+ }
  owner:=link.owner;history:=&link.history;target:=history.next_tick-1
  if target<owner.state_tick { prediction_set_mode(p,.Conservative,.Missing_Command);return }
+ bridged:=false;bridge_pos,bridge_from:Vec2;bridge_has_from:=false
  if !p.has_owner || p.identity!=owner.identity || p.last_teleport!=owner.teleport_serial {
+  // The first owner state after a bridged reset: continue from the bridged world, one tick
+  // ahead if needed, so the replay below blends the difference instead of snapping.
+  if was_estimated && p.world_ok && p.has_owner && p.last_teleport==owner.teleport_serial && p.world.active && p.world.epoch==owner.identity.epoch {
+   if p.world.state_tick+1==target { bridge_from,bridge_has_from=prediction_bridge_step(c,p,target) }
+   else if p.world.state_tick==target { bridge_from=p.step_from;bridge_has_from=p.has_step && p.step_tick==target }
+   bridged=p.world.state_tick==target && p.world.reason==.None
+   bridge_pos=p.world.player.pose.position
+  }
   // A schedule generation changes command identity, not collision geometry.
   // Keep the revision/epoch checked world; replay restores every player field
   // from the new owner before another step. Rebuilding here can turn a single
@@ -144,6 +167,7 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  old_position:Vec2;has_old:=false
  // Where the player was one tick before target on the presented trajectory.
  from:Vec2;has_from:=false
+ if bridged { old_position=bridge_pos;has_old=true;from=bridge_from;has_from=bridge_has_from }
  if p.world_ok && p.world.identity==owner.identity {
   if p.world.state_tick+1==target {
    slot:=history.slots[target%INPUT_HISTORY]
@@ -198,6 +222,37 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  }
  p.recover_streak=0
  prediction_set_mode(p,.Predicting,.None)
+}
+// Steps the presented world one tick with the link's command for that tick, or neutral
+// when there is none (the server runs a fenced tick neutral too).
+prediction_bridge_step :: proc(c:^Net_Client,p:^Prediction_Controller,tick:u64) -> (from:Vec2,ok:bool) {
+ command:=Scheduled_Command{target_tick=tick}
+ slot:=c.input_link.history.slots[tick%INPUT_HISTORY]
+ if c.input_link.history.accepted && slot.occupied && slot.command.target_tick==tick { command=slot.command }
+ from=p.world.player.pose.position
+ ok=prediction_world_step(&p.world,command,&c.collision_history,tolerance=PREDICTION_ESTIMATE_TOLERANCE)
+ return
+}
+// A schedule reset is pending (see PREDICTION_BRIDGE_SECONDS). Returns false when the
+// caller should fall back to the interpolated authority as before.
+prediction_bridge :: proc(c:^Net_Client,p:^Prediction_Controller,now:f64,presenting:bool) -> bool {
+ link:=&c.input_link
+ if !presenting || !p.world_ok || !p.world.active || p.world.epoch!=c.epoch || now-p.certain_at>PREDICTION_BRIDGE_SECONDS { return false }
+ // Until the next proposal's history begins, hold the presented position.
+ target:=p.world.state_tick
+ if link.history.accepted && link.history.next_tick>link.history.first_tick { target=max(target,link.history.next_tick-1) }
+ if target-p.world.state_tick>PREDICTION_BRIDGE_GAP { return false }
+ from:=p.world.player.pose.position;has_from:=p.has_step && p.step_tick==target
+ if has_from { from=p.step_from }
+ for p.world.state_tick<target {
+  ok:bool
+  from,ok=prediction_bridge_step(c,p,p.world.state_tick+1)
+  if !ok { return false }
+ }
+ p.step_tick=target;p.step_from=from;p.has_step=true
+ prediction_set_mode(p,.Warming,.Uninitialized)
+ p.world_ok=true;p.estimated=true;p.estimated_updates+=1
+ return true
 }
 // The own player is drawn from the predicted world while Predicting and from the
 // interpolated authority otherwise, plus visual_offset either way. When the

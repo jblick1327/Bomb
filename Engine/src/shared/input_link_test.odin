@@ -9,14 +9,17 @@ input_link_waits_for_acceptance_and_rejects_stale_results :: proc(test:^t.T) {
  _,ready:=input_link_prepare_reset(&c,0);t.expect(test,!ready)
  nonce,_:=input_clock_probe(&c.clock,0);_=input_clock_echo(&c.clock,nonce,{1000,0},.1)
  request,ok:=input_link_prepare_reset(&c,.1);t.expect(test,ok && request.kind==.Request)
+ // A pending proposal's commands carry the real input and are sent; the server executes
+ // them only after it accepts the proposal.
  command,ok_command:=input_link_command(&c,127,true)
- t.expect(test,ok_command && command.move==0 && command.jump_edge==0)
- _,ready=input_link_packet(&c,false,0);t.expect(test,!ready)
+ t.expect(test,ok_command && command.move==127 && command.jump_edge==1 && command.target_tick==request.proposal.first_tick)
+ pending,ready_pending:=input_link_packet(&c,false,0)
+ t.expect(test,ready_pending && pending.identity==request.proposal.identity && pending.count==1 && pending.commands[0]==command)
  accepted:=request;accepted.kind=.Accepted
  stale:=accepted;stale.proposal.first_tick+=1;t.expect(test,!input_link_control_result(&c,stale))
  t.expect(test,input_link_control_result(&c,accepted))
  command,ok_command=input_link_command(&c,127,true)
- t.expect(test,ok_command && command.move==127 && command.jump_edge==1 && command.target_tick==request.proposal.first_tick+1)
+ t.expect(test,ok_command && command.move==127 && command.jump_edge==2 && command.target_tick==request.proposal.first_tick+1)
  packet,ready_packet:=input_link_packet(&c,true,9007199254740997)
  t.expect(test,ready_packet && packet.count==2 && packet.ack==9007199254740997 && packet.commands[0]==command)
 }
