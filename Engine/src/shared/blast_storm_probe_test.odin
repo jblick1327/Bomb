@@ -40,6 +40,13 @@ blast_storm_probe :: proc(t:^testing.T) {
     if speed>0.05 {moving+=1};max_speed=max(max_speed,speed)
     shift:=vlen(vsub(sub.pose.position,sub.rest_center));if shift>0.05 {displaced+=1};max_shift=max(max_shift,shift)
    }
+   bodies:=make(map[u64][2]int);defer delete(bodies)
+   for sub in w.scene.subdivisions {
+    if !sub.live || sub.body==b2.nullBodyId || !b2.Body_IsValid(sub.body) || b2.Body_GetType(sub.body)!=.dynamicBody {continue}
+    key:=transmute(u64)sub.body;row:=bodies[key];row[0]+=1;row[1]=int(b2.Body_GetShapeCount(sub.body));bodies[key]=row
+   }
+   largest,shapes:=0,0;for _,row in bodies {largest=max(largest,row[0]);shapes+=row[1]}
+   fmt.printf("PROBE bodies tick=%d distinct_dynamic_bodies=%d cells_on_largest=%d dynamic_shapes=%d\n",tick,len(bodies),largest,shapes)
    fmt.printf("PROBE motion tick=%d dynamic=%d awake=%d moving_over_5cm_s=%d max_speed=%.3f displaced_over_5cm=%d max_shift=%.2f sleep_enabled=%v contacts=%v\n",tick,dyn,awake,moving,max_speed,displaced,max_shift,b2.World_IsSleepingEnabled(w.scene.physics.world),b2.World_GetCounters(w.scene.physics.world).contactCount)
   }
   if tick==239 || tick==260 {
