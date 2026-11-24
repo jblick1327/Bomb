@@ -26,6 +26,12 @@ Prediction_Controller :: struct {
  presented,presented_base:Vec2,
  presented_serial:u64,
  has_presented,presented_predicted:bool,
+ // Sub-tick presentation: the own player is drawn between step_from (where it was one
+ // tick before step_tick, on the current trajectory) and the world's position at
+ // step_tick, so it moves as smoothly as the interpolated world instead of in 60 Hz steps.
+ step_from:Vec2,
+ step_tick:u64,
+ has_step:bool,
  // The last update ended with a valid predicted world at the target tick.
  world_ok:bool,
  recover_streak:u64,
@@ -40,7 +46,7 @@ prediction_controller_destroy :: proc(p:^Prediction_Controller) { if p!=nil { pr
 prediction_controller_reset :: proc(c:^Net_Client) {
  p:=c.prediction;if p==nil { return }
  prediction_static_destroy(&p.world);p.visual_offset={};p.has_owner=false;p.last_owner_tick=0;p.records={};p.mode=.Warming;p.reset_count+=1
- p.has_presented=false;p.world_ok=false;p.recover_streak=0
+ p.has_presented=false;p.world_ok=false;p.recover_streak=0;p.has_step=false
 }
 prediction_set_mode :: proc(p:^Prediction_Controller,mode:Prediction_Mode,reason:Prediction_Reason) {
  if mode!=.Predicting { p.world_ok=false;p.recover_streak=0 }
@@ -117,14 +123,20 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   if !prediction_static_build(&p.world,&topology.scene,true,window,&p.hulls) { prediction_set_mode(p,.Conservative,p.world.reason);return }
  }
  old_position:Vec2;has_old:=false
+ // Where the player was one tick before target on the presented trajectory.
+ from:Vec2;has_from:=false
  if p.world_ok && p.world.identity==owner.identity {
   if p.world.state_tick+1==target {
    slot:=history.slots[target%INPUT_HISTORY]
-   if slot.occupied && slot.command.target_tick==target { _=prediction_world_step(&p.world,slot.command,&c.collision_history) }
-  }
+   if slot.occupied && slot.command.target_tick==target {
+    from=p.world.player.pose.position
+    has_from=prediction_world_step(&p.world,slot.command,&c.collision_history)
+   }
+  } else if p.world.state_tick==target && p.has_step && p.step_tick==target { from=p.step_from;has_from=true }
   if p.world.state_tick==target && p.world.reason==.None { old_position=p.world.player.pose.position;has_old=true }
  }
  if p.last_owner_tick!=owner.state_tick || !has_old {
+  if !has_old || p.mode!=.Predicting { has_from=false }
   if !prediction_static_replay(&p.world,owner,history,&c.collision_history) { prediction_set_mode(p,.Conservative,p.world.reason);return }
   if p.last_owner_tick!=owner.state_tick {
    record:=p.records[owner.state_tick%256]
@@ -136,12 +148,15 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   if has_old && p.mode==.Predicting {
    offset:=vsub(old_position,p.world.player.pose.position)
    p.visual_offset=vadd(p.visual_offset,offset)
-   if vlen(p.visual_offset)>PREDICTION_BLEND_LIMIT { p.visual_offset={} }
+   // The corrected trajectory starts where the old one was drawn: shift step_from with the offset.
+   from=vsub(from,offset)
+   if vlen(p.visual_offset)>PREDICTION_BLEND_LIMIT { p.visual_offset={};has_from=false }
    if vlen(offset)>=.25 { p.snaps+=1;fmt.printf("PREDICTION SNAP reason=gross_correction distance=%.6f tick=%d\n",vlen(offset),target) }
   }
   p.last_owner_tick=owner.state_tick
  }
  p.records[target%256]={true,owner.identity,target,p.world.player.pose.position}
+ p.step_tick=target;p.step_from=has_from ? from : p.world.player.pose.position;p.has_step=true
  p.world_ok=true
  if p.mode==.Conservative && p.reason==.Dynamic_History_Required {
   p.recover_streak+=1
@@ -162,7 +177,11 @@ net_prediction_apply :: proc(c:^Net_Client) {
  predicted:=p.mode==.Predicting && p.world.epoch==c.epoch
  drawn,exists:=c.drawn[key]
  base:Vec2
- if predicted { base=p.world.player.pose.position;drawn={} }
+ if predicted {
+  base=p.world.player.pose.position;drawn={}
+  // present_lag is 1 - the frame's fraction of the current tick (0 outside fractional presentation).
+  if p.has_step && p.step_tick==p.world.state_tick && c.present_lag>0 { base=vadd(base,vmul(vsub(p.step_from,base),f32(min(c.present_lag,1)))) }
+ }
  else {
   if !exists { p.has_presented=false;return }
   base={drawn.x,drawn.y}

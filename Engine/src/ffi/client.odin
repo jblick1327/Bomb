@@ -352,7 +352,9 @@ bom_client_acquire_sample :: proc "c" (handle:u64,sample:^BomSample) -> u32 {
   if s.pump!=nil { fraction=clamp(s.accumulator+(s.main_now-s.last_now),0,core.NET_STEP_DT) }
   target:=min(f64(s.client.newest_complete),fixed_clock+fraction/core.NET_STEP_DT)
   s.client.clock=max(s.presented_tick,target)
+  s.client.present_lag=1-clamp(fraction/core.NET_STEP_DT,0,1)
   core.net_client_apply_queue(&s.client);core.net_client_compute_drawn(&s.client)
+  s.client.present_lag=0
   presented:=s.client.clock
   collected:=collect_presented(s)
   s.client.clock=fixed_clock

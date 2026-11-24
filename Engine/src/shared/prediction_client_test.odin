@@ -109,3 +109,33 @@ prediction_schedule_generation_reuses_geometry_but_restores_new_owner :: proc(te
  c.input_link.owner.topology_revision=2;net_prediction_update(&c,.032)
  t.expect(test,c.prediction.world.revision==2 && c.prediction.world.scene.physics.world!=world)
 }
+
+@(test)
+predicted_player_is_drawn_between_ticks_and_stays_continuous_through_a_correction :: proc(test:^t.T) {
+ source:=test_prediction_static_scene();defer scene_destroy(&source)
+ c:Net_Client;net_client_init(&c,1241,0);defer net_client_destroy(&c)
+ c.real_gate=true;c.nc_client.client_index=0;c.epoch=1;c.has_epoch=true
+ _=collision_history_record_topology(&c.collision_history,&source,0)
+ id:=Input_Identity{1,1,1};command_history_begin(&c.input_link.history,{id,1,1})
+ for _ in 0..<5 {_,_=command_history_push(&c.input_link.history,127,0)}
+ c.input_link.active=true;c.input_link.has_owner=true
+ c.input_link.owner=Owner_State{identity=id,topology_revision=1,position=PLAYER_SPAWN,teleport_serial=1}
+ key:=ent_key(.Player,0)
+ drawn_at :: proc(c:^Net_Client,lag:f64,key:u64) -> Vec2 { c.present_lag=lag;net_client_compute_drawn(c);c.present_lag=0;d:=c.drawn[key];return {d.x,d.y} }
+ net_prediction_update(&c,0);t.expect(test,c.prediction.mode==.Predicting && c.prediction.world.state_tick==5)
+ p5:=c.prediction.world.player.pose.position
+ _,_=command_history_push(&c.input_link.history,127,0);net_prediction_update(&c,0)
+ p6:=c.prediction.world.player.pose.position
+ t.expect(test,c.prediction.world.state_tick==6 && p6.x>p5.x)
+ t.expect(test,drawn_at(&c,0,key)==p6,"no lag outside fractional presentation: the newest tick")
+ t.expect(test,drawn_at(&c,1,key)==p5,"lag 1: the previous tick")
+ mid:=drawn_at(&c,.5,key)
+ t.expectf(test,abs(mid.x-(p5.x+p6.x)/2)<1e-5 && abs(mid.y-(p5.y+p6.y)/2)<1e-5,"half a tick: midpoint, got %v between %v and %v",mid,p5,p6)
+ // A new owner state moves the trajectory; at the tick boundary the drawn player must not jump.
+ before:=drawn_at(&c,0,key)
+ c.input_link.owner=Owner_State{identity=id,state_tick=1,finalized_through=1,topology_revision=1,position=vadd(PLAYER_SPAWN,Vec2{.05,0}),teleport_serial=1}
+ _,_=command_history_push(&c.input_link.history,127,0);net_prediction_update(&c,0)
+ t.expect(test,c.prediction.mode==.Predicting && c.prediction.world.state_tick==7 && c.prediction.visual_offset!=Vec2{},"the correction is blended")
+ after:=drawn_at(&c,1,key)
+ t.expectf(test,vlen(vsub(after,before))<1e-5,"continuous through the correction: %v then %v",before,after)
+}

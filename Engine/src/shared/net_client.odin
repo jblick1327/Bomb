@@ -118,6 +118,9 @@ Net_Client :: struct {
  // presentation
  drawn: map[u64]Net_Drawn,
  drawn_serial: u64, // counts fresh interpolations of drawn
+ // 1 - the presentation fraction of the current fixed tick, set only while a sample is
+ // composed: the predicted own player is drawn that far back toward its previous tick.
+ present_lag: f64,
  anchored: map[u64]bool, anchored_valid: bool,
  presentation_reset_serial: u64, // Incremented when frontend caches must be invalidated.
  events: [dynamic]Net_Event, // Due immutable events, consumed by the caller before the next fixed step.
