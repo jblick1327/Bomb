@@ -47,6 +47,7 @@ namespace Bom.Unity
         ulong lastHudKey = ulong.MaxValue,
             menuRound = ulong.MaxValue;
         uint menuState = uint.MaxValue;
+        bool sawElimination; // P2: "Preparing the round…" only until the menu's Elimination request first takes effect
         string message = "Connect to a local or LAN server.";
         ulong displayedRound,
             displayedTick;
@@ -512,9 +513,26 @@ namespace Bom.Unity
             }
             double estimatedTick =
                 r.tick + Math.Min(60, Math.Max(0, BomSession.Now - receivedAt) * 60);
+            // P2: while the server rebuilds the level (a mode switch or REPLAY) and while everyone loads it, say so instead
+            // of "SANDBOX" or "Waiting for two ready players" over the old level. Connection flags: 1 connected, 2 ready.
+            int connected = 0,
+                ready = 0;
+            for (int i = 0; i < r.connection_count; i++)
+            {
+                uint f = session.RoundConnections[i].flags;
+                if ((f & 1) != 0)
+                    connected++;
+                if ((f & 3) == 3)
+                    ready++;
+            }
+            if (r.mode == 1)
+                sawElimination = true;
             string state =
-                r.mode == 0 ? "SANDBOX"
-                : r.state == 0 ? "Waiting for two ready players"
+                r.mode == 0 && host && Client.EliminationRequested && !sawElimination ? "Preparing the round…"
+                : r.mode == 0 ? "SANDBOX"
+                : r.state == 0 && connected >= 2 ? "Loading the level… " + ready + "/" + connected + " ready"
+                : r.state == 0 ? "Waiting for another player"
+                : r.state == 3 && host && !canRestart ? "Preparing the next round…"
                 : r.state == 1
                     ? "Starting in "
                         + Math.Max(0, Math.Ceiling((r.start_tick - estimatedTick) / 60))

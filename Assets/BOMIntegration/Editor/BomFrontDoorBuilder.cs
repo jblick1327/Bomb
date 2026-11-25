@@ -67,7 +67,12 @@ public static class BomFrontDoorBuilder
                 scenes = scenes.ToArray(),
                 target = BuildTarget.StandaloneWindows64,
                 locationPathName = Path.Combine(output, "Bomb.exe"),
-                options = BuildOptions.Development,
+                // P3: testers' packages are release builds (no "Development Build" watermark, release script code);
+                // the gates keep Development unless BOM_GAME_RELEASE=1 (Build-BomGame.ps1 -Release).
+                options =
+                    Environment.GetEnvironmentVariable("BOM_GAME_RELEASE") == "1"
+                        ? BuildOptions.None
+                        : BuildOptions.Development,
             }
         );
         if (report.summary.result != BuildResult.Succeeded)

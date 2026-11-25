@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
  [ValidateSet('Mono','IL2CPP','Both')][string]$Backend='Both',
- [string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json')
+ [string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json'),
+ # P3: a release build (no Development watermark) for testers, into Game-<backend>-Release; gates use the Development build.
+ [switch]$Release
 )
 # F4: builds the front-door game (Bomb.exe, MainMenuScene first, Server/BOM-server.exe and Server/levels/*.json beside it)
 # into integration/build/validation/Game-Mono and/or Game-IL2CPP. Works in Windows PowerShell 5.1 and PowerShell 7.
@@ -23,8 +25,9 @@ Copy-Item (Join-Path $config.OdinRoot 'build/bomcore.dll') $plugin -Force
 Copy-Item (Join-Path $config.OdinRoot 'bindings/BomNative.cs') (Join-Path $assets 'Runtime/BomNative.cs') -Force
 $kinds=if($Backend -eq 'Both'){@('Mono','IL2CPP')}else{@($Backend)}
 foreach($kind in $kinds){
- $output=Join-Path $integration ('build/validation/Game-'+$kind);New-Item -ItemType Directory -Path $output -Force|Out-Null
- $values=@{BOM_NATIVE_SERVER_EXE=(Join-Path $config.OdinRoot 'build/BOM-server.exe');BOM_GAME_PLAYER_OUT=$output;BOM_YARD_LAYOUT_OUT=(Join-Path $integration 'fixtures/network-yard/yard.json');BOM_TILE_LEVEL_DIR=(Join-Path $integration 'fixtures/levels')}
+ $output=Join-Path $integration ('build/validation/Game-'+$kind+$(if($Release){'-Release'}else{''}));New-Item -ItemType Directory -Path $output -Force|Out-Null
+ # BOM_INTEGRATION_ROOT: the validation copy has no integration/ of its own, and the level export reads materials.json from it.
+ $values=@{BOM_GAME_RELEASE=$(if($Release){'1'}else{''});BOM_INTEGRATION_ROOT=$integration;BOM_NATIVE_SERVER_EXE=(Join-Path $config.OdinRoot 'build/BOM-server.exe');BOM_GAME_PLAYER_OUT=$output;BOM_YARD_LAYOUT_OUT=(Join-Path $integration 'fixtures/network-yard/yard.json');BOM_TILE_LEVEL_DIR=(Join-Path $integration 'fixtures/levels')}
  $previous=@{}
  try{
   foreach($key in $values.Keys){$previous[$key]=[Environment]::GetEnvironmentVariable($key);[Environment]::SetEnvironmentVariable($key,$values[$key])}

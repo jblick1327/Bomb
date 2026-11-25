@@ -15,6 +15,7 @@ namespace Bom.Unity
     //       host again -> quit (server must stop). Guest: bad address and port rejected -> join -> forfeit by LEAVE GAME at
     //       150 ticks (the Rounds gate's choreography) -> join again -> sees the Finished round -> RETURN -> quit.
     // Crash: host and wait; the tool kills this player and checks the job object took the server with it.
+    // play-host / play-guest: visual review; see Play().
     public sealed class BomFrontDoorScenario : MonoBehaviour
     {
         const ulong GuestForfeitTicks = 150;
@@ -42,8 +43,74 @@ namespace Bom.Unity
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 60;
             Directory.CreateDirectory(dir);
+            playSeconds = float.Parse(Arg("--bom-frontdoor-seconds", "120"), System.Globalization.CultureInfo.InvariantCulture);
+            shotEvery = float.Parse(Arg("--bom-frontdoor-shot-every", "5"), System.Globalization.CultureInfo.InvariantCulture);
             Log("start port=" + port + " level=" + BomFrontDoor.Levels[level].Name + " scene=" + BomFrontDoor.Levels[level].Scene);
-            StartCoroutine(Guard(role == "guest" ? Guest() : role == "crash" ? Crash() : Host()));
+            StartCoroutine(
+                Guard(
+                    role == "guest" ? Guest()
+                    : role == "crash" ? Crash()
+                    : role == "play-host" ? Play(true)
+                    : role == "play-guest" ? Play(false)
+                    : Host()
+                )
+            );
+        }
+
+        float playSeconds,
+            shotEvery;
+
+        // Visual review (play-host | play-guest, with --bom-frontdoor-seconds and --bom-frontdoor-shot-every): host or join
+        // from the menu like a player, stay in the level, and save what the window shows every few seconds
+        // (<dir>/<role>-tNNN.png, UI included). The host starts the next Elimination round (REPLAY's command) a few
+        // seconds after one finishes. Pair with --bom-debug-move to keep the players moving.
+        IEnumerator Play(bool host)
+        {
+            if (host)
+            {
+                yield return HostFromMenu();
+                Mark("hosted", "port=" + BomFrontDoor.SessionPort);
+            }
+            else
+            {
+                yield return Until(() => Seen("play-host-hosted"), 120, "the host to start");
+                yield return JoinFromMenu(joinAddress);
+                yield return Until(() => Client() != null && Connected(Client()), 90, "the joined level to load and connect");
+                CheckLevel();
+                Mark("connected");
+            }
+            var client = Client();
+            float start = Time.realtimeSinceStartup,
+                nextShot = start + 1,
+                finishedAt = -1;
+            ulong lastKey = ulong.MaxValue;
+            while (Time.realtimeSinceStartup - start < playSeconds)
+            {
+                var r = client.Session.Round;
+                ulong key = (r.round_id << 8) | r.state;
+                if (key != lastKey)
+                {
+                    lastKey = key;
+                    LogRound(client);
+                    finishedAt = r.state == 3 ? Time.realtimeSinceStartup : -1;
+                }
+                if (host && finishedAt > 0 && Time.realtimeSinceStartup - finishedAt > 4)
+                {
+                    finishedAt = -1;
+                    BomSession.Check(BomNative.bom_client_host_command(client.Session.Handle, 1, 0, 0));
+                    Log("next round requested");
+                }
+                if (Time.realtimeSinceStartup >= nextShot)
+                {
+                    int t = (int)(Time.realtimeSinceStartup - start);
+                    ScreenCapture.CaptureScreenshot(Path.Combine(dir, role + "-t" + t.ToString("D3") + ".png"));
+                    nextShot += shotEvery;
+                }
+                yield return null;
+            }
+            Mark("done");
+            if (host)
+                yield return Until(() => Seen("play-guest-done"), 30, "the guest to finish");
         }
 
         void Log(string text) => Debug.Log("BOM FRONTDOOR TEST role=" + role + " " + text);

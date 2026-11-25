@@ -685,6 +685,65 @@ extrusion that turns debris into long sticks all violate it. F2 showed the explo
   - Do: measure first (a fixture with an overhanging glued piece after its support breaks; report the bond loads), then propose a bending/moment limit per bond, scaled by material, that releases overhangs under their own weight and keeps load-bearing joints (OD-10 bearing rule) intact. Compare against a plain glue-strength reduction, side by side, before shipping. Physics change: owner approves the chosen rule as an OD.
   - Done when: the overhang fixture releases; OD-6 settle on all four levels stands at round start (two runs, byte-identical); `bom.ps1 Test`, `NetTest` pass; evidence `Engine/evidence/G-N12/README.md` (archived, indexed). Then E1-GN12.
 
+## Phase P: ready for the team playtest (fresh audit 2026-11-24, owner: "clean up any big issues before we playtest")
+Source: a fresh Mono front-door build of 904964db (native pair 24dda19b) played by two scripted windows per level,
+18 Elimination rounds over the four levels, screenshots every 7 s (`evidence/VIS/capture-1/README.md`). Re-run any time
+with `integration/tools/Capture-BomLevels.ps1` (new). All eight windows: 0 Exception lines, 0 hash mismatches. The
+dev machine was busy, so the times below are relative (same machine, same session), not absolute.
+Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's checks P6–P7, then P8.
+- [x] **P1 Between-round wait** (done 2026-11-24, Claude Opus, owner "do P1-3". Engine 64e358b1, pair DLL b98ff622 /
+  server 16d87e64. Gluing was ~95% of a rebuild because `level_glue_link` tested every cell pair; pairs out of glue reach
+  are now skipped. Same world: canonical and raw connection hashes match on all four levels. Rebuild thread at Normal
+  priority. Built game, busy machine: Classic Yard 14–22 s -> 0.6–1.1 s, Yard 6–7 -> 0.3–1.0, Tower 5–10 -> 0.1–1.0,
+  Bridge -> 0.1–0.2. `evidence/P1/README.md`, `evidence/VIS/capture-2-p1p2/README.md`; Test 240/240, NetTest 27/27.
+  Not done: timing on the owner's desktop, in P8.) (Lane N, T1, M; engine change outside physics, so ask the owner before shipping). REPLAY
+  rebuilds the world on the server (`Engine/src/shared/net_rebuild.odin`) before the countdown. Measured `build_ms`:
+  Classic Yard 13.9–22.1 s, Yard 5.7–7.3 s, Tower 4.8–9.8 s, Bridge 0.7–1.5 s. Rounds last 10–30 s, so on the yards
+  players wait about as long as they play. The Rounds gate shows the same (yard 6.7–18 s) but only checks that a round starts.
+  The worker thread is `.Low` priority (`net_rebuild.odin:64`), so a busy host starves it, but the per-level spread on
+  one machine means the build itself is slow too. Do: time `world_rebuild_layout` per phase on each level (idle machine);
+  then pick the cheapest fix that keeps a restart byte-identical to a fresh build. Candidates: Normal priority; start the
+  next build as soon as a round finishes; keep the first built world and copy it. Done when: restart ≤ 2 s on every
+  level on the owner's desktop, restarted world hash equals a fresh build's, `bom.ps1 Test` and `NetTest` pass. Then E1.
+- [x] **P2 HUD while the next round is prepared** (done 2026-11-24: the host reads "Preparing the round…" until the menu's
+  Elimination takes effect and "Preparing the next round…" after REPLAY; Waiting reads "Loading the level… n/m ready" with
+  two or more connected, else "Waiting for another player"; `evidence/VIS/capture-2-p1p2`) (Lane U, T2, S). During the rebuild the host's HUD says "SANDBOX" and
+  guests' say "Waiting for two ready players", over the old wrecked level (`capture-1/*/play-*-t0*.png`). Show "Preparing
+  the next round…" while a rebuild is pending and keep REPLAY's "STARTING…". Done when: captures show it on host and guest.
+- [x] **P3 Testers get a release build** (done 2026-11-24: `Build-BomGame.ps1 -Release` builds `Game-<backend>-Release`
+  (BOM_GAME_RELEASE=1), `Package-BomWindows.ps1 -Release` packages those, gates keep Development; front-door gate on the
+  release player passes on Classic Yard and Tower (`evidence/P1/frontdoor-release-*.log`); no watermark in
+  `evidence/VIS/capture-3-release`. Rounds and Content pass on the new pair (`evidence/P1/rounds.log`, `content.log`).
+  Not built yet: the IL2CPP release player and the package itself, in P8) (Lane U, T2, S). `BomFrontDoorBuilder.Build` uses `BuildOptions.Development`
+  (watermark in every frame, Debug script code). Add a release option for `Package-BomWindows.ps1`. Gates keep
+  Development unless they pass on release too. Done when: the package has no watermark and the front-door gate passes on it.
+- [ ] **P4 Prediction gate on today's DLL** (Lane U, T3, S). The latency Prediction suite (100 ms / 200 ms + loss) last ran on
+  2026-11-19; four native pairs with prediction changes shipped since (ee79b9b8, 74df5ea8, 3e2f1609, 24dda19b).
+  Run `Invoke-BomIntegration.ps1 -Task Test -Suite Prediction` with nothing else running. Done when: it passes, or the
+  failure is recorded with its evidence and a task opened. Cadence-only failures: see the E1-GN10 note before blaming code.
+- [ ] **P5 Camera shows past the backdrop** (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
+  Yard's right/left edges (`classic-yard/play-host-t036.png`, `t085.png`), a strip under Yard's ground (`yard/play-host-t036.png`).
+  Fit the follow camera to the backdrop (or extend the backdrop) without touching Darryn's originals. Done when: no bars in a capture.
+- [ ] **P6 Glue holds overhangs (G-N12, re-scoped)** (Lane N, T1, M; physics: the owner picks the rule as an OD).
+  Correction to G-N12's wording: glue already has a bending limit. A seam's ratio is
+  |charged force|/(S·L) + |torque|/(½·S·L²) with S = 280·toughness (`sim_mortar.odin:180`). Density 1 and g 9.8 put a
+  1×1 piece hanging off a 1-long seam at r ≈ 0.07, and a 3×1 overhang at r ≈ 0.4, so own weight never breaks it.
+  The Bridge (a deck piece left as a T on a post, `bridge/play-host-t022.png`) and the Tower (a slab hung off-centre on a pillar, `tower/play-host-t099.png`) show it.
+  A lower torque term alone risks the round-start stability the Bridge and Tower fought for (G-N7–G-N10). Measure both:
+  (a) a smaller torque capacity; (b) blast shock damage: seams within reach of an explosion lose strength (round start untouched).
+  Done when: as G-N12 (overhang fixture releases, OD-6 settle stands on all four levels twice, byte-identical), with the
+  two candidates side by side in captures for the owner. Then E1. G-N12's "after the PR merges" is lifted for this.
+- [ ] **P7 Crater readability on the yards** (Lane U, T1, M; look work, ask the owner before changing materials or meshes).
+  The ground's front face is one flat colour, so craters read as faint rectangles, not holes (`yard/play-host-t036.png`,
+  `classic-yard/play-host-t078.png`). Classic Yard's earth under it shows the G3 banding. Propose 2–3 options with
+  captures, for example: darker cut faces inside the band, edge shading on new surfaces, the surface colour only on
+  original top faces. Done when: the owner picks one and captures show it on both yards.
+- [ ] **P8 Package and two-PC test** (Lane U, T2, S; after P1–P5). Package (Mono, release), then the owner runs it on the
+  laptop plus the desktop at home (LAN), then over Tailscale (`TEAM.md`). Re-measure P1's restart times on the desktop.
+- Noted, no task yet: the Tower is dark with tiny players, and yellow-on-yellow floor slabs merge when they pile up
+  (`tower/play-host-t099.png`). Raise it with Darryn after the playtest. The first-blast hitch with two windows on one PC
+  doesn't apply to separate machines.
+
 ## Findings (append here; newest last)
 - 2026-11-10 Claude: both playtests had 0 hash mismatches, but the server overran its tick 9 and 4 times. Darryn's
   `PlayerItemGlow` adds point lights, which will press on the shadow atlas (see D10).

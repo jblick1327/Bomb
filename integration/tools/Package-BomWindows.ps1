@@ -1,7 +1,9 @@
 [CmdletBinding()]
 param(
  [string]$ConfigPath=(Join-Path (Split-Path -Parent $PSScriptRoot) 'local.config.json'),
- [string]$MonoPlayer='', [string]$Il2CppPlayer='', [string]$OutputDirectory=''
+ [string]$MonoPlayer='', [string]$Il2CppPlayer='', [string]$OutputDirectory='',
+ # P3: package the release builds (Build-BomGame.ps1 -Release -> Game-<backend>-Release) for testers.
+ [switch]$Release
 )
 # Works in Windows PowerShell 5.1 and PowerShell 7. Packages the front-door game (Bomb.exe, Darryn's main menu first; F4) built by
 # Build-BomGame.ps1 into build/validation/Game-Mono and Game-IL2CPP. A backend is packaged when its player exists; at least one is required.
@@ -15,8 +17,9 @@ function Get-RelativePath([string]$base,[string]$path){
 $ErrorActionPreference='Stop'
 $integration=Split-Path -Parent $PSScriptRoot
 $config=Get-Content -LiteralPath $ConfigPath -Raw|ConvertFrom-Json
-if(!$MonoPlayer){$MonoPlayer=Join-Path $integration 'build/validation/Game-Mono/Bomb.exe'}
-if(!$Il2CppPlayer){$Il2CppPlayer=Join-Path $integration 'build/validation/Game-IL2CPP/Bomb.exe'}
+$suffix=if($Release){'-Release'}else{''}
+if(!$MonoPlayer){$MonoPlayer=Join-Path $integration "build/validation/Game-Mono$suffix/Bomb.exe"}
+if(!$Il2CppPlayer){$Il2CppPlayer=Join-Path $integration "build/validation/Game-IL2CPP$suffix/Bomb.exe"}
 if(!$OutputDirectory){$OutputDirectory=Join-Path $integration ('build/packages/Windows-'+[DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ'))}
 if(Test-Path -LiteralPath $OutputDirectory){throw 'Choose a new package directory; existing packages are preserved.'}
 $native=Join-Path $config.OdinRoot 'build'
@@ -76,5 +79,5 @@ the IL2CPP backup directory name is retained there to preserve debugger paths.
 Source and reproducible build/test instructions are in DEVELOPER-README.md.
 '@ | Set-Content -LiteralPath (Join-Path $output 'README.txt') -Encoding utf8
 $rows=@(Get-ChildItem -LiteralPath $output -File -Recurse|Sort-Object FullName|ForEach-Object {[ordered]@{path=(Get-RelativePath $output $_.FullName).Replace('\','/');bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}})
-[ordered]@{schema_version=1;platform='Windows x64';unity='6000.2.14f1';configuration='Development Unity; optimized native with debug symbols';native_identity=$identity;files=$rows}|ConvertTo-Json -Depth 12|Set-Content -LiteralPath (Join-Path $output 'manifest.json') -Encoding utf8
+[ordered]@{schema_version=1;platform='Windows x64';unity='6000.2.14f1';configuration=$(if($Release){'Release Unity'}else{'Development Unity'})+'; optimized native with debug symbols';native_identity=$identity;files=$rows}|ConvertTo-Json -Depth 12|Set-Content -LiteralPath (Join-Path $output 'manifest.json') -Encoding utf8
 Write-Output "Windows package: $output"

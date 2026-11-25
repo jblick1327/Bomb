@@ -59,6 +59,7 @@ namespace Bom.Unity
         BomCellPresenter cellPresenter;
         bool cellsShown;
         bool eliminationRequested;
+        public bool EliminationRequested => eliminationRequested; // P2: the HUD says the round is being prepared
         public bool ClippedSourceArt;
         BomCameraRig cameraRig;
         public BomSourcePresentation SourcePresentation => sourcePresentation;

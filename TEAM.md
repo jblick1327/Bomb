@@ -12,7 +12,24 @@ still here and work as before. This page is the short version; ask J about anyth
    - *This PC only* is for testing on one machine. *LAN / direct IP* lets others join; the Esc menu shows the
      address to give them. The first time, Windows asks about BOM-server: tick **Private networks** and press Allow.
 4. **Online → Join**: type the host's address and port and pick the same level as the host.
-   Over the internet the host has to forward the UDP port on their router (there is no relay yet).
+   Over the internet, use Tailscale (below) or have the host forward the UDP port on their router (there is no relay yet).
+
+## Play over the internet with Tailscale
+Tailscale puts everyone's PCs on one private network, so *LAN / direct IP* works between houses with no router changes.
+The game uses UDP port **47380**, and the client accepts only an IPv4 address (no host names).
+1. **Everyone:** accept J's Tailscale invite, install Tailscale for Windows (tailscale.com/download) and sign in with
+   the invited account. Each PC gets a `100.x.y.z` address (tray icon, or `tailscale ip -4`).
+2. **Everyone:** run the same `BOM-Windows-<date>` package. Different builds won't connect.
+3. **Host, once:** Windows often marks the Tailscale network as *Public*, which the first-run Allow (Private) doesn't
+   cover, and then joins time out. In an **admin** PowerShell, allow the game port only from tailnet addresses:
+   `New-NetFirewallRule -DisplayName "BOM server (Tailscale)" -Direction Inbound -Protocol UDP -LocalPort 47380 -RemoteAddress 100.64.0.0/10 -Action Allow -Profile Any`
+4. **Host:** Online → Host → *LAN / direct IP*, port 47380. Give out the `100.x` address the Esc menu shows, not the `192.168.x` one.
+5. **Others:** Online → Join with that `100.x` address, port 47380, and the host's level.
+
+The host should be a desktop on a wired connection: it runs the server and a game window. If a join fails, run
+`tailscale ping <host 100.x address>` first. If that fails, it's a Tailscale problem; if it works, check the firewall rule
+on the host. If ping says "via DERP", the connection is relayed (often a network that blocks UDP) and play will lag.
+Say whether it was direct or DERP when you report lag.
 
 Builds for testers come as a package from J (`BOM-Windows-<date>`, with Mono and IL2CPP builds). Building the online
 game yourself is not one click yet: Unity's normal Build doesn't include the online scenes or the server.
@@ -71,5 +88,5 @@ If you hit one of these, note the level, whose player, and same PC or LAN; a cli
 
 ## Not done yet
 Offline Play on Odin (one rule set everywhere), a solo/survival mode with bots, playing over the internet without
-port forwarding, sending chosen characters online, the shadow colour fix, and the new bombs. The game feel has only
+Tailscale or port forwarding, sending chosen characters online, the shadow colour fix, and the new bombs. The game feel has only
 been checked by machines so far: that's what the team playtest is for.
