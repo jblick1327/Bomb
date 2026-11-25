@@ -726,7 +726,11 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   2026-11-19; four native pairs with prediction changes shipped since (ee79b9b8, 74df5ea8, 3e2f1609, 24dda19b).
   Run `Invoke-BomIntegration.ps1 -Task Test -Suite Prediction` with nothing else running. Done when: it passes, or the
   failure is recorded with its evidence and a task opened. Cadence-only failures: see the E1-GN10 note before blaming code.
-- [ ] **P4a Client falls behind its command schedule since 11-19** (Lane N, T1, M; from P4). Today's DLL hits
+- [x] **P4a Client falls behind its command schedule since 11-19** (done 2026-11-25, Claude Opus 5.5: **no regression**.
+  Round-robin bisect, 3 min per run on AC: every build 829b3808…64e358b1 scores 0–3 resets on a quiet machine; the only
+  failures (829b3808 r1, 64e358b1 r1) are the runs with server tick-overrun bursts (machine stalls, up to 183 ms), and
+  P4's failures line up with overruns the same way. Gate now refreshes the interop DLL itself and reports server
+  overruns (informational). Left: P4b. `evidence/P4a/README.md`) (Lane N, T1, M; from P4). Today's DLL hits
   `Missing_Command` (client history behind the owner tick) ~2.5x as often as 8cf5fc3b on the same machine, and each
   episode stays conservative ~4x longer. Suspects, client side only: the NPT pump thread (`Engine/src/ffi/pump.odin`,
   how it times command production vs the presentation thread), then the reset changes in `input_link.odin` and
@@ -734,6 +738,9 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   (8cf5fc3b → 5ef68966 → … → b98ff622) on typical seed 2026, A/B back to back; fix in `Engine/`. Also make
   `Build-OwnerNative.py` refresh `build/interop/bomcore.dll` (stale copy voided P4's first run). Done when: the full
   Prediction suite passes 6/6 on the new pair, `bom.ps1 Test`/`NetTest` pass, then E1. Blocks P8 only if the owner says so.
+- [ ] **P4b Prediction gate, quiet run** (Lane U, T3, S; from P4a). Run the full suite on b98ff622 plugged in, with the
+  owner off the machine (about an hour). Done when: 6/6 pass, or a failure whose summaries show 0 server overruns
+  (then it is code: reopen P4a).
 - [ ] **P5 Camera shows past the backdrop** (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
   Yard's right/left edges (`classic-yard/play-host-t036.png`, `t085.png`), a strip under Yard's ground (`yard/play-host-t036.png`).
   Fit the follow camera to the backdrop (or extend the backdrop) without touching Darryn's originals. Done when: no bars in a capture.

@@ -1,5 +1,5 @@
 """Real native server/DLL profile through a bounded, seeded UDP impairment relay."""
-import argparse,datetime,heapq,hashlib,json,os,pathlib,random,secrets,select,socket,subprocess,threading,time
+import argparse,datetime,heapq,hashlib,json,os,pathlib,random,re,secrets,select,socket,subprocess,threading,time
 p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--seconds',type=int,default=600);p.add_argument('--rtt-ms',type=float,default=100);p.add_argument('--jitter-ms',type=float,default=0);p.add_argument('--loss',type=float,default=0);p.add_argument('--fps',type=int,default=60);p.add_argument('--prediction-off',action='store_true');p.add_argument('--seed',type=int,default=57291);p.add_argument('--unity-player');p.add_argument('--evidence-stage',choices=['M5','M9'],default='M5');a=p.parse_args()
 if not 1<=a.seconds<=3600 or not 0<=a.loss<1 or not 0<=a.jitter_ms<=100 or not 0<=a.rtt_ms<=1000 or not 15<=a.fps<=1000:raise SystemExit('Invalid profile bounds')
 config_path=pathlib.Path(a.config).resolve();config=json.loads(config_path.read_text(encoding='utf-8-sig'));root=pathlib.Path(config['OdinRoot']);integration=config_path.parent
@@ -60,6 +60,9 @@ finally:
 profile=None
 for line in (out/('unity-profile.log' if a.unity_player else 'profile.log')).read_text(encoding='utf-8',errors='replace').splitlines():
  if line.startswith('PROFILE_RESULT '):profile=json.loads(line[len('PROFILE_RESULT '):])
+# Informational, never part of pass/fail: server tick overruns (time dropped after a stall) mark a busy machine.
+server_log=out/'server.log';overrun_ms=[float(x) for x in re.findall(r'overrun at [0-9.]+s: dropping ([0-9.]+)ms',server_log.read_text(encoding='utf-8',errors='replace'))] if server_log.exists() else []
+counters['server_overruns']=len(overrun_ms);counters['server_overrun_max_ms']=max(overrun_ms,default=0.0)
 passed=not failure and not relay_error and all(code==0 for code in codes.values()) and profile is not None and profile['status']=='passed'
 report={'status':'passed' if passed else 'failed','profile':vars(a),'exit_codes':codes,'failure':failure,'relay_errors':relay_error,'relay':counters,'result':profile,'native_identity':identity,'native_plugin_sha256':plugin_hash,'server_sha256':server_hash,'commands':{name:[arg if arg!=token else '[REDACTED]' for arg in command] for name,command in commands.items()},'scope':'Real UDP and actual Unity URP rendered-pose measurement, with a saved frame.' if a.unity_player else 'Real UDP server and exact native DLL at a controlled presentation sampling rate. Does not claim a GPU/Unity latency measurement.'}
 (out/'summary.json').write_text(json.dumps(report,indent=2),encoding='utf-8');print(json.dumps({k:v for k,v in report.items() if k not in ['commands','native_identity']}));print('Evidence: '+str(out));raise SystemExit(0 if passed else 1)

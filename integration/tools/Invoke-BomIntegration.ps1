@@ -42,6 +42,15 @@ try {
         foreach($kind in $kinds){& (Join-Path $PSScriptRoot 'Test-UnitySlice.ps1') -ConfigPath $ConfigPath -Backend $kind -Seconds $(if($Seconds){$Seconds}else{24}) -SkipBuild:$SkipBuild;if($LASTEXITCODE -ne 0){throw 'Unity live slice failed.'}}
     } elseif ($Task -eq 'Test' -and $Suite -eq 'Prediction') {
         $duration=if($Seconds){$Seconds}else{600}
+        # The profile loads build/interop/bomcore.dll; Build-OwnerNative.py only refreshes build/bomcore.dll
+        # (P4: a stale interop copy voided a run). Refresh it from build/ when that one matches the identity.
+        $odinBuild=Join-Path $config.OdinRoot 'build'
+        $identity=Get-Content -Raw (Join-Path $odinBuild 'bomcore.build.json')|ConvertFrom-Json
+        $stageDll=Join-Path $odinBuild 'bomcore.dll';$interopDll=Join-Path $odinBuild 'interop/bomcore.dll'
+        if((Get-FileHash $stageDll -Algorithm SHA256).Hash.ToLowerInvariant() -eq $identity.dll_sha256 -and
+           (-not (Test-Path $interopDll) -or (Get-FileHash $interopDll -Algorithm SHA256).Hash.ToLowerInvariant() -ne $identity.dll_sha256)){
+            Copy-Item $stageDll $interopDll -Force;Write-Host "Refreshed build/interop/bomcore.dll from build/ ($($identity.dll_sha256.Substring(0,8)))"
+        }
         function Invoke-PredictionProfile([string]$Label,[string[]]$ProfileArguments){
             $lines=@(& python (Join-Path $PSScriptRoot 'Run-PredictionProfile.py') --config $ConfigPath --evidence-stage M9 --seconds $duration @ProfileArguments 2>&1|ForEach-Object{Write-Host $_;"$_"})
             $code=$LASTEXITCODE
