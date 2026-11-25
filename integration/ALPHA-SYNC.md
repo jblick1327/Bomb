@@ -738,7 +738,9 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   (8cf5fc3b → 5ef68966 → … → b98ff622) on typical seed 2026, A/B back to back; fix in `Engine/`. Also make
   `Build-OwnerNative.py` refresh `build/interop/bomcore.dll` (stale copy voided P4's first run). Done when: the full
   Prediction suite passes 6/6 on the new pair, `bom.ps1 Test`/`NetTest` pass, then E1. Blocks P8 only if the owner says so.
-- [ ] **P4b Prediction gate, quiet run** (Lane U, T3, S; from P4a). Run the full suite on b98ff622 plugged in, with the
+- [x] **P4b Prediction gate, quiet run** (done 2026-11-25, Claude Opus 5.5: **6/6 pass** on b98ff622, on AC, resets 0–2
+  and conservative ≤ 0.10 s per profile; `evidence/M0/Test-Prediction-20261125T071606246Z.json`, `evidence/P4b/README.md`)
+  (Lane U, T3, S; from P4a). Run the full suite on b98ff622 plugged in, with the
   owner off the machine (about an hour). Done when: 6/6 pass, or a failure whose summaries show 0 server overruns
   (then it is code: reopen P4a).
 - [ ] **P5 Camera shows past the backdrop** (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
