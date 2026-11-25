@@ -717,10 +717,23 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   Not built yet: the IL2CPP release player and the package itself, in P8) (Lane U, T2, S). `BomFrontDoorBuilder.Build` uses `BuildOptions.Development`
   (watermark in every frame, Debug script code). Add a release option for `Package-BomWindows.ps1`. Gates keep
   Development unless they pass on release too. Done when: the package has no watermark and the front-door gate passes on it.
-- [ ] **P4 Prediction gate on today's DLL** (Lane U, T3, S). The latency Prediction suite (100 ms / 200 ms + loss) last ran on
+- [x] **P4 Prediction gate on today's DLL** (done 2026-11-25, Claude Opus 5.5: **failed, recorded, P4a opened**.
+  DLL b98ff622: 4/6 passed, typical seed 2026 failed "static fixture must use genuine prediction" (conservative 1.50 s,
+  limit 1; 28 resets, all Missing_Command); not cadence (59.1 fps). Back-to-back A/B on that profile: 11-19 DLL 8cf5fc3b
+  passes (7 resets, 0.12 s), b98ff622 fails (18 resets, 1.35 s, 1 snap) while the server starved less, so the client
+  issues commands late. First attempt void: `Engine/build/interop/bomcore.dll` was stale (11-23); `Build-OwnerNative.py`
+  does not refresh it. `evidence/P4/README.md`) (Lane U, T3, S). The latency Prediction suite (100 ms / 200 ms + loss) last ran on
   2026-11-19; four native pairs with prediction changes shipped since (ee79b9b8, 74df5ea8, 3e2f1609, 24dda19b).
   Run `Invoke-BomIntegration.ps1 -Task Test -Suite Prediction` with nothing else running. Done when: it passes, or the
   failure is recorded with its evidence and a task opened. Cadence-only failures: see the E1-GN10 note before blaming code.
+- [ ] **P4a Client falls behind its command schedule since 11-19** (Lane N, T1, M; from P4). Today's DLL hits
+  `Missing_Command` (client history behind the owner tick) ~2.5x as often as 8cf5fc3b on the same machine, and each
+  episode stays conservative ~4x longer. Suspects, client side only: the NPT pump thread (`Engine/src/ffi/pump.odin`,
+  how it times command production vs the presentation thread), then the reset changes in `input_link.odin` and
+  `prediction_client.odin` (bridge/estimate). Do: bisect with the saved snapshots in `integration/build/owner-native/`
+  (8cf5fc3b → 5ef68966 → … → b98ff622) on typical seed 2026, A/B back to back; fix in `Engine/`. Also make
+  `Build-OwnerNative.py` refresh `build/interop/bomcore.dll` (stale copy voided P4's first run). Done when: the full
+  Prediction suite passes 6/6 on the new pair, `bom.ps1 Test`/`NetTest` pass, then E1. Blocks P8 only if the owner says so.
 - [ ] **P5 Camera shows past the backdrop** (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
   Yard's right/left edges (`classic-yard/play-host-t036.png`, `t085.png`), a strip under Yard's ground (`yard/play-host-t036.png`).
   Fit the follow camera to the backdrop (or extend the backdrop) without touching Darryn's originals. Done when: no bars in a capture.
