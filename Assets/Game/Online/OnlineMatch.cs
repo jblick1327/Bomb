@@ -36,6 +36,7 @@ public static class OnlineMatch
         Left,        // host -> all: a player left the game
         ToLobby,     // host -> all: back to the lobby
         BombFuse,    // host -> all: armed bomb pose and remaining fuse
+        ChooseModel, // client -> host: chosen character model
     }
 
     public enum LobbyScreen : byte { Players, ChooseLevel }
@@ -59,6 +60,10 @@ public static class OnlineMatch
 
     private static NetworkManager Network => OnlineSession.Network;
 
+    public static CharacterModel LocalModel { get; private set; }
+
+    private static readonly Dictionary<ulong, CharacterModel> lobbyModels = new Dictionary<ulong, CharacterModel>();
+    private static CharacterModel[] matchModels = Array.Empty<CharacterModel>();
     private static readonly List<ulong> slotClients = new List<ulong>();
     private static readonly HashSet<ulong> readyClients = new HashSet<ulong>();
     private static ArenaSession arena;
@@ -82,6 +87,28 @@ public static class OnlineMatch
     // ---------- Lobby ----------
 
     public static int ConnectedPlayerCount => Network != null && Network.IsServer ? Network.ConnectedClientsIds.Count : 0;
+
+    public static CharacterModel GetMatchModel(int slot) => matchModels[slot];
+
+    internal static void ResetCharacterChoices()
+    {
+        LocalModel = CharacterModel.Original;
+        lobbyModels.Clear();
+    }
+
+    public static void CycleLocalModel()
+    {
+        if (IsRunning || !OnlineSession.IsNetworkConnected || !CanSend) return;
+        LocalModel = CharacterModels.Next(LocalModel);
+        if (IsHost)
+        {
+            lobbyModels[Network.LocalClientId] = LocalModel;
+            return;
+        }
+        FastBufferWriter writer = Begin(Message.ChooseModel);
+        writer.WriteValueSafe((byte)LocalModel);
+        SendToHost(writer, NetworkDelivery.ReliableSequenced);
+    }
 
     public static void HostShowLobby(LobbyScreen screen, int level)
     {
@@ -115,19 +142,28 @@ public static class OnlineMatch
         FastBufferWriter writer = Begin(Message.Load);
         writer.WriteValueSafe((byte)SelectedLevel);
         writer.WriteValueSafe((byte)slotClients.Count);
-        foreach (ulong id in slotClients) writer.WriteValueSafe(id);
+        // Keep the slot IDs together, then append one model per slot.
+        var models = new CharacterModel[slotClients.Count];
+        for (int slot = 0; slot < slotClients.Count; slot++)
+        {
+            ulong id = slotClients[slot];
+            writer.WriteValueSafe(id);
+            lobbyModels.TryGetValue(id, out models[slot]);
+        }
+        foreach (CharacterModel model in models) writer.WriteValueSafe((byte)model);
         SendToClients(writer, NetworkDelivery.ReliableSequenced);
 
         // Nobody can join a match in progress.
         _ = OnlineSession.SetLockedAsync(true);
-        BeginLoading(SelectedLevel, slotClients.Count, 0);
+        BeginLoading(SelectedLevel, models, 0);
     }
 
-    private static void BeginLoading(int level, int playerCount, int localSlot)
+    private static void BeginLoading(int level, CharacterModel[] models, int localSlot)
     {
         IsRunning = true;
         LevelIndex = level;
-        PlayerCount = playerCount;
+        matchModels = models;
+        PlayerCount = models.Length;
         LocalSlot = localSlot;
         arena = null;
         bombs = null;
@@ -228,6 +264,7 @@ public static class OnlineMatch
     private static void EndMatchState()
     {
         IsRunning = false;
+        matchModels = Array.Empty<CharacterModel>();
         arena = null;
         bombs = null;
         startPending = false;
@@ -367,9 +404,11 @@ public static class OnlineMatch
             }
             case Message.Load:
             {
-                if (!fromHost || IsHost) return;
+                if (!fromHost || IsHost || !reader.TryBeginRead(2 * sizeof(byte))) return;
                 reader.ReadValueSafe(out byte level);
                 reader.ReadValueSafe(out byte count);
+                if (level >= MatchMenuUI.LevelSceneNames.Length || count == 0 || count > OnlineSession.MaxPlayers
+                    || !reader.TryBeginRead(count * sizeof(ulong))) return;
                 int localSlot = -1;
                 for (int i = 0; i < count; i++)
                 {
@@ -377,8 +416,24 @@ public static class OnlineMatch
                     if (id == Network.LocalClientId) localSlot = i;
                 }
                 if (localSlot < 0) return;
+                var models = new CharacterModel[count];
+                if (reader.TryBeginRead(count))
+                {
+                    for (int slot = 0; slot < count; slot++)
+                    {
+                        reader.ReadValueSafe(out byte model);
+                        models[slot] = CharacterModels.FromIndex(model);
+                    }
+                }
                 SelectedLevel = level;
-                BeginLoading(level, count, localSlot);
+                BeginLoading(level, models, localSlot);
+                break;
+            }
+            case Message.ChooseModel:
+            {
+                if (!IsHost || IsRunning || !IsConnected(sender) || !reader.TryBeginRead(sizeof(byte))) return;
+                reader.ReadValueSafe(out byte model);
+                lobbyModels[sender] = CharacterModels.FromIndex(model);
                 break;
             }
             case Message.Ready:
@@ -507,6 +562,7 @@ public static class OnlineMatch
     private static void OnClientDisconnected(ulong clientId)
     {
         if (!IsHost || clientId == Network.LocalClientId) return;
+        lobbyModels.Remove(clientId);
         LobbyChanged?.Invoke();
         if (!IsRunning) return;
         int slot = SlotOf(clientId);

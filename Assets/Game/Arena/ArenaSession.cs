@@ -95,6 +95,8 @@ public sealed class ArenaSession : MonoBehaviour
         player2 = players.Count > 1 ? players[1] : null;
         for (int i = 0; i < players.Count; i++)
         {
+            players[i].ConfigureCharacter(OnlineMatch.IsRunning
+                ? OnlineMatch.GetMatchModel(i) : MatchMenuUI.GetModelForPlayer(i + 1));
             players[i].SetPlayerNumber(i + 1);
             players[i].gameObject.name = "Player " + (i + 1);
             if (OnlineMatch.IsRunning) players[i].SetOnlineRole(i == OnlineMatch.LocalSlot);

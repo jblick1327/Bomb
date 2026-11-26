@@ -39,8 +39,13 @@ public sealed class PlayerItemGlow : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<ArenaPlayerController>();
-        bodyRenderers = GetComponentsInChildren<Renderer>(true);
+        CacheBody();
         properties = new MaterialPropertyBlock();
+    }
+
+    internal void CacheBody()
+    {
+        bodyRenderers = GetComponent<ArenaPlayerController>().GetBodyComponents<Renderer>();
     }
 
     private void OnDisable()
@@ -133,10 +138,10 @@ public sealed class PlayerItemGlow : MonoBehaviour
         foreach (Renderer body in bodyRenderers)
         {
             if (body == null) continue;
-            body.GetPropertyBlock(properties);
+            body.GetPropertyBlock(properties, 0);
             properties.SetColor(BaseColorId, color);
             properties.SetColor(ColorId, color);
-            body.SetPropertyBlock(properties);
+            body.SetPropertyBlock(properties, 0);
         }
     }
 }

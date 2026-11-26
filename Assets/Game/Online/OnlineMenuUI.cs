@@ -26,6 +26,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
     private TextMeshProUGUI statusText;
     private TextMeshProUGUI playerListText;
     private TextMeshProUGUI networkText;
+    private Button modelButton;
+    private TextMeshProUGUI modelLabel;
+    private RawImage modelPortrait;
     private TMP_InputField codeField;
     private Button chooseLevelButton;
     private Button startButton;
@@ -103,6 +106,8 @@ public sealed class OnlineMenuUI : MonoBehaviour
         }
         // The host can also flip levels with the controller's shoulder buttons.
         Gamepad gamepad = Gamepad.current;
+        if (modelButton != null && modelButton.interactable && gamepad != null && gamepad.buttonNorth.wasPressedThisFrame)
+            CycleModel();
         if (screen == MenuScreen.Level && OnlineSession.IsHost && gamepad != null)
         {
             if (gamepad.leftShoulder.wasPressedThisFrame) ChangeLevel(-1);
@@ -115,6 +120,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
         for (int i = content.childCount - 1; i >= 0; i--) Destroy(content.GetChild(i).gameObject);
         playerListText = null;
         networkText = null;
+        modelButton = null;
+        modelLabel = null;
+        modelPortrait = null;
         codeField = null;
         chooseLevelButton = null;
         startButton = null;
@@ -178,10 +186,11 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             MatchMenuUI.AddText(content, "JOINED GAME " + OnlineSession.JoinCode, new Vector2(.1f, .76f), new Vector2(.9f, .96f), 26, LightText, FontStyles.Bold);
         }
-        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .30f), new Vector2(.9f, .68f), 24, Color.white, FontStyles.Bold);
+        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .40f), new Vector2(.9f, .68f), 22, Color.white, FontStyles.Bold);
         playerListText.alignment = TextAlignmentOptions.TopLeft;
         playerListText.enableAutoSizing = false;
-        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .22f), new Vector2(.9f, .30f), 18, LightText, FontStyles.Normal);
+        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .20f), new Vector2(.9f, .26f), 18, LightText, FontStyles.Normal);
+        AddModelPicker(.27f, .38f);
         if (OnlineSession.IsHost)
         {
             MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
@@ -213,6 +222,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
             list.Append('\n');
         }
         playerListText.text = list.ToString();
+        RefreshModelPicker();
         networkText.text = OnlineSession.IsNetworkConnected ? "Game connection: ready" : "Game connection: connecting...";
         if (chooseLevelButton != null)
         {
@@ -226,7 +236,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
     {
         screen = MenuScreen.Level;
         ClearContent();
-        RectTransform frame = MatchMenuUI.AddPanel(content, "Level Preview", new Vector2(.1f, .40f), new Vector2(.9f, .97f), new Color(.08f, .09f, .14f));
+        RectTransform frame = MatchMenuUI.AddPanel(content, "Level Preview", new Vector2(.1f, .48f), new Vector2(.9f, .97f), new Color(.08f, .09f, .14f));
         var imageObject = new GameObject("Level Preview Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(AspectRatioFitter));
         RectTransform imageRect = imageObject.GetComponent<RectTransform>();
         imageRect.SetParent(frame, false);
@@ -239,8 +249,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
         AspectRatioFitter fitter = imageObject.GetComponent<AspectRatioFitter>();
         fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
         fitter.aspectRatio = 16f / 9f;
-        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .28f), new Vector2(.9f, .38f), 30, Color.white, FontStyles.Bold);
+        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .35f), new Vector2(.9f, .45f), 30, Color.white, FontStyles.Bold);
 
+        AddModelPicker(.22f, .33f);
         if (OnlineSession.IsHost)
         {
             MatchMenuUI.AddButton(content, "<", new Vector2(0f, .58f), new Vector2(.09f, .78f), SecondaryButtonColor, () => ChangeLevel(-1), 44, DarkText);
@@ -261,6 +272,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         if (screen != MenuScreen.Level || levelNameText == null) return;
         int level = Mathf.Clamp(OnlineMatch.SelectedLevel, 0, MatchMenuUI.LevelNames.Length - 1);
         levelNameText.text = MatchMenuUI.LevelNames[level];
+        RefreshModelPicker();
         if (levelPreview != null) levelPreview.texture = Resources.Load<Texture2D>(LevelPreviewNames[level]);
         if (OnlineSession.IsHost)
         {
@@ -273,6 +285,30 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             SetStatus("The host is choosing a level...");
         }
+    }
+
+    private void AddModelPicker(float bottom, float top)
+    {
+        modelButton = MatchMenuUI.AddButton(content, "MODEL", new Vector2(.10f, bottom), new Vector2(.90f, top),
+            SecondaryButtonColor, CycleModel, 22, DarkText);
+        modelLabel = modelButton.GetComponentInChildren<TextMeshProUGUI>();
+        modelPortrait = MatchMenuUI.AddPortrait((RectTransform)modelButton.transform, null,
+            new Vector2(.10f, .03f), new Vector2(.30f, .97f));
+        RefreshModelPicker();
+    }
+
+    private void CycleModel()
+    {
+        OnlineMatch.CycleLocalModel();
+        RefreshModelPicker();
+    }
+
+    private void RefreshModelPicker()
+    {
+        if (modelButton == null) return;
+        modelButton.interactable = OnlineSession.IsNetworkConnected;
+        modelPortrait.texture = CharacterModels.Portrait(OnlineMatch.LocalModel);
+        modelLabel.text = "MODEL   " + CharacterModels.Name(OnlineMatch.LocalModel) + "  ›";
     }
 
     private void ChangeLevel(int direction)

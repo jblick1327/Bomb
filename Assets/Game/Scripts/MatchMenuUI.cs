@@ -25,6 +25,7 @@ public sealed class MatchMenuUI : MonoBehaviour
     private int selectedLevel;
     private int selectedCharacter;
     private const int MaxLocalPlayers = 4;
+    private static readonly CharacterModel[] playerModels = new CharacterModel[MaxLocalPlayers];
     private static readonly int[] playerCharacters = { 0, 1, 2, 3 };
     private static readonly int[] playerGamepadDeviceIds = { -1, -1, -1, -1 };
     private static int matchPlayerCount = 2;
@@ -38,6 +39,8 @@ public sealed class MatchMenuUI : MonoBehaviour
     private TextMeshProUGUI levelName;
     private TextMeshProUGUI[] playerSlotLabels;
     private RawImage[] playerSlotPortraits;
+    private Button[] playerModelButtons;
+    private TextMeshProUGUI[] playerModelLabels;
     private TextMeshProUGUI controllerStatusText;
     private Camera menuCamera;
     private Vector3 mainMenuCameraPosition;
@@ -57,8 +60,7 @@ public sealed class MatchMenuUI : MonoBehaviour
     private bool shopMenuOpen;
     private bool settingsMenuOpen;
     private RectTransform playerOneSlot;
-    private RawImage selectedPlayerPortrait;
-    private RenderTexture[] unlockedCharacterPortraits;
+    private RawImage[] colorTilePortraits;
     private readonly bool[] ownedCharacters = { true, true, true, true, true, false, false, false, false, false, false, false, false, false, false };
     private readonly string[] shopCharacterNames =
     {
@@ -88,10 +90,8 @@ public sealed class MatchMenuUI : MonoBehaviour
     private RawImage[] shopCardPortraits;
     private Outline[] shopCardOutlines;
     private Button shopPurchaseButton;
-    private RenderTexture shopLockedPortrait;
     private TextMeshProUGUI[] shopCardLockedLabels;
     private Image[] shopCardBackgrounds;
-    private readonly List<RenderTexture> portraitTextures = new List<RenderTexture>();
     private Button[] characterButtons;
     private Outline[] characterOutlines;
     private RectTransform[] playerCursors;
@@ -194,7 +194,10 @@ public sealed class MatchMenuUI : MonoBehaviour
         {
             nextControllerStatusRefresh = Time.unscaledTime + 0.25f;
             int connectedCount = Gamepad.all.Count;
-            string status = connectedCount + " CONTROLLERS CONNECTED  |  X JOIN / SELECT  |  OPTIONS START";
+            string modelControls = inputMode == MatchInputMode.AllControllers ? "Y / TRIANGLE"
+                : inputMode == MatchInputMode.SharedKeyboard ? "Q (P1) / RIGHT SHIFT (P2) / Y"
+                : "Q (P1) / Y / TRIANGLE";
+            string status = connectedCount + " CONTROLLERS  |  X JOIN / SELECT  |  CHANGE MODEL: " + modelControls;
             if (lastControllerStatus != status)
             {
                 controllerStatusText.text = status;
@@ -272,6 +275,9 @@ public sealed class MatchMenuUI : MonoBehaviour
         int index = Mathf.Clamp(playerNumber - 1, 0, MaxLocalPlayers - 1);
         return playerCharacters[index];
     }
+
+    public static CharacterModel GetModelForPlayer(int playerNumber) =>
+        playerModels[Mathf.Clamp(playerNumber - 1, 0, MaxLocalPlayers - 1)];
 
     public static Color GetCharacterColorForPlayer(int playerNumber)
     {
@@ -814,9 +820,10 @@ public sealed class MatchMenuUI : MonoBehaviour
         activeCharacterPlayer = 0;
         playerSlotLabels = new TextMeshProUGUI[MaxLocalPlayers];
         playerSlotPortraits = new RawImage[MaxLocalPlayers];
+        playerModelButtons = new Button[MaxLocalPlayers];
+        playerModelLabels = new TextMeshProUGUI[MaxLocalPlayers];
         playerCursors = new RectTransform[MaxLocalPlayers];
         playerOneSlot = null;
-        selectedPlayerPortrait = null;
         for (int i = 0; i < playerSlotLabels.Length; i++)
         {
             float xMin = .0525f + i * .23f;
@@ -833,6 +840,13 @@ public sealed class MatchMenuUI : MonoBehaviour
                 int slotIndex = i;
                 AddButton(slot, "", Vector2.zero, Vector2.one, new Color(1, 1, 1, .01f), () => JoinPlayer(slotIndex), 18, Color.white);
             }
+            int modelSlot = i;
+            Button modelButton = AddButton(slot, CharacterModels.Name(playerModels[i]),
+                new Vector2(.04f, .04f), new Vector2(.96f, .25f), new Color(.30f, .39f, .58f),
+                () => CyclePlayerModel(modelSlot), 17, Color.white);
+            modelButton.navigation = new Navigation { mode = Navigation.Mode.None };
+            playerModelButtons[i] = modelButton;
+            playerModelLabels[i] = modelButton.GetComponentInChildren<TextMeshProUGUI>();
             playerCharacterCursors[i] = Mathf.Clamp(playerCharacters[i], 0, 4);
         }
 
@@ -840,8 +854,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         AddHeaderBar(characters, "CHARACTER SELECTION", new Color(.13f, .39f, .83f), .60f, 36);
         characterButtons = new Button[CharacterCount];
         characterOutlines = new Outline[CharacterCount];
-        unlockedCharacterPortraits = new RenderTexture[CharacterCount];
-        RenderTexture lockedSilhouette = null;
+        colorTilePortraits = new RawImage[CharacterCount];
         for (int i = 0; i < CharacterCount; i++)
         {
             int index = i;
@@ -855,9 +868,8 @@ public sealed class MatchMenuUI : MonoBehaviour
             if (unlocked)
             {
                 characterButtons[i] = AddButton(tile, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => SelectCharacterForPlayer(0, index), 21, Color.white);
-                if (unlockedCharacterPortraits[i] == null)
-                    unlockedCharacterPortraits[i] = CreateCharacterPortrait(characterColors[i], false);
-                AddPortrait(tile, unlockedCharacterPortraits[i], new Vector2(.04f, .035f), new Vector2(.96f, .965f));
+                colorTilePortraits[i] = AddPortrait(tile, null, new Vector2(.04f, .035f), new Vector2(.96f, .965f));
+                colorTilePortraits[i].color = characterColors[i];
                 characterOutlines[i] = tile.gameObject.AddComponent<Outline>();
                 characterOutlines[i].effectColor = characterColors[i];
                 characterOutlines[i].effectDistance = new Vector2(4f, -4f);
@@ -865,21 +877,11 @@ public sealed class MatchMenuUI : MonoBehaviour
             else
             {
                 characterButtons[i] = AddButton(tile, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => { }, 21, Color.white);
-                if (lockedSilhouette == null)
-                    lockedSilhouette = CreateCharacterPortrait(Color.black, true);
-                AddPortrait(tile, lockedSilhouette, new Vector2(.10f, .20f), new Vector2(.90f, .98f));
+                colorTilePortraits[i] = AddPortrait(tile, null, new Vector2(.10f, .20f), new Vector2(.90f, .98f));
+                colorTilePortraits[i].color = Color.black;
                 AddText(tile, "Locked", new Vector2(.03f, .03f), new Vector2(.97f, .27f), 19, new Color(.77f, .76f, .81f), FontStyles.Bold);
             }
         }
-        for (int i = 0; i < matchPlayerCount; i++)
-        {
-            int character = Mathf.Clamp(playerCharacters[i], 0, CharacterCount - 1);
-            playerSlotLabels[i].text = "PLAYER " + (i + 1) + "\n" + shopCharacterNames[character];
-            if (unlockedCharacterPortraits[character] != null)
-                playerSlotPortraits[i] = AddPortrait((RectTransform)playerSlotLabels[i].transform.parent, unlockedCharacterPortraits[character], new Vector2(.08f, .04f), new Vector2(.92f, .73f));
-        }
-        if (playerSlotPortraits[0] != null)
-            selectedPlayerPortrait = playerSlotPortraits[0];
         RefreshCharacterSelection();
 
         Button inputModeButton = AddButton(root, InputModeLabels[(int)inputMode], new Vector2(.755f, .43f), new Vector2(.97f, .60f), new Color(.30f, .39f, .58f), CycleInputMode, 18, Color.white);
@@ -1003,16 +1005,16 @@ public sealed class MatchMenuUI : MonoBehaviour
                 && (inputMode != MatchInputMode.AllControllers || playerGamepadDeviceIds[i] >= 0);
             if (playerSlotLabels[i] != null)
             {
-                playerSlotLabels[i].text = active
-                    ? "PLAYER " + (i + 1) + "\n" + shopCharacterNames[Mathf.Clamp(playerCharacters[i], 0, CharacterCount - 1)]
-                    : "PLAYER " + (i + 1) + "\n" + (inputMode == MatchInputMode.AllControllers ? "WAITING FOR CONTROLLER" : "PRESS X TO JOIN");
+                if (!active)
+                    playerSlotLabels[i].text = "PLAYER " + (i + 1) + "\n" + (inputMode == MatchInputMode.AllControllers ? "WAITING FOR CONTROLLER" : "PRESS X TO JOIN");
                 playerSlotLabels[i].color = active ? new Color(.98f, .88f, .77f) : new Color(.62f, .60f, .69f);
                 SetPlayerSlotLabelLayout(playerSlotLabels[i], active);
             }
             if (active)
                 UpdatePlayerSlot(i);
-            if (playerSlotPortraits != null && playerSlotPortraits[i] != null)
+            if (playerSlotPortraits[i] != null)
                 playerSlotPortraits[i].gameObject.SetActive(active);
+            playerModelButtons[i].gameObject.SetActive(active);
             if (playerCursors != null && playerCursors[i] != null)
                 playerCursors[i].gameObject.SetActive(active);
         }
@@ -1034,11 +1036,6 @@ public sealed class MatchMenuUI : MonoBehaviour
     {
         if (shopCanvasObject != null) Destroy(shopCanvasObject);
         ClearPortraits();
-        unlockedCharacterPortraits = new RenderTexture[CharacterCount];
-        for (int i = 0; i < CharacterCount; i++)
-            if (ownedCharacters[i]) unlockedCharacterPortraits[i] = CreateCharacterPortrait(characterColors[i], false);
-        shopLockedPortrait = CreateCharacterPortrait(Color.black, true);
-
         shopCanvasObject = new GameObject("Character Shop Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Canvas canvas = shopCanvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -1070,7 +1067,8 @@ public sealed class MatchMenuUI : MonoBehaviour
             RectTransform card = AddPanel(collection, "Shop Character " + (i + 1), new Vector2(xMin, yMax - .19f), new Vector2(xMin + .143f, yMax), Color.white);
             shopCardBackgrounds[i] = card.GetComponent<Image>();
             Button cardButton = AddButton(card, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => SelectShopCharacter(index), 18, Color.white);
-            shopCardPortraits[i] = AddPortrait(card, ownedCharacters[i] ? unlockedCharacterPortraits[i] : shopLockedPortrait, new Vector2(.04f, .04f), new Vector2(.96f, .96f));
+            shopCardPortraits[i] = AddPortrait(card, CharacterModels.Portrait(CharacterModel.Original), new Vector2(.04f, .04f), new Vector2(.96f, .96f));
+            shopCardPortraits[i].color = ownedCharacters[i] ? characterColors[i] : Color.black;
             if (!ownedCharacters[i])
                 shopCardLockedLabels[i] = AddText(card, "LOCKED", new Vector2(.04f, .02f), new Vector2(.96f, .22f), 14, new Color(.86f, .83f, .88f), FontStyles.Bold);
             SetShopCardBackground(i);
@@ -1087,7 +1085,7 @@ public sealed class MatchMenuUI : MonoBehaviour
 
         RectTransform detail = AddPanel(root, "Character Details", new Vector2(.62f, .18f), new Vector2(.92f, .85f), new Color(.84f, .72f, .57f, .98f));
         shopNameText = AddText(detail, string.Empty, new Vector2(.04f, .83f), new Vector2(.96f, .98f), 32, new Color(.22f, .15f, .12f), FontStyles.Bold);
-        shopDetailPortrait = AddPortrait(detail, null, new Vector2(.10f, .16f), new Vector2(.90f, .82f));
+        shopDetailPortrait = AddPortrait(detail, CharacterModels.Portrait(CharacterModel.Original), new Vector2(.10f, .16f), new Vector2(.90f, .82f));
         shopPurchaseButton = AddButton(detail, "BUY", new Vector2(.08f, .035f), new Vector2(.92f, .16f), new Color(.24f, .21f, .23f), PurchaseSelectedCharacter, 27, new Color(.91f, .89f, .92f));
         shopPurchaseText = shopPurchaseButton.GetComponentInChildren<TextMeshProUGUI>();
 
@@ -1119,7 +1117,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         bool owned = ownedCharacters[shopSelectedCharacter];
         int characterPrice = GetCharacterPrice(shopSelectedCharacter);
         shopNameText.text = owned ? shopCharacterNames[shopSelectedCharacter] : "Unknown";
-        shopDetailPortrait.texture = owned ? unlockedCharacterPortraits[shopSelectedCharacter] : shopLockedPortrait;
+        shopDetailPortrait.color = owned ? characterColors[shopSelectedCharacter] : Color.black;
         shopPurchaseText.text = owned ? "OWNED" : "BUY  •  " + characterPrice + " COINS";
         shopPurchaseButton.interactable = !owned && shopCoins >= characterPrice;
         shopBalanceText.text = "★  " + shopCoins;
@@ -1135,8 +1133,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         PlayerPrefs.SetInt(ShopOwnedKeyPrefix + shopSelectedCharacter, 1);
         PlayerPrefs.Save();
         selectedCharacter = shopSelectedCharacter;
-        unlockedCharacterPortraits[shopSelectedCharacter] = CreateCharacterPortrait(characterColors[shopSelectedCharacter], false);
-        shopCardPortraits[shopSelectedCharacter].texture = unlockedCharacterPortraits[shopSelectedCharacter];
+        shopCardPortraits[shopSelectedCharacter].color = characterColors[shopSelectedCharacter];
         if (shopCardLockedLabels[shopSelectedCharacter] != null)
         {
             Destroy(shopCardLockedLabels[shopSelectedCharacter].gameObject);
@@ -1302,16 +1299,8 @@ public sealed class MatchMenuUI : MonoBehaviour
         activeCharacterPlayer = playerIndex;
         playerCharacterCursors[playerIndex] = characterIndex;
         playerCharacters[playerIndex] = characterIndex;
-        if (playerSlotLabels != null && playerIndex < playerSlotLabels.Length && playerSlotLabels[playerIndex] != null)
-            playerSlotLabels[playerIndex].text = "PLAYER " + (playerIndex + 1) + "\n" + shopCharacterNames[characterIndex];
-        if (playerSlotPortraits != null && playerIndex < playerSlotPortraits.Length && playerSlotPortraits[playerIndex] != null)
-            playerSlotPortraits[playerIndex].texture = unlockedCharacterPortraits[characterIndex];
         UpdatePlayerSlot(playerIndex);
-        if (playerIndex == 0)
-        {
-            selectedCharacter = characterIndex;
-            selectedPlayerPortrait = playerSlotPortraits != null ? playerSlotPortraits[0] : null;
-        }
+        if (playerIndex == 0) selectedCharacter = characterIndex;
         RefreshCharacterSelection();
     }
 
@@ -1457,6 +1446,7 @@ public sealed class MatchMenuUI : MonoBehaviour
                 UpdateGamepadCursor(playerIndex, stick);
             }
 
+            if (gamepad.buttonNorth.wasPressedThisFrame) CyclePlayerModel(playerIndex);
             if (playerIndex == 0 && gamepad.leftShoulder.wasPressedThisFrame) ChangeLevel(-1);
             if (playerIndex == 0 && gamepad.rightShoulder.wasPressedThisFrame) ChangeLevel(1);
 
@@ -1480,6 +1470,11 @@ public sealed class MatchMenuUI : MonoBehaviour
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null)
             {
+                if (inputMode != MatchInputMode.AllControllers && keyboard.qKey.wasPressedThisFrame)
+                    CyclePlayerModel(0);
+                if (inputMode == MatchInputMode.SharedKeyboard && keyboard.rightShiftKey.wasPressedThisFrame)
+                    CyclePlayerModel(1);
+
                 if (inputMode == MatchInputMode.SharedKeyboard)
                 {
                     if (keyboard.leftArrowKey.wasPressedThisFrame) keyboardNavigation.x = -1f;
@@ -1540,26 +1535,37 @@ public sealed class MatchMenuUI : MonoBehaviour
         RefreshPlayerSlots();
     }
 
+    private void CyclePlayerModel(int playerIndex)
+    {
+        if (isTransitioning || playerIndex >= matchPlayerCount) return;
+        playerModels[playerIndex] = CharacterModels.Next(playerModels[playerIndex]);
+        activeCharacterPlayer = playerIndex;
+        RefreshCharacterSelection();
+        UpdatePlayerSlot(playerIndex);
+    }
+
     private void UpdatePlayerSlot(int playerIndex)
     {
         if (playerSlotLabels == null || playerIndex >= playerSlotLabels.Length)
             return;
 
-        int character = Mathf.Clamp(playerCharacters[playerIndex], 0, CharacterCount - 1);
+        int character = GetCharacterForPlayer(playerIndex + 1);
+        CharacterModel model = playerModels[playerIndex];
         playerSlotLabels[playerIndex].text = "PLAYER " + (playerIndex + 1) + "\n" + shopCharacterNames[character];
+        playerModelLabels[playerIndex].text = "MODEL " + CharacterModels.Name(model) + "  ›";
         SetPlayerSlotLabelLayout(playerSlotLabels[playerIndex], true);
-        if (unlockedCharacterPortraits != null && unlockedCharacterPortraits[character] != null)
+
+        Texture2D portrait = CharacterModels.Portrait(model);
+        if (playerSlotPortraits[playerIndex] == null)
         {
-            if (playerSlotPortraits[playerIndex] == null)
-            {
-                RectTransform slot = (RectTransform)playerSlotLabels[playerIndex].transform.parent;
-                playerSlotPortraits[playerIndex] = AddPortrait(slot, unlockedCharacterPortraits[character], new Vector2(.08f, .04f), new Vector2(.92f, .73f));
-            }
-            else
-            {
-                playerSlotPortraits[playerIndex].texture = unlockedCharacterPortraits[character];
-            }
+            RectTransform slot = (RectTransform)playerSlotLabels[playerIndex].transform.parent;
+            playerSlotPortraits[playerIndex] = AddPortrait(slot, portrait, new Vector2(.08f, .27f), new Vector2(.92f, .75f));
         }
+        else
+        {
+            playerSlotPortraits[playerIndex].texture = portrait;
+        }
+        playerSlotPortraits[playerIndex].color = characterColors[character];
     }
 
     private void SetPlayerSlotLabelLayout(TextMeshProUGUI label, bool active)
@@ -1596,6 +1602,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         int focusedCharacter = Mathf.Clamp(playerCharacterCursors[activeCharacterPlayer], 0, CharacterCount - 1);
         for (int i = 0; i < characterButtons.Length; i++)
         {
+            colorTilePortraits[i].texture = CharacterModels.Portrait(playerModels[activeCharacterPlayer]);
             if (characterOutlines[i] != null)
             {
                 characterOutlines[i].enabled = i == focusedCharacter;
@@ -1605,32 +1612,15 @@ public sealed class MatchMenuUI : MonoBehaviour
         }
     }
 
-    private RenderTexture CreateCharacterPortrait(Color tint, bool silhouette)
+    internal static RawImage AddPortrait(RectTransform parent, Texture texture, Vector2 anchorMin, Vector2 anchorMax)
     {
-        GameObject prefab = Resources.Load<GameObject>("PlayerPreview");
-        if (prefab == null)
-        {
-            Debug.LogError("PlayerPreview prefab is missing from a Resources folder.");
-            return null;
-        }
-
-        RenderTexture texture = ModelSnapshot.Render(prefab, 256, silhouette ? Color.black : tint,
-            ModelSnapshot.Framing.Head, silhouette);
-        if (texture == null) return null;
-        texture.name = silhouette ? "Locked Character Silhouette" : "Unlocked Character Portrait " + (portraitTextures.Count + 1);
-        portraitTextures.Add(texture);
-        return texture;
-    }
-
-    private RawImage AddPortrait(RectTransform parent, RenderTexture texture, Vector2 anchorMin, Vector2 anchorMax)
-    {
-        GameObject portrait = new GameObject("Character Portrait", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
-        RectTransform rect = portrait.GetComponent<RectTransform>();
-        rect.SetParent(parent, false);
-        rect.anchorMin = anchorMin;
-        rect.anchorMax = anchorMax;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
+        var frame = new GameObject("Portrait Frame", typeof(RectTransform)).GetComponent<RectTransform>();
+        frame.SetParent(parent, false);
+        frame.anchorMin = anchorMin;
+        frame.anchorMax = anchorMax;
+        frame.offsetMin = frame.offsetMax = Vector2.zero;
+        GameObject portrait = new GameObject("Character Portrait", typeof(RectTransform), typeof(RawImage));
+        portrait.transform.SetParent(frame, false);
         RawImage image = portrait.GetComponent<RawImage>();
         image.texture = texture;
         image.color = Color.white;
@@ -1643,19 +1633,13 @@ public sealed class MatchMenuUI : MonoBehaviour
 
     private void ClearPortraits()
     {
-        foreach (RenderTexture texture in portraitTextures)
-        {
-            if (texture == null) continue;
-            texture.Release();
-            Destroy(texture);
-        }
-        portraitTextures.Clear();
         characterButtons = null;
         characterOutlines = null;
-        unlockedCharacterPortraits = null;
-        selectedPlayerPortrait = null;
+        colorTilePortraits = null;
         playerOneSlot = null;
         playerSlotPortraits = null;
+        playerModelButtons = null;
+        playerModelLabels = null;
         playerSlotLabels = null;
         playerCursors = null;
         inputModeLabel = null;
@@ -1668,7 +1652,6 @@ public sealed class MatchMenuUI : MonoBehaviour
         shopCardPortraits = null;
         shopCardOutlines = null;
         shopPurchaseButton = null;
-        shopLockedPortrait = null;
     }
 
     private void JoinPlayer(int slotIndex)

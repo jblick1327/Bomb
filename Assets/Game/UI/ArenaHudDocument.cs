@@ -28,7 +28,6 @@ public sealed class ArenaHudDocument : MonoBehaviour
 
     // Pictures for the result cards, rendered from the game's own models.
     private readonly RenderTexture[] statIcons = new RenderTexture[5];
-    private readonly Dictionary<Color, RenderTexture> portraits = new Dictionary<Color, RenderTexture>();
     private bool iconsRendered;
 
     private void Awake()
@@ -170,8 +169,6 @@ public sealed class ArenaHudDocument : MonoBehaviour
     private void OnDestroy()
     {
         foreach (RenderTexture icon in statIcons) ModelSnapshot.Release(icon);
-        foreach (RenderTexture portrait in portraits.Values) ModelSnapshot.Release(portrait);
-        portraits.Clear();
     }
 
     private int shownSeconds = -1;
@@ -241,7 +238,7 @@ public sealed class ArenaHudDocument : MonoBehaviour
             string name = "Player " + player.PlayerNumber;
             if (OnlineMatch.IsRunning && i == OnlineMatch.LocalSlot) name += " (you)";
             if (player.HasLeftGame) name += " (left)";
-            VisualElement card = CreateCard(name, Portrait(player.CharacterColor), values, player.RoundTotal,
+            VisualElement card = CreateCard(name, CharacterModels.Portrait(player.Model), values, player.RoundTotal,
                 player.CharacterColor, out VisualElement fill);
             if (player.gameObject.activeSelf && players.Count > 1) card.AddToClassList("winner");
             resultCards.Add(card);
@@ -309,7 +306,7 @@ public sealed class ArenaHudDocument : MonoBehaviour
         who.Add(nameLabel);
         if (portrait != null)
         {
-            var image = new Image { image = portrait, scaleMode = ScaleMode.ScaleToFit };
+            var image = new Image { image = portrait, tintColor = tint, scaleMode = ScaleMode.ScaleToFit };
             image.AddToClassList("result-portrait");
             who.Add(image);
         }
@@ -415,15 +412,6 @@ public sealed class ArenaHudDocument : MonoBehaviour
         statIcons[(int)Stat.Speed] = ModelSnapshot.Render(dropper.GetItemVisualPrefab(CollectibleItemType.SpeedBoost), 96, null, ModelSnapshot.Framing.Whole);
         statIcons[(int)Stat.Shield] = ModelSnapshot.Render(dropper.GetItemVisualPrefab(CollectibleItemType.Invincibility), 96, null, ModelSnapshot.Framing.Whole);
         statIcons[(int)Stat.Coins] = ModelSnapshot.Render(dropper.GetItemVisualPrefab(CollectibleItemType.SilverCoin), 96, null, ModelSnapshot.Framing.Whole);
-    }
-
-    private RenderTexture Portrait(Color color)
-    {
-        if (portraits.TryGetValue(color, out RenderTexture existing) && existing != null) return existing;
-        GameObject prefab = Resources.Load<GameObject>("PlayerPreview");
-        RenderTexture texture = ModelSnapshot.Render(prefab, 128, color, ModelSnapshot.Framing.Head);
-        portraits[color] = texture;
-        return texture;
     }
 
     // ---------- Buttons ----------

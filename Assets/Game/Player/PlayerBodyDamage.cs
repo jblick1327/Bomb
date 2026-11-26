@@ -38,10 +38,13 @@ public sealed class PlayerBodyDamage : MonoBehaviour
     private readonly List<Limb> limbs = new List<Limb>();
     private int grazes;
 
-    private void Awake()
+    private void Awake() => CacheBody();
+
+    internal void CacheBody()
     {
         player = GetComponent<ArenaPlayerController>();
-        skins = GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        skins = player.GetBodyComponents<SkinnedMeshRenderer>();
+        limbs.Clear();
         originalMeshes = new Mesh[skins.Length];
         damagedMeshes = new Mesh[skins.Length];
         for (int i = 0; i < skins.Length; i++) originalMeshes[i] = skins[i].sharedMesh;

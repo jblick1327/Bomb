@@ -49,6 +49,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
     private float jumpBufferRemaining;
     private bool wasGrounded;
     private Animator animator;
+    private AnimatorOverrideController modelAnimatorController;
     private ArenaSession session;
     private MaterialPropertyBlock characterColorProperties;
     private TextMeshPro playerLabel;
@@ -77,6 +78,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
     public float InvincibilityRemaining => invincibilityRemaining;
     public float SpeedEffectRemaining => speedEffectRemaining;
     public SpeedEffect ActiveSpeedEffect { get; private set; }
+    public CharacterModel Model { get; private set; }
     public Color CharacterColor { get; private set; } = Color.white;
     public event Action<int> CoinsChanged;
 
@@ -124,7 +126,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
     {
         session = FindFirstObjectByType<ArenaSession>();
         controller = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>(true);
         characterColorProperties = new MaterialPropertyBlock();
 
         // Save the player's starting scale.
@@ -277,6 +279,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (modelAnimatorController != null) Destroy(modelAnimatorController);
         if (playerLabel != null)
             Destroy(playerLabel.gameObject);
     }
@@ -445,6 +448,24 @@ public sealed class ArenaPlayerController : MonoBehaviour
         return MatchMenuUI.GetGamepadForPlayer(playerNumber);
     }
 
+    internal void ConfigureCharacter(CharacterModel model)
+    {
+        if (animator == null) animator = GetComponentInChildren<Animator>(true);
+        animator = CharacterModels.CreateVisual(model, animator, out modelAnimatorController);
+        CharacterModels.FitToCapsule(animator, GetComponent<CharacterController>());
+        if (modelAnimatorController == null) return;
+
+        Model = model;
+        if (TryGetComponent(out bodyDamage)) bodyDamage.CacheBody();
+        if (TryGetComponent(out PlayerItemGlow glow)) glow.CacheBody();
+    }
+
+    internal T[] GetBodyComponents<T>() where T : Component
+    {
+        Animator body = animator != null ? animator : GetComponentInChildren<Animator>(true);
+        return body != null ? body.GetComponentsInChildren<T>(true) : GetComponentsInChildren<T>(true);
+    }
+
     public void SetPlayerNumber(int number)
     {
         playerNumber = Mathf.Clamp(number, 1, 4);
@@ -466,12 +487,12 @@ public sealed class ArenaPlayerController : MonoBehaviour
             ? MatchMenuUI.GetPlayerCursorColor(playerNumber - 1)
             : MatchMenuUI.GetCharacterColorForPlayer(playerNumber);
         CharacterColor = color;
-        foreach (Renderer targetRenderer in GetComponentsInChildren<Renderer>(true))
+        foreach (Renderer targetRenderer in GetBodyComponents<Renderer>())
         {
-            targetRenderer.GetPropertyBlock(characterColorProperties);
+            targetRenderer.GetPropertyBlock(characterColorProperties, 0);
             characterColorProperties.SetColor("_BaseColor", color);
             characterColorProperties.SetColor("_Color", color);
-            targetRenderer.SetPropertyBlock(characterColorProperties);
+            targetRenderer.SetPropertyBlock(characterColorProperties, 0);
         }
     }
 
