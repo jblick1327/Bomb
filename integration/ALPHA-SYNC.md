@@ -743,10 +743,24 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   (Lane U, T3, S; from P4a). Run the full suite on b98ff622 plugged in, with the
   owner off the machine (about an hour). Done when: 6/6 pass, or a failure whose summaries show 0 server overruns
   (then it is code: reopen P4a).
-- [ ] **P5 Camera shows past the backdrop** (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
+- [x] **P5 Camera shows past the backdrop** (done 2026-11-26, Claude Opus 5.5: **misdiagnosed; the "bars" are the drawn
+  bedrock** (walls beyond x ±18 on Classic Yard, the floor under Yard's earth; colour 58,63,70). A render-based check of
+  what the scenery really covers found no gap the camera reaches; the camera change was reverted (it would have cut
+  Tower's view). Owner picks: (A) camera stops at the bedrock face, (B) give bedrock a rock look, (C) leave.
+  `evidence/P5/README.md`) (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
   Yard's right/left edges (`classic-yard/play-host-t036.png`, `t085.png`), a strip under Yard's ground (`yard/play-host-t036.png`).
   Fit the follow camera to the backdrop (or extend the backdrop) without touching Darryn's originals. Done when: no bars in a capture.
+- [ ] **P9 Round start collapses on Bridge and Tower since 1996dcb3** (Lane N, T1, M; physics: owner decides; found
+  2026-11-26 by P6). Headless OD-6 on the shipped server: Bridge loses 22 cells (2 pieces fall out of the world), Tower
+  79 late seam breaks; every server through 3e2f1609 passes. Cause: `collideConnected=false` on glue welds (the
+  owner-approved fix for the post-blast ground blow-up) removed OD-8 contact bearing. Options: contact back on; contact
+  off only between ground pieces; other. Done when: OD-6 passes on all four levels twice, byte-identical, and the
+  blast-storm probe stays fast (no ground blow-up); `bom.ps1 Test`/`NetTest`; then E1. `evidence/P6/README.md` §1.
+  Blocks P8 (testers would see the Bridge drop pieces at round start).
 - [ ] **P6 Glue holds overhangs (G-N12, re-scoped)** (Lane N, T1, M; physics: the owner picks the rule as an OD).
+  Interim 2026-11-26 (Claude Opus 5.5): measured on the broken baseline, see P9. (a) 30% torque fails Yard's round
+  start; (b) blast shock at 25% leaves round start alone but barely changes blast outcomes. Re-run after P9 with a
+  stronger overhang fixture. Tools `integration/tools/p6/`, `evidence/P6/README.md` §2.
   Correction to G-N12's wording: glue already has a bending limit. A seam's ratio is
   |charged force|/(S·L) + |torque|/(½·S·L²) with S = 280·toughness (`sim_mortar.odin:180`). Density 1 and g 9.8 put a
   1×1 piece hanging off a 1-long seam at r ≈ 0.07, and a 3×1 overhang at r ≈ 0.4, so own weight never breaks it.
