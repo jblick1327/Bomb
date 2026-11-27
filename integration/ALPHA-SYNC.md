@@ -746,18 +746,30 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
 - [x] **P5 Camera shows past the backdrop** (done 2026-11-26, Claude Opus 5.5: **misdiagnosed; the "bars" are the drawn
   bedrock** (walls beyond x ±18 on Classic Yard, the floor under Yard's earth; colour 58,63,70). A render-based check of
   what the scenery really covers found no gap the camera reaches; the camera change was reverted (it would have cut
-  Tower's view). Owner picks: (A) camera stops at the bedrock face, (B) give bedrock a rock look, (C) leave.
+  Tower's view). Options: (A) camera stops at the bedrock face, (B) give bedrock a rock look, (C) leave. **Decided (C), owner-delegated
+  2026-11-26**: the bedrock is the arena boundary players touch and dig to, so it stays in view; a rock look is P7-style
+  art work for after the team showing.
   `evidence/P5/README.md`) (Lane U, T2, S). Grey bars where the camera passes Darryn's backdrop: Classic
   Yard's right/left edges (`classic-yard/play-host-t036.png`, `t085.png`), a strip under Yard's ground (`yard/play-host-t036.png`).
   Fit the follow camera to the backdrop (or extend the backdrop) without touching Darryn's originals. Done when: no bars in a capture.
-- [ ] **P9 Round start collapses on Bridge and Tower since 1996dcb3** (Lane N, T1, M; physics: owner decides; found
+- [x] **P9 Round start collapses on Bridge and Tower since 1996dcb3** (Lane N, T1, M; physics: owner delegated the call; found
   2026-11-26 by P6). Headless OD-6 on the shipped server: Bridge loses 22 cells (2 pieces fall out of the world), Tower
   79 late seam breaks; every server through 3e2f1609 passes. Cause: `collideConnected=false` on glue welds (the
   owner-approved fix for the post-blast ground blow-up) removed OD-8 contact bearing. Options: contact back on; contact
   off only between ground pieces; other. Done when: OD-6 passes on all four levels twice, byte-identical, and the
   blast-storm probe stays fast (no ground blow-up); `bom.ps1 Test`/`NetTest`; then E1. `evidence/P6/README.md` §1.
   Blocks P8 (testers would see the Bridge drop pieces at round start).
+  **Decided 2026-11-26 (owner delegated): contact bearing only between different placed objects** (`collideConnected =
+  source_identity differs`); pieces of one object (the yard ground) still do not collide. OD-6: all four levels pass twice,
+  byte-identical, Bridge 1 / Tower 10 late breaks (same as 3e2f1609). Blast-storm probe (yard, 30 deep blasts, freeze on):
+  world 231 ms/s mean, worst 348 (shipped 290 / 667), fastest piece 8.5 m/s (shipped 8.6), no ground blow-up.
+  OD-8 test now checks both cases. `evidence/P9/README.md`.
+  Shipped: Engine 59b51704, DLL 13578414, server 2e022734. Gates on the pair: engine Test 240/240, NetTest 27/27,
+  Content, NativeInterop, Rounds (first Rounds run used the stale `Engine/build` DLL and was refused by the identity guard:
+  `evidence/M8/unity-rounds-20261127T000748916979Z`, kept), front-door Bridge and Tower on the release package.
 - [ ] **P6 Glue holds overhangs (G-N12, re-scoped)** (Lane N, T1, M; physics: the owner picks the rule as an OD).
+  **Decided 2026-11-26 (owner delegated): no rule change for the team showing.** Neither candidate met its bar ((a) breaks
+  Yard's round start; (b) changes nothing visible). Stays open after the showing with a stronger fixture on the P9 baseline.
   Interim 2026-11-26 (Claude Opus 5.5): measured on the broken baseline, see P9. (a) 30% torque fails Yard's round
   start; (b) blast shock at 25% leaves round start alone but barely changes blast outcomes. Re-run after P9 with a
   stronger overhang fixture. Tools `integration/tools/p6/`, `evidence/P6/README.md` §2.
@@ -776,6 +788,8 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   original top faces. Done when: the owner picks one and captures show it on both yards.
 - [ ] **P8 Package and two-PC test** (Lane U, T2, S; after P1–P5). Package (Mono, release), then the owner runs it on the
   laptop plus the desktop at home (LAN), then over Tailscale (`TEAM.md`). Re-measure P1's restart times on the desktop.
+  2026-11-27: release package on the P9 pair built: `integration/build/packages/Windows-20261127T001508623Z` (Mono);
+  front-door passes on Bridge and Tower. Owner's two-PC run still to do.
 - Noted, no task yet: the Tower is dark with tiny players, and yellow-on-yellow floor slabs merge when they pile up
   (`tower/play-host-t099.png`). Raise it with Darryn after the playtest. The first-blast hitch with two windows on one PC
   doesn't apply to separate machines.

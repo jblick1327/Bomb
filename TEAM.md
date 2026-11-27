@@ -77,8 +77,8 @@ If you hit one of these, note the level, whose player, and same PC or LAN; a cli
 - **Glue resists bending too much**: a piece can stay stuck out at a right angle from a piece that has just broken
   off, like a shelf. Planned fix: give glue a bending (shear/moment) limit in the engine, so overhanging pieces snap
   under their own weight while load-bearing joints stay strong. It has to keep the Bridge and Tower standing at round start.
-- **Seams sometimes crack before any bomb lands**, with players standing on a level (mostly the Bridge). Rare and varies
-  run to run; we think players' weight sets it off.
+- **Fixed 2026-11-26, tell J if you still see it:** Bridge and Tower pieces cracking or falling at round start, before
+  any bomb lands. Glued objects rest on each other again (the 11-23 ground fix had stopped that); the yard ground fix stays.
 - **The first blast can hitch** for a frame when two game windows run on the same PC.
 - **Fixed 2026-11-24, tell J if you still see them:** the ground blowing apart after many blasts, the game getting
   slower as rubble piles up, and online play stalling during a long Unity frame.
