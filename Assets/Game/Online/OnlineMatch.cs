@@ -387,6 +387,9 @@ public static class OnlineMatch
 
     private static void OnMessage(ulong sender, FastBufferReader reader)
     {
+        // Netcode has already read its own header from this buffer, so our
+        // message starts here, not at the buffer's start (see Relay).
+        int messageStart = reader.Position;
         reader.ReadValueSafe(out byte kindByte);
         Message kind = (Message)kindByte;
         bool fromHost = sender == NetworkManager.ServerClientId;
@@ -453,7 +456,7 @@ public static class OnlineMatch
                 reader.ReadValueSafe(out byte slot);
                 reader.ReadValueSafe(out Vector2 position);
                 reader.ReadValueSafe(out byte flags);
-                if (IsHost) Relay(sender, reader, NetworkDelivery.UnreliableSequenced);
+                if (IsHost) Relay(sender, reader, messageStart, NetworkDelivery.UnreliableSequenced);
                 ArenaPlayerController player = arena != null ? arena.GetPlayer(slot) : null;
                 if (player == null || !player.IsRemote || !player.gameObject.activeInHierarchy) return;
                 RemotePlayerSmoother smoother = player.GetComponent<RemotePlayerSmoother>();
@@ -526,7 +529,7 @@ public static class OnlineMatch
                 reader.ReadValueSafe(out byte slot);
                 reader.ReadValueSafe(out byte grazeRound);
                 reader.ReadValueSafe(out Vector2 center);
-                if (IsHost) Relay(sender, reader, NetworkDelivery.ReliableSequenced);
+                if (IsHost) Relay(sender, reader, messageStart, NetworkDelivery.ReliableSequenced);
                 if (grazeRound != round || arena == null) return;
                 ArenaPlayerController player = arena.GetPlayer(slot);
                 if (player != null && player.IsRemote && player.gameObject.activeInHierarchy) player.TakeGraze(center);
@@ -538,7 +541,7 @@ public static class OnlineMatch
                 reader.ReadValueSafe(out byte deathRound);
                 reader.ReadValueSafe(out bool hasCenter);
                 reader.ReadValueSafe(out Vector2 center);
-                if (IsHost) Relay(sender, reader, NetworkDelivery.ReliableSequenced);
+                if (IsHost) Relay(sender, reader, messageStart, NetworkDelivery.ReliableSequenced);
                 if (deathRound != round || arena == null) return;
                 ArenaPlayerController player = arena.GetPlayer(slot);
                 if (player != null && player.IsRemote) arena.ApplyNetworkDeath(slot, hasCenter ? center : (Vector2?)null);
@@ -641,11 +644,17 @@ public static class OnlineMatch
     }
 
     // Host: passes a client's message on to the other clients unchanged.
-    private static void Relay(ulong sender, FastBufferReader reader, NetworkDelivery delivery)
+    // messageStart is where our message begins in the reader's buffer: the
+    // buffer also holds Netcode's own header in front of it, and copying that
+    // too made the other clients ignore every relayed message (so joiners saw
+    // the host move but not each other, nor each other's hits and knockouts).
+    private static void Relay(ulong sender, FastBufferReader reader, int messageStart, NetworkDelivery delivery)
     {
         byte[] bytes = reader.ToArray();
-        var writer = new FastBufferWriter(bytes.Length, Allocator.Temp);
-        writer.WriteBytesSafe(bytes);
+        int length = bytes.Length - messageStart;
+        if (messageStart < 0 || length <= 0) return;
+        var writer = new FastBufferWriter(length, Allocator.Temp);
+        writer.WriteBytesSafe(bytes, length, messageStart);
         SendToClients(writer, delivery, sender);
     }
 
