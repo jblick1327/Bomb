@@ -135,7 +135,13 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   prediction_set_mode(p,.Warming,.Uninitialized);return
  }
  owner:=link.owner;history:=&link.history;target:=history.next_tick-1
- if target<owner.state_tick { prediction_set_mode(p,.Conservative,.Missing_Command);return }
+ // The client's newest command is older than the server's owner state (this client stalled, or its schedule is
+ // catching up): hold the presented prediction through the bridge instead of dropping back to the authority, which
+ // drew the player several ticks behind and then forward again (movement stutter, 2026-11-27).
+ if target<owner.state_tick {
+  if prediction_bridge(c,p,now,presenting) { return }
+  prediction_set_mode(p,.Conservative,.Missing_Command);return
+ }
  bridged:=false;bridge_pos,bridge_from:Vec2;bridge_has_from:=false
  if !p.has_owner || p.identity!=owner.identity || p.last_teleport!=owner.teleport_serial {
   // The first owner state after a bridged reset: continue from the bridged world, one tick
@@ -188,6 +194,11 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   replayed:=prediction_static_replay(&p.world,owner,history,&c.collision_history)
   if !replayed && allow_estimate && p.world.reason==.Dynamic_History_Required {
    replayed=prediction_static_replay(&p.world,owner,history,&c.collision_history,PREDICTION_ESTIMATE_TOLERANCE);uncertain=replayed
+  }
+  // A gap in this client's own command history: the server ran those ticks neutral, so replay them neutral as an
+  // estimate rather than dropping back to the authority (2026-11-27).
+  if !replayed && allow_estimate && p.world.reason==.Missing_Command {
+   replayed=prediction_static_replay(&p.world,owner,history,&c.collision_history,PREDICTION_ESTIMATE_TOLERANCE,fill_missing=true);uncertain=replayed
   }
   if !replayed { prediction_set_mode(p,.Conservative,p.world.reason);return }
   if p.last_owner_tick!=owner.state_tick {

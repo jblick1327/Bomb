@@ -236,7 +236,10 @@ prediction_world_step :: proc(p:^Static_Prediction,command:Scheduled_Command,col
  if outside || !finite(p.player.pose.position.x) || !finite(p.player.pose.position.y) { p.reason=.Unsafe_Position;return false }
  p.state_tick=tick;p.reason=.None;return true
 }
-prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil,tolerance:f32=PREDICTION_PROXY_TOLERANCE) -> bool {
+// fill_missing: a tick with no command in the history replays as the server runs a starved tick (input_schedule_consume:
+// the last movement held for INPUT_HELD_GRACE ticks, then neutral). An estimate: the caller presents it as uncertain and
+// blends the correction.
+prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:^Command_History,collision:^Collision_History=nil,tolerance:f32=PREDICTION_PROXY_TOLERANCE,fill_missing:bool=false) -> bool {
  if !p.active { p.reason=.Uninitialized;return false }
  if owner.identity.epoch!=p.epoch { p.reason=.Wrong_Epoch;return false }
  if owner.topology_revision!=p.revision { p.reason=.Wrong_Revision;return false }
@@ -246,10 +249,17 @@ prediction_static_replay :: proc(p:^Static_Prediction,owner:Owner_State,history:
  if history.next_tick<=owner.state_tick { p.reason=.Missing_Command;return false }
  if history.next_tick-owner.state_tick>INPUT_HISTORY { p.reason=.Capacity;return false }
  first:=true
+ held:=history.slots[owner.state_tick%INPUT_HISTORY];held_move:=held.occupied&&held.command.target_tick==owner.state_tick ? held.command.move : 0
+ missing:=u32(0)
  for tick:=owner.state_tick+1;tick<history.next_tick;tick+=1 {
   slot:=history.slots[tick%INPUT_HISTORY]
-  if !slot.occupied || slot.command.target_tick!=tick { p.reason=.Missing_Command;return false }
-  if !prediction_world_step(p,slot.command,collision,first,tolerance) { return false };first=false
+  command:=slot.command
+  if !slot.occupied || slot.command.target_tick!=tick {
+   if !fill_missing { p.reason=.Missing_Command;return false }
+   missing+=1;command=Scheduled_Command{target_tick=tick}
+   if missing<=INPUT_HELD_GRACE { command.move=held_move } else { held_move=0 }
+  } else { missing=0;held_move=command.move }
+  if !prediction_world_step(p,command,collision,first,tolerance) { return false };first=false
  }
  p.reason=.None;return true
 }
