@@ -167,13 +167,17 @@ public sealed class ArenaPlayerController : MonoBehaviour
         bool onlinePause = session != null && session.IsPaused && OnlineMatch.IsRunning;
         if (session != null && session.IsPaused && !onlinePause)
             return;
-        if (session != null && !session.IsPlaying)
+        // During the 3-2-1 the player can't move or jump yet, but still
+        // falls onto the ground from the spawn point.
+        bool countdown = session != null && session.State == ArenaRoundState.Countdown;
+        if (session != null && !session.IsPlaying && !countdown)
         {
             IsRunning = false;
             if (animator != null) animator.SetBool(RunningParameter, false);
             return;
         }
-        float input = onlinePause ? 0f : ReadMovement();
+        bool inputBlocked = onlinePause || countdown;
+        float input = inputBlocked ? 0f : ReadMovement();
         IsRunning = Mathf.Abs(input) > 0.01f;
 
         if (animator != null)
@@ -191,7 +195,7 @@ public sealed class ArenaPlayerController : MonoBehaviour
         else
             coyoteRemaining -= Time.deltaTime;
 
-        if (!onlinePause && JumpPressed())
+        if (!inputBlocked && JumpPressed())
             jumpBufferRemaining = jumpBufferTime + Time.deltaTime;
         else
             jumpBufferRemaining -= Time.deltaTime;
@@ -254,7 +258,11 @@ public sealed class ArenaPlayerController : MonoBehaviour
         labelObject.transform.position = transform.position + Vector3.up * PlayerLabelHeight;
         playerLabel = labelObject.GetComponent<TextMeshPro>();
         playerLabel.text = "P" + playerNumber;
-        playerLabel.fontSize = 6f;
+        // The menus' chalk font. It is much narrower than TMP's default, so it
+        // is set larger (6 -> 8.5) to cover about the same space as before.
+        if (BomUiSkin.MenuFont != null) playerLabel.font = BomUiSkin.MenuFont;
+        playerLabel.fontSize = 8.5f;
+        playerLabel.fontStyle = FontStyles.Bold;
         playerLabel.alignment = TextAlignmentOptions.Center;
         playerLabel.horizontalAlignment = HorizontalAlignmentOptions.Center;
         playerLabel.verticalAlignment = VerticalAlignmentOptions.Middle;

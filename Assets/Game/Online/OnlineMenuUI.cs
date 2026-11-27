@@ -10,12 +10,11 @@ using UnityEngine.UI;
 // picker. Everyone sees the picker; only the host can change it and start.
 public sealed class OnlineMenuUI : MonoBehaviour
 {
-    private static readonly Color PanelColor = new Color(.13f, .14f, .22f, .97f);
-    private static readonly Color HeaderColor = new Color(.13f, .39f, .83f);
-    private static readonly Color ButtonColor = new Color(1f, .62f, .09f);
-    private static readonly Color SecondaryButtonColor = new Color(.91f, .82f, .73f);
-    private static readonly Color DarkText = new Color(.15f, .16f, .22f);
-    private static readonly Color LightText = new Color(.98f, .88f, .77f);
+    private const BomButtonStyle ButtonStyle = BomButtonStyle.Orange;
+    private const BomButtonStyle SecondaryButtonStyle = BomButtonStyle.Yellow;
+    // Menu text is white; only errors and the empty code box differ.
+    private static readonly Color LightText = BomUiSkin.TextColor;
+    private static readonly Color PlaceholderText = new Color(1f, 1f, 1f, .45f);
     private static readonly Color ErrorText = new Color(1f, .45f, .40f);
     private static readonly string[] LevelPreviewNames = { "YardLevelPreview", "BridgeLevelPreview", "TowerLevelPreview" };
 
@@ -30,6 +29,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
     private Button chooseLevelButton;
     private Button startButton;
     private RawImage levelPreview;
+    private AspectRatioFitter levelPreviewAspect;
     private TextMeshProUGUI levelNameText;
     private MenuScreen screen;
     private bool busy;
@@ -59,9 +59,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
         root.anchorMax = Vector2.one;
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
-        RectTransform panel = MatchMenuUI.AddPanel(root, "Online Panel", new Vector2(.30f, .14f), new Vector2(.70f, .88f), PanelColor);
-        MatchMenuUI.AddHeaderBar(panel, "ONLINE", HeaderColor, .5f, 36);
-        statusText = MatchMenuUI.AddText(panel, string.Empty, new Vector2(.05f, .80f), new Vector2(.95f, .88f), 20, LightText, FontStyles.Bold);
+        RectTransform panel = MatchMenuUI.AddPanel(root, "Online Panel", new Vector2(.30f, .14f), new Vector2(.70f, .88f));
+        MatchMenuUI.AddHeaderBar(panel, "ONLINE", BomButtonStyle.Blue);
+        statusText = MatchMenuUI.AddText(panel, string.Empty, new Vector2(.05f, .80f), new Vector2(.95f, .88f), 24, LightText, FontStyles.Bold);
         content = new GameObject("Content", typeof(RectTransform)).GetComponent<RectTransform>();
         content.SetParent(panel, false);
         content.anchorMin = new Vector2(.05f, .04f);
@@ -119,6 +119,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         chooseLevelButton = null;
         startButton = null;
         levelPreview = null;
+        levelPreviewAspect = null;
         levelNameText = null;
     }
 
@@ -133,11 +134,11 @@ public sealed class OnlineMenuUI : MonoBehaviour
         screen = MenuScreen.Choose;
         ClearContent();
         SetStatus(string.IsNullOrEmpty(message) ? "Play with friends over the internet (up to 4 players)." : message, error);
-        MatchMenuUI.AddButton(content, "HOST GAME", new Vector2(.1f, .74f), new Vector2(.9f, .96f), ButtonColor, HostGame, 36, DarkText);
-        MatchMenuUI.AddText(content, "OR JOIN WITH A CODE", new Vector2(.1f, .60f), new Vector2(.9f, .70f), 20, LightText, FontStyles.Bold);
+        MatchMenuUI.AddButton(content, "HOST GAME", new Vector2(.1f, .74f), new Vector2(.9f, .96f), ButtonStyle, HostGame, 36);
+        MatchMenuUI.AddText(content, "OR JOIN WITH A CODE", new Vector2(.1f, .60f), new Vector2(.9f, .70f), 26, LightText, FontStyles.Bold);
         codeField = CreateCodeField(content, new Vector2(.1f, .42f), new Vector2(.62f, .58f));
-        MatchMenuUI.AddButton(content, "JOIN", new Vector2(.65f, .42f), new Vector2(.9f, .58f), ButtonColor, JoinGame, 30, DarkText);
-        MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, Close, 28, DarkText);
+        MatchMenuUI.AddButton(content, "JOIN", new Vector2(.65f, .42f), new Vector2(.9f, .58f), ButtonStyle, JoinGame, 34);
+        MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonStyle, Close, 32);
     }
 
     private void ShowBusyScreen(string message)
@@ -170,27 +171,27 @@ public sealed class OnlineMenuUI : MonoBehaviour
         ClearContent();
         if (OnlineSession.IsHost)
         {
-            MatchMenuUI.AddText(content, "JOIN CODE", new Vector2(.1f, .88f), new Vector2(.9f, .98f), 20, LightText, FontStyles.Bold);
+            MatchMenuUI.AddText(content, "JOIN CODE", new Vector2(.1f, .88f), new Vector2(.9f, .98f), 26, LightText, FontStyles.Bold);
             MatchMenuUI.AddText(content, OnlineSession.JoinCode, new Vector2(.1f, .70f), new Vector2(.9f, .88f), 60, Color.white,
-                FontStyles.Bold, new Color(.20f, .20f, .30f));
+                FontStyles.Bold, Color.white);
         }
         else
         {
-            MatchMenuUI.AddText(content, "JOINED GAME " + OnlineSession.JoinCode, new Vector2(.1f, .76f), new Vector2(.9f, .96f), 26, LightText, FontStyles.Bold);
+            MatchMenuUI.AddText(content, "JOINED GAME " + OnlineSession.JoinCode, new Vector2(.1f, .76f), new Vector2(.9f, .96f), 32, LightText, FontStyles.Bold);
         }
-        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .30f), new Vector2(.9f, .68f), 24, Color.white, FontStyles.Bold);
+        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .30f), new Vector2(.9f, .68f), 28, Color.white, FontStyles.Bold);
         playerListText.alignment = TextAlignmentOptions.TopLeft;
         playerListText.enableAutoSizing = false;
-        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .22f), new Vector2(.9f, .30f), 18, LightText, FontStyles.Normal);
+        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .22f), new Vector2(.9f, .30f), 22, LightText, FontStyles.Normal);
         if (OnlineSession.IsHost)
         {
-            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonStyle, LeaveGame, 32);
             chooseLevelButton = MatchMenuUI.AddButton(content, "CHOOSE LEVEL", new Vector2(.45f, .04f), new Vector2(.9f, .2f),
-                ButtonColor, () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.ChooseLevel, OnlineMatch.SelectedLevel), 28, DarkText);
+                ButtonStyle, () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.ChooseLevel, OnlineMatch.SelectedLevel), 32);
         }
         else
         {
-            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonStyle, LeaveGame, 32);
         }
         RefreshLobby();
     }
@@ -226,32 +227,21 @@ public sealed class OnlineMenuUI : MonoBehaviour
     {
         screen = MenuScreen.Level;
         ClearContent();
-        RectTransform frame = MatchMenuUI.AddPanel(content, "Level Preview", new Vector2(.1f, .40f), new Vector2(.9f, .97f), new Color(.08f, .09f, .14f));
-        var imageObject = new GameObject("Level Preview Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(AspectRatioFitter));
-        RectTransform imageRect = imageObject.GetComponent<RectTransform>();
-        imageRect.SetParent(frame, false);
-        imageRect.anchorMin = Vector2.zero;
-        imageRect.anchorMax = Vector2.one;
-        imageRect.offsetMin = new Vector2(6f, 6f);
-        imageRect.offsetMax = new Vector2(-6f, -6f);
-        levelPreview = imageObject.GetComponent<RawImage>();
-        levelPreview.raycastTarget = false;
-        AspectRatioFitter fitter = imageObject.GetComponent<AspectRatioFitter>();
-        fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-        fitter.aspectRatio = 16f / 9f;
-        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .28f), new Vector2(.9f, .38f), 30, Color.white, FontStyles.Bold);
+        // No frame: the picture's edges fade into the panel.
+        levelPreview = MatchMenuUI.AddFadedPicture(content, "Level Preview", new Vector2(.06f, .40f), new Vector2(.94f, .97f), out levelPreviewAspect);
+        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .28f), new Vector2(.9f, .38f), 36, Color.white, FontStyles.Bold);
 
         if (OnlineSession.IsHost)
         {
-            MatchMenuUI.AddButton(content, "<", new Vector2(0f, .58f), new Vector2(.09f, .78f), SecondaryButtonColor, () => ChangeLevel(-1), 44, DarkText);
-            MatchMenuUI.AddButton(content, ">", new Vector2(.91f, .58f), new Vector2(1f, .78f), SecondaryButtonColor, () => ChangeLevel(1), 44, DarkText);
-            MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonColor,
-                () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.Players, OnlineMatch.SelectedLevel), 28, DarkText);
-            startButton = MatchMenuUI.AddButton(content, "START", new Vector2(.45f, .04f), new Vector2(.9f, .2f), ButtonColor, StartMatch, 32, DarkText);
+            MatchMenuUI.AddArrowButton(content, true, new Vector2(-.02f, .58f), new Vector2(.09f, .78f), () => ChangeLevel(-1));
+            MatchMenuUI.AddArrowButton(content, false, new Vector2(.91f, .58f), new Vector2(1.02f, .78f), () => ChangeLevel(1));
+            MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonStyle,
+                () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.Players, OnlineMatch.SelectedLevel), 32);
+            startButton = MatchMenuUI.AddButton(content, "START", new Vector2(.45f, .04f), new Vector2(.9f, .2f), ButtonStyle, StartMatch, 36);
         }
         else
         {
-            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonColor, LeaveGame, 28, DarkText);
+            MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.9f, .2f), SecondaryButtonStyle, LeaveGame, 32);
         }
         RefreshLevel();
     }
@@ -261,7 +251,13 @@ public sealed class OnlineMenuUI : MonoBehaviour
         if (screen != MenuScreen.Level || levelNameText == null) return;
         int level = Mathf.Clamp(OnlineMatch.SelectedLevel, 0, MatchMenuUI.LevelNames.Length - 1);
         levelNameText.text = MatchMenuUI.LevelNames[level];
-        if (levelPreview != null) levelPreview.texture = Resources.Load<Texture2D>(LevelPreviewNames[level]);
+        if (levelPreview != null)
+        {
+            Texture2D picture = Resources.Load<Texture2D>(LevelPreviewNames[level]);
+            levelPreview.texture = picture;
+            if (picture != null && levelPreviewAspect != null)
+                levelPreviewAspect.aspectRatio = (float)picture.width / picture.height;
+        }
         if (OnlineSession.IsHost)
         {
             bool enoughPlayers = OnlineMatch.ConnectedPlayerCount >= 2;
@@ -367,7 +363,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
     // A text box for the join code: letters and numbers only, shown in capitals.
     private static TMP_InputField CreateCodeField(RectTransform parent, Vector2 anchorMin, Vector2 anchorMax)
     {
-        RectTransform box = MatchMenuUI.AddPanel(parent, "Join Code Field", anchorMin, anchorMax, new Color(.95f, .93f, .90f));
+        RectTransform box = MatchMenuUI.AddPanel(parent, "Join Code Field", anchorMin, anchorMax);
         var viewport = new GameObject("Text Area", typeof(RectTransform), typeof(RectMask2D)).GetComponent<RectTransform>();
         viewport.SetParent(box, false);
         viewport.anchorMin = Vector2.zero;
@@ -375,8 +371,8 @@ public sealed class OnlineMenuUI : MonoBehaviour
         viewport.offsetMin = new Vector2(14f, 6f);
         viewport.offsetMax = new Vector2(-14f, -6f);
 
-        TextMeshProUGUI placeholder = MatchMenuUI.AddText(viewport, "CODE", Vector2.zero, Vector2.one, 34, new Color(.55f, .55f, .6f), FontStyles.Bold);
-        TextMeshProUGUI text = MatchMenuUI.AddText(viewport, string.Empty, Vector2.zero, Vector2.one, 34, DarkText, FontStyles.Bold | FontStyles.UpperCase);
+        TextMeshProUGUI placeholder = MatchMenuUI.AddText(viewport, "CODE", Vector2.zero, Vector2.one, 34, PlaceholderText, FontStyles.Bold);
+        TextMeshProUGUI text = MatchMenuUI.AddText(viewport, string.Empty, Vector2.zero, Vector2.one, 34, Color.white, FontStyles.Bold | FontStyles.UpperCase);
         text.enableAutoSizing = false;
 
         TMP_InputField field = box.gameObject.AddComponent<TMP_InputField>();

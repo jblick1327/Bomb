@@ -10,8 +10,10 @@ public static class ModelSnapshot
     private const int SnapshotLayer = 31;
     private static int snapshotCount;
 
-    // tint recolours the model; null keeps its own materials.
-    public static RenderTexture Render(Object prefab, int size, Color? tint, Framing framing, bool silhouette = false)
+    // tint recolours the model; null keeps its own materials. faceCamera turns
+    // a flat model (a coin) so its broad side faces the camera, whichever way
+    // it was modelled.
+    public static RenderTexture Render(Object prefab, int size, Color? tint, Framing framing, bool silhouette = false, bool faceCamera = false)
     {
         if (prefab == null) return null;
 
@@ -33,6 +35,7 @@ public static class ModelSnapshot
         foreach (Collider collider in model.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
         foreach (Rigidbody body in model.GetComponentsInChildren<Rigidbody>(true)) body.isKinematic = true;
         foreach (Light light in model.GetComponentsInChildren<Light>(true)) light.enabled = false;
+        if (faceCamera) TurnFlatSideToCamera(model);
 
         Bounds bounds = default;
         bool hasBounds = false;
@@ -90,6 +93,26 @@ public static class ModelSnapshot
         rig.SetActive(false);
         Object.Destroy(rig);
         return texture;
+    }
+
+    // The camera sits on -Z looking along +Z. Finds the model's thinnest
+    // direction and turns the model so that direction points at the camera.
+    private static void TurnFlatSideToCamera(GameObject model)
+    {
+        Bounds bounds = default;
+        bool hasBounds = false;
+        foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>(true))
+        {
+            if (renderer is ParticleSystemRenderer || renderer is LineRenderer || renderer is TrailRenderer) continue;
+            if (hasBounds) bounds.Encapsulate(renderer.bounds);
+            else { bounds = renderer.bounds; hasBounds = true; }
+        }
+        if (!hasBounds) return;
+        Vector3 size = bounds.size;
+        if (size.x < size.z && size.x <= size.y)
+            model.transform.rotation = Quaternion.Euler(0f, 90f, 0f) * model.transform.rotation;   // thin along X
+        else if (size.y < size.z && size.y < size.x)
+            model.transform.rotation = Quaternion.Euler(-90f, 0f, 0f) * model.transform.rotation;  // lying flat
     }
 
     public static void Release(RenderTexture texture)

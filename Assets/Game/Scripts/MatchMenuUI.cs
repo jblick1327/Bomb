@@ -105,6 +105,26 @@ public sealed class MatchMenuUI : MonoBehaviour
     internal static readonly string[] LevelNames = { "THE YARD", "THE BRIDGE", "THE TOWER" };
     internal static readonly string[] LevelSceneNames = { "YardLevel", "BridgeLevel", "TowerLevel" };
     private const int CharacterCount = 15;
+    // Title bars: height, smallest width, and the room left either side of the words.
+    private const float HeaderHeight = 76f;
+    private const float HeaderMinWidth = 320f;
+    private const float HeaderSidePadding = 70f;
+    private const float HeaderFontSize = 44f;
+    // Player slots: the name along the top, the portrait underneath.
+    private const float SlotLabelSize = 26f;
+    private static readonly Vector2 SlotLabelMin = new Vector2(.04f, .70f);
+    private static readonly Vector2 SlotLabelMax = new Vector2(.96f, .98f);
+    private static readonly Vector2 SlotPortraitMin = new Vector2(0f, 0f);
+    private static readonly Vector2 SlotPortraitMax = new Vector2(1f, .72f);
+    // Character portraits sit this far inside their card's chalk edge, and
+    // their cut-off bottom fades out over the fade distance.
+    private const float PortraitInset = 12f;
+    private const int PortraitFade = 26;
+    // How far in from the edges a level picture fades out.
+    private const int PictureFadeSides = 48;
+    private const int PictureFadeTopBottom = 30;
+    // How dark chalk buttons sit when nothing is on them (1 = the art as drawn).
+    private const float ButtonRestingShade = .66f;
     private static readonly string[] InputModeLabels =
     {
         "MODE A: P1 KEYBOARD / P2-P4 CONTROLLERS",
@@ -188,6 +208,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         {
             RefreshRosterForInputMode();
             UpdateSetupInput();
+            UpdateSetupButtonHover();
         }
 
         if (controllerStatusText != null && Time.unscaledTime >= nextControllerStatusRefresh)
@@ -308,8 +329,33 @@ public sealed class MatchMenuUI : MonoBehaviour
             // Offline covers single player and couch co-op, through the setup screen.
             TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
             if (label != null) label.text = "OFFLINE";
+            StyleSceneButton(button);
             return;
         }
+    }
+
+    // The main menu's own buttons live in the scene: give their words the same
+    // white, outlined look as the menus built in code. A label in some other
+    // font keeps that font and only turns white.
+    private static void StyleSceneButton(Button button)
+    {
+        if (button == null) return;
+        foreach (TMP_Text label in button.GetComponentsInChildren<TMP_Text>(true))
+        {
+            if (label.font == BomUiSkin.MenuFont && BomUiSkin.MenuTextMaterial != null)
+                label.fontSharedMaterial = BomUiSkin.MenuTextMaterial;
+            label.color = BomUiSkin.TextColor;
+        }
+        if (button.transition == Selectable.Transition.ColorTint)
+            SetChalkButtonColors(button);
+        AddHover(button);
+    }
+
+    // The slight grow-on-hover the in-game buttons have.
+    private static void AddHover(Button button)
+    {
+        if (button != null && button.GetComponent<BomButtonHover>() == null)
+            button.gameObject.AddComponent<BomButtonHover>();
     }
 
     // Adds the ONLINE button under OFFLINE, styled the same.
@@ -378,6 +424,7 @@ public sealed class MatchMenuUI : MonoBehaviour
 
         if (shopButton != null)
         {
+            StyleSceneButton(shopButton);
             shopButton.onClick.RemoveListener(ShowSecondaryMenu);
             shopButton.onClick.RemoveListener(ShowShopMenu);
             shopButton.onClick.AddListener(ShowShopMenu);
@@ -392,6 +439,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             if (button.gameObject.name != "QuitButton")
                 continue;
 
+            StyleSceneButton(button);
             button.onClick.RemoveListener(QuitGame);
             button.onClick.AddListener(QuitGame);
             GameAudio.RegisterButton(button);
@@ -420,6 +468,7 @@ public sealed class MatchMenuUI : MonoBehaviour
                 continue;
 
             settingsButton = button;
+            StyleSceneButton(button);
             button.onClick.RemoveListener(ShowSettingsMenu);
             button.onClick.AddListener(ShowSettingsMenu);
             return;
@@ -473,48 +522,22 @@ public sealed class MatchMenuUI : MonoBehaviour
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
 
-        RectTransform panel = AddPanel(root, "Settings Panel", new Vector2(.32f, .25f), new Vector2(.68f, .75f), new Color(.13f, .14f, .22f, .97f));
-        AddHeaderBar(panel, "SETTINGS", new Color(.13f, .39f, .83f), .72f, 36);
-        AddText(panel, "MASTER VOLUME", new Vector2(.10f, .57f), new Vector2(.90f, .69f), 28, Color.white, FontStyles.Bold);
-
-        GameObject sliderObject = new GameObject("Master Volume Slider", typeof(RectTransform), typeof(Slider));
-        RectTransform sliderRect = sliderObject.GetComponent<RectTransform>();
-        sliderRect.SetParent(panel, false);
-        sliderRect.anchorMin = new Vector2(.12f, .43f);
-        sliderRect.anchorMax = new Vector2(.88f, .51f);
-        sliderRect.offsetMin = Vector2.zero;
-        sliderRect.offsetMax = Vector2.zero;
-        GameObject trackObject = new GameObject("Track", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        RectTransform trackRect = trackObject.GetComponent<RectTransform>();
-        trackRect.SetParent(sliderRect, false);
-        trackRect.anchorMin = new Vector2(0f, .40f);
-        trackRect.anchorMax = new Vector2(1f, .60f);
-        trackRect.offsetMin = Vector2.zero;
-        trackRect.offsetMax = Vector2.zero;
-        trackObject.GetComponent<Image>().color = new Color(.28f, .28f, .36f);
-        GameObject fillObject = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        RectTransform fillRect = fillObject.GetComponent<RectTransform>();
-        fillRect.SetParent(sliderRect, false);
-        fillRect.anchorMin = new Vector2(0f, .40f);
-        fillRect.anchorMax = new Vector2(1f, .60f);
-        fillRect.offsetMin = Vector2.zero;
-        fillRect.offsetMax = Vector2.zero;
-        fillObject.GetComponent<Image>().color = new Color(1f, .62f, .09f);
-        GameObject handleObject = new GameObject("Handle", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
-        handleRect.SetParent(sliderRect, false);
-        handleRect.sizeDelta = new Vector2(28f, 34f);
-        handleObject.GetComponent<Image>().color = new Color(.91f, .82f, .73f);
-        Slider volumeSlider = sliderObject.GetComponent<Slider>();
-        volumeSlider.fillRect = fillRect;
-        volumeSlider.handleRect = handleRect;
-        volumeSlider.targetGraphic = handleObject.GetComponent<Image>();
+        RectTransform panel = AddPanel(root, "Settings Panel", new Vector2(.32f, .25f), new Vector2(.68f, .75f));
+        AddHeaderBar(panel, "SETTINGS", BomButtonStyle.Blue);
+        TextMeshProUGUI volumeLabel = AddText(panel, string.Empty, new Vector2(.10f, .57f), new Vector2(.90f, .69f), 34, Color.white, FontStyles.Bold);
+        Slider volumeSlider = AddChalkSlider(panel, "Master Volume Slider", new Vector2(.12f, .42f), new Vector2(.88f, .53f));
         volumeSlider.minValue = 0f;
         volumeSlider.maxValue = 1f;
         volumeSlider.value = AudioListener.volume;
-        volumeSlider.onValueChanged.AddListener(value => AudioListener.volume = value);
-        AddButton(panel, "RESTART GAME", new Vector2(.18f, .20f), new Vector2(.82f, .34f), new Color(1f, .62f, .09f), RestartCurrentScene, 25, new Color(.17f, .13f, .16f));
-        AddButton(panel, "GO BACK", new Vector2(.28f, .055f), new Vector2(.72f, .17f), new Color(.91f, .82f, .73f), CloseSettingsMenu, 26, new Color(.15f, .16f, .22f));
+        void ShowVolume(float value) => volumeLabel.text = "MASTER VOLUME  " + Mathf.RoundToInt(value * 100f) + "%";
+        ShowVolume(volumeSlider.value);
+        volumeSlider.onValueChanged.AddListener(value =>
+        {
+            AudioListener.volume = value;
+            ShowVolume(value);
+        });
+        AddButton(panel, "RESTART GAME", new Vector2(.18f, .20f), new Vector2(.82f, .34f), BomButtonStyle.Orange, RestartCurrentScene, 30);
+        AddButton(panel, "GO BACK", new Vector2(.28f, .055f), new Vector2(.72f, .17f), BomButtonStyle.Yellow, CloseSettingsMenu, 32);
     }
 
     private void RestartCurrentScene()
@@ -778,38 +801,25 @@ public sealed class MatchMenuUI : MonoBehaviour
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
 
-        RectTransform preview = AddPanel(root, "Level Preview Panel", new Vector2(.035f, .665f), new Vector2(.49f, .97f), new Color(.13f, .14f, .22f, .96f));
-        AddHeaderBar(preview, "LEVEL PREVIEW", new Color(.13f, .39f, .83f), .72f, 34);
-        RectTransform previewWindow = AddPanel(preview, "Preview Window", new Vector2(.055f, .10f), new Vector2(.945f, .76f), new Color(.25f, .34f, .52f));
-        previewWindow.gameObject.AddComponent<RectMask2D>();
+        RectTransform preview = AddPanel(root, "Level Preview Panel", new Vector2(.035f, .665f), new Vector2(.49f, .97f));
+        AddHeaderBar(preview, "LEVEL PREVIEW", BomButtonStyle.Blue);
+        RectTransform previewWindow = AddRect(preview, "Preview Window", new Vector2(.04f, .08f), new Vector2(.96f, .78f));
         if (yardLevelPreviewTexture == null)
             yardLevelPreviewTexture = Resources.Load<Texture2D>("YardLevelPreview");
         if (bridgeLevelPreviewTexture == null)
             bridgeLevelPreviewTexture = Resources.Load<Texture2D>("BridgeLevelPreview");
         if (towerLevelPreviewTexture == null)
             towerLevelPreviewTexture = Resources.Load<Texture2D>("TowerLevelPreview");
-        GameObject previewImageObject = new GameObject("Yard Level Preview Image", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(AspectRatioFitter));
-        RectTransform previewImageRect = previewImageObject.GetComponent<RectTransform>();
-        previewImageRect.SetParent(previewWindow, false);
-        previewImageRect.anchorMin = Vector2.zero;
-        previewImageRect.anchorMax = Vector2.one;
-        previewImageRect.offsetMin = Vector2.zero;
-        previewImageRect.offsetMax = Vector2.zero;
-        levelPreviewImage = previewImageObject.GetComponent<RawImage>();
+        levelPreviewImage = AddFadedPicture(previewWindow, "Level Preview", Vector2.zero, Vector2.one, out levelPreviewAspect);
         levelPreviewImage.texture = yardLevelPreviewTexture;
-        levelPreviewImage.raycastTarget = false;
-        levelPreviewAspect = previewImageObject.GetComponent<AspectRatioFitter>();
-        levelPreviewAspect.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-        levelName = AddText(previewWindow, LevelNames[selectedLevel], new Vector2(.08f, .08f), new Vector2(.92f, .25f), 25, Color.white, FontStyles.Bold, new Color(.12f, .13f, .20f, .9f));
+        levelName = AddNameTag(previewWindow, LevelNames[selectedLevel], .04f, .30f, 32);
         RefreshLevelPreview();
-        Button previousLevelButton = AddButton(preview, "‹", new Vector2(.015f, .34f), new Vector2(.15f, .62f), new Color(.91f, .82f, .73f), () => ChangeLevel(-1), 50, new Color(.15f, .16f, .22f));
-        previousLevelButton.navigation = new Navigation { mode = Navigation.Mode.None };
-        Button nextLevelButton = AddButton(preview, "›", new Vector2(.85f, .34f), new Vector2(.985f, .62f), new Color(.91f, .82f, .73f), () => ChangeLevel(1), 50, new Color(.15f, .16f, .22f));
-        nextLevelButton.navigation = new Navigation { mode = Navigation.Mode.None };
+        AddArrowButton(preview, true, new Vector2(.015f, .34f), new Vector2(.15f, .62f), () => ChangeLevel(-1));
+        AddArrowButton(preview, false, new Vector2(.85f, .34f), new Vector2(.985f, .62f), () => ChangeLevel(1));
 
-        RectTransform players = AddPanel(root, "Players Panel", new Vector2(.525f, .665f), new Vector2(.965f, .97f), new Color(.13f, .14f, .22f, .96f));
-        AddHeaderBar(players, "PLAYERS", new Color(.79f, .18f, .22f), .48f, 34);
-        controllerStatusText = AddText(players, string.Empty, new Vector2(.035f, .73f), new Vector2(.965f, .83f), 17, new Color(.79f, .84f, .94f), FontStyles.Bold);
+        RectTransform players = AddPanel(root, "Players Panel", new Vector2(.525f, .665f), new Vector2(.965f, .97f));
+        AddHeaderBar(players, "PLAYERS", BomButtonStyle.Orange);
+        controllerStatusText = AddText(players, string.Empty, new Vector2(.035f, .73f), new Vector2(.965f, .83f), 22, Color.white, FontStyles.Bold);
         lastControllerStatus = null;
         activeCharacterPlayer = 0;
         playerSlotLabels = new TextMeshProUGUI[MaxLocalPlayers];
@@ -820,24 +830,24 @@ public sealed class MatchMenuUI : MonoBehaviour
         for (int i = 0; i < playerSlotLabels.Length; i++)
         {
             float xMin = .0525f + i * .23f;
-            RectTransform slot = AddPanel(players, "Player Slot " + (i + 1), new Vector2(xMin, .08f), new Vector2(xMin + .205f, .73f), new Color(.20f, .20f, .30f));
+            RectTransform slot = AddPanel(players, "Player Slot " + (i + 1), new Vector2(xMin, .08f), new Vector2(xMin + .205f, .73f));
             bool joined = i < matchPlayerCount;
             if (i == 0)
             {
                 playerOneSlot = slot;
-                playerSlotLabels[i] = AddText(slot, "PLAYER 1", new Vector2(.05f, .76f), new Vector2(.95f, .98f), 20, new Color(.98f, .88f, .77f), FontStyles.Bold);
+                playerSlotLabels[i] = AddText(slot, "PLAYER 1", SlotLabelMin, SlotLabelMax, SlotLabelSize, Color.white, FontStyles.Bold);
             }
             else
             {
-                playerSlotLabels[i] = AddText(slot, joined ? "PLAYER " + (i + 1) : "+\nPRESS X TO JOIN", joined ? new Vector2(.05f, .76f) : Vector2.zero, joined ? new Vector2(.95f, .98f) : Vector2.one, joined ? 20 : 20, joined ? new Color(.98f, .88f, .77f) : new Color(.62f, .60f, .69f), FontStyles.Bold);
+                playerSlotLabels[i] = AddText(slot, joined ? "PLAYER " + (i + 1) : "+\nPRESS X TO JOIN", joined ? SlotLabelMin : Vector2.zero, joined ? SlotLabelMax : Vector2.one, SlotLabelSize, Color.white, FontStyles.Bold);
                 int slotIndex = i;
                 AddButton(slot, "", Vector2.zero, Vector2.one, new Color(1, 1, 1, .01f), () => JoinPlayer(slotIndex), 18, Color.white);
             }
             playerCharacterCursors[i] = Mathf.Clamp(playerCharacters[i], 0, 4);
         }
 
-        RectTransform characters = AddPanel(root, "Character Selection Panel", new Vector2(.035f, .015f), new Vector2(.725f, .635f), new Color(.13f, .14f, .22f, .97f));
-        AddHeaderBar(characters, "CHARACTER SELECTION", new Color(.13f, .39f, .83f), .60f, 36);
+        RectTransform characters = AddPanel(root, "Character Selection Panel", new Vector2(.035f, .015f), new Vector2(.725f, .635f));
+        AddHeaderBar(characters, "CHARACTER SELECTION", BomButtonStyle.Blue);
         characterButtons = new Button[CharacterCount];
         characterOutlines = new Outline[CharacterCount];
         unlockedCharacterPortraits = new RenderTexture[CharacterCount];
@@ -848,27 +858,28 @@ public sealed class MatchMenuUI : MonoBehaviour
             int col = i % 5;
             int row = i / 5;
             float xMin = .035f + col * .192f;
-            float yMax = .86f - row * .29f;
+            float yMax = .855f - row * .28f;
             bool unlocked = ownedCharacters[i];
-            Color tileColor = unlocked ? Color.Lerp(characterColors[i], Color.white, .52f) : new Color(.24f, .24f, .34f);
-            RectTransform tile = AddPanel(characters, unlocked ? "Unlocked Character " + (i + 1) : "Locked Character " + (i - 4), new Vector2(xMin, yMax - .27f), new Vector2(xMin + .168f, yMax), tileColor);
+            // The chalk panel takes on a light wash of the character's colour.
+            Color tileColor = unlocked ? Color.Lerp(characterColors[i], Color.white, .45f) : new Color(.55f, .55f, .6f);
+            RectTransform tile = AddPanel(characters, unlocked ? "Unlocked Character " + (i + 1) : "Locked Character " + (i - 4), new Vector2(xMin, yMax - .265f), new Vector2(xMin + .168f, yMax), tileColor);
             if (unlocked)
             {
                 characterButtons[i] = AddButton(tile, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => SelectCharacterForPlayer(0, index), 21, Color.white);
                 if (unlockedCharacterPortraits[i] == null)
                     unlockedCharacterPortraits[i] = CreateCharacterPortrait(characterColors[i], false);
-                AddPortrait(tile, unlockedCharacterPortraits[i], new Vector2(.04f, .035f), new Vector2(.96f, .965f));
+                AddFramedPortrait(tile, unlockedCharacterPortraits[i], Vector2.zero, Vector2.one);
                 characterOutlines[i] = tile.gameObject.AddComponent<Outline>();
                 characterOutlines[i].effectColor = characterColors[i];
-                characterOutlines[i].effectDistance = new Vector2(4f, -4f);
+                characterOutlines[i].effectDistance = new Vector2(5f, -5f);
             }
             else
             {
                 characterButtons[i] = AddButton(tile, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => { }, 21, Color.white);
                 if (lockedSilhouette == null)
                     lockedSilhouette = CreateCharacterPortrait(Color.black, true);
-                AddPortrait(tile, lockedSilhouette, new Vector2(.10f, .20f), new Vector2(.90f, .98f));
-                AddText(tile, "Locked", new Vector2(.03f, .03f), new Vector2(.97f, .27f), 19, new Color(.77f, .76f, .81f), FontStyles.Bold);
+                AddFramedPortrait(tile, lockedSilhouette, Vector2.zero, Vector2.one);
+                AddText(tile, "LOCKED", new Vector2(.03f, .04f), new Vector2(.97f, .30f), 26, Color.white, FontStyles.Bold);
             }
         }
         for (int i = 0; i < matchPlayerCount; i++)
@@ -876,31 +887,37 @@ public sealed class MatchMenuUI : MonoBehaviour
             int character = Mathf.Clamp(playerCharacters[i], 0, CharacterCount - 1);
             playerSlotLabels[i].text = "PLAYER " + (i + 1) + "\n" + shopCharacterNames[character];
             if (unlockedCharacterPortraits[character] != null)
-                playerSlotPortraits[i] = AddPortrait((RectTransform)playerSlotLabels[i].transform.parent, unlockedCharacterPortraits[character], new Vector2(.08f, .04f), new Vector2(.92f, .73f));
+                playerSlotPortraits[i] = AddFramedPortrait((RectTransform)playerSlotLabels[i].transform.parent, unlockedCharacterPortraits[character], SlotPortraitMin, SlotPortraitMax);
         }
         if (playerSlotPortraits[0] != null)
             selectedPlayerPortrait = playerSlotPortraits[0];
         RefreshCharacterSelection();
 
-        Button inputModeButton = AddButton(root, InputModeLabels[(int)inputMode], new Vector2(.755f, .43f), new Vector2(.97f, .60f), new Color(.30f, .39f, .58f), CycleInputMode, 18, Color.white);
+        Button inputModeButton = AddButton(root, InputModeLabels[(int)inputMode], new Vector2(.755f, .43f), new Vector2(.97f, .60f), BomButtonStyle.Blue, CycleInputMode, 26);
         inputModeButton.navigation = new Navigation { mode = Navigation.Mode.None };
         inputModeLabel = inputModeButton.GetComponentInChildren<TextMeshProUGUI>();
-        startButton = AddButton(root, "LET'S GO!", new Vector2(.755f, .205f), new Vector2(.97f, .405f), new Color(1f, .62f, .09f), StartGame, 48, new Color(.17f, .13f, .16f));
+        startButton = AddButton(root, "LET'S GO!", new Vector2(.755f, .205f), new Vector2(.97f, .405f), BomButtonStyle.Orange, StartGame, 48);
         startButton.navigation = new Navigation { mode = Navigation.Mode.None };
-        Button backButton = AddButton(root, "GO BACK", new Vector2(.755f, .07f), new Vector2(.97f, .18f), new Color(.91f, .82f, .73f), GoBack, 30, new Color(.15f, .16f, .22f));
+        Button backButton = AddButton(root, "GO BACK", new Vector2(.755f, .07f), new Vector2(.97f, .18f), BomButtonStyle.Yellow, GoBack, 36);
         backButton.navigation = new Navigation { mode = Navigation.Mode.None };
         CreatePlayerCursors(root);
         RefreshRosterForInputMode();
     }
 
-    internal static TextMeshProUGUI AddHeaderBar(RectTransform parent, string label, Color color, float widthFraction, float fontSize)
+    // A chalk title bar that sits on the panel's top edge. It is sized to its
+    // words, so the chalk art keeps roughly the shape it was drawn at.
+    internal static TextMeshProUGUI AddHeaderBar(RectTransform parent, string label, BomButtonStyle style, float fontSize = HeaderFontSize)
     {
-        float halfWidth = widthFraction * .5f;
-        RectTransform bar = AddPanel(parent, label + " Header", new Vector2(.5f - halfWidth, 1f), new Vector2(.5f + halfWidth, 1f), color);
+        RectTransform bar = AddImage(parent, label + " Header", new Vector2(.5f, 1f), new Vector2(.5f, 1f));
+        Image image = bar.GetComponent<Image>();
+        image.raycastTarget = false;
         bar.pivot = new Vector2(.5f, 1f);
-        bar.anchoredPosition = Vector2.zero;
-        bar.sizeDelta = new Vector2(0f, 60f);
-        return AddText(bar, label, Vector2.zero, Vector2.one, fontSize, Color.white, FontStyles.Bold);
+        bar.anchoredPosition = new Vector2(0f, 18f);
+        TextMeshProUGUI text = AddText(bar, label, Vector2.zero, Vector2.one, fontSize, Color.white, FontStyles.Bold);
+        float textWidth = text.GetPreferredValues(label, float.PositiveInfinity, float.PositiveInfinity).x;
+        bar.sizeDelta = new Vector2(Mathf.Max(HeaderMinWidth, textWidth + HeaderSidePadding * 2f), HeaderHeight);
+        BomUiSkin.ApplyHeader(image, style);
+        return text;
     }
 
     private void StartGame()
@@ -1006,7 +1023,6 @@ public sealed class MatchMenuUI : MonoBehaviour
                 playerSlotLabels[i].text = active
                     ? "PLAYER " + (i + 1) + "\n" + shopCharacterNames[Mathf.Clamp(playerCharacters[i], 0, CharacterCount - 1)]
                     : "PLAYER " + (i + 1) + "\n" + (inputMode == MatchInputMode.AllControllers ? "WAITING FOR CONTROLLER" : "PRESS X TO JOIN");
-                playerSlotLabels[i].color = active ? new Color(.98f, .88f, .77f) : new Color(.62f, .60f, .69f);
                 SetPlayerSlotLabelLayout(playerSlotLabels[i], active);
             }
             if (active)
@@ -1054,8 +1070,8 @@ public sealed class MatchMenuUI : MonoBehaviour
         root.offsetMin = Vector2.zero;
         root.offsetMax = Vector2.zero;
 
-        RectTransform collection = AddPanel(root, "Character Collection", new Vector2(.035f, .14f), new Vector2(.59f, .87f), new Color(.12f, .10f, .12f, .96f));
-        AddHeaderBar(collection, "CHARACTER SHOP", new Color(.39f, .20f, .12f), .76f, 36);
+        RectTransform collection = AddPanel(root, "Character Collection", new Vector2(.035f, .14f), new Vector2(.59f, .87f));
+        AddHeaderBar(collection, "CHARACTER SHOP", BomButtonStyle.Orange);
         shopCardPortraits = new RawImage[CharacterCount];
         shopCardOutlines = new Outline[CharacterCount];
         shopCardLockedLabels = new TextMeshProUGUI[CharacterCount];
@@ -1070,31 +1086,62 @@ public sealed class MatchMenuUI : MonoBehaviour
             RectTransform card = AddPanel(collection, "Shop Character " + (i + 1), new Vector2(xMin, yMax - .19f), new Vector2(xMin + .143f, yMax), Color.white);
             shopCardBackgrounds[i] = card.GetComponent<Image>();
             Button cardButton = AddButton(card, string.Empty, Vector2.zero, Vector2.one, new Color(1f, 1f, 1f, .01f), () => SelectShopCharacter(index), 18, Color.white);
-            shopCardPortraits[i] = AddPortrait(card, ownedCharacters[i] ? unlockedCharacterPortraits[i] : shopLockedPortrait, new Vector2(.04f, .04f), new Vector2(.96f, .96f));
+            shopCardPortraits[i] = AddFramedPortrait(card, ownedCharacters[i] ? unlockedCharacterPortraits[i] : shopLockedPortrait, Vector2.zero, Vector2.one);
             if (!ownedCharacters[i])
-                shopCardLockedLabels[i] = AddText(card, "LOCKED", new Vector2(.04f, .02f), new Vector2(.96f, .22f), 14, new Color(.86f, .83f, .88f), FontStyles.Bold);
+                shopCardLockedLabels[i] = AddText(card, "LOCKED", new Vector2(.04f, .04f), new Vector2(.96f, .28f), 22, Color.white, FontStyles.Bold);
             SetShopCardBackground(i);
             shopCardOutlines[i] = card.gameObject.AddComponent<Outline>();
             shopCardOutlines[i].effectColor = ownedCharacters[i] ? characterColors[i] : new Color(.67f, .62f, .72f);
-            shopCardOutlines[i].effectDistance = new Vector2(4f, -4f);
+            shopCardOutlines[i].effectDistance = new Vector2(5f, -5f);
             shopCardOutlines[i].enabled = false;
             cardButton.navigation = new Navigation { mode = Navigation.Mode.None };
         }
 
-        RectTransform balancePanel = AddPanel(root, "Coin Balance", new Vector2(.62f, .89f), new Vector2(.92f, .98f), new Color(.15f, .14f, .16f, .97f));
-        AddText(balancePanel, "★  " + shopCoins, Vector2.zero, Vector2.one, 34, new Color(1f, .80f, .25f), FontStyles.Bold);
-        shopBalanceText = balancePanel.GetComponentInChildren<TextMeshProUGUI>();
+        RectTransform balancePanel = AddPanel(root, "Coin Balance", new Vector2(.62f, .89f), new Vector2(.92f, .98f));
+        shopBalanceText = AddCoinBalance(balancePanel);
 
-        RectTransform detail = AddPanel(root, "Character Details", new Vector2(.62f, .18f), new Vector2(.92f, .85f), new Color(.84f, .72f, .57f, .98f));
-        shopNameText = AddText(detail, string.Empty, new Vector2(.04f, .83f), new Vector2(.96f, .98f), 32, new Color(.22f, .15f, .12f), FontStyles.Bold);
-        shopDetailPortrait = AddPortrait(detail, null, new Vector2(.10f, .16f), new Vector2(.90f, .82f));
-        shopPurchaseButton = AddButton(detail, "BUY", new Vector2(.08f, .035f), new Vector2(.92f, .16f), new Color(.24f, .21f, .23f), PurchaseSelectedCharacter, 27, new Color(.91f, .89f, .92f));
+        RectTransform detail = AddPanel(root, "Character Details", new Vector2(.62f, .18f), new Vector2(.92f, .85f));
+        shopNameText = AddText(detail, string.Empty, new Vector2(.05f, .82f), new Vector2(.95f, .975f), 58, Color.white, FontStyles.Bold);
+        shopDetailPortrait = AddFramedPortrait(detail, null, new Vector2(.08f, .19f), new Vector2(.92f, .82f), 0f, 44);
+        shopPurchaseButton = AddButton(detail, "BUY", new Vector2(.08f, .04f), new Vector2(.92f, .17f), BomButtonStyle.Orange, PurchaseSelectedCharacter, 32);
         shopPurchaseText = shopPurchaseButton.GetComponentInChildren<TextMeshProUGUI>();
 
-        AddButton(root, "GO BACK", new Vector2(.62f, .055f), new Vector2(.76f, .14f), new Color(.91f, .82f, .73f), GoBackFromShop, 21, new Color(.15f, .16f, .22f));
-        AddButton(root, "PLAY", new Vector2(.78f, .055f), new Vector2(.92f, .14f), new Color(1f, .62f, .09f), PlayFromShop, 23, new Color(.17f, .13f, .16f));
+        AddButton(root, "GO BACK", new Vector2(.62f, .045f), new Vector2(.76f, .15f), BomButtonStyle.Yellow, GoBackFromShop, 30);
+        AddButton(root, "PLAY", new Vector2(.78f, .045f), new Vector2(.92f, .15f), BomButtonStyle.Orange, PlayFromShop, 32);
         shopSelectedCharacter = Mathf.Clamp(selectedCharacter, 0, CharacterCount - 1);
         RefreshShopSelection();
+    }
+
+    // The coin model's picture beside the number of coins, centred together.
+    private TextMeshProUGUI AddCoinBalance(RectTransform panel)
+    {
+        RectTransform row = AddRect(panel, "Coin Balance Row", Vector2.zero, Vector2.one);
+        HorizontalLayoutGroup layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(20, 20, 6, 6);
+        layout.spacing = 14f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = false;
+
+        RenderTexture coinPicture = ModelSnapshot.Render(BomMenuArt.CoinPrefab, 128, null, ModelSnapshot.Framing.Whole, faceCamera: true);
+        if (coinPicture != null)
+        {
+            coinPicture.name = "Coin Balance Icon";
+            portraitTextures.Add(coinPicture);
+            RawImage coin = new GameObject("Coin Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(LayoutElement)).GetComponent<RawImage>();
+            coin.rectTransform.SetParent(row, false);
+            coin.texture = coinPicture;
+            coin.raycastTarget = false;
+            LayoutElement size = coin.GetComponent<LayoutElement>();
+            size.preferredWidth = 66f;
+            size.preferredHeight = 66f;
+        }
+
+        TextMeshProUGUI amount = AddText(row, shopCoins.ToString(), Vector2.zero, Vector2.one, 46, Color.white, FontStyles.Bold);
+        amount.enableAutoSizing = false;
+        return amount;
     }
 
     private void SelectShopCharacter(int index)
@@ -1122,7 +1169,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         shopDetailPortrait.texture = owned ? unlockedCharacterPortraits[shopSelectedCharacter] : shopLockedPortrait;
         shopPurchaseText.text = owned ? "OWNED" : "BUY  •  " + characterPrice + " COINS";
         shopPurchaseButton.interactable = !owned && shopCoins >= characterPrice;
-        shopBalanceText.text = "★  " + shopCoins;
+        shopBalanceText.text = shopCoins.ToString();
     }
 
     private void PurchaseSelectedCharacter()
@@ -1159,10 +1206,10 @@ public sealed class MatchMenuUI : MonoBehaviour
     {
         Image background = shopCardBackgrounds[index];
         if (background == null) return;
-        background.sprite = null;
+        // Tints the card's chalk panel: a wash of the character's colour, or grey while locked.
         background.color = ownedCharacters[index]
-            ? Color.Lerp(characterColors[index], Color.white, .42f)
-            : new Color(.25f, .23f, .28f);
+            ? Color.Lerp(characterColors[index], Color.white, .45f)
+            : new Color(.55f, .55f, .6f);
     }
 
     private void LoadShopProgress()
@@ -1191,7 +1238,21 @@ public sealed class MatchMenuUI : MonoBehaviour
         }
     }
 
-    internal static RectTransform AddPanel(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, Color color)
+    // A chalk panel (BomPanel) stretched over the anchors.
+    internal static RectTransform AddPanel(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax)
+    {
+        return AddPanel(parent, objectName, anchorMin, anchorMax, Color.white);
+    }
+
+    // A chalk panel tinted by the colour given (white shows the art as drawn).
+    internal static RectTransform AddPanel(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, Color tint)
+    {
+        RectTransform rect = AddImage(parent, objectName, anchorMin, anchorMax);
+        BomUiSkin.ApplyPanel(rect.GetComponent<Image>(), tint);
+        return rect;
+    }
+
+    private static RectTransform AddImage(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax)
     {
         GameObject panel = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         RectTransform rect = panel.GetComponent<RectTransform>();
@@ -1200,10 +1261,101 @@ public sealed class MatchMenuUI : MonoBehaviour
         rect.anchorMax = anchorMax;
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
-        panel.GetComponent<Image>().color = color;
         return rect;
     }
 
+    // A slider in the chalk look: a dark chalk track, an orange chalk fill,
+    // and a yellow chalk knob.
+    internal static Slider AddChalkSlider(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax)
+    {
+        const float KnobWidth = 46f;
+        RectTransform sliderRect = AddRect(parent, objectName, anchorMin, anchorMax);
+        Slider slider = sliderRect.gameObject.AddComponent<Slider>();
+
+        // The track also catches clicks, so pressing anywhere along it jumps there.
+        RectTransform track = AddPanel(sliderRect, "Track", Vector2.zero, Vector2.one, new Color(.85f, .85f, .85f));
+
+        // Fill and knob travel the same span, so the fill always ends under
+        // the knob's middle; the fill reaches back to the track's left edge.
+        RectTransform fillArea = AddRect(sliderRect, "Fill Area", Vector2.zero, Vector2.one);
+        fillArea.offsetMin = new Vector2(KnobWidth * .5f, 9f);
+        fillArea.offsetMax = new Vector2(-KnobWidth * .5f, -9f);
+        RectTransform fill = AddImage(fillArea, "Fill", Vector2.zero, Vector2.one);
+        fill.offsetMin = new Vector2(-KnobWidth * .5f + 7f, 0f);
+        BomUiSkin.ApplyButton(fill.GetComponent<Image>(), BomButtonStyle.Orange);
+        fill.GetComponent<Image>().raycastTarget = false;
+
+        RectTransform handleArea = AddRect(sliderRect, "Handle Slide Area", Vector2.zero, Vector2.one);
+        handleArea.offsetMin = new Vector2(KnobWidth * .5f, 0f);
+        handleArea.offsetMax = new Vector2(-KnobWidth * .5f, 0f);
+        RectTransform handle = AddImage(handleArea, "Knob", Vector2.zero, Vector2.one);
+        // Wider than the track is tall, and poking out above and below it.
+        handle.sizeDelta = new Vector2(KnobWidth, 14f);
+        Image knob = handle.GetComponent<Image>();
+        BomUiSkin.ApplyButton(knob, BomButtonStyle.Yellow);
+
+        slider.fillRect = fill;
+        slider.handleRect = handle;
+        slider.targetGraphic = knob;
+        slider.direction = Slider.Direction.LeftToRight;
+        SetChalkButtonColors(slider);
+        return slider;
+    }
+
+    // An empty box stretched over the anchors, for grouping.
+    internal static RectTransform AddRect(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax)
+    {
+        RectTransform rect = new GameObject(objectName, typeof(RectTransform)).GetComponent<RectTransform>();
+        rect.SetParent(parent, false);
+        rect.anchorMin = anchorMin;
+        rect.anchorMax = anchorMax;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        return rect;
+    }
+
+    // A picture with no frame: it fills the area given (cropping to keep its
+    // shape) and its edges fade softly into whatever is behind it. Set the
+    // aspect's ratio to the texture's when the texture changes.
+    internal static RawImage AddFadedPicture(RectTransform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, out AspectRatioFitter aspect)
+    {
+        RectTransform mask = AddRect(parent, objectName + " Mask", anchorMin, anchorMax);
+        mask.gameObject.AddComponent<RectMask2D>().softness = new Vector2Int(PictureFadeSides, PictureFadeTopBottom);
+        GameObject pictureObject = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage), typeof(AspectRatioFitter));
+        RectTransform picture = pictureObject.GetComponent<RectTransform>();
+        picture.SetParent(mask, false);
+        picture.anchorMin = Vector2.zero;
+        picture.anchorMax = Vector2.one;
+        picture.offsetMin = Vector2.zero;
+        picture.offsetMax = Vector2.zero;
+        RawImage image = pictureObject.GetComponent<RawImage>();
+        image.raycastTarget = false;
+        aspect = pictureObject.GetComponent<AspectRatioFitter>();
+        aspect.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+        aspect.aspectRatio = 16f / 9f;
+        return image;
+    }
+
+    // A chalk name tag, centred, that grows and shrinks to fit its words.
+    // yMin / yMax set its height within the parent.
+    internal static TextMeshProUGUI AddNameTag(RectTransform parent, string value, float yMin, float yMax, float fontSize)
+    {
+        RectTransform tag = AddPanel(parent, "Name Tag", new Vector2(.5f, yMin), new Vector2(.5f, yMax));
+        HorizontalLayoutGroup layout = tag.gameObject.AddComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(34, 34, 2, 2);
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = true;
+        tag.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+        TextMeshProUGUI text = AddText(tag, value, Vector2.zero, Vector2.one, fontSize, Color.white, FontStyles.Bold);
+        // A fixed size, so the tag's width follows the words.
+        text.enableAutoSizing = false;
+        return text;
+    }
+
+    // background, if given, puts a chalk panel tinted that colour behind the text.
     internal static TextMeshProUGUI AddText(RectTransform parent, string value, Vector2 anchorMin, Vector2 anchorMax, float size, Color color, FontStyles style, Color? background = null)
     {
         RectTransform rect;
@@ -1228,10 +1380,12 @@ public sealed class MatchMenuUI : MonoBehaviour
             textRect.SetParent(rect, false);
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = new Vector2(6, 4);
-            textRect.offsetMax = new Vector2(-6, -4);
+            textRect.offsetMin = new Vector2(12, 6);
+            textRect.offsetMax = new Vector2(-12, -6);
             text = textObject.GetComponent<TextMeshProUGUI>();
         }
+        // White and outlined; color only differs for the odd warning or placeholder.
+        BomUiSkin.StyleText(text);
         text.text = value;
         text.fontSize = size;
         text.fontStyle = style;
@@ -1266,6 +1420,71 @@ public sealed class MatchMenuUI : MonoBehaviour
         if (!string.IsNullOrEmpty(label))
             AddText(rect, label, Vector2.zero, Vector2.one, fontSize, textColor, FontStyles.Bold);
         return button;
+    }
+
+    // A chalk button (BomButton_orange / _yellow / _blue) with a label.
+    internal static Button AddButton(RectTransform parent, string label, Vector2 anchorMin, Vector2 anchorMax, BomButtonStyle style, UnityEngine.Events.UnityAction action, float fontSize)
+    {
+        Button button = AddButton(parent, label, anchorMin, anchorMax, Color.white, action, fontSize, BomUiSkin.TextColor);
+        Image image = (Image)button.targetGraphic;
+        BomUiSkin.ApplyButton(image, style);
+        // The art is already coloured, so the states only brighten or darken it.
+        image.color = Color.white;
+        SetChalkButtonColors(button);
+        AddHover(button);
+        TextMeshProUGUI text = button.GetComponentInChildren<TextMeshProUGUI>();
+        if (text != null)
+        {
+            // Keep the words inside the button's fuzzy chalk edge.
+            text.rectTransform.offsetMin = new Vector2(18f, 8f);
+            text.rectTransform.offsetMax = new Vector2(-18f, -8f);
+        }
+        return button;
+    }
+
+    // A chalk arrow button (BomArrow_left / _right), used to flip between levels.
+    internal static Button AddArrowButton(RectTransform parent, bool left, Vector2 anchorMin, Vector2 anchorMax, UnityEngine.Events.UnityAction action)
+    {
+        // A soft black copy behind the arrow, a little larger and dropped
+        // down-right, so the pale chalk stands out on bright level pictures.
+        RectTransform shadow = AddImage(parent, left ? "Previous Arrow Shadow" : "Next Arrow Shadow", anchorMin, anchorMax);
+        Image shadowImage = shadow.GetComponent<Image>();
+        shadowImage.sprite = left ? BomUiSkin.ArrowLeft : BomUiSkin.ArrowRight;
+        shadowImage.preserveAspect = true;
+        shadowImage.color = new Color(0f, 0f, 0f, .7f);
+        shadowImage.raycastTarget = false;
+        shadow.anchoredPosition = new Vector2(4f, -6f);
+        shadow.localScale = new Vector3(1.14f, 1.14f, 1f);
+
+        RectTransform rect = AddImage(parent, left ? "Previous Arrow Button" : "Next Arrow Button", anchorMin, anchorMax);
+        Image image = rect.GetComponent<Image>();
+        image.sprite = left ? BomUiSkin.ArrowLeft : BomUiSkin.ArrowRight;
+        image.preserveAspect = true;
+        image.color = Color.white;
+        Button button = rect.gameObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        button.onClick.AddListener(action);
+        button.navigation = new Navigation { mode = Navigation.Mode.None };
+        GameAudio.RegisterButton(button);
+        SetChalkButtonColors(button, .78f);
+        AddHover(button);
+        return button;
+    }
+
+    // Chalk buttons sit noticeably darker until the pointer or cursor is on
+    // them, then light up to the art's full colour. Selected counts as lit,
+    // since that is how the controller cursor highlights a button.
+    // resting sets how dark an idle button is (1 = no darkening).
+    private static void SetChalkButtonColors(Selectable button, float resting = ButtonRestingShade)
+    {
+        ColorBlock colors = button.colors;
+        colors.normalColor = new Color(resting, resting, resting);
+        colors.highlightedColor = Color.white;
+        colors.selectedColor = Color.white;
+        colors.pressedColor = new Color(resting * .8f, resting * .8f, resting * .8f);
+        colors.disabledColor = new Color(.4f, .4f, .4f, .6f);
+        colors.fadeDuration = .08f;
+        button.colors = colors;
     }
 
     private void ChangeLevel(int direction)
@@ -1327,7 +1546,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             image.sprite = MenuCursor.RingSprite;
             image.color = characterColors[i];
             image.raycastTarget = false;
-            TextMeshProUGUI label = AddText(cursor, "P" + (i + 1), Vector2.zero, Vector2.one, 18f, Color.white, FontStyles.Bold);
+            TextMeshProUGUI label = AddText(cursor, "P" + (i + 1), Vector2.zero, Vector2.one, 22f, Color.white, FontStyles.Bold);
             label.raycastTarget = false;
             playerCursors[i] = cursor;
             PositionCursorAtCharacter(i);
@@ -1504,6 +1723,15 @@ public sealed class MatchMenuUI : MonoBehaviour
         }
     }
 
+    // Player 1's ring on the setup screen lights up and grows the button
+    // under it, as the mouse would (only Player 1 can press these).
+    private void UpdateSetupButtonHover()
+    {
+        bool cursorShown = playerCursors != null && playerCursors[0] != null && playerCursors[0].gameObject.activeInHierarchy;
+        foreach (BomButtonHover hover in setupCanvasObject.GetComponentsInChildren<BomButtonHover>())
+            hover.CursorOver = cursorShown && IsCursorOverButton(0, hover.GetComponent<Button>());
+    }
+
     private int FindPlayerForGamepad(Gamepad gamepad)
     {
         for (int i = 0; i < matchPlayerCount; i++)
@@ -1553,7 +1781,7 @@ public sealed class MatchMenuUI : MonoBehaviour
             if (playerSlotPortraits[playerIndex] == null)
             {
                 RectTransform slot = (RectTransform)playerSlotLabels[playerIndex].transform.parent;
-                playerSlotPortraits[playerIndex] = AddPortrait(slot, unlockedCharacterPortraits[character], new Vector2(.08f, .04f), new Vector2(.92f, .73f));
+                playerSlotPortraits[playerIndex] = AddFramedPortrait(slot, unlockedCharacterPortraits[character], SlotPortraitMin, SlotPortraitMax);
             }
             else
             {
@@ -1565,8 +1793,8 @@ public sealed class MatchMenuUI : MonoBehaviour
     private void SetPlayerSlotLabelLayout(TextMeshProUGUI label, bool active)
     {
         RectTransform rect = label.rectTransform;
-        rect.anchorMin = active ? new Vector2(.05f, .76f) : Vector2.zero;
-        rect.anchorMax = active ? new Vector2(.95f, .98f) : Vector2.one;
+        rect.anchorMin = active ? SlotLabelMin : Vector2.zero;
+        rect.anchorMax = active ? SlotLabelMax : Vector2.one;
         rect.offsetMin = new Vector2(6f, 4f);
         rect.offsetMax = new Vector2(-6f, -4f);
     }
@@ -1638,6 +1866,36 @@ public sealed class MatchMenuUI : MonoBehaviour
         AspectRatioFitter aspect = portrait.AddComponent<AspectRatioFitter>();
         aspect.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
         aspect.aspectRatio = 1f;
+        return image;
+    }
+
+    // A portrait shown inside its card: it sits PortraitInset inside the
+    // card's chalk edge, bottom-aligned, and the soft mask fades the model's
+    // cut-off body into the card instead of ending in a hard line on the edge.
+    private RawImage AddFramedPortrait(RectTransform parent, RenderTexture texture, Vector2 anchorMin, Vector2 anchorMax,
+        float inset = PortraitInset, int fade = PortraitFade)
+    {
+        // Only the mask's bottom edge matters, so the other three are pushed
+        // well out of the way and never fade anything.
+        const float Far = 2000f;
+        RectTransform frame = new GameObject("Portrait Frame", typeof(RectTransform), typeof(RectMask2D)).GetComponent<RectTransform>();
+        frame.SetParent(parent, false);
+        frame.anchorMin = anchorMin;
+        frame.anchorMax = anchorMax;
+        frame.offsetMin = new Vector2(-Far, inset);
+        frame.offsetMax = new Vector2(Far, Far);
+        frame.GetComponent<RectMask2D>().softness = new Vector2Int(0, fade);
+
+        // Back to the area asked for, less the inset on every side.
+        RectTransform area = new GameObject("Portrait Area", typeof(RectTransform)).GetComponent<RectTransform>();
+        area.SetParent(frame, false);
+        area.anchorMin = Vector2.zero;
+        area.anchorMax = Vector2.one;
+        area.offsetMin = new Vector2(Far + inset, 0f);
+        area.offsetMax = new Vector2(-Far - inset, -Far - inset);
+
+        RawImage image = AddPortrait(area, texture, Vector2.zero, Vector2.one);
+        image.rectTransform.pivot = new Vector2(.5f, 0f);
         return image;
     }
 

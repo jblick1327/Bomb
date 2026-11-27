@@ -41,6 +41,22 @@ public sealed class ArenaCamera : MonoBehaviour
     private void OnValidate() => FitArena(true);
     private void LateUpdate() => FitArena(false);
 
+    // Screen shake (explosions). Shake adds to it; it settles on its own.
+    private const float ShakeDistance = .35f;   // world units at full shake
+    private const float ShakeSettle = 2.2f;     // per second
+    private static float shake;
+    public static void Shake(float amount) => shake = Mathf.Clamp01(shake + amount);
+
+    private Vector3 ShakeOffset(Quaternion rotation)
+    {
+        if (!Application.isPlaying || shake <= 0f) return Vector3.zero;
+        float strength = shake * shake * ShakeDistance;
+        float t = Time.unscaledTime * 28f;
+        shake = Mathf.Max(0f, shake - ShakeSettle * Time.unscaledDeltaTime);
+        return rotation * new Vector3((Mathf.PerlinNoise(t, 0f) * 2f - 1f) * strength,
+            (Mathf.PerlinNoise(0f, t) * 2f - 1f) * strength, 0f);
+    }
+
     private Camera view;
     private CharacterController playerController;
     private bool playerSearched;
@@ -98,7 +114,8 @@ public sealed class ArenaCamera : MonoBehaviour
         }
         else followVelocity = Vector3.zero;
         targetCenter = desiredCenter;
-        transform.SetPositionAndRotation(targetCenter - rotation * Vector3.forward * 30f, rotation);
+        Vector3 shakeOffset = instant ? Vector3.zero : ShakeOffset(rotation);
+        transform.SetPositionAndRotation(targetCenter - rotation * Vector3.forward * 30f + shakeOffset, rotation);
     }
 
     private Vector2 GetPlayerPadding()

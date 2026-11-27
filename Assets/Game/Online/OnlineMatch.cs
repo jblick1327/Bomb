@@ -188,8 +188,8 @@ public static class OnlineMatch
         }
         startPending = false;
         round = newRound;
+        // Starts the 3-2-1 on every computer; the whistle blows when it ends.
         arena.RestartRound();
-        GameAudio.PlayWhistle();
     }
 
     // Results screen RETURN. The host takes everyone back to the lobby;

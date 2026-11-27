@@ -188,6 +188,8 @@ public sealed class BombDropper : MonoBehaviour
     // Online: the host dropped an item.
     public void SpawnNetworkItem(int id, float x, CollectibleItemType type)
     {
+        // The host's round has started even if this computer's countdown hasn't.
+        if (session != null) session.FinishCountdown();
         if (CanRun && layout != null) SpawnItem(type, x, id);
     }
 
@@ -216,6 +218,7 @@ public sealed class BombDropper : MonoBehaviour
         IgnorePlayers(collider, true);
 
         body.AddComponent<CollectibleItemTypeHolder>().Type = type;
+        body.AddComponent<ItemAura>().Initialize(type);
         FallingCollectibleItem item = body.AddComponent<FallingCollectibleItem>();
         item.Initialize(this, fallAcceleration, itemLifetime);
         item.NetworkId = id;
@@ -370,6 +373,8 @@ public sealed class BombDropper : MonoBehaviour
     // Online: the host dropped a bomb.
     public void SpawnNetworkBomb(int id, float x)
     {
+        // The host's round has started even if this computer's countdown hasn't.
+        if (session != null) session.FinishCountdown();
         if (CanRun && layout != null) SpawnBomb(x, id);
     }
 
@@ -408,6 +413,7 @@ public sealed class BombDropper : MonoBehaviour
         fuse.GetComponent<Collider>().enabled = false;
         Destroy(fuse.GetComponent<Collider>());
         fuse.GetComponent<Renderer>().sharedMaterial = blastMaterial;
+        BomFx.AddFuseSparks(fuse.transform);
 
         // Online, only the host's bombs decide where they go off. Elsewhere a
         // bomb falls through players and waits for the host's explosion.
@@ -458,7 +464,8 @@ public sealed class BombDropper : MonoBehaviour
         else if (HitPlayer(player, center))
             player.gameObject.SetActive(false);
 
-        ShowBlast(center);
+        ShowBlast(center, cutMaterial);
+        ArenaCamera.Shake(.45f);
     }
 
     // Close hits kill; hits from the edge of the blast knock a limb off, and
@@ -504,16 +511,20 @@ public sealed class BombDropper : MonoBehaviour
         }
     }
 
-    private void ShowBlast(Vector2 center)
+    // The explosion's look: fire, sparks, smoke, dust in the colour of the
+    // ground hit (cutMaterial), a flash of light, and a glowing shockwave ring.
+    private void ShowBlast(Vector2 center, Material cutMaterial)
     {
         var visual = new GameObject("Blast");
         visual.transform.SetParent(GetTransientRoot(), true);
         var ring = visual.AddComponent<LineRenderer>();
-        ring.sharedMaterial = blastMaterial;
+        Material ringMaterial = BomFx.Strip(2.5f);
+        ring.sharedMaterial = ringMaterial != null ? ringMaterial : blastMaterial;
+        ring.startColor = ring.endColor = new Color(1f, .82f, .5f);
         ring.useWorldSpace = false;
         ring.loop = true;
         ring.positionCount = 64;
-        ring.startWidth = ring.endWidth = 0.12f;
+        ring.startWidth = ring.endWidth = 0.45f;
         ring.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         ring.receiveShadows = false;
         for (int i = 0; i < ring.positionCount; i++)
@@ -526,6 +537,11 @@ public sealed class BombDropper : MonoBehaviour
         float frontDistance = ((layout != null ? layout.Depth : 0f) * 0.5f + 0.1f) / Mathf.Max(Mathf.Abs(forward.z), 0.1f);
         visual.transform.position = origin - forward * frontDistance;
         visual.AddComponent<BombBlastVisual>().Initialize(lethalRadius, blastDuration);
+
+        Color? dustColor = null;
+        if (cutMaterial != null)
+            dustColor = cutMaterial.HasProperty("_BaseColor") ? cutMaterial.GetColor("_BaseColor") : cutMaterial.color;
+        BomFx.Explosion(visual.transform.position, lethalRadius, dustColor);
     }
 
     public bool IsBelowArena(Vector3 position)
@@ -581,7 +597,7 @@ public sealed class BombDropper : MonoBehaviour
             float pieceSize = rubblePieceSize * Random.Range(0.8f, 1.25f);
             position.y += pieceSize * 0.8f;
             GroundRubble.Spawn(new Vector3(position.x, position.y, planeZ), pieceSize, impulse,
-                material, GetTransientRoot());
+                LevelAtmosphere.SurfaceVersion(material), GetTransientRoot());
         }
     }
 

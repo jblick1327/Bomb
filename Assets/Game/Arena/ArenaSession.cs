@@ -7,8 +7,9 @@ using UnityEngine.Serialization;
 using UnityEngine.SceneManagement;
 
 // The round states that control player input and the HUD. Waiting is only
-// used online, while everyone's level finishes loading.
-public enum ArenaRoundState { Playing, Dead, Waiting }
+// used online, while everyone's level finishes loading. Countdown is the
+// 3-2-1 before each round: players and bombs hold still until the whistle.
+public enum ArenaRoundState { Playing, Dead, Waiting, Countdown }
 
 // Owns round state, player death, and restoration of arena objects on restart.
 [AddComponentMenu("Arena/Round Session")]
@@ -16,6 +17,7 @@ public sealed class ArenaSession : MonoBehaviour
 {
     public const int CoinsPerBomb = 10;
     public const int CoinsPerSecond = 1;
+    public const float CountdownSeconds = 3f;
 
     [Header("Scene references")]
     [SerializeField] private ArenaLayout layout;
@@ -39,6 +41,8 @@ public sealed class ArenaSession : MonoBehaviour
     public bool IsMenuShowing => IsPaused || State == ArenaRoundState.Dead;
     public event Action<bool> PausedChanged;
     public float TimeSurvived { get; private set; }
+    // Seconds left before the round starts, while State is Countdown.
+    public float CountdownRemaining { get; private set; }
     public int BombsDodged => bombs != null ? bombs.DroppedBombCount : 0;
     public int CoinsCollected { get; private set; }
     public int BonusCoins { get; private set; }
@@ -119,9 +123,7 @@ public sealed class ArenaSession : MonoBehaviour
             // Online, the host starts the round once every player has loaded.
             SetState(ArenaRoundState.Waiting);
             OnlineMatch.ArenaLoaded(this);
-            return;
         }
-        GameAudio.PlayWhistle();
     }
 
     private void Update()
@@ -129,15 +131,19 @@ public sealed class ArenaSession : MonoBehaviour
         if (IsPlaying)
             TimeSurvived += Time.deltaTime;
 
-        // Only Player 1 controls pausing and restarting. Online, the keyboard
-        // always belongs to this computer's player.
+        if (State == ArenaRoundState.Countdown)
+        {
+            CountdownRemaining -= Time.deltaTime;
+            if (CountdownRemaining <= 0f)
+                FinishCountdown();
+        }
+
+        // Only Player 1 controls pausing. Online, the keyboard always belongs
+        // to this computer's player. Restarting is only through the Game Over
+        // panel's REPLAY button (the host's, online).
         Keyboard keyboard = OnlineMatch.IsRunning || MatchMenuUI.IsKeyboardEnabledForPlayer(1) ? Keyboard.current : null;
         if (IsPlaying && PausePressed(keyboard))
             SetPaused(!IsPaused);
-        // R only restarts once the round is over, so it can't be hit by accident
-        // mid-match. Online, only the host restarts, from the results panel.
-        if (State == ArenaRoundState.Dead && !OnlineMatch.IsRunning && keyboard != null && keyboard.rKey.wasPressedThisFrame)
-            RestartRound();
 
         CheckOutOfBounds();
     }
@@ -146,6 +152,17 @@ public sealed class ArenaSession : MonoBehaviour
     {
         State = state;
         StateChanged?.Invoke(State);
+    }
+
+    // Ends the 3-2-1 and starts play with the whistle. Online clients also
+    // call this early if the host's first bomb arrives before their own
+    // countdown has finished (their start message arrived a little later).
+    public void FinishCountdown()
+    {
+        if (State != ArenaRoundState.Countdown) return;
+        CountdownRemaining = 0f;
+        SetState(ArenaRoundState.Playing);
+        GameAudio.PlayWhistle();
     }
 
     private static readonly Collider[] boundHits = new Collider[16];
@@ -354,7 +371,9 @@ public sealed class ArenaSession : MonoBehaviour
             ResetPlayer(players[i], xOffset);
         }
 
-        State = ArenaRoundState.Playing;
+        // Every round opens with the 3-2-1; FinishCountdown starts play.
+        State = ArenaRoundState.Countdown;
+        CountdownRemaining = CountdownSeconds;
         TimeSurvived = 0f;
         CoinsCollected = 0;
         BonusCoins = 0;
