@@ -6,6 +6,9 @@ Candidates (owner picks one as an OD; see ALPHA-SYNC P6):
   base       : no change (control; must equal the shipped server's behaviour)
   torque<N>  : (a) the seam torque capacity is N% of today's (bending gives way sooner); round start included
   shock<N>   : (b) a glue seam an explosion reaches but does not break keeps N% of its strength from then on
+  hang<N>    : (d) the working tree's sim_mortar.odin with GLUE_COHESION N% (only single-seam pieces are weakened)
+  coulomb<N> : (c) glue keeps N% against shear and bending; weight pressing across the seam adds friction (0.6) and
+               a moment arm (half the seam) back, so resting joints hold and hanging pieces give way
 """
 import argparse, difflib, json, os, pathlib, re, shutil, subprocess, sys
 
@@ -29,6 +32,9 @@ def edit(path, old, new):
     path.write_text(text.replace(old, new), encoding='utf-8')
 
 
+DEFINES = {}
+
+
 def apply(stage, name):
     mortar = stage / 'shared' / 'sim_mortar.odin'
     m = re.fullmatch(r'torque(\d+)', name)
@@ -49,6 +55,23 @@ def apply(stage, name):
         edit(destruction, '  load:=blast_load(cover_failure_distance(a,sample,blast,strength),blast.radius)\n  if fails(load,strength) { append(&f.connections,id) }\n',
              '  load:=blast_load(cover_failure_distance(a,sample,blast,strength),blast.radius)\n  if fails(load,strength) { append(&f.connections,id) }\n'
              f'  else if c.mortar && load>0 {{ s.connections[s.conn_rows[id]].shock=f32({pct})/100 }} // P6 (b): reached, not broken\n')
+        return
+    m = re.fullmatch(r'coulomb(\d+)', name)
+    if m:  # P6 (c): glue cohesion N% against shear and bending; compression across the seam adds friction and a moment arm back
+        pct = int(m.group(1))
+        edit(mortar, ' return vlen(seam.charged)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length)\n',
+             f' cohesion:=strength*f32({pct})/100 // P6 candidate (c)\n'
+             ' fn:=vdot(seam.charged,seam.normal); tension:=max(-fn,0)\n'
+             ' shear:=vlen(vsub(seam.charged,vmul(seam.normal,fn)))\n'
+             ' shear_capacity:=cohesion*seam.length+GLUE_FRICTION*seam.bearing\n'
+             ' moment_capacity:=0.5*cohesion*seam.length*seam.length+0.5*seam.bearing*seam.length\n'
+             ' return tension/(strength*seam.length)+shear/shear_capacity+math.abs(seam.torque)/moment_capacity\n')
+        edit(mortar, 'MORTAR_STRENGTH :: f32(280)\n', 'MORTAR_STRENGTH :: f32(280)\nGLUE_FRICTION :: f32(0.6) // P6 (c)\n')
+        return
+    m = re.fullmatch(r'hang(\d+)', name)
+    if m:  # P6 (d): the working tree's sim_mortar.odin (weak rule only for a piece hanging by one seam), GLUE_COHESION N%
+        shutil.copyfile(pathlib.Path(__file__).resolve().parents[3] / 'Engine' / 'src' / 'shared' / 'sim_mortar.odin', mortar)
+        DEFINES[name] = [f'-define:GLUE_COHESION={int(m.group(1))/100}']
         return
     if name == 'xsource':  # P9: contact bearing only between different placed objects (level glue)
         edit(stage / 'shared' / 'sim_physics.odin', '   def.collideConnected=false\n',
@@ -76,7 +99,7 @@ for name in a.candidates:
     log = target / 'build-server.log'
     with open(log, 'w', encoding='utf-8') as handle:
         code = subprocess.run([ODIN, 'build', str(stage / 'server'), '-o:speed', '-out:' + str(target / 'BOM-server.exe'),
-                               '-ignore-vs-search', '-debug'], stdout=handle, stderr=subprocess.STDOUT, env=ENV).returncode
+                               '-ignore-vs-search', '-debug'] + DEFINES.get(name, []), stdout=handle, stderr=subprocess.STDOUT, env=ENV).returncode
     print(name, 'exit', code, 'diff_lines', len(diff), flush=True)
     if code != 0:
         sys.exit(code)

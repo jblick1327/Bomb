@@ -69,6 +69,7 @@ Mortar_Seam :: struct {
  normal: Vec2,          // OD-10: unit seam normal, world frame, bodies[0] -> bodies[1] (zero if none is defined)
  bearing: f32,          // OD-10: compression across the seam face (force·normal when > 0); not charged to the glue
  charged: Vec2,         // OD-10: force with the bearing part removed; this, not force, drives the load ratio
+ hanging: bool,         // P6: a moving body of this seam has no other glue seam (it hangs by this one); see mortar_seam_ratio
 }
 
 // OD-10 (G-N10b): the seam normal of one mortar/glue link, unit length in rest coordinates, pointing from cell a to cell b.
@@ -116,6 +117,19 @@ mortar_seams :: proc(s: ^Scene) -> [dynamic]Mortar_Seam {
   // New members / merged groups can have different histories: retain the
   // largest surviving history, then write the group value to every member.
   seam.damage=max(seam.damage,c.damage)
+ }
+ // P6: a seam whose moving (dynamic) body has no other glue seam carries that piece alone, like a shelf.
+ // Counted per body over all seams, so it does not depend on order.
+ counts:=make(map[b2.BodyId]int); defer delete(counts)
+ for seam in seams { for body in seam.bodies { counts[body]+=1 } }
+ // Level glue only (a world built from a level, glue-sample links): the Odin sandbox editor keeps today's rule, so its
+ // demo layout and glue/mortar fixtures stand as authored.
+ for &seam in seams {
+  if s.catalog==nil { break }
+  level_glue:=true
+  for id in seam.members { if len(s.connections[s.conn_rows[id]].rest_segments)>0 { level_glue=false; break } }
+  if !level_glue { continue }
+  for body in seam.bodies { if counts[body]==1 && b2.Body_GetType(body)==.dynamicBody { seam.hanging=true } }
  }
  for &seam in seams {
   seam.center=vmul(seam.center,1/seam.length)
@@ -173,11 +187,28 @@ mortar_seam_toughness :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
  return toughness
 }
 
-// Load ratio r of a seam: 1 at capacity. Strength is MORTAR_STRENGTH per unit length times the seam toughness.
+// P6 / G-N12 (owner-delegated 2026-11-27): a piece hanging by a single glue seam (a shelf: nothing else glued to it)
+// is held like mortar, weak against sliding and bending on its own. Weight pressing across the seam (OD-10 bearing) adds
+// friction against sliding and a lever against bending (the load can move to the seam's edge, half its length), so a
+// piece resting on its one support still holds while one sticking out sideways gives way. Seams of pieces glued in two
+// or more places (beams, the Bridge's frame, the Tower's slabs) keep the full rule: a uniform cut broke the Bridge and
+// Yard at round start (evidence/P6/README.md §3).
+GLUE_COHESION :: f32(#config(GLUE_COHESION,0.3)) // share of MORTAR_STRENGTH a hanging seam keeps against shear and bending
+GLUE_FRICTION :: f32(0.6)                         // shear resisted per unit of bearing on a hanging seam
+
+// Load ratio r of a seam: 1 at capacity. Strength S is MORTAR_STRENGTH per unit length times the seam toughness.
 // The force term uses the charged force: compression across the seam face is not charged (OD-10).
+// A hanging seam charges tension against S·L, shear against cohesion·S·L + friction·bearing and torque against
+// ½·cohesion·S·L² + ½·bearing·L.
 mortar_seam_ratio :: proc(s: ^Scene,seam: Mortar_Seam) -> f32 {
  strength:=MORTAR_STRENGTH*mortar_seam_toughness(s,seam)
- return vlen(seam.charged)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length)
+ if !seam.hanging { return vlen(seam.charged)/(strength*seam.length)+math.abs(seam.torque)/(0.5*strength*seam.length*seam.length) }
+ cohesion:=strength*GLUE_COHESION
+ fn:=vdot(seam.charged,seam.normal);tension:=max(-fn,0)
+ shear:=vlen(vsub(seam.charged,vmul(seam.normal,fn)))
+ shear_capacity:=cohesion*seam.length+GLUE_FRICTION*seam.bearing
+ moment_capacity:=0.5*cohesion*seam.length*seam.length+0.5*seam.bearing*seam.length
+ return tension/(strength*seam.length)+shear/shear_capacity+math.abs(seam.torque)/moment_capacity
 }
 
 mortar_apply_seam :: proc(s: ^Scene,seam: Mortar_Seam,failures: ^Failures,dt: f32) {
