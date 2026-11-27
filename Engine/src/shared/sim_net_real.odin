@@ -9,6 +9,7 @@ import time "core:time"
 import b2 "vendor:box2d"
 
 NET_REAL_PORT :: u16(47380)
+NET_REAL_CATCH_UP :: f64(0.25) // most accumulated time the server catches up instead of dropping
 
 NET_REAL_HASH_REPORT :: u8(0xC1)
 
@@ -88,6 +89,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
  destroyed:=false
  defer {if !destroyed {net_server_destroy(&ns)}}
  fmt.printf("BOM staging server listening on %d.%d.%d.%d:%d; tick=60Hz\n",bind_ip[0],bind_ip[1],bind_ip[2],bind_ip[3],port)
+ waiter:=net_real_waiter_init();defer net_real_waiter_destroy(&waiter)
  start:=time.tick_now()
  last:=f64(0)
  accumulator:=f64(0)
@@ -116,7 +118,9 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
    accumulator-=NET_STEP_DT
    steps+=1
   }
-  if steps==5 && accumulator>=NET_STEP_DT {
+  // A stall shorter than NET_REAL_CATCH_UP is caught up (5 ticks per pass) so the server's tick stays on the clock the
+  // clients schedule against; dropping time there moved the server behind every client and forced a schedule reset.
+  if accumulator>=NET_REAL_CATCH_UP {
    overrun_count+=1
    fmt.eprintf("server tick overrun at %.2fs: dropping %.1fms of accumulated time\n",now,accumulator*1000)
    accumulator=0
@@ -138,7 +142,7 @@ net_real_run_server :: proc(port: u16,layout: string,seconds: f64 = 0,host_token
    }
    report_at+=10
   }
-  time.sleep(time.Millisecond)
+  net_real_waiter_wait(&waiter,0.001)
  }
  if metrics_path!="" {
   report:=Net_Real_Metrics{ticks=ns.tick,overruns=u64(overrun_count),hash_checks=u64(ns.real_hash_checks),hash_mismatches=u64(ns.real_hash_mismatch),hash_unrecorded=u64(ns.real_hash_unrecorded),sample_capacity=NET_SERVER_TIMING_CAPACITY,first_sample_index=0,tick_ms=ns.tick_ms[:],world_ms=ns.world_ms[:]}
