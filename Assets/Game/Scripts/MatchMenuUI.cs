@@ -923,7 +923,10 @@ public sealed class MatchMenuUI : MonoBehaviour
     private void StartGame()
     {
         if (!isTransitioning && CanStartMatch())
+        {
+            GameAudio.PlayCheerVoice();
             StartCoroutine(FadeToScene(LevelSceneNames[selectedLevel]));
+        }
     }
 
     private bool CanStartMatch()
@@ -1178,6 +1181,7 @@ public sealed class MatchMenuUI : MonoBehaviour
         if (ownedCharacters[shopSelectedCharacter] || shopCoins < characterPrice) return;
         shopCoins -= characterPrice;
         ownedCharacters[shopSelectedCharacter] = true;
+        GameAudio.PlayPurchase();
         PlayerPrefs.SetInt(ShopCoinsKey, shopCoins);
         PlayerPrefs.SetInt(ShopOwnedKeyPrefix + shopSelectedCharacter, 1);
         PlayerPrefs.Save();

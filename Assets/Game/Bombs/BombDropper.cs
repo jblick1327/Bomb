@@ -26,6 +26,9 @@ public sealed class BombDropper : MonoBehaviour
     [SerializeField, Min(0f), InspectorName("Rubble impulse")]
     private float rubbleImpulse = 2.5f;
     [SerializeField] private bool enableRubble = true;
+    [Tooltip("A blast this far beyond the lethal radius from a player counts as a near miss (a \"Woah!\").")]
+    [SerializeField, Min(0f), InspectorName("Near miss margin (units)")]
+    private float nearMissMargin = 1.2f;
     [SerializeField, Tooltip("Development shortcut: allow B to drop an extra bomb.")]
     private bool enableSpawning = false;
 
@@ -453,6 +456,9 @@ public sealed class BombDropper : MonoBehaviour
         // Rubble takes the colour of the block the bomb dug into, so a blast
         // in open air makes none.
         if (enableRubble && cutMaterial != null) SpawnRubble(center, cutMaterial);
+        // The crumble only when the blast broke into ground or a block.
+        if (cutMaterial != null)
+            GameAudio.PlayBreaking(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
         if (session != null)
         {
             // Online, each computer only checks its own player and reports the result.
@@ -463,9 +469,24 @@ public sealed class BombDropper : MonoBehaviour
         }
         else if (HitPlayer(player, center))
             player.gameObject.SetActive(false);
+        if (IsNearMiss(center)) GameAudio.PlayNearMissVoice();
 
         ShowBlast(center, cutMaterial);
         ArenaCamera.Shake(.45f);
+    }
+
+    // True if a player on this computer who is still in the round was only
+    // just outside the blast.
+    private bool IsNearMiss(Vector2 center)
+    {
+        if (session == null) return false;
+        foreach (ArenaPlayerController target in session.Players)
+        {
+            if (target == null || target.IsRemote || !target.gameObject.activeInHierarchy) continue;
+            float distance = target.DistanceToBody(center);
+            if (distance > lethalRadius && distance <= lethalRadius + nearMissMargin) return true;
+        }
+        return false;
     }
 
     // Close hits kill; hits from the edge of the blast knock a limb off, and

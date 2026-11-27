@@ -133,6 +133,13 @@ public sealed class ArenaSession : MonoBehaviour
 
         if (State == ArenaRoundState.Countdown)
         {
+            // Call out each number as it comes up: 3, 2, 1.
+            int number = Mathf.Clamp(Mathf.CeilToInt(CountdownRemaining), 1, 3);
+            if (number != spokenCountdown)
+            {
+                spokenCountdown = number;
+                GameAudio.PlayCountdown(number);
+            }
             CountdownRemaining -= Time.deltaTime;
             if (CountdownRemaining <= 0f)
                 FinishCountdown();
@@ -148,6 +155,9 @@ public sealed class ArenaSession : MonoBehaviour
         CheckOutOfBounds();
     }
 
+    // The countdown number last called out (0: none yet this round).
+    private int spokenCountdown;
+
     private void SetState(ArenaRoundState state)
     {
         State = state;
@@ -161,8 +171,10 @@ public sealed class ArenaSession : MonoBehaviour
     {
         if (State != ArenaRoundState.Countdown) return;
         CountdownRemaining = 0f;
+        spokenCountdown = 0;
         SetState(ArenaRoundState.Playing);
         GameAudio.PlayWhistle();
+        GameAudio.PlayCountdown(0);
     }
 
     private static readonly Collider[] boundHits = new Collider[16];
@@ -299,6 +311,7 @@ public sealed class ArenaSession : MonoBehaviour
             anyPlayerDied = true;
         }
         if (!anyPlayerDied) return;
+        GameAudio.PlayKnockedOutVoice();
 
         ArenaPlayerController winner = null;
         int aliveCount = 0;
@@ -342,6 +355,7 @@ public sealed class ArenaSession : MonoBehaviour
 
         StateChanged?.Invoke(State);
         GameAudio.PlayWhistle();
+        GameAudio.PlayRoundEndVoice();
     }
 
     public void RestartRound()
@@ -373,6 +387,7 @@ public sealed class ArenaSession : MonoBehaviour
 
         // Every round opens with the 3-2-1; FinishCountdown starts play.
         State = ArenaRoundState.Countdown;
+        spokenCountdown = 0;
         CountdownRemaining = CountdownSeconds;
         TimeSurvived = 0f;
         CoinsCollected = 0;

@@ -138,7 +138,12 @@ public sealed class ArenaPlayerController : MonoBehaviour
     }
 
     // A hit from the edge of a blast. Returns true if it should kill.
-    public bool TakeGraze(Vector2 blastCenter) => bodyDamage == null || bodyDamage.TakeGraze(blastCenter);
+    public bool TakeGraze(Vector2 blastCenter)
+    {
+        bool killed = bodyDamage == null || bodyDamage.TakeGraze(blastCenter);
+        if (!killed) GameAudio.PlayHurtVoice();
+        return killed;
+    }
 
     // Throws the body out as chunks; the caller then removes the player.
     public void Burst(Vector2 blastCenter)

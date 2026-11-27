@@ -112,6 +112,7 @@ public sealed class FallingCollectibleItem : MonoBehaviour
         collected = true;
         if (player != null) player.ApplyCollectible(type);
         GameAudio.PlayCoinPickup(transform.position);
+        if (player != null) GameAudio.PlayPickupVoice();
         BomFx.Pickup(transform.position, ItemAura.ColorFor(type));
         gameObject.SetActive(false);
         Destroy(gameObject);

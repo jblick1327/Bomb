@@ -140,11 +140,12 @@ public sealed class MenuCursor : MonoBehaviour
         labelRect.offsetMin = Vector2.zero;
         labelRect.offsetMax = Vector2.zero;
         var label = labelObject.GetComponent<TMPro.TextMeshProUGUI>();
+        // The menus' chalk font and outline, matching the setup screen's P1-P4 rings.
+        BomUiSkin.StyleText(label);
         label.text = "P1";
-        label.fontSize = 18f;
+        label.fontSize = 22f;
         label.fontStyle = TMPro.FontStyles.Bold;
         label.alignment = TMPro.TextAlignmentOptions.Center;
-        label.color = Color.white;
         label.raycastTarget = false;
     }
 
