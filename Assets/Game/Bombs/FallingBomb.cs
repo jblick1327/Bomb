@@ -18,6 +18,7 @@ public sealed class FallingBomb : MonoBehaviour
 
     private BombDropper owner;
     private Rigidbody body;
+    private SphereCollider blastCollider;
     private float fallAcceleration;
     private bool exploded;
     private bool fuseStarted;
@@ -47,6 +48,7 @@ public sealed class FallingBomb : MonoBehaviour
     {
         owner = dropper;
         body = GetComponent<Rigidbody>();
+        blastCollider = GetComponent<SphereCollider>();
         fallAcceleration = acceleration;
         Type = type;
         lifetimeRemaining = Mathf.Max(0.1f, lifetime);
@@ -150,13 +152,32 @@ public sealed class FallingBomb : MonoBehaviour
 
     private void Detonate(Vector3 point)
     {
-        if (exploded || owner == null || !owner.CanRun || !IsAuthority) return;
+        if (TryCommitDetonation(point)) owner.Explode(point, Type);
+    }
+
+    internal bool TryDetonateFromBlast(Vector2 center, float radius, out Vector3 point)
+    {
+        point = default;
+        if (exploded || !isActiveAndEnabled || blastCollider == null ||
+            (!fuseStarted && lifetimeRemaining <= 0f)) return false;
+
+        point = transform.TransformPoint(blastCollider.center);
+        Vector3 scale = transform.lossyScale;
+        float colliderRadius = blastCollider.radius *
+            Mathf.Max(Mathf.Abs(scale.x), Mathf.Max(Mathf.Abs(scale.y), Mathf.Abs(scale.z)));
+        float reach = radius + colliderRadius;
+        return ((Vector2)point - center).sqrMagnitude <= reach * reach && TryCommitDetonation(point);
+    }
+
+    private bool TryCommitDetonation(Vector3 point)
+    {
+        if (exploded || owner == null || !owner.CanRun || !IsAuthority) return false;
         exploded = true;
         if (countdownAudio != null) countdownAudio.Stop();
         if (OnlineMatch.IsRunning)
             OnlineMatch.SendExplosion(NetworkId, new Vector2(point.x, point.y), Type, owner.GetExplosionScale(Type));
-        owner.Explode(point, Type);
         Destroy(gameObject);
+        return true;
     }
 
     public void ApplyNetworkFuse(Vector3 position, float remaining)

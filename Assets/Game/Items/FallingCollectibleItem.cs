@@ -15,6 +15,7 @@ public sealed class FallingCollectibleItem : MonoBehaviour
 {
     private BombDropper owner;
     private Rigidbody body;
+    private SphereCollider pickupCollider;
     private float fallAcceleration;
     private bool collected;
     private bool landed;
@@ -29,6 +30,7 @@ public sealed class FallingCollectibleItem : MonoBehaviour
     {
         owner = dropper;
         body = GetComponent<Rigidbody>();
+        pickupCollider = GetComponent<SphereCollider>();
         fallAcceleration = acceleration;
         Destroy(gameObject, lifetime);
     }
@@ -105,6 +107,23 @@ public sealed class FallingCollectibleItem : MonoBehaviour
         if (collected) return false;
         collected = true;
         return true;
+    }
+
+    internal bool IsInBlast(Vector2 center, float radius)
+    {
+        if (collected || !isActiveAndEnabled || pickupCollider == null || !pickupCollider.enabled)
+            return false;
+
+        Bounds bounds = pickupCollider.bounds;
+        float reach = radius + bounds.extents.x;
+        return ((Vector2)bounds.center - center).sqrMagnitude <= reach * reach;
+    }
+
+    internal void DestroyByBlast()
+    {
+        collected = true;
+        gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 
     public void CollectBy(ArenaPlayerController player, CollectibleItemType type)

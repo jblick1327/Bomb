@@ -296,6 +296,30 @@ public sealed class BombDropper : MonoBehaviour
         networkItems.Remove(id);
     }
 
+    internal void DestroyItem(int id)
+    {
+        if (networkItems.Remove(id, out FallingCollectibleItem item) && item != null)
+            item.DestroyByBlast();
+    }
+
+    private void DestroyItemsInBlast(Vector2 center, float radius)
+    {
+        if (networkItems.Count == 0 || (OnlineMatch.IsRunning && !OnlineMatch.IsHost)) return;
+
+        var hitItems = new List<int>();
+        foreach (var entry in networkItems)
+        {
+            if (entry.Value != null && entry.Value.IsInBlast(center, radius))
+                hitItems.Add(entry.Key);
+        }
+
+        foreach (int id in hitItems)
+        {
+            DestroyItem(id);
+            if (OnlineMatch.IsRunning) OnlineMatch.SendItemDestroyed(id);
+        }
+    }
+
     private void IgnorePlayers(Collider collider, bool remoteOnly)
     {
         if (session == null || collider == null) return;
@@ -508,8 +532,15 @@ public sealed class BombDropper : MonoBehaviour
             Destroy(bomb.gameObject);
         }
         networkBombs.Remove(id);
-        if (!CanRun) return;
-        Explode(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f), type, sizeScale);
+        Vector3 position = new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f);
+        if (CanRun) Explode(position, type, sizeScale);
+        else if (session != null && session.State == ArenaRoundState.Dead)
+        {
+            // A client can finish the round on the first blast in a chain.
+            float scale = sizeScale >= 0f ? Mathf.Max(0.05f, sizeScale) : GetExplosionScale(type);
+            PlayBlastCue(position, scale);
+            ShowBlast(center, lethalRadius * scale, null);
+        }
     }
 
     private void CreateBombVisual(Transform bomb, BombType type)
@@ -671,10 +702,66 @@ public sealed class BombDropper : MonoBehaviour
     public void Explode(Vector3 position, BombType type = BombType.Impact, float explosionScale = -1f)
     {
         if (!CanRun) return;
-        Vector2 center = new Vector2(position.x, position.y);
         float sizeScale = explosionScale >= 0f ? Mathf.Max(0.05f, explosionScale) : GetExplosionScale(type);
+        var blasts = new List<(Vector3 Position, float Scale, Material CutMaterial)> { (position, sizeScale, null) };
+
+        // Resolve the entire chain before any blast can end the round and clear the bombs.
+        if (!OnlineMatch.IsRunning || OnlineMatch.IsHost)
+        {
+            for (int i = 0; i < blasts.Count; i++)
+            {
+                var blast = blasts[i];
+                foreach (FallingBomb bomb in networkBombs.Values)
+                {
+                    if (bomb != null && bomb.TryDetonateFromBlast(blast.Position, lethalRadius * blast.Scale, out Vector3 point))
+                        blasts.Add((point, GetExplosionScale(bomb.Type), null));
+                }
+            }
+        }
+
+        var hitPlayers = new List<ArenaPlayerController>();
+        Vector2 lethalCenter = default;
+        for (int i = 0; i < blasts.Count; i++)
+        {
+            var blast = blasts[i];
+            Vector2 center = blast.Position;
+            PlayBlastCue(blast.Position, blast.Scale);
+            blast.CutMaterial = ApplyBlastEffects(center, blast.Scale);
+            blasts[i] = blast;
+
+            if (session != null)
+            {
+                // Online, each computer only checks its own player and reports the result.
+                foreach (ArenaPlayerController target in session.Players)
+                {
+                    if (target == null || target.IsRemote || hitPlayers.Contains(target) ||
+                        !HitPlayer(target, center, blast.Scale)) continue;
+                    hitPlayers.Add(target);
+                    lethalCenter = center;
+                }
+            }
+            else if (HitPlayer(player, center, blast.Scale))
+                player.gameObject.SetActive(false);
+        }
+        if (session != null) session.KillPlayers(hitPlayers, lethalCenter);
+
+        foreach (var blast in blasts)
+        {
+            float radius = lethalRadius * blast.Scale;
+            if (IsNearMiss(blast.Position, radius)) GameAudio.PlayNearMissVoice();
+            ShowBlast(blast.Position, radius, blast.CutMaterial);
+        }
+    }
+
+    private void PlayBlastCue(Vector3 position, float sizeScale)
+    {
         PlayExplosionSound(position);
         ArenaCamera.Shake(Mathf.Clamp(0.75f * sizeScale, 0.55f, 1f));
+    }
+
+    private Material ApplyBlastEffects(Vector2 center, float sizeScale)
+    {
+        DestroyItemsInBlast(center, lethalRadius * sizeScale);
         List<DestructibleObject> supportedPieces = DestructibleObject.FindSupportedPieces();
         DestroyDebrisInBlast(center, outerShatterRadius * sizeScale);
         Material cutMaterial = AffectBlastReceivers(center, sizeScale);
@@ -686,19 +773,7 @@ public sealed class BombDropper : MonoBehaviour
         // The crumble only when the blast broke into ground or a block.
         if (cutMaterial != null)
             GameAudio.PlayBreaking(new Vector3(center.x, center.y, layout != null ? layout.Origin.z : 0f));
-        if (session != null)
-        {
-            // Online, each computer only checks its own player and reports the result.
-            List<ArenaPlayerController> hitPlayers = new List<ArenaPlayerController>();
-            foreach (ArenaPlayerController target in session.Players)
-                if (target != null && !target.IsRemote && HitPlayer(target, center, sizeScale)) hitPlayers.Add(target);
-            session.KillPlayers(hitPlayers, center);
-        }
-        else if (HitPlayer(player, center, sizeScale))
-            player.gameObject.SetActive(false);
-        if (IsNearMiss(center, lethalRadius * sizeScale)) GameAudio.PlayNearMissVoice();
-
-        ShowBlast(center, lethalRadius * sizeScale, cutMaterial);
+        return cutMaterial;
     }
 
     // True if a player on this computer who is still in the round was only

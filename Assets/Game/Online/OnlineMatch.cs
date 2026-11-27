@@ -7,8 +7,8 @@ using UnityEngine.SceneManagement;
 
 // Runs an online match on top of OnlineSession. The host is in charge: it
 // picks the level, starts each round, drops the bombs and items, and decides
-// who picks an item up first. Each computer moves its own player and checks
-// its own player against blasts, then tells everyone else what happened.
+// who picks an item up first and which items blasts destroy. Each computer
+// moves its own player, checks them against blasts, and reports what happened.
 //
 // Everything travels as small "named messages" through Netcode for
 // GameObjects, so no networked prefabs are needed. Clients send to the host;
@@ -37,6 +37,7 @@ public static class OnlineMatch
         ToLobby,     // host -> all: back to the lobby
         BombFuse,    // host -> all: armed bomb pose and remaining fuse
         ChooseModel, // client -> host: chosen character model
+        ItemDestroyed, // host -> all: a blast destroyed an item
     }
 
     public enum LobbyScreen : byte { Players, ChooseLevel }
@@ -303,6 +304,15 @@ public static class OnlineMatch
         SendToClients(writer, NetworkDelivery.ReliableSequenced);
     }
 
+    internal static void SendItemDestroyed(int id)
+    {
+        if (!IsHost) return;
+        FastBufferWriter writer = Begin(Message.ItemDestroyed);
+        writer.WriteValueSafe(id);
+        writer.WriteValueSafe(round);
+        SendToClients(writer, NetworkDelivery.ReliableSequenced);
+    }
+
     public static void SendExplosion(int id, Vector2 center, BombType type = BombType.Impact, float sizeScale = 1f)
     {
         if (!IsHost) return;
@@ -481,6 +491,14 @@ public static class OnlineMatch
                 reader.ReadValueSafe(out float x);
                 reader.ReadValueSafe(out byte type);
                 if (bombs != null) bombs.SpawnNetworkItem(id, x, (CollectibleItemType)type);
+                break;
+            }
+            case Message.ItemDestroyed:
+            {
+                if (!fromHost || IsHost) return;
+                reader.ReadValueSafe(out int id);
+                reader.ReadValueSafe(out byte itemRound);
+                if (itemRound == round && bombs != null) bombs.DestroyItem(id);
                 break;
             }
             case Message.Boom:
