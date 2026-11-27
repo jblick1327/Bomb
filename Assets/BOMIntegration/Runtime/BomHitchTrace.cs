@@ -113,6 +113,35 @@ namespace Bom.Unity
                 Debug.Log("BOM HITCH section " + name + " frame=" + Time.frameCount + " ms=" + F(Ms(from)));
         }
 
+        // Main-thread CPU time (100 ns units) and gen-0 GC count, taken with a section's start stamp. A section whose
+        // wall time is far above its CPU time was waiting (descheduled, paging) rather than working; gc>0 means a
+        // garbage collection ran inside it. Windows counts thread CPU in ~15.6 ms ticks, so only large gaps mean anything.
+        public static long ThreadCpu()
+        {
+            if (!On || !GetThreadTimes(GetCurrentThread(), out _, out _, out long kernel, out long user))
+                return 0;
+            return kernel + user;
+        }
+
+        public static int GcCount() => On ? GC.CollectionCount(0) : 0;
+
+        public static void Section(string name, long from, long cpuFrom, int gcFrom)
+        {
+            if (!On || Ms(from) <= 2)
+                return;
+            double cpu = (ThreadCpu() - cpuFrom) / 10000.0;
+            Debug.Log(
+                "BOM HITCH section " + name + " frame=" + Time.frameCount + " ms=" + F(Ms(from)) + " cpu_ms=" + F(cpu)
+                    + " gc=" + (GC.CollectionCount(0) - gcFrom)
+            );
+        }
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        static extern IntPtr GetCurrentThread();
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        static extern bool GetThreadTimes(IntPtr thread, out long creation, out long exit, out long kernel, out long user);
+
         // A timestamp before every player-loop subsystem; on a slow frame the slowest gaps are logged by name.
         static string[] markNames = new string[0];
         static long[] markTimes = new long[0];

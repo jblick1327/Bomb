@@ -479,9 +479,11 @@ namespace Bom.Unity
         void Update()
         {
             BomDebugHitch.Tick(BomSession.Now);
-            long traced = BomHitchTrace.On ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+            long traced = BomHitchTrace.On ? System.Diagnostics.Stopwatch.GetTimestamp() : 0,
+                tracedCpu = BomHitchTrace.ThreadCpu();
+            int tracedGc = BomHitchTrace.GcCount();
             UpdateCore();
-            BomHitchTrace.Section("client_update", traced);
+            BomHitchTrace.Section("client_update", traced, tracedCpu, tracedGc);
         }
 
         void UpdateCore()

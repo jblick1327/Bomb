@@ -7,7 +7,9 @@ param(
  [ValidateRange(1,120)][double]$ShotEvery=6,
  [ValidateRange(1,65535)][int]$Port=47380,
  [string]$OutDir='',
- [switch]$NoMove
+ [switch]$NoMove,
+ # Extra player arguments, one string (e.g. '--bom-hitch-trace'), passed to both windows.
+ [string]$ExtraArgs=''
 )
 # Visual review: for each level, two front-door game windows (Bomb.exe) host and join from the menu like players, play
 # Elimination rounds (the host starts the next one), move on their own (--bom-debug-move) and save what each window
@@ -29,6 +31,7 @@ foreach($level in @($Levels -split '[,\s]+' | Where-Object { $_ } | ForEach-Obje
    '--bom-frontdoor-seconds',"$Seconds",'--bom-frontdoor-shot-every',$ShotEvery.ToString([Globalization.CultureInfo]::InvariantCulture),
    '-screen-fullscreen','0','-screen-width','1280','-screen-height','720','-logFile',('"'+(Join-Path $dir "$role.log")+'"'))
   if(!$NoMove){$arguments+='--bom-debug-move'}
+  if($ExtraArgs){$arguments+=@($ExtraArgs -split '\s+' | Where-Object { $_ })}
   $procs+=Start-Process -FilePath $Player -ArgumentList $arguments -WorkingDirectory (Split-Path -Parent $Player) -PassThru
   Start-Sleep -Seconds 2
  }
