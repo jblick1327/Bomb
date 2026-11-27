@@ -720,7 +720,11 @@ namespace Bom.Unity
         void Fail(Exception error)
         {
             failure = error.Message;
-            Debug.LogError(error);
+            bool levelRetry = !(smoke || AutomatedProfile) && BomFrontDoor.WillRetryJoin(failure);
+            if (levelRetry)
+                Debug.LogWarning("BOM UNITY join refused (host runs another level): " + failure);
+            else
+                Debug.LogError(error);
             if (smoke || AutomatedProfile)
             {
                 Close();
@@ -738,6 +742,9 @@ namespace Bom.Unity
                     Close();
                     ClearScene();
                 }
+                // Joined with a different level from the host's: try the next level instead of showing the error.
+                if (BomFrontDoor.RetryJoinOnLevelMismatch(failure))
+                    failure = "";
             }
         }
 

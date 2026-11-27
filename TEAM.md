@@ -11,7 +11,7 @@ still here and work as before. This page is the short version; ask J about anyth
    for you; nothing else needs installing. It starts an Elimination round, and the host starts each new round.
    - *This PC only* is for testing on one machine. *LAN / direct IP* lets others join; the Esc menu shows the
      address to give them. The first time, Windows asks about BOM-server: tick **Private networks** and press Allow.
-4. **Online → Join**: type the host's address and port and pick the same level as the host.
+4. **Online → Join**: type the host's address and port. If you picked a different level from the host, Join switches to the host's level by itself (a few seconds).
    Over the internet, use Tailscale (below) or have the host forward the UDP port on their router (there is no relay yet).
 
 ## Play over the internet with Tailscale
@@ -21,10 +21,11 @@ The game uses UDP port **47380**, and the client accepts only an IPv4 address (n
    the invited account. Each PC gets a `100.x.y.z` address (tray icon, or `tailscale ip -4`).
 2. **Everyone:** run the same `BOM-Windows-<date>` package. Different builds won't connect.
 3. **Host, once:** Windows often marks the Tailscale network as *Public*, which the first-run Allow (Private) doesn't
-   cover, and then joins time out. In an **admin** PowerShell, allow the game port only from tailnet addresses:
+   cover, and then joins time out. Double-click `Allow-BomTailscale.cmd` in the package and say Yes, or in an **admin**
+   PowerShell allow the game port only from tailnet addresses:
    `New-NetFirewallRule -DisplayName "BOM server (Tailscale)" -Direction Inbound -Protocol UDP -LocalPort 47380 -RemoteAddress 100.64.0.0/10 -Action Allow -Profile Any`
 4. **Host:** Online → Host → *LAN / direct IP*, port 47380. Give out the `100.x` address the Esc menu shows, not the `192.168.x` one.
-5. **Others:** Online → Join with that `100.x` address, port 47380, and the host's level.
+5. **Others:** Online → Join with that `100.x` address, port 47380.
 
 The host should be a desktop on a wired connection: it runs the server and a game window. If a join fails, run
 `tailscale ping <host 100.x address>` first. If that fails, it's a Tailscale problem; if it works, check the firewall rule

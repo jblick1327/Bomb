@@ -6,7 +6,9 @@ job object must take the server with it. A UDP port held by this script proves t
 --level (C6) picks the level in the host and join menus (index into BomFrontDoor.Levels, kept in step below)."""
 import argparse,datetime,hashlib,json,os,pathlib,re,socket,subprocess,time
 LEVELS={'ClassicYard':(0,'NetworkMenu','yard.json'),'Yard':(1,'NetworkYardTiles','YardLevel.json'),'Bridge':(2,'NetworkBridge','BridgeLevel.json'),'Tower':(3,'NetworkTower','TowerLevel.json')}
-p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--player',required=True);p.add_argument('--level',default='ClassicYard',choices=sorted(LEVELS));a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--config',required=True);p.add_argument('--player',required=True);p.add_argument('--level',default='ClassicYard',choices=sorted(LEVELS))
+# --guest-level: the guest picks another level in its join menu; Join must switch to the host's level by itself.
+p.add_argument('--guest-level',default='',choices=['']+sorted(LEVELS));a=p.parse_args()
 level_index,level_scene,level_file=LEVELS[a.level]
 cfg=pathlib.Path(a.config).resolve();config=json.loads(cfg.read_text(encoding='utf-8-sig'));root=pathlib.Path(config['OdinRoot']);player=pathlib.Path(a.player).resolve()
 identity=json.loads((root/'build/bomcore.build.json').read_text(encoding='utf-8-sig'))
@@ -31,7 +33,7 @@ t0=time.monotonic()
 def note(text):timeline.append(f'{time.monotonic()-t0:7.1f}s {text}');print(timeline[-1],flush=True)
 def launch(name,role,port):
  command=[str(player),'-batchmode','-force-d3d11','-screen-fullscreen','0','-screen-width','1280','-screen-height','720',
-  '--bom-frontdoor-test',str(out),'--bom-frontdoor-role',role,'--bom-frontdoor-port',str(port),'--bom-frontdoor-level',str(level_index),'-logFile',str(out/(name+'.log'))]
+  '--bom-frontdoor-test',str(out),'--bom-frontdoor-role',role,'--bom-frontdoor-port',str(port),'--bom-frontdoor-level',str(LEVELS[a.guest_level][0] if role=='guest' and a.guest_level else level_index),'-logFile',str(out/(name+'.log'))]
  streams[name]=(out/(name+'-stdout.log')).open('w',encoding='utf-8')
  children[name]=subprocess.Popen(command,cwd=player.parent,stdout=streams[name],stderr=subprocess.STDOUT,startupinfo=startup)
  note(f'started {name} pid={children[name].pid} port={port}');return command
@@ -90,6 +92,7 @@ checks['main_menu_first']='menu ONLINE' in logs['host'] and 'menu ONLINE' in log
 checks['job_kill_on_close']=all('BOM FRONTDOOR SERVER job kill_on_close=1' in logs[n] for n in ['host','crash'])
 checks['no_host_token_env']='BOM_TEST_HOST_TOKEN' not in os.environ
 checks['level_scene_loaded']=all(f'BOM FRONTDOOR LOAD scene={level_scene} ' in logs[n] for n in ['host','guest']) and all(f'level=' in logs[n] and f' scene={level_scene} level_id=' in logs[n] for n in ['host','guest'])
+if a.guest_level and a.guest_level!=a.level: checks['guest_switched_to_host_level']='BOM FRONTDOOR JOIN level mismatch, trying' in logs['guest']
 passed=not failure and all(checks.values())
 summary={'status':'passed' if passed else 'failed','level':a.level,'level_scene':level_scene,'level_file':level_file,'scope':'C5: MainMenuScene -> Online host (player starts BOM-server.exe itself) + Online join 127.0.0.1 -> finished elimination round; server stops on return to menu, on quit and on player crash; busy port skipped',
  'failure':failure,'checks':checks,'exit_codes':codes,'busy_port_held':busy,'orphans_killed':orphans,'exception_lines':exceptions,'timeline':timeline,

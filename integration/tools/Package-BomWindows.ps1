@@ -57,6 +57,7 @@ foreach($pair in $backends){
 }
 Copy-Item -LiteralPath (Join-Path $integration 'README.md') -Destination (Join-Path $output 'DEVELOPER-README.md')
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Launch-BomPackage.ps1') -Destination (Join-Path $output 'Launch-Bom.ps1')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Allow-BomTailscale.cmd') -Destination (Join-Path $output 'Allow-BomTailscale.cmd')
 @'
 BOM for Windows (x64). Read PACKAGE-NOTES.md first when it is here.
 
@@ -71,6 +72,14 @@ LAN: on the host PC choose "LAN / direct IP" in HOST GAME; the Esc menu lists th
 Launch-Bom.ps1 -Clients 1 (or Bomb.exe) and use JOIN GAME with the host's address and port. The first time, Windows
 asks to allow BOM-server.exe: tick Private networks and press Allow.
 The game starts and stops its own server (Server\BOM-server.exe beside Bomb.exe); closing the host's game ends it.
+
+Between houses (Tailscale):
+  1. Everyone: install Tailscale (tailscale.com/download), accept J's invite and sign in. Everyone runs this same package.
+  2. Host, once: double-click Allow-BomTailscale.cmd and say Yes (opens UDP 47380 to Tailscale PCs only).
+  3. Host: ONLINE, HOST GAME, "LAN / direct IP", port 47380, START. Give out the 100.x address the Esc menu shows.
+  4. Others: ONLINE, JOIN GAME with that 100.x address and port 47380. A different level from the host's is fixed for you.
+  Best host: a desktop on a wired connection. Join fails? Run "tailscale ping <host 100.x address>": if it fails it is
+  Tailscale; if it works, run step 2 again on the host. "via DERP" in that ping means a relayed, laggier connection.
 
 These Windows x64 builds use Unity 6000.2.14f1 and an optimized native library
 with matching debug symbols. No Unity Editor or Odin compiler is needed to play.

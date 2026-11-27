@@ -790,6 +790,11 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   laptop plus the desktop at home (LAN), then over Tailscale (`TEAM.md`). Re-measure P1's restart times on the desktop.
   2026-11-27: release package on the P9 pair built: `integration/build/packages/Windows-20261127T001508623Z` (Mono);
   front-door passes on Bridge and Tower. Owner's two-PC run still to do.
+  Connection decided (owner delegated, 2026-11-27): **Tailscale** (no router access in either house, encrypted, already in
+  TEAM.md); port forwarding and a VPS dropped. Join now switches to the host's level when the server refuses the pick
+  (manifest mismatch; tries the others in turn), the package carries the Tailscale steps and `Allow-BomTailscale.cmd`.
+  Front-door `--guest-level` checks it (`evidence/M8/frontdoor-bridge-20261127T003740519085Z`; the two earlier failed
+  runs are kept). Package `Windows-20261127T003842373Z`, copied to `BOM-Release/BOM-Windows-2026-11-27`.
 - Noted, no task yet: the Tower is dark with tiny players, and yellow-on-yellow floor slabs merge when they pile up
   (`tower/play-host-t099.png`). Raise it with Darryn after the playtest. The first-blast hitch with two windows on one PC
   doesn't apply to separate machines.

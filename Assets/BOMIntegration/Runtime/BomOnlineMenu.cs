@@ -156,7 +156,7 @@ namespace Bom.Unity
             levelText = AddText(content, "", new Vector2(.43f, .39f), new Vector2(.85f, .53f), 26, Color.white, FontStyles.Bold);
             AddButton(content, "›", new Vector2(.86f, .39f), new Vector2(.96f, .53f), SecondaryButtonColor, () => ChangeLevel(1), 40, DarkText);
             ChangeLevel(0);
-            AddText(content, "Same PC: 127.0.0.1. Another PC: the address the host's screen shows. Pick the level the host chose.", new Vector2(.05f, .22f), new Vector2(.96f, .37f), 18, LightText, FontStyles.Normal);
+            AddText(content, "Same PC: 127.0.0.1. Another PC: the address the host's screen shows. A wrong level is fixed for you.", new Vector2(.05f, .22f), new Vector2(.96f, .37f), 18, LightText, FontStyles.Normal);
             ConnectButton = AddButton(content, "JOIN", new Vector2(.52f, .04f), new Vector2(.96f, .2f), ButtonColor, StartJoin, 30, DarkText);
             BackButton = AddButton(content, "BACK", new Vector2(.05f, .04f), new Vector2(.48f, .2f), SecondaryButtonColor, () => ShowChoose(""), 28, DarkText);
         }

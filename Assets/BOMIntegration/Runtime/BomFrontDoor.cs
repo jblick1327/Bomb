@@ -270,7 +270,48 @@ namespace Bom.Unity
                 return;
             IsHost = false;
             LanHost = false;
+            joinLevel = IndexOf(level);
+            joinTries = 0;
+            joinAddress = address;
             Begin(level.Scene, address, port, "", false);
+        }
+
+        // A guest whose level differs from the host's is refused with a manifest mismatch on the first world message.
+        // Instead of failing, Join tries the other levels in turn (each try is a scene load and a connect, a few seconds),
+        // and remembers the one that worked. Returns true when it started another try.
+        static int joinLevel, joinTries;
+        public static int JoinLevelIndex => joinLevel;
+        static string joinAddress;
+        public const string JoinLevelKey = "Bom.Online.Level";
+
+        static int IndexOf(Level level)
+        {
+            for (int i = 0; i < Levels.Count; i++)
+                if (Levels[i] == level)
+                    return i;
+            return 0;
+        }
+
+        // True when a failure is a level mismatch that RetryJoinOnLevelMismatch will handle (so it is not an error).
+        public static bool WillRetryJoin(string failure) =>
+            !IsHost && InSession && !string.IsNullOrEmpty(failure) && failure.Contains("manifest mismatch") && joinTries < Levels.Count - 1;
+
+        public static bool RetryJoinOnLevelMismatch(string failure)
+        {
+            if (!WillRetryJoin(failure))
+            {
+                if (!IsHost && InSession && !string.IsNullOrEmpty(failure) && failure.Contains("manifest mismatch"))
+                    Debug.LogWarning("BOM FRONTDOOR JOIN no level matches the host's");
+                return false;
+            }
+            joinTries++;
+            joinLevel = (joinLevel + 1) % Levels.Count;
+            var next = Levels[joinLevel];
+            Debug.Log("BOM FRONTDOOR JOIN level mismatch, trying " + next.Name + " (" + joinTries + "/" + (Levels.Count - 1) + ")");
+            PlayerPrefs.SetInt(JoinLevelKey, joinLevel);
+            PlayerPrefs.Save();
+            Begin(next.Scene, joinAddress, SessionPort, "", false);
+            return true;
         }
 
         static void Begin(string scene, string address, uint port, string token, bool host)

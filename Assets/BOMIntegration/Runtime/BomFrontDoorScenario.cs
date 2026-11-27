@@ -231,9 +231,10 @@ namespace Bom.Unity
         static BomClientBehaviour Client() => FindFirstObjectByType<BomClientBehaviour>();
 
         // The loaded scene and the server's level must be the picked one (the manifest check already refused others).
+        // A guest that picked another level ends on the level Join switched to after the server refused its pick.
         void CheckLevel()
         {
-            var expected = BomFrontDoor.Levels[level];
+            var expected = BomFrontDoor.Levels[role == "guest" && !BomFrontDoor.IsHost ? BomFrontDoor.JoinLevelIndex : level];
             var client = Client();
             string scene = SceneManager.GetActiveScene().name,
                 registry = client.VisualRegistry != null ? client.VisualRegistry.LevelId : "";
