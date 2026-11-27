@@ -25,6 +25,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
     private TextMeshProUGUI statusText;
     private TextMeshProUGUI playerListText;
     private TextMeshProUGUI networkText;
+    private Button modelButton;
+    private TextMeshProUGUI modelLabel;
+    private RawImage modelPortrait;
     private TMP_InputField codeField;
     private Button chooseLevelButton;
     private Button startButton;
@@ -103,6 +106,8 @@ public sealed class OnlineMenuUI : MonoBehaviour
         }
         // The host can also flip levels with the controller's shoulder buttons.
         Gamepad gamepad = Gamepad.current;
+        if (modelButton != null && modelButton.interactable && gamepad != null && gamepad.buttonNorth.wasPressedThisFrame)
+            CycleModel();
         if (screen == MenuScreen.Level && OnlineSession.IsHost && gamepad != null)
         {
             if (gamepad.leftShoulder.wasPressedThisFrame) ChangeLevel(-1);
@@ -115,6 +120,9 @@ public sealed class OnlineMenuUI : MonoBehaviour
         for (int i = content.childCount - 1; i >= 0; i--) Destroy(content.GetChild(i).gameObject);
         playerListText = null;
         networkText = null;
+        modelButton = null;
+        modelLabel = null;
+        modelPortrait = null;
         codeField = null;
         chooseLevelButton = null;
         startButton = null;
@@ -179,10 +187,11 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             MatchMenuUI.AddText(content, "JOINED GAME " + OnlineSession.JoinCode, new Vector2(.1f, .76f), new Vector2(.9f, .96f), 32, LightText, FontStyles.Bold);
         }
-        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .30f), new Vector2(.9f, .68f), 28, Color.white, FontStyles.Bold);
+        playerListText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .40f), new Vector2(.9f, .68f), 26, Color.white, FontStyles.Bold);
         playerListText.alignment = TextAlignmentOptions.TopLeft;
         playerListText.enableAutoSizing = false;
-        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .22f), new Vector2(.9f, .30f), 22, LightText, FontStyles.Normal);
+        networkText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .20f), new Vector2(.9f, .27f), 20, LightText, FontStyles.Normal);
+        AddModelPicker(.27f, .39f);
         if (OnlineSession.IsHost)
         {
             MatchMenuUI.AddButton(content, "LEAVE", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonStyle, LeaveGame, 32);
@@ -214,6 +223,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
             list.Append('\n');
         }
         playerListText.text = list.ToString();
+        RefreshModelPicker();
         networkText.text = OnlineSession.IsNetworkConnected ? "Game connection: ready" : "Game connection: connecting...";
         if (chooseLevelButton != null)
         {
@@ -228,13 +238,14 @@ public sealed class OnlineMenuUI : MonoBehaviour
         screen = MenuScreen.Level;
         ClearContent();
         // No frame: the picture's edges fade into the panel.
-        levelPreview = MatchMenuUI.AddFadedPicture(content, "Level Preview", new Vector2(.06f, .40f), new Vector2(.94f, .97f), out levelPreviewAspect);
-        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .28f), new Vector2(.9f, .38f), 36, Color.white, FontStyles.Bold);
+        levelPreview = MatchMenuUI.AddFadedPicture(content, "Level Preview", new Vector2(.06f, .48f), new Vector2(.94f, .97f), out levelPreviewAspect);
+        levelNameText = MatchMenuUI.AddText(content, string.Empty, new Vector2(.1f, .36f), new Vector2(.9f, .47f), 34, Color.white, FontStyles.Bold);
 
+        AddModelPicker(.22f, .33f);
         if (OnlineSession.IsHost)
         {
-            MatchMenuUI.AddArrowButton(content, true, new Vector2(-.02f, .58f), new Vector2(.09f, .78f), () => ChangeLevel(-1));
-            MatchMenuUI.AddArrowButton(content, false, new Vector2(.91f, .58f), new Vector2(1.02f, .78f), () => ChangeLevel(1));
+            MatchMenuUI.AddArrowButton(content, true, new Vector2(-.02f, .62f), new Vector2(.09f, .83f), () => ChangeLevel(-1));
+            MatchMenuUI.AddArrowButton(content, false, new Vector2(.91f, .62f), new Vector2(1.02f, .83f), () => ChangeLevel(1));
             MatchMenuUI.AddButton(content, "BACK", new Vector2(.1f, .04f), new Vector2(.42f, .2f), SecondaryButtonStyle,
                 () => OnlineMatch.HostShowLobby(OnlineMatch.LobbyScreen.Players, OnlineMatch.SelectedLevel), 32);
             startButton = MatchMenuUI.AddButton(content, "START", new Vector2(.45f, .04f), new Vector2(.9f, .2f), ButtonStyle, StartMatch, 36);
@@ -251,6 +262,7 @@ public sealed class OnlineMenuUI : MonoBehaviour
         if (screen != MenuScreen.Level || levelNameText == null) return;
         int level = Mathf.Clamp(OnlineMatch.SelectedLevel, 0, MatchMenuUI.LevelNames.Length - 1);
         levelNameText.text = MatchMenuUI.LevelNames[level];
+        RefreshModelPicker();
         if (levelPreview != null)
         {
             Texture2D picture = Resources.Load<Texture2D>(LevelPreviewNames[level]);
@@ -269,6 +281,34 @@ public sealed class OnlineMenuUI : MonoBehaviour
         {
             SetStatus("The host is choosing a level...");
         }
+    }
+
+    // The body-style picker: a blue chalk option button with this player's
+    // body style pictured on its left. Pressing it moves to the next style.
+    private void AddModelPicker(float bottom, float top)
+    {
+        modelButton = MatchMenuUI.AddButton(content, "BODY STYLE", new Vector2(.10f, bottom), new Vector2(.90f, top),
+            BomButtonStyle.Blue, CycleModel, 28);
+        modelLabel = modelButton.GetComponentInChildren<TextMeshProUGUI>();
+        // Leave the picture's side of the button clear of the words.
+        modelLabel.rectTransform.offsetMin = new Vector2(90f, modelLabel.rectTransform.offsetMin.y);
+        modelPortrait = MatchMenuUI.AddPortrait((RectTransform)modelButton.transform, null,
+            new Vector2(.06f, .06f), new Vector2(.26f, .94f));
+        RefreshModelPicker();
+    }
+
+    private void CycleModel()
+    {
+        OnlineMatch.CycleLocalModel();
+        RefreshModelPicker();
+    }
+
+    private void RefreshModelPicker()
+    {
+        if (modelButton == null) return;
+        modelButton.interactable = OnlineSession.IsNetworkConnected;
+        modelPortrait.texture = CharacterModels.Portrait(OnlineMatch.LocalModel);
+        modelLabel.text = "BODY STYLE   " + CharacterModels.Name(OnlineMatch.LocalModel) + "   >";
     }
 
     private void ChangeLevel(int direction)

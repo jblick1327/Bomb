@@ -172,6 +172,7 @@ public static class OnlineSession
     private static void Attach(ISession session)
     {
         Current = session;
+        OnlineMatch.ResetCharacterChoices();
         OnlineMatch.EnsureRunner();
         session.PlayerJoined += OnPlayerListChanged;
         session.PlayerHasLeft += OnPlayerListChanged;

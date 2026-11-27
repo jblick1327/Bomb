@@ -8,7 +8,6 @@ public sealed class ItemAura : MonoBehaviour
 {
     private const float SpinSpeed = 110f;   // degrees per second
     private const float GlowSize = 1.6f;    // across, in world units
-    private static Mesh quad;
     private static readonly int TintColorId = Shader.PropertyToID("_TintColor");
 
     private Transform glow;
@@ -53,30 +52,17 @@ public sealed class ItemAura : MonoBehaviour
 
     private void CreateGlow(Vector3 center)
     {
-        if (quad == null) quad = CreateQuad();
         var glowObject = new GameObject("Aura Glow");
         glow = glowObject.transform;
         glow.SetParent(transform, true);
         glow.position = center;
-        glowObject.AddComponent<MeshFilter>().sharedMesh = quad;
+        glowObject.AddComponent<MeshFilter>().sharedMesh = BomFx.GlowQuad();
         var renderer = glowObject.AddComponent<MeshRenderer>();
         renderer.sharedMaterial = BomFx.Additive(1.8f);
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         glowRenderer = renderer;
         glowProperties = new MaterialPropertyBlock();
-    }
-
-    // A 1x1 quad with white vertex colours (the glow shader multiplies by them).
-    private static Mesh CreateQuad()
-    {
-        var mesh = new Mesh { name = "Aura Quad" };
-        mesh.vertices = new[] { new Vector3(-.5f, -.5f, 0f), new Vector3(.5f, -.5f, 0f), new Vector3(-.5f, .5f, 0f), new Vector3(.5f, .5f, 0f) };
-        mesh.uv = new[] { new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f) };
-        mesh.colors = new[] { Color.white, Color.white, Color.white, Color.white };
-        mesh.triangles = new[] { 0, 2, 1, 2, 3, 1 };
-        mesh.RecalculateBounds();
-        return mesh;
     }
 
     private void CreateSparkles(Vector3 center)

@@ -10,10 +10,12 @@ public static class ModelSnapshot
     private const int SnapshotLayer = 31;
     private static int snapshotCount;
 
-    // tint recolours the model; null keeps its own materials. faceCamera turns
-    // a flat model (a coin) so its broad side faces the camera, whichever way
-    // it was modelled.
-    public static RenderTexture Render(Object prefab, int size, Color? tint, Framing framing, bool silhouette = false, bool faceCamera = false)
+    // tint recolours the model; null keeps its own materials. pose and
+    // rotation set up a character model before it is photographed. faceCamera
+    // turns a flat model (a coin) so its broad side faces the camera,
+    // whichever way it was modelled.
+    public static RenderTexture Render(Object prefab, int size, Color? tint, Framing framing,
+        bool silhouette = false, AnimationClip pose = null, Quaternion? rotation = null, bool faceCamera = false)
     {
         if (prefab == null) return null;
 
@@ -29,6 +31,13 @@ public static class ModelSnapshot
             return null;
         }
         model.transform.localPosition = Vector3.zero;
+        if (rotation.HasValue) model.transform.localRotation = rotation.Value;
+        if (pose != null)
+        {
+            pose.SampleAnimation(model, 0f);
+            foreach (SkinnedMeshRenderer skin in model.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                skin.updateWhenOffscreen = true;
+        }
 
         // Only the look is needed: stop the model's scripts and physics.
         foreach (MonoBehaviour behaviour in model.GetComponentsInChildren<MonoBehaviour>(true)) behaviour.enabled = false;
@@ -47,7 +56,8 @@ public static class ModelSnapshot
             if (hasBounds) bounds.Encapsulate(renderer.bounds);
             else { bounds = renderer.bounds; hasBounds = true; }
             if (tint == null) continue;
-            renderer.GetPropertyBlock(properties);
+            if (pose != null) renderer.GetPropertyBlock(properties, 0);
+            else renderer.GetPropertyBlock(properties);
             properties.SetColor("_BaseColor", tint.Value);
             properties.SetColor("_Color", tint.Value);
             if (silhouette)
@@ -55,7 +65,13 @@ public static class ModelSnapshot
                 properties.SetColor("_SpecColor", Color.black);
                 properties.SetColor("_EmissionColor", Color.black);
             }
-            renderer.SetPropertyBlock(properties);
+            if (pose != null) renderer.SetPropertyBlock(properties, 0);
+            else renderer.SetPropertyBlock(properties);
+        }
+        if (pose != null && CharacterModels.TryGetSkinnedBounds(model, null, out Bounds posedBounds))
+        {
+            bounds = posedBounds;
+            hasBounds = true;
         }
         if (!hasBounds) bounds = new Bounds(model.transform.position + Vector3.up, new Vector3(1f, 2f, 1f));
 

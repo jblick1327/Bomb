@@ -297,11 +297,11 @@ public static class BomFx
         }
     }
 
-    // Sparks fizzing off a bomb's fuse while it falls. tip is the fuse.
-    public static void AddFuseSparks(Transform tip)
+    // Sparks fizzing off a bomb's fuse. tip is where the fuse is.
+    public static ParticleSystem AddFuseSparks(Transform tip)
     {
-        ParticleSystem system = CreateSystem("Fuse Sparks", tip, Additive(3f), 40, 28f);
-        system.transform.localPosition = new Vector3(0f, 1f, 0f);
+        ParticleSystem system = CreateSystem("Fuse Sparks", tip, Additive(3f), 80, 28f);
+        system.transform.localPosition = Vector3.zero;
         ParticleSystem.MainModule main = system.main;
         main.startLifetime = new ParticleSystem.MinMaxCurve(.12f, .28f);
         main.startSpeed = new ParticleSystem.MinMaxCurve(.6f, 1.8f);
@@ -314,5 +314,22 @@ public static class BomFx
         FadeOverLife(system, MakeGradient(
             (0f, new Color(1f, .95f, .6f), 1f),
             (1f, new Color(1f, .45f, .1f), 0f)));
+        return system;
+    }
+
+    private static Mesh glowQuad;
+
+    // A 1x1 quad with white vertex colours, for camera-facing glows (the
+    // glow shader multiplies by vertex colour).
+    public static Mesh GlowQuad()
+    {
+        if (glowQuad != null) return glowQuad;
+        glowQuad = new Mesh { name = "Glow Quad" };
+        glowQuad.vertices = new[] { new Vector3(-.5f, -.5f, 0f), new Vector3(.5f, -.5f, 0f), new Vector3(-.5f, .5f, 0f), new Vector3(.5f, .5f, 0f) };
+        glowQuad.uv = new[] { new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 1f), new Vector2(1f, 1f) };
+        glowQuad.colors = new[] { Color.white, Color.white, Color.white, Color.white };
+        glowQuad.triangles = new[] { 0, 2, 1, 2, 3, 1 };
+        glowQuad.RecalculateBounds();
+        return glowQuad;
     }
 }
