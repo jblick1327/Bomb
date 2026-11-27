@@ -24,6 +24,10 @@ public sealed class ArenaCamera : MonoBehaviour
     [SerializeField, InspectorName("Follow player")]
     private bool followPlayer;
 
+    [Header("Explosion Shake")]
+    [SerializeField, Range(0f, 10f), InspectorName("Strength (% of viewport height)")]
+    private float shakeViewportPercent = 0.9f;
+
     [Header("Scene references")]
     [SerializeField, Tooltip("Shared dimensions used to frame the entire arena.")]
     private ArenaLayout layout;
@@ -32,29 +36,84 @@ public sealed class ArenaCamera : MonoBehaviour
     private Vector3 targetCenter;
     private Vector3 followVelocity;
 
+    private const float ShakeDuration = 0.18f;
+    private const float ShakeFrequency = 12f;
+    private static event System.Action<float> ExplosionShake;
+    private double shakeStartTime;
+    private float shakeStrength;
+    private Vector3 positionBeforeShake;
+    private bool shakeApplied;
+
     private void OnEnable()
     {
         targetCenter = transform.position;
+        shakeStrength = 0f;
+        ExplosionShake += StartShake;
         FitArena(true);
     }
 
-    private void OnValidate() => FitArena(true);
-    private void LateUpdate() => FitArena(false);
+    private void OnDisable()
+    {
+        ExplosionShake -= StartShake;
+        RestoreCameraPosition();
+    }
 
-    // Screen shake (explosions). Shake adds to it; it settles on its own.
-    private const float ShakeDistance = .35f;   // world units at full shake
-    private const float ShakeSettle = 2.2f;     // per second
-    private static float shake;
-    public static void Shake(float amount) => shake = Mathf.Clamp01(shake + amount);
+    private void OnValidate()
+    {
+        RestoreCameraPosition();
+        FitArena(true);
+    }
+
+    private void LateUpdate()
+    {
+        RestoreCameraPosition();
+        FitArena(false);
+        if (view == null) return;
+
+        Vector3 offset = ShakeOffset(transform.rotation);
+        if (offset == Vector3.zero) return;
+
+        positionBeforeShake = transform.position;
+        transform.position = positionBeforeShake + offset;
+        shakeApplied = true;
+    }
+
+    private void RestoreCameraPosition()
+    {
+        if (!shakeApplied) return;
+        transform.position = positionBeforeShake;
+        shakeApplied = false;
+    }
+
+    public static void Shake(float amount)
+    {
+        if (Application.isPlaying) ExplosionShake?.Invoke(amount);
+    }
+
+    private void StartShake(float amount)
+    {
+        double now = Time.unscaledTimeAsDouble;
+        shakeStrength = Mathf.Clamp01(shakeStrength * ShakeDecay(now) + amount);
+        shakeStartTime = now;
+    }
+
+    private float ShakeDecay(double now)
+    {
+        float remaining = 1f - Mathf.Clamp01((float)(now - shakeStartTime) / ShakeDuration);
+        return remaining * remaining;
+    }
 
     private Vector3 ShakeOffset(Quaternion rotation)
     {
-        if (!Application.isPlaying || shake <= 0f) return Vector3.zero;
-        float strength = shake * shake * ShakeDistance;
-        float t = Time.unscaledTime * 28f;
-        shake = Mathf.Max(0f, shake - ShakeSettle * Time.unscaledDeltaTime);
-        return rotation * new Vector3((Mathf.PerlinNoise(t, 0f) * 2f - 1f) * strength,
-            (Mathf.PerlinNoise(0f, t) * 2f - 1f) * strength, 0f);
+        if (!Application.isPlaying || shakeStrength <= 0f) return Vector3.zero;
+
+        double now = Time.unscaledTimeAsDouble;
+        float strength = shakeStrength * ShakeDecay(now);
+        if (strength <= 0f) return Vector3.zero;
+
+        float distance = strength * (shakeViewportPercent * 0.01f) * (2f * view.orthographicSize);
+        float phase = (float)(now - shakeStartTime) * ShakeFrequency * (2f * Mathf.PI);
+        return rotation * new Vector3(Mathf.Cos(phase), 0.6f * Mathf.Sin(phase), 0f) * distance;
     }
 
     private Camera view;
@@ -114,8 +173,7 @@ public sealed class ArenaCamera : MonoBehaviour
         }
         else followVelocity = Vector3.zero;
         targetCenter = desiredCenter;
-        Vector3 shakeOffset = instant ? Vector3.zero : ShakeOffset(rotation);
-        transform.SetPositionAndRotation(targetCenter - rotation * Vector3.forward * 30f + shakeOffset, rotation);
+        transform.SetPositionAndRotation(targetCenter - rotation * Vector3.forward * 30f, rotation);
     }
 
     private Vector2 GetPlayerPadding()

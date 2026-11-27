@@ -674,6 +674,7 @@ public sealed class BombDropper : MonoBehaviour
         Vector2 center = new Vector2(position.x, position.y);
         float sizeScale = explosionScale >= 0f ? Mathf.Max(0.05f, explosionScale) : GetExplosionScale(type);
         PlayExplosionSound(position);
+        ArenaCamera.Shake(Mathf.Clamp(0.75f * sizeScale, 0.55f, 1f));
         List<DestructibleObject> supportedPieces = DestructibleObject.FindSupportedPieces();
         DestroyDebrisInBlast(center, outerShatterRadius * sizeScale);
         Material cutMaterial = AffectBlastReceivers(center, sizeScale);
@@ -698,7 +699,6 @@ public sealed class BombDropper : MonoBehaviour
         if (IsNearMiss(center, lethalRadius * sizeScale)) GameAudio.PlayNearMissVoice();
 
         ShowBlast(center, lethalRadius * sizeScale, cutMaterial);
-        ArenaCamera.Shake(Mathf.Clamp(.45f * sizeScale, .2f, .9f));
     }
 
     // True if a player on this computer who is still in the round was only
