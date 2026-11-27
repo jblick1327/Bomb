@@ -13,12 +13,18 @@ public enum CollectibleItemType
 [AddComponentMenu("Arena/Falling Collectible Item")]
 public sealed class FallingCollectibleItem : MonoBehaviour
 {
+    private const float GroundHoverHeight = 0.22f;
+    private const float SupportProbeTolerance = 0.06f;
+    private const float MinSupportNormalY = 0.3f;
+
     private BombDropper owner;
     private Rigidbody body;
     private SphereCollider pickupCollider;
     private float fallAcceleration;
     private bool collected;
     private bool landed;
+    private Collider landingSurface;
+    private Ray supportProbe;
     // Online: a pickup was asked for and the host hasn't answered yet.
     private bool pickupRequested;
 
@@ -62,21 +68,29 @@ public sealed class FallingCollectibleItem : MonoBehaviour
             return;
         }
 
-        // Already resting: a kinematic body can't have its velocity set.
-        if (!landed && !body.isKinematic && collision.contactCount > 0 && collision.GetContact(0).normal.y > 0.3f)
-        {
-            landed = true;
-            body.linearVelocity = Vector3.zero;
-            body.angularVelocity = Vector3.zero;
-            body.isKinematic = true;
-        }
+        if (landed || body.isKinematic || collision.contactCount == 0) return;
+        ContactPoint contact = collision.GetContact(0);
+        if (contact.normal.y <= MinSupportNormalY) return;
+
+        // Keep the original contact so a blast can check this exact spot, even on a ledge.
+        landingSurface = collision.collider;
+        supportProbe = new Ray(contact.point + contact.normal * SupportProbeTolerance, -contact.normal);
+        landed = true;
+        body.linearVelocity = Vector3.zero;
+        body.angularVelocity = Vector3.zero;
+        body.isKinematic = true;
+        body.position += Vector3.up * GroundHoverHeight;
     }
 
-    // Called after a blast. A landed item is frozen in place, so let it fall
-    // again; if its surface is still there it lands again straight away.
+    // Called after a blast has updated the terrain colliders.
     public void ResumeFalling()
     {
         if (!landed || collected || body == null) return;
+        if (landingSurface != null && landingSurface.enabled && landingSurface.gameObject.activeInHierarchy &&
+            landingSurface.Raycast(supportProbe, out RaycastHit hit, SupportProbeTolerance * 2f) &&
+            hit.normal.y > MinSupportNormalY) return;
+
+        landingSurface = null;
         landed = false;
         body.isKinematic = false;
         body.WakeUp();
