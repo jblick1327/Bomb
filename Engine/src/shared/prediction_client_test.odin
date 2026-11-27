@@ -44,6 +44,12 @@ bomb_contact_uncertainty_is_explicit_and_recovers_without_old_impulses :: proc(t
  clear(&poses);_=collision_history_record_frame(&c.collision_history,1,6,&poses)
  net_prediction_update(&c,.2)
  t.expect(test,c.prediction.mode==.Predicting && c.prediction.recoveries==1 && c.prediction.conservative_seconds<1)
+ // 2026-11-27: a bomb arriving near a player already drawn from the prediction keeps the prediction on screen as an
+ // estimate (reported as Bomb_Contact_Uncertain), instead of drawing the player at the authority.
+ _,_=command_history_push(&c.input_link.history,0,0)
+ poses[ent_key(.Bomb,1)]=pose_state_make(PLAYER_SPAWN.x,PLAYER_SPAWN.y+1,0);_=collision_history_record_frame(&c.collision_history,1,7,&poses)
+ net_prediction_update(&c,.216)
+ t.expect(test,c.prediction.reason==.Bomb_Contact_Uncertain && c.prediction.estimated && c.prediction.world_ok)
 }
 
 @(test)

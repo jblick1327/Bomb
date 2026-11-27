@@ -164,7 +164,12 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
  }
  topology:=collision_history_topology(&c.collision_history,owner.state_tick,owner.topology_revision)
  if topology==nil { prediction_set_mode(p,.Conservative,.Wrong_Revision);return }
- if prediction_bomb_uncertain(c,owner,target) { prediction_set_mode(p,.Conservative,.Bomb_Contact_Uncertain);return }
+ // A bomb near the player: the replay does not model bomb contact. While a prediction is on screen it keeps going as an
+ // estimate (each update replays from the newest owner state, so the error stays within the lead, and corrections blend
+ // like any other) instead of drawing the player at the authority, ticks behind, whenever a bomb lands close by
+ // (movement stutter, 2026-11-27). Without a presented prediction it stays conservative as before.
+ bomb_uncertain:=prediction_bomb_uncertain(c,owner,target)
+ if bomb_uncertain && !presenting { prediction_set_mode(p,.Conservative,.Bomb_Contact_Uncertain);return }
  if !p.world.active || p.world.revision!=owner.topology_revision || p.world.epoch!=owner.identity.epoch || p.world.has_region&&!prediction_region_contains(p.world.region,owner.position,3) {
   region:Level_Bounds;window:^Level_Bounds
   if len(topology.scene.subdivisions)>2048 {region={vsub(owner.position,{8,8}),vadd(owner.position,{8,8})};window=&region}
@@ -218,15 +223,16 @@ net_prediction_update :: proc(c:^Net_Client,now:f64) {
   }
   p.last_owner_tick=owner.state_tick
  }
+ if bomb_uncertain { uncertain=true }
  p.records[target%256]={true,owner.identity,target,p.world.player.pose.position}
  p.step_tick=target;p.step_from=has_from ? from : p.world.player.pose.position;p.has_step=true
  p.world_ok=true
  if uncertain {
-  prediction_set_mode(p,.Conservative,.Dynamic_History_Required)
+  prediction_set_mode(p,.Conservative,bomb_uncertain ? .Bomb_Contact_Uncertain : .Dynamic_History_Required)
   p.world_ok=true;p.estimated=true;p.estimated_updates+=1;return
  }
  p.certain_at=now
- if p.mode==.Conservative && p.reason==.Dynamic_History_Required {
+ if p.mode==.Conservative && (p.reason==.Dynamic_History_Required || p.reason==.Bomb_Contact_Uncertain && was_estimated) {
   p.recover_streak+=1
   // An estimated episode keeps presenting the (now certain) world through the dwell.
   if p.recover_streak<PREDICTION_RECOVER_UPDATES { p.estimated=was_estimated;return }
