@@ -72,9 +72,10 @@ game yourself is not one click yet: Unity's normal Build doesn't include the onl
 
 ## Known issues
 If you hit one of these, note the level, whose player, and same PC or LAN; a clip or screenshot helps most.
-- **Movement prediction is still choppy at times**: your own player can stutter or snap back, most on the Tower.
-  It's better than it was (the 2026-11-24 fixes draw your player between server ticks and keep controls live through
-  resets). It looks worse in Unity's Play mode than in a built game, so judge it in a build.
+- **Movement stutter, fixed 2026-11-27, tell J if you still see it:** your player used to snap back for a moment when
+  a bomb landed nearby, when the host's PC hitched, or when your own game hitched. Now prediction keeps going through
+  those, and the server keeps steadier time. Note the level and whether you were host or guest. Judge it in a built
+  game, not Unity's Play mode.
 - **Glue resists bending too much**: a piece can stay stuck out at a right angle from a piece that has just broken
   off, like a shelf. Planned fix: give glue a bending (shear/moment) limit in the engine, so overhanging pieces snap
   under their own weight while load-bearing joints stay strong. It has to keep the Bridge and Tower standing at round start.

@@ -795,6 +795,18 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   (manifest mismatch; tries the others in turn), the package carries the Tailscale steps and `Allow-BomTailscale.cmd`.
   Front-door `--guest-level` checks it (`evidence/M8/frontdoor-bridge-20261127T003740519085Z`; the two earlier failed
   runs are kept). Package `Windows-20261127T003842373Z`, copied to `BOM-Release/BOM-Windows-2026-11-27`.
+- [x] **P10 Movement stutter** (done 2026-11-27, Claude Opus 5.5, owner: "fix it now by whatever means necessary";
+  `evidence/STUTTER/`). Causes and fixes, engine 5c54ca77, 2279d755, b46b00e3 (shipped pair b46b00e3):
+  (1) the server loop slept with a plain Sleep(1) (~15.6 ms on Windows 11 without a per-process timer resolution), so it
+  ticked and sent in bursts: now a high-resolution 1 ms wait, timeBeginPeriod(1), above-normal process/thread priority;
+  (2) stalls over 83 ms dropped time, moving the server behind every client's schedule (P4a's resets): now stalls up to
+  250 ms are caught up; (3) a client whose newest command was older than the owner state, or with a gap in its own
+  history, drew the player at the authority (ticks behind): now bridged / replayed as the server runs starved ticks;
+  (4) a bomb near the player did the same: now an estimate while a prediction is on screen (reported as
+  Bomb_Contact_Uncertain). Checks: engine Test 240/240, NetTest 27/27, shared package 142/142 serial (2 Box2D byte-count
+  rebuild tests fail only in parallel, logs kept), adverse 120 s profile (200 ms, 20 ms jitter, 5% loss) 0 resets /
+  0 snaps / 0 fallback, max correction 3 cm, 0 server overruns; Rounds, Tower front-door, Content. Package
+  `Windows-20261127T014043843Z` -> `BOM-Release/BOM-Windows-2026-11-27`. Not measured: two PCs over Tailscale (tonight).
 - Noted, no task yet: the Tower is dark with tiny players, and yellow-on-yellow floor slabs merge when they pile up
   (`tower/play-host-t099.png`). Raise it with Darryn after the playtest. The first-blast hitch with two windows on one PC
   doesn't apply to separate machines.
