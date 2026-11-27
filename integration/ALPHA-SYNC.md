@@ -1,5 +1,9 @@
 # Alpha sync: Odin integration + Darryn's AlphaV0.1
 
+> **Commit hashes:** hashes of engine and native-pair commits from 2026-11-23 on (for example `9d5fbb2c`, `b46b00e3`,
+> `59b51704`, `24dda19b`) come from the owner's local branch `native-pump-thread`. This PR's history has the same changes
+> under different hashes; `integration/evidence/INDEX.md` has the old-to-new table.
+
 Written 2026-11-10 by Claude Opus 5.5. This file is the work queue. **One task per session.** Read the
 "Rules for every task" section, then only your own task. Tick your box when you finish (rule 6).
 

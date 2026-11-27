@@ -6,7 +6,7 @@ the game starts this program and the other players join it. It is built from `En
 
 | file | sha256 | built from |
 |---|---|---|
-| `BOM-server.exe` | `8aeb7e3088d65d2f1c3da1342288c30c296a13b450914066085cf83debadcc86` | Engine 9d5fbb2c (b46b00e3 plus: a piece hanging by one glue seam gives way under its own weight), same build as bomcore.dll 70b8b75f |
+| `BOM-server.exe` | `8aeb7e3088d65d2f1c3da1342288c30c296a13b450914066085cf83debadcc86` | Engine 9d5fbb2c (7a6b5a50 in this PR's history; b46b00e3, 0a5bd33b here, plus: a piece hanging by one glue seam gives way under its own weight), same build as bomcore.dll 70b8b75f |
 
 The level files the server loads come from `integration/fixtures/levels/` (Yard, Bridge, Tower) and
 `integration/fixtures/network-yard/yard.json` (Classic Yard). In the Editor the game reads them from there;
