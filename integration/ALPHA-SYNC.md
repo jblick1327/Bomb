@@ -767,7 +767,17 @@ Order: P1 and P2 first (they shape every round), then P3–P5, then the owner's 
   Shipped: Engine 59b51704, DLL 13578414, server 2e022734. Gates on the pair: engine Test 240/240, NetTest 27/27,
   Content, NativeInterop, Rounds (first Rounds run used the stale `Engine/build` DLL and was refused by the identity guard:
   `evidence/M8/unity-rounds-20261127T000748916979Z`, kept), front-door Bridge and Tower on the release package.
-- [ ] **P6 Glue holds overhangs (G-N12, re-scoped)** (Lane N, T1, M; physics: the owner picks the rule as an OD).
+- [x] **P6 Glue holds overhangs (G-N12, re-scoped)** (Lane N, T1, M; physics: the owner picks the rule as an OD).
+  **Done 2026-11-27 (owner: "use your best judgement to fix the glue resistance"): Engine 9d5fbb2c, pair DLL 70b8b75f /
+  server 8aeb7e30.** On level worlds, a glue seam whose moving piece has no other glue seam (a shelf) keeps 30% of its
+  strength against shear and bending, plus friction (0.6) and a lever (half the seam) from weight pressing across it;
+  all other seams and the Odin sandbox keep the old rule. A uniform cut (`coulomb15/30/50`) broke the Bridge's frame at
+  round start every time. OD-6 on all four levels twice, byte-identical: Classic Yard, Yard, Bridge as before, Tower
+  10 -> 13 late breaks (1.5 mm). 12-blast sweep: more glue gives way after the blast in 10 of 12. Engine Test 241/241
+  (new `glue_overhang_shelf_gives_way_resting_deck_holds`), NetTest 27/27, shared 142/142. `evidence/P6/README.md` §3.
+  Shipped: Content, Rounds (`evidence/M8/unity-rounds-20261127T045230005605Z`), front-door Bridge and Tower on the
+  release build, package `Windows-20261127T050351891Z` -> `BOM-Release/BOM-Windows-2026-11-27`.
+  The earlier interim decision below (no change for the showing) is superseded.
   **Decided 2026-11-26 (owner delegated): no rule change for the team showing.** Neither candidate met its bar ((a) breaks
   Yard's round start; (b) changes nothing visible). Stays open after the showing with a stronger fixture on the P9 baseline.
   Interim 2026-11-26 (Claude Opus 5.5): measured on the broken baseline, see P9. (a) 30% torque fails Yard's round

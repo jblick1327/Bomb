@@ -76,9 +76,10 @@ If you hit one of these, note the level, whose player, and same PC or LAN; a cli
   a bomb landed nearby, when the host's PC hitched, or when your own game hitched. Now prediction keeps going through
   those, and the server keeps steadier time. Note the level and whether you were host or guest. Judge it in a built
   game, not Unity's Play mode.
-- **Glue resists bending too much**: a piece can stay stuck out at a right angle from a piece that has just broken
-  off, like a shelf. Planned fix: give glue a bending (shear/moment) limit in the engine, so overhanging pieces snap
-  under their own weight while load-bearing joints stay strong. It has to keep the Bridge and Tower standing at round start.
+- **Glue holding shelves, fixed 2026-11-27, tell J if you still see it:** a piece left hanging off the side of
+  another by one glue joint (nothing under it) now snaps off under its own weight. A piece resting on its support, or
+  glued in two or more places (beams, the Bridge's frame, the Tower's slabs), holds as before, and every level still
+  stands at round start. Note the level and where it was if a piece still sticks out where it shouldn't.
 - **Fixed 2026-11-26, tell J if you still see it:** Bridge and Tower pieces cracking or falling at round start, before
   any bomb lands. Glued objects rest on each other again (the 11-23 ground fix had stopped that); the yard ground fix stays.
 - **The first blast can hitch** for a frame when two game windows run on the same PC.
