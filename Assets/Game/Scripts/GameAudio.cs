@@ -17,6 +17,8 @@ public sealed class GameAudio : MonoBehaviour
     [SerializeField] private AudioClip intro;
     [SerializeField] private AudioClip menuMusic;
     [SerializeField] private AudioClip gameLoopMusic;
+    [Tooltip("Plays in the Bridge level instead of the game loop music.")]
+    [SerializeField] private AudioClip bridgeMusic;
     [Tooltip("Buying a character in the shop.")]
     [SerializeField] private AudioClip purchase;
     [Tooltip("Ground and blocks breaking, with a bomb's boom.")]
@@ -123,7 +125,7 @@ public sealed class GameAudio : MonoBehaviour
             PlayMenuMusic();
         else if (scene.name == "Arena" || scene.name == "YardLevel"
             || scene.name == "BridgeLevel" || scene.name == "TowerLevel")
-            PlayGameLoopMusic();
+            PlayGameLoopMusic(scene.name == "BridgeLevel" && bridgeMusic != null ? bridgeMusic : gameLoopMusic);
     }
 
     private void RegisterSceneButtons()
@@ -307,7 +309,8 @@ public sealed class GameAudio : MonoBehaviour
         menuMusicRoutine = null;
     }
 
-    private void PlayGameLoopMusic()
+    // The level's music: its own track if it has one, else the game loop.
+    private void PlayGameLoopMusic(AudioClip clip)
     {
         if (menuMusicRoutine != null)
         {
@@ -315,7 +318,7 @@ public sealed class GameAudio : MonoBehaviour
             menuMusicRoutine = null;
         }
 
-        PlayMusic(gameLoopMusic);
+        PlayMusic(clip);
     }
 
     private void PlayMusic(AudioClip clip, bool loop = true)
