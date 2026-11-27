@@ -6,9 +6,10 @@ import "core:math"
 import b2 "vendor:box2d"
 import shared "shared"
 
-// OD-8 (G-N9b): structure gravity eases in over the first 60 steps of each level start. Mortar welds no longer let
-// their pair collide (owner-approved NPT change, 2026-11-24): the seam contacts fought the rigid welds and blew the
-// yard ground apart after blasts (integration/evidence/NPT/blast-probe).
+// OD-8 (G-N9b): structure gravity eases in over the first 60 steps of each level start. Mortar welds let their pair
+// collide only between different placed objects (P9, owner-delegated 2026-11-26): glued objects rest on each other
+// (contact bearing, needed for Bridge/Tower round start), while pieces of one object do not (NPT 2026-11-24: those
+// seam contacts fought the rigid welds and blew the yard ground apart after blasts; integration/evidence/P9).
 
 // A dynamic tile hanging in a level with no floor; with glued=true a second tile sits on it, glued (one mortar seam).
 od8_level :: proc(glued:bool) -> string {
@@ -23,32 +24,45 @@ od8_piece_body :: proc(w:^shared.World,identity:u64) -> b2.BodyId {
 
 od8_step :: proc(w:^shared.World) { events:=shared.world_tick(w,{},f32(1.0/60.0));delete(events.explosions) }
 
-@(test)
-od8_mortar_weld_pair_does_not_collide :: proc(t:^testing.T) {
- sync.mutex_lock(&physics_test_mutex);defer sync.mutex_unlock(&physics_test_mutex)
- text:=od8_level(true);defer delete(text)
+// One glued pair: per_source=1 puts the two tiles in two objects (level glue), per_source=2 in one object.
+od8_glued_pair :: proc(t:^testing.T,per_source:int,collides:bool) {
+ text:=glue_test_level({{-0.5,20,0.5,20.5},{-0.5,20.5,0.5,21}},{{0,1}},per_source);defer delete(text)
  layout,w,ok:=glue_test_world(t,text);if !ok { return };defer shared.destroy_layout(&layout);defer shared.scene_destroy(&w.scene);defer delete(w.bombs)
- a,b:=od8_piece_body(&w,1),od8_piece_body(&w,2)
- testing.expect(t,a!=b2.nullBodyId && b!=b2.nullBodyId && a!=b,"two glued tiles are two dynamic piece bodies")
+ bodies:[2]b2.BodyId;n:=0
+ for sub in w.scene.subdivisions {
+  if !sub.live { continue }
+  body:=w.scene.pieces[w.scene.piece_rows[sub.owner]].body
+  if n==0 || (n==1 && body!=bodies[0]) { bodies[n]=body;n+=1 }
+ }
+ testing.expectf(t,n==2,"per_source=%d: two glued tiles are two dynamic piece bodies, found %d",per_source,n);if n!=2 { return }
+ a,b:=bodies[0],bodies[1]
  welds:=0
  for c in w.scene.connections {
   if !c.live || !c.mortar || c.joint==b2.nullJointId { continue }
-  welds+=1;testing.expect(t,!b2.Joint_GetCollideConnected(c.joint),"a mortar weld does not let its two bodies collide")
+  welds+=1;testing.expectf(t,b2.Joint_GetCollideConnected(c.joint)==collides,"per_source=%d: weld collideConnected must be %v",per_source,collides)
  }
- testing.expect(t,welds>0,"the glue link makes a mortar weld")
+ testing.expectf(t,welds>0,"per_source=%d: the glue link makes a mortar weld",per_source)
  offset:=b2.Body_GetPosition(b)-b2.Body_GetPosition(a);start_y:=b2.Body_GetPosition(a).y
  for _ in 0..<30 { od8_step(&w) }
- // The glued faces touch (gap 0) but make no contact; the weld alone holds the pair together while it falls.
  data:=make([]b2.ContactData,int(b2.Body_GetContactCapacity(a)));defer delete(data)
  touching:=0
  for contact in b2.Body_GetContactData(a,data) {
   ba,bb:=b2.Shape_GetBody(contact.shapeIdA),b2.Shape_GetBody(contact.shapeIdB)
   if (ba==a && bb==b || ba==b && bb==a) && contact.manifold.pointCount>0 { touching+=1 }
  }
- testing.expectf(t,touching==0,"glued tiles must not touch through a contact, found %d",touching)
+ // The glued faces touch (gap 0): with collideConnected the pair rests on a contact; without it Box2D makes none.
+ if collides { testing.expectf(t,touching>0,"glued objects must touch through a contact, found %d",touching) }
+ else { testing.expectf(t,touching==0,"glued pieces of one object must not touch through a contact, found %d",touching) }
  drift:=b2.Body_GetPosition(b)-b2.Body_GetPosition(a)-offset
- testing.expectf(t,math.sqrt(drift.x*drift.x+drift.y*drift.y)<1e-3,"the weld keeps the glued pair together: drift %v",drift)
- testing.expect(t,b2.Body_GetPosition(a).y<start_y-0.01,"the pair falls (no floor)")
+ testing.expectf(t,math.sqrt(drift.x*drift.x+drift.y*drift.y)<1e-3,"per_source=%d: the weld keeps the glued pair together: drift %v",per_source,drift)
+ testing.expectf(t,b2.Body_GetPosition(a).y<start_y-0.01,"per_source=%d: the pair falls (no floor)",per_source)
+}
+
+@(test)
+od8_mortar_weld_collides_across_objects_not_within :: proc(t:^testing.T) {
+ sync.mutex_lock(&physics_test_mutex);defer sync.mutex_unlock(&physics_test_mutex)
+ od8_glued_pair(t,1,true)  // OD-8 contact bearing between glued objects (P9: Bridge/Tower round start)
+ od8_glued_pair(t,2,false) // NPT: no contact inside one object (the yard ground blow-up)
 }
 
 @(test)

@@ -50,6 +50,10 @@ def apply(stage, name):
              '  load:=blast_load(cover_failure_distance(a,sample,blast,strength),blast.radius)\n  if fails(load,strength) { append(&f.connections,id) }\n'
              f'  else if c.mortar && load>0 {{ s.connections[s.conn_rows[id]].shock=f32({pct})/100 }} // P6 (b): reached, not broken\n')
         return
+    if name == 'xsource':  # P9: contact bearing only between different placed objects (level glue)
+        edit(stage / 'shared' / 'sim_physics.odin', '   def.collideConnected=false\n',
+             '   def.collideConnected=a.provenance.source_identity!=b.provenance.source_identity // P9 candidate\n')
+        return
     if name != 'base':
         raise SystemExit('unknown candidate ' + name)
 
